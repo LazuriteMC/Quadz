@@ -4,8 +4,8 @@ import net.minecraft.item.Item;
 
 public class ItemGoggles extends Item {
 
-	public ItemGoggles(Item.Properties builder) {
-		super(builder);
+	public ItemGoggles(Item.Settings settings) {
+		super(settings);
 	}
 
 }

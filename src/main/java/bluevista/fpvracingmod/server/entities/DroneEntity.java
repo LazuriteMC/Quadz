@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.server.entities;
 
+import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import com.bluevista.fpvracing.client.handler.RenderHandler;
 import com.bluevista.fpvracing.client.math.QuaternionHelper;
 import com.bluevista.fpvracing.server.EntityRegistry;
@@ -14,6 +15,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.FMLPlayMessages;
@@ -23,17 +25,17 @@ import java.util.List;
 
 public class DroneEntity extends Entity {
 
-	private CompoundNBT properties;
+//	private CompoundNBT properties;
 	private Quaternion orientation;
-	private ServerPlayerEntity player;
+//	private ServerPlayerEntity player;
 
 	private float throttle = 0.0f;
 
 	public DroneEntity(EntityType<?> entityTypeIn, World worldIn) {
 		super(entityTypeIn, worldIn);
 		orientation = QuaternionHelper.rotateX(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f), 0);
-		properties = new CompoundNBT();
-		properties.putInt("channel", 0);
+//		properties = new CompoundNBT();
+//		properties.putInt("channel", 0);
 		// TODO nbt tags - channel, camera_angle, etc.
 
 		this.setNoGravity(true);
