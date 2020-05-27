@@ -10,8 +10,8 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.RayTraceContext;
 import net.minecraft.world.World;
 
-public class ItemDroneSpawner extends Item {
-	public ItemDroneSpawner(Settings settings) {
+public class DroneSpawnerItem extends Item {
+	public DroneSpawnerItem(Settings settings) {
 		super(settings);
 	}
 
@@ -29,6 +29,9 @@ public class ItemDroneSpawner extends Item {
 			if (hitResult.getType() == net.minecraft.util.hit.HitResult.Type.BLOCK) {
 				DroneEntity d = new DroneEntity(world);
 				d.setPos(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
+				System.out.println("X is: " + hitResult.getPos().x);
+				System.out.println("Y is: " + hitResult.getPos().y);
+				System.out.println("Z is: " + hitResult.getPos().z);
 				world.spawnEntity(d);
 			}
 		}

@@ -2,8 +2,8 @@ package bluevista.fpvracingmod.server.items;
 
 import net.minecraft.item.Item;
 
-public class ItemTransmitter extends Item {
-	public ItemTransmitter(Settings settings) {
+public class TransmitterItem extends Item {
+	public TransmitterItem(Settings settings) {
 		super(settings);
 	}
 }

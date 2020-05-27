@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.server.entities;
 
+import bluevista.fpvracingmod.FPVRacingMod;
 import bluevista.fpvracingmod.client.math.Quaternion;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import net.minecraft.entity.Entity;
@@ -7,7 +8,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 public class DroneEntity extends Entity {
 
@@ -18,6 +23,7 @@ public class DroneEntity extends Entity {
 	private float throttle = 0.0f;
 
 	public DroneEntity(World worldIn) {
+//		super(FPVRacingMod.DRONE_ENTITY, worldIn);
 		super(EntityType.PLAYER, worldIn);
 		orientation = QuaternionHelper.rotateX(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f), 0);
 //		properties = new CompoundNBT();
@@ -95,20 +101,17 @@ public class DroneEntity extends Entity {
 		this.throttle = throttle;
 	}
 
-//	@Override
-//	public EntityType<?> getType() {
-//		return com.bluevista.fpvracing.server.EntityRegistry.DRONE.get();
-//	}
-
 	@Override
 	protected void initDataTracker() { }
 
-//	public static DroneEntity getNearestTo(Entity entity) {
-//		World world = entity.getEntityWorld();
-//		List<DroneEntity> drones = world.getEntitiesWithinAABB(DroneEntity.class,
-//				new AxisAlignedBB(entity.getPosition().getX()-100, entity.getPosition().getY()-100, entity.getPosition().getZ()-100,
-//						entity.getPosition().getX()+100, entity.getPosition().getY()+100, entity.getPosition().getZ()+100));
-//		if(drones.size() > 0) return drones.get(0);
-//		else return null;
-//	}
+	public static DroneEntity getNearestTo(Entity entity) {
+		World world = entity.getEntityWorld();
+		List<DroneEntity> drones = world.getEntities(
+				DroneEntity.class,
+				new Box(entity.getPos().getX() - 100, entity.getPos().getY() - 100, entity.getPos().getZ() - 100, entity.getPos().getX() + 100, entity.getPos().getY() + 100, entity.getPos().getZ() + 100),
+				null
+		);
+		if(drones.size() > 0) return drones.get(0);
+		else return null;
+	}
 }

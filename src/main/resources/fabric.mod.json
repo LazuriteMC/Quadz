@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "bluevista.fpvracingmod.FPVRacingMod"
+    ],
+    "client": [
+      "bluevista.fpvracingmod.client.ClientInitializer"
     ]
   },
   "mixins": [
