@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.client.controls;
 
-import com.bluevista.fpvracing.client.utils.BetaflightHelper;
+import bluevista.fpvracingmod.client.math.BetaflightHelper;
 
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 

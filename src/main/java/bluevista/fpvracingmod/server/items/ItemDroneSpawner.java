@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.RayTraceContext;
 import net.minecraft.world.World;
 
@@ -20,9 +19,10 @@ public class ItemDroneSpawner extends Item {
 	 * Called when this item is used while targeting a Block
 	 */
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+		ItemStack itemStack = user.getStackInHand(hand);
+		HitResult hitResult = rayTrace(world, user, RayTraceContext.FluidHandling.ANY);
+
 		if (!world.isClient) {
-			ItemStack itemStack = user.getStackInHand(hand);
-			HitResult hitResult = rayTrace(world, user, RayTraceContext.FluidHandling.ANY);
 			if (hitResult.getType() == net.minecraft.util.hit.HitResult.Type.MISS)
 				return TypedActionResult.pass(itemStack);
 
@@ -30,10 +30,10 @@ public class ItemDroneSpawner extends Item {
 				DroneEntity d = new DroneEntity(world);
 				d.setPos(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
 				world.spawnEntity(d);
-//			EntityRegistry.DRONE.spawn(world, context.getItem(), context.getPlayer(), pos, SpawnReason.SPAWNER, false, false);
+			}
 		}
 
-		return ActionResultType.SUCCESS;
+		return TypedActionResult.success(itemStack);
 	}
 	
 }

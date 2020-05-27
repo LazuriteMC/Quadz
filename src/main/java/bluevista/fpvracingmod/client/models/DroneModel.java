@@ -1,11 +1,8 @@
 package bluevista.fpvracingmod.client.models;
 
-import com.bluevista.fpvracing.server.entities.DroneEntity;
-import net.minecraft.client.renderer.entity.model.CowModel;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import bluevista.fpvracingmod.server.entities.DroneEntity;
+import net.minecraft.client.render.entity.model.CowEntityModel;
 
-@OnlyIn(Dist.CLIENT)
-public class DroneModel extends CowModel<DroneEntity> {
+public class DroneModel extends CowEntityModel<DroneEntity> {
 
 }
