@@ -22,7 +22,7 @@ public class DroneSpawnerItem extends Item {
 		ItemStack itemStack = user.getStackInHand(hand);
 		HitResult hitResult = rayTrace(world, user, RayTraceContext.FluidHandling.ANY);
 
-		if (!world.isClient) {
+		if (!world.isClient()) {
 			if (hitResult.getType() == net.minecraft.util.hit.HitResult.Type.MISS)
 				return TypedActionResult.pass(itemStack);
 

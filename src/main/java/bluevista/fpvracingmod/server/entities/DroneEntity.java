@@ -3,16 +3,20 @@ package bluevista.fpvracingmod.server.entities;
 import bluevista.fpvracingmod.FPVRacingMod;
 import bluevista.fpvracingmod.client.math.Quaternion;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class DroneEntity extends Entity {
 
@@ -24,7 +28,7 @@ public class DroneEntity extends Entity {
 
 	public DroneEntity(World worldIn) {
 //		super(FPVRacingMod.DRONE_ENTITY, worldIn);
-		super(EntityType.PLAYER, worldIn);
+		super(FPVRacingMod.DRONE_ENTITY, worldIn);
 		orientation = QuaternionHelper.rotateX(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f), 0);
 //		properties = new CompoundNBT();
 //		properties.putInt("channel", 0);
@@ -74,8 +78,23 @@ public class DroneEntity extends Entity {
 
 	@Override
 	public Packet<?> createSpawnPacket() {
-		return new EntitySpawnS2CPacket(this);
+		final PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+
+		buf.writeVarInt(this.getEntityId());
+		buf.writeUuid(this.uuid);
+		buf.writeVarInt(Registry.ENTITY_TYPE.getRawId(this.getType()));
+		buf.writeDouble(this.getX());
+		buf.writeDouble(this.getY());
+		buf.writeDouble(this.getZ());
+		buf.writeByte(MathHelper.floor(this.pitch * 256.0F / 360.0F));
+		buf.writeByte(MathHelper.floor(this.yaw * 256.0F / 360.0F));
+
+		return ServerSidePacketRegistry.INSTANCE.toPacket(new Identifier("fpvracing", "spawn_drone"), buf);
 	}
+
+//	public Packet<?> createSpawnPacket() {
+//		return new EntitySpawnS2CPacket(this);
+//	}
 
 //	public void setChannel(int channel) {
 //		this.properties.putInt("channel", channel);

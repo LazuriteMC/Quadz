@@ -24,7 +24,7 @@ public class RenderHandler {
         screenRotationTick();
 
         if (mc.player != null) {
-            if (mc.player.getItemsEquipped() instanceof GogglesItem) { // if the player is holding the goggles
+            if (mc.player.getItemsHand().iterator().next().getItem() instanceof GogglesItem) { // if the player is holding the goggles
 
                 if (view != null) {
                     view.clientTick(delta); // ...update the ViewHandler...
@@ -33,6 +33,7 @@ public class RenderHandler {
 
                 if (!(mc.getCameraEntity() instanceof ViewHandler)) { // ...and if a ViewHandler doesn't exist, create one
                     currentDrone = DroneEntity.getNearestTo(mc.player);
+                    System.out.println(currentDrone);
                     if(currentDrone != null) {
                         playerPos = mc.player.getPos();
                         view = new ViewHandler(mc.world, currentDrone);
