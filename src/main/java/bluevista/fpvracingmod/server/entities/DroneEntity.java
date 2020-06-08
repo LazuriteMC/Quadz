@@ -1,12 +1,11 @@
 package bluevista.fpvracingmod.server.entities;
 
-import bluevista.fpvracingmod.FPVRacingMod;
+import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.math.Quaternion;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.util.Identifier;
@@ -28,7 +27,7 @@ public class DroneEntity extends Entity {
 
 	public DroneEntity(World worldIn) {
 //		super(FPVRacingMod.DRONE_ENTITY, worldIn);
-		super(FPVRacingMod.DRONE_ENTITY, worldIn);
+		super(ServerInitializer.DRONE_ENTITY, worldIn);
 		orientation = QuaternionHelper.rotateX(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f), 0);
 //		properties = new CompoundNBT();
 //		properties.putInt("channel", 0);

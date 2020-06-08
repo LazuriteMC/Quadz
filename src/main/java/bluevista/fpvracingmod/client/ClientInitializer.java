@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.client;
 
-import bluevista.fpvracingmod.FPVRacingMod;
+import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.network.DroneSpawnNetworkHandler;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
 import net.fabricmc.api.ClientModInitializer;
@@ -11,7 +11,15 @@ import net.minecraft.util.Identifier;
 public class ClientInitializer implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        EntityRendererRegistry.INSTANCE.register(FPVRacingMod.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
+        initRenderers();
+        initNetwork();
+    }
+
+    public void initRenderers() {
+        EntityRendererRegistry.INSTANCE.register(ServerInitializer.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
+    }
+
+    public void initNetwork() {
         ClientSidePacketRegistry.INSTANCE.register(new Identifier("fpvracing", "spawn_drone"), DroneSpawnNetworkHandler::accept);
     }
 }

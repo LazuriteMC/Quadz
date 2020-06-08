@@ -27,10 +27,7 @@ public class DroneSpawnNetworkHandler {
         byte yaw = buffer.readByte();
 
         Entity entity = type.create(client.world);
-
-        if (entity == null) {
-            return;
-        }
+        if (entity == null) return;
 
         entity.setEntityId(id);
         entity.setUuid(uuid);
@@ -40,22 +37,15 @@ public class DroneSpawnNetworkHandler {
         entity.yaw = yaw * 360 / 256F;
 
         if (client.isOnThread()) {
-            System.out.println("AAAAAAAAAA");
             spawn(client, entity);
         } else {
-            System.out.println("BBBBBBBBBBB");
             client.execute(() -> spawn(client, entity));
         }
     }
 
     private static void spawn(MinecraftClient client, Entity entity) {
-        System.out.println("SPAWN TIME");
         final ClientWorld world = client.world;
-
-        if (world == null) {
-            return;
-        }
-
+        if (world == null) return;
         world.addEntity(entity.getEntityId(), entity);
     }
 }

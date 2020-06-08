@@ -19,7 +19,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "bluevista.fpvracingmod.FPVRacingMod"
+      "bluevista.fpvracingmod.server.ServerInitializer"
     ],
     "client": [
       "bluevista.fpvracingmod.client.ClientInitializer"
