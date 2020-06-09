@@ -21,7 +21,7 @@ public class RenderHandler {
     private static float prevZ;
 
     public static void tick(float delta) {
-        screenRotationTick();
+//        screenRotationTick();
 
         if (mc.player != null) {
             if (mc.player.getItemsHand().iterator().next().getItem() instanceof GogglesItem) { // if the player is holding the goggles
@@ -31,9 +31,9 @@ public class RenderHandler {
 //					mc.player.move(MoverType.PLAYER, new Vec3d(playerPos.x - (mc.player.getPositionVec()).x, playerPos.y - (mc.player.getPositionVec()).y, playerPos.z - (mc.player.getPositionVec()).z));
                 }
 
+                System.out.println(mc.getCameraEntity() instanceof ViewHandler);
                 if (!(mc.getCameraEntity() instanceof ViewHandler)) { // ...and if a ViewHandler doesn't exist, create one
                     currentDrone = DroneEntity.getNearestTo(mc.player);
-                    System.out.println(currentDrone);
                     if(currentDrone != null) {
                         playerPos = mc.player.getPos();
                         view = new ViewHandler(mc.world, currentDrone);

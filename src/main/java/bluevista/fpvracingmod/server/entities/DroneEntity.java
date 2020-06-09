@@ -37,11 +37,12 @@ public class DroneEntity extends Entity {
 //		this.setMotion(Vec3d.ZERO);
 	}
 
+	@Override
 	public void tick() {
 //		this.prevPosX = this.posX;
 //		this.prevPosY = this.posY;
 //		this.prevPosZ = this.posZ;
-		super.tick();
+//		super.tick();
 
 //		if(RenderHandler.isPlayerViewingDrone()) {
 //			Vector3f d = QuaternionHelper.rotationMatrixToVector(QuaternionHelper.quatToMatrix(getOrientation()));
