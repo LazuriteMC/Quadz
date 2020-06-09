@@ -1,16 +1,9 @@
 # gradle
 
 .gradle/
-gradle/
-gradle/wrapper
 build/
 out/
 classes/
-settings.gradle
-gradlew
-gradlew.bat
-build.gradle
-gradle.properties
 
 # eclipse
 
