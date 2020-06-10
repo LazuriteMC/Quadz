@@ -2,12 +2,9 @@ package bluevista.fpvracingmod.server.entities;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MovementType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class ViewHandler extends Entity {
@@ -30,31 +27,25 @@ public class ViewHandler extends Entity {
         this(EntityType.PLAYER, worldIn);
         this.setTarget(target);
 
-        this.setPos(5, 5, 5);
-//        this.setPos(target.getPos().x, target.getPos().y, target.getPos().z);
-//        this.prevPosX = target.getPos().x;
-//        this.prevPosY = target.getPos().y;
-//        this.prevPosZ = target.getPos().z;
-    }
-
-    @Override
-    public void move(MovementType type, Vec3d movement) {
-
+        this.setPos(target.getPos().x, target.getPos().y, target.getPos().z);
+        this.prevPosX = target.getPos().x;
+        this.prevPosY = target.getPos().y;
+        this.prevPosZ = target.getPos().z;
     }
 
     public void clientTick(float delta) {
-//        if(target != null) {
-//            float deltaPosX = (float) (this.prevPosX + (this.target.getPos().x - this.prevPosX) * delta);
-//            float deltaPosY = (float) (this.prevPosY + (this.target.getPos().y - this.prevPosY) * delta);
-//            float deltaPosZ = (float) (this.prevPosZ + (this.target.getPos().z - this.prevPosZ) * delta);
-//
-//            this.setPos(deltaPosX, deltaPosY, deltaPosZ);
-//
-//            this.prevPosX = this.getPos().x;
-//            this.prevPosY = this.getPos().y;
-//            this.prevPosZ = this.getPos().z;
-//            System.out.println(prevPosX + ", " + prevPosY + ", " + prevPosZ);
-//        }
+        if(target != null) {
+            float deltaPosX = (float) (this.prevPosX + (this.target.getPos().x - this.prevPosX) * delta);
+            float deltaPosY = (float) (this.prevPosY + (this.target.getPos().y - this.prevPosY) * delta);
+            float deltaPosZ = (float) (this.prevPosZ + (this.target.getPos().z - this.prevPosZ) * delta);
+
+            this.setPos(deltaPosX, deltaPosY, deltaPosZ);
+
+            this.prevPosX = this.getPos().x;
+            this.prevPosY = this.getPos().y;
+            this.prevPosZ = this.getPos().z;
+            System.out.println(prevPosX + ", " + prevPosY + ", " + prevPosZ);
+        }
     }
 
     public Entity getTarget() {
