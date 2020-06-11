@@ -44,7 +44,6 @@ public class ViewHandler extends Entity {
             this.prevPosX = this.getPos().x;
             this.prevPosY = this.getPos().y;
             this.prevPosZ = this.getPos().z;
-            System.out.println(prevPosX + ", " + prevPosY + ", " + prevPosZ);
         }
     }
 

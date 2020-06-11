@@ -27,7 +27,7 @@ public class RenderHandler {
             if (mc.player.getItemsHand().iterator().next().getItem() instanceof GogglesItem) { // if the player is holding the goggles
 
                 if (view != null) {
-                        view.clientTick(delta); // ...update the ViewHandler...
+                    view.clientTick(delta); // ...update the ViewHandler...
 //					mc.player.move(MoverType.PLAYER, new Vec3d(playerPos.x - (mc.player.getPositionVec()).x, playerPos.y - (mc.player.getPositionVec()).y, playerPos.z - (mc.player.getPositionVec()).z));
                 }
 
