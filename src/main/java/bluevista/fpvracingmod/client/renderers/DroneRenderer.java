@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.client.renderers;
 
+import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.client.models.DroneModel;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;
@@ -31,6 +32,7 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
 
         matrixStack.scale(-1.0F, -1.0F, -3.0F); // makes a chonky cow (change -3.0 to -1.0 to revert chonkiness)
         matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90.0F));
+        matrixStack.multiply(QuaternionHelper.convertToMCQuat(droneEntity.getOrientation()));
         this.model.setAngles(droneEntity, g, 0.0F, -0.1F, 0.0F, 0.0F);
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(this.getTexture(droneEntity)));
         this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
