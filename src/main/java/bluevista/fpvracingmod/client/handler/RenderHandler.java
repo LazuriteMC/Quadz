@@ -6,6 +6,7 @@ import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.entities.ViewHandler;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 
@@ -20,8 +21,8 @@ public class RenderHandler {
     private static float prevY;
     private static float prevZ;
 
-    public static void tick(float delta) {
-//        screenRotationTick();
+    public static void tick(MatrixStack stack, float delta) {
+        screenRotationTick(stack);
 
         if (mc.player != null) {
             if (mc.player.getItemsHand().iterator().next().getItem() instanceof GogglesItem) { // if the player is holding the goggles
@@ -42,7 +43,7 @@ public class RenderHandler {
 
                 } else if (((ViewHandler) mc.getCameraEntity()).getTarget() instanceof DroneEntity) {
                     DroneEntity drone = (DroneEntity) ((ViewHandler) mc.getCameraEntity()).getTarget();
-//                    inputTick(drone, delta);
+                    inputTick(drone, delta);
                 }
 
             } else if(mc.getCameraEntity() instanceof ViewHandler) {
@@ -53,12 +54,13 @@ public class RenderHandler {
         }
     }
 
-    public static void screenRotationTick() {
+    public static void screenRotationTick(MatrixStack stack) {
         Entity currentViewEntity = mc.getCameraEntity();
         if(currentViewEntity instanceof ViewHandler) {
             if (((ViewHandler) currentViewEntity).getTarget() instanceof DroneEntity) {
                 DroneEntity drone = (DroneEntity) ((ViewHandler) currentViewEntity).getTarget();
-                QuaternionHelper.applyRotQuat(drone.getOrientation());
+                stack.multiply(QuaternionHelper.convertToMCQuat(drone.getOrientation()));
+//                QuaternionHelper.applyRotQuat(drone.getOrientation());
             }
         }
     }
