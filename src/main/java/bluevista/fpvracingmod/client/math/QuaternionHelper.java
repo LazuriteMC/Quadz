@@ -6,9 +6,19 @@ import java.nio.FloatBuffer;
 
 public class QuaternionHelper {
 
-	private static FloatBuffer MATRIX_BUFFER = BufferUtils.createFloatBuffer(16);//GLX.make(MemoryUtil.memAllocFloat(16), (p_209238_0_) -> {
+	private static FloatBuffer MATRIX_BUFFER = BufferUtils.createFloatBuffer(16);
+//	GLX.make(MemoryUtil.memAllocFloat(16), (p_209238_0_) -> {
 //		LWJGLMemoryUntracker.untrack(MemoryUtil.memAddress(p_209238_0_));
 //	});
+
+	public static net.minecraft.util.math.Quaternion convertToMCQuat(Quaternion q) {
+		return new net.minecraft.util.math.Quaternion(
+				q.getX(),
+				q.getY(),
+				q.getZ(),
+				q.getW()
+		);
+	}
 
 	public static void applyRotQuat(Quaternion q) {
 		Matrix4f mat = new Matrix4f(q);
@@ -17,16 +27,6 @@ public class QuaternionHelper {
 		GL11.glMultMatrixf(MATRIX_BUFFER);
 	}
 
-//	public static AxisAngle4f toAxisAngle(Quaternion quat, AxisAngle4f angle) {
-//		float divisor = (float) Math.sqrt(1 - quat.getW() * quat.getW());
-//		angle.setAngle((float) (2 * Math.acos(quat.getW())));
-//		angle.setX((quat.getX() / divisor));
-//		angle.setY((quat.getY() / divisor));
-//		angle.setZ((quat.getZ() / divisor));
-//
-//		return angle;
-//	}
-	
 	public static Quaternion negateRotation(Quaternion quat, Quaternion rot) {
 		rot.conjugate();
 		quat.multiply(rot);
@@ -117,35 +117,4 @@ public class QuaternionHelper {
 
 	    return mat;
 	}
-
-//	public static javax.vecmath.Matrix4f quatToMatrix(Quat4d q) {
-//		javax.vecmath.Matrix4f mat = new javax.vecmath.Matrix4f();
-//
-//		double sqw = q.w*q.w;
-//		double sqx = q.x*q.x;
-//		double sqy = q.y*q.y;
-//		double sqz = q.z*q.z;
-//
-//		 invs (inverse square length) is only required if quaternion is not already normalised
-//		double invs = 1 / (sqx + sqy + sqz + sqw);
-//		mat.m00 = (float) (( sqx - sqy - sqz + sqw)*invs) ; // since sqw + sqx + sqy + sqz =1/invs*invs
-//		mat.m11 = (float) ((-sqx + sqy - sqz + sqw)*invs) ;
-//		mat.m22 = (float) ((-sqx - sqy + sqz + sqw)*invs) ;
-//
-//		double tmp1 = q.x*q.y;
-//		double tmp2 = q.z*q.w;
-//		mat.m10 = (float) (2.0 * (tmp1 + tmp2)*invs) ;
-//		mat.m01 = (float) (2.0 * (tmp1 - tmp2)*invs) ;
-//
-//		tmp1 = q.x*q.z;
-//		tmp2 = q.y*q.w;
-//		mat.m20 = (float) (2.0 * (tmp1 - tmp2)*invs) ;
-//		mat.m02 = (float) (2.0 * (tmp1 + tmp2)*invs) ;
-//		tmp1 = q.y*q.z;
-//		tmp2 = q.x*q.w;
-//		mat.m21 = (float) (2.0 * (tmp1 + tmp2)*invs) ;
-//		mat.m12 = (float) (2.0 * (tmp1 - tmp2)*invs) ;
-//
-//		return mat;
-//	}
 }
