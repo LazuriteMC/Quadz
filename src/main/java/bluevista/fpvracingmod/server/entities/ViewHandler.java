@@ -27,7 +27,9 @@ public class ViewHandler extends Entity {
         this(EntityType.PLAYER, worldIn);
         this.setTarget(target);
 
-        this.setPos(target.getPos().x, target.getPos().y, target.getPos().z);
+//        this.setPos(target.getPos().x, target.getPos().y, target.getPos().z);
+        this.resetPosition(target.getX(), target.getY(), target.getZ());
+
         this.prevPosX = target.getPos().x;
         this.prevPosY = target.getPos().y;
         this.prevPosZ = target.getPos().z;

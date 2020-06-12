@@ -36,12 +36,13 @@ public class RenderHandler {
                     if(currentDrone != null) {
                         playerPos = mc.player.getPos();
                         view = new ViewHandler(mc.world, currentDrone);
+                        mc.world.spawnEntity(view);
                         mc.setCameraEntity(view);
                     }
 
                 } else if (((ViewHandler) mc.getCameraEntity()).getTarget() instanceof DroneEntity) {
                     DroneEntity drone = (DroneEntity) ((ViewHandler) mc.getCameraEntity()).getTarget();
-                    inputTick(drone, delta);
+//                    inputTick(drone, delta);
                 }
 
             } else if(mc.getCameraEntity() instanceof ViewHandler) {
