@@ -5,15 +5,11 @@ import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.entities.ViewHandler;
 import bluevista.fpvracingmod.server.items.GogglesItem;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Quaternion;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.Vec3d;
-
-import java.util.Vector;
 
 public class RenderHandler {
 
@@ -61,6 +57,9 @@ public class RenderHandler {
                     DroneEntity drone = (DroneEntity) ((ViewHandler) mc.getCameraEntity()).getTarget();
                     inputTick(drone, delta);
                 }
+
+                CompoundTag testTag = new CompoundTag();
+
 
             } else if(mc.getCameraEntity() instanceof ViewHandler) {
                 view = null;
