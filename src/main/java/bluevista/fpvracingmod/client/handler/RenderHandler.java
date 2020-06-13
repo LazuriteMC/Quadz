@@ -5,10 +5,15 @@ import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.entities.ViewHandler;
 import bluevista.fpvracingmod.server.items.GogglesItem;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.Vector;
 
 public class RenderHandler {
 
@@ -27,8 +32,11 @@ public class RenderHandler {
         if(currentViewEntity instanceof ViewHandler) {
             if (((ViewHandler) currentViewEntity).getTarget() instanceof DroneEntity) {
                 DroneEntity drone = (DroneEntity) ((ViewHandler) currentViewEntity).getTarget();
-                stack.multiply(QuaternionHelper.convertToMCQuat(drone.getOrientation()));
+//                stack.multiply(QuaternionHelper.convertToMCQuat(drone.getOrientation()));
+//                Matrix4f mat = new Matrix4f(QuaternionHelper.convertToMCQuat(drone.getOrientation()));
+//                stack.peek().getModel().multiply(mat);
 //                QuaternionHelper.applyRotQuat(drone.getOrientation());
+                stack.multiply(drone.getOrientation());
             }
         }
 

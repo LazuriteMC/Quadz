@@ -1,7 +1,6 @@
 package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
-import bluevista.fpvracingmod.client.math.Quaternion;
 import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -12,6 +11,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
