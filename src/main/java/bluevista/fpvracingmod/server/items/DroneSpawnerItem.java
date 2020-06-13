@@ -30,6 +30,9 @@ public class DroneSpawnerItem extends Item {
 				DroneEntity d = new DroneEntity(world);
 				d.setPos(hitResult.getPos().x, hitResult.getPos().y+1, hitResult.getPos().z);
 				world.spawnEntity(d);
+				if (!user.abilities.creativeMode) {
+					itemStack.decrement(1);
+				}
 			}
 		}
 
