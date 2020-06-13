@@ -2,7 +2,7 @@ package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.math.Quaternion;
-import bluevista.fpvracingmod.client.math.QuaternionHelper;
+import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.Entity;

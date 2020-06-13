@@ -1,7 +1,7 @@
 package bluevista.fpvracingmod.client.handler;
 
 import bluevista.fpvracingmod.client.controls.Controller;
-import bluevista.fpvracingmod.client.math.QuaternionHelper;
+import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.entities.ViewHandler;
 import bluevista.fpvracingmod.server.items.GogglesItem;
