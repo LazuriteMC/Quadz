@@ -22,7 +22,15 @@ public class RenderHandler {
     private static float prevZ;
 
     public static void tick(MatrixStack stack, float delta) {
-        screenRotationTick(stack);
+
+        Entity currentViewEntity = mc.getCameraEntity();
+        if(currentViewEntity instanceof ViewHandler) {
+            if (((ViewHandler) currentViewEntity).getTarget() instanceof DroneEntity) {
+                DroneEntity drone = (DroneEntity) ((ViewHandler) currentViewEntity).getTarget();
+                stack.multiply(QuaternionHelper.convertToMCQuat(drone.getOrientation()));
+//                QuaternionHelper.applyRotQuat(drone.getOrientation());
+            }
+        }
 
         if (mc.player != null) {
             if (mc.player.getItemsHand().iterator().next().getItem() instanceof GogglesItem) { // if the player is holding the goggles
@@ -50,17 +58,6 @@ public class RenderHandler {
                 view = null;
                 mc.setCameraEntity(mc.player); // switch back to player
                 mc.player.setPos(playerPos.x, playerPos.y, playerPos.z);
-            }
-        }
-    }
-
-    public static void screenRotationTick(MatrixStack stack) {
-        Entity currentViewEntity = mc.getCameraEntity();
-        if(currentViewEntity instanceof ViewHandler) {
-            if (((ViewHandler) currentViewEntity).getTarget() instanceof DroneEntity) {
-                DroneEntity drone = (DroneEntity) ((ViewHandler) currentViewEntity).getTarget();
-                stack.multiply(QuaternionHelper.convertToMCQuat(drone.getOrientation()));
-//                QuaternionHelper.applyRotQuat(drone.getOrientation());
             }
         }
     }
