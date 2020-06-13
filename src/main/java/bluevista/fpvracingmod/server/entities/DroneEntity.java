@@ -16,10 +16,12 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Random;
 
 public class DroneEntity extends Entity {
 
-//	private CompoundNBT properties;
+	private int band;
+	private int channel;
 	private Quaternion orientation;
 //	private ServerPlayerEntity player;
 
@@ -29,8 +31,10 @@ public class DroneEntity extends Entity {
 //		super(FPVRacingMod.DRONE_ENTITY, worldIn);
 		super(ServerInitializer.DRONE_ENTITY, worldIn);
 		orientation = QuaternionHelper.rotateX(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f), 0);
-//		properties = new CompoundNBT();
-//		properties.putInt("channel", 0);
+		Random random = new Random(); // testing only
+		band = random.nextInt(6) + 1; // 1 - 6
+		channel = random.nextInt(8) + 1; // 1 - 8
+
 		// TODO nbt tags - channel, camera_angle, etc.
 
 //		this.setNoGravity(true);
@@ -68,12 +72,16 @@ public class DroneEntity extends Entity {
 
 	@Override
 	protected void readCustomDataFromTag(CompoundTag tag) {
-
+		band = tag.getInt("band");
+		channel = tag.getInt("channel");
+		System.out.println("Band:" + band);
+		System.out.println("Channel:" + channel);
 	}
 
 	@Override
 	protected void writeCustomDataToTag(CompoundTag tag) {
-
+		tag.putInt("band", band);
+		tag.putInt("channel", channel);
 	}
 
 	@Override

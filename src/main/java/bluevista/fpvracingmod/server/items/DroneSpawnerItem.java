@@ -4,6 +4,7 @@ import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.HitResult;
@@ -11,6 +12,9 @@ import net.minecraft.world.RayTraceContext;
 import net.minecraft.world.World;
 
 public class DroneSpawnerItem extends Item {
+
+	private CompoundTag compoundTag;
+
 	public DroneSpawnerItem(Settings settings) {
 		super(settings);
 	}
