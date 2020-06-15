@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.client.handler;
+package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.controls.Controller;
 import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
@@ -68,7 +68,7 @@ public class RenderHandler {
 
             } else if(mc.getCameraEntity() instanceof ViewHandler) {
                 view = null;
-                mc.setCameraEntity(mc.player); // switch back to player
+                mc.setCameraEntity(mc.player);
 //                mc.player.setPos(playerPos.x, playerPos.y, playerPos.z);
             }
         }
@@ -91,6 +91,10 @@ public class RenderHandler {
         prevX = currX;
         prevY = currY;
         prevZ = currZ;
+    }
+
+    public static boolean shouldRenderHand() {
+        return view == null;
     }
 
 }
