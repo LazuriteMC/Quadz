@@ -12,6 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class RenderMixin {
 	@Inject(at = @At("HEAD"), method = "renderWorld")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
-		RenderHandler.tick(matrix, tickDelta);
+		RenderHandler.renderTick(matrix, tickDelta);
 	}
 }
