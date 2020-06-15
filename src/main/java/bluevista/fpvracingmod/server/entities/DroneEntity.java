@@ -47,6 +47,11 @@ public class DroneEntity extends Entity {
 	}
 
 	@Override
+	public boolean collides() {
+		return true;
+	}
+
+	@Override
 	public Box getCollisionBox() {
 		return super.getBoundingBox();
 	}
@@ -162,22 +167,23 @@ public class DroneEntity extends Entity {
 	@Override
 	public boolean damage(DamageSource source, float amount) {
 
-		/*if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
+		if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
+			System.out.println("Entity Drops: " + this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS));
 			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-				DroneSpawnerItem droneSpawnerItem = new DroneSpawnerItem(new Item.Settings());
-				this.dropItem(droneSpawnerItem);
+				Item item = ServerInitializer.DRONE_SPAWNER_ITEM.asItem();
+				this.dropItem(ServerInitializer.DRONE_SPAWNER_ITEM.asItem());
 			}
 			this.remove();
 			return true;
 		}
-		return false;*/
+		return false;
 
 		//return super.damage(source, amount);
 
-		System.out.println("FML");
+		//System.out.println("FML");
 
 		//if (!this.world.isClient && !this.removed) {
-		if (!this.removed) {
+		/*if (!this.removed) {
 			if (source instanceof ProjectileDamageSource && source.getAttacker() != null && this.hasPassenger(source.getAttacker())) {
 				return false;
 			} else {
@@ -196,6 +202,6 @@ public class DroneEntity extends Entity {
 			}
 		} else {
 			return true;
-		}
+		}*/
 	}
 }
