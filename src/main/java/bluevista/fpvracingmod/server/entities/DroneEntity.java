@@ -29,24 +29,21 @@ public class DroneEntity extends Entity {
 	private int band;
 	private int channel;
 	private Quaternion orientation;
-//	private ServerPlayerEntity player;
-	private static final double HALF_BOX = 0.5;
+//	private static final double HALF_BOX = 0.5;
 
 	private float throttle = 0.0f;
 
 	public DroneEntity(World worldIn) {
-//		super(FPVRacingMod.DRONE_ENTITY, worldIn);
 		super(ServerInitializer.DRONE_ENTITY, worldIn);
-		setBoundingBox(new Box(getX() - HALF_BOX, getY() - HALF_BOX, getZ() - HALF_BOX, getX() + HALF_BOX, getY() + HALF_BOX, getZ() + HALF_BOX));
-		orientation = QuaternionHelper.rotateX(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f), 0);
+
+//		this.setBoundingBox(new Box(getX() - HALF_BOX, getY() - HALF_BOX, getZ() - HALF_BOX, getX() + HALF_BOX, getY() + HALF_BOX, getZ() + HALF_BOX));
+		this.orientation = QuaternionHelper.rotateX(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f), 0);
+
 		Random random = new Random(); // testing only
 		band = random.nextInt(6) + 1; // 1 - 6
 		channel = random.nextInt(8) + 1; // 1 - 8
 
 		// TODO nbt tags - channel, camera_angle, etc.
-
-//		this.setNoGravity(true);
-//		this.setMotion(Vec3d.ZERO);
 	}
 
 	@Override
@@ -118,17 +115,13 @@ public class DroneEntity extends Entity {
 		return ServerSidePacketRegistry.INSTANCE.toPacket(new Identifier("fpvracing", "spawn_drone"), buf);
 	}
 
-//	public Packet<?> createSpawnPacket() {
-//		return new EntitySpawnS2CPacket(this);
-//	}
+	public void setChannel(int channel) {
+		this.channel = channel;
+	}
 
-//	public void setChannel(int channel) {
-//		this.properties.putInt("channel", channel);
-//	}
-
-//	public int getChannel() {
-//		return this.properties.getInt("channel");
-//	}
+	public int getChannel() {
+		return this.channel;
+	}
 
 	public Quaternion getOrientation() {
 		return orientation;
@@ -166,6 +159,7 @@ public class DroneEntity extends Entity {
 		return false;
 	}
 
+	@Override
 	public boolean damage(DamageSource source, float amount) {
 
 		/*if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {

@@ -22,7 +22,6 @@ public class RenderHandler {
     private static float prevZ;
 
     public static void renderTick(MatrixStack stack, float delta) {
-
         /*
          * Update the ViewHandler object if it exists
          */
@@ -35,6 +34,10 @@ public class RenderHandler {
         if(currentViewEntity instanceof ViewHandler) {
             if (((ViewHandler) currentViewEntity).getTarget() instanceof DroneEntity) {
                 DroneEntity drone = (DroneEntity) ((ViewHandler) currentViewEntity).getTarget();
+                System.out.println(drone.getDimensions(null));
+                System.out.println(drone.getCollisionBox());
+                System.out.println(drone.getBoundingBox());
+                System.out.println();
                 stack.multiply(drone.getOrientation());
             }
         }
