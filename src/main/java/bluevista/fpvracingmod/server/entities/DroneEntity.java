@@ -30,12 +30,14 @@ public class DroneEntity extends Entity {
 	private int channel;
 	private Quaternion orientation;
 //	private ServerPlayerEntity player;
+	private static final double HALF_BOX = 0.5;
 
 	private float throttle = 0.0f;
 
 	public DroneEntity(World worldIn) {
 //		super(FPVRacingMod.DRONE_ENTITY, worldIn);
 		super(ServerInitializer.DRONE_ENTITY, worldIn);
+		setBoundingBox(new Box(getX() - HALF_BOX, getY() - HALF_BOX, getZ() - HALF_BOX, getX() + HALF_BOX, getY() + HALF_BOX, getZ() + HALF_BOX));
 		orientation = QuaternionHelper.rotateX(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f), 0);
 		Random random = new Random(); // testing only
 		band = random.nextInt(6) + 1; // 1 - 6
@@ -45,6 +47,16 @@ public class DroneEntity extends Entity {
 
 //		this.setNoGravity(true);
 //		this.setMotion(Vec3d.ZERO);
+	}
+
+	@Override
+	public Box getCollisionBox() {
+		return super.getBoundingBox();
+	}
+
+	@Override
+	public Box getHardCollisionBox(Entity collidingEntity) {
+		return collidingEntity.isPushable() ? collidingEntity.getBoundingBox() : null;
 	}
 
 	@Override

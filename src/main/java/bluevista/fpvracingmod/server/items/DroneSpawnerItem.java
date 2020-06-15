@@ -34,7 +34,6 @@ public class DroneSpawnerItem extends Item {
 			if (hitResult.getType() == net.minecraft.util.hit.HitResult.Type.BLOCK) {
 				DroneEntity d = new DroneEntity(world);
 				d.setPos(hitResult.getPos().x, hitResult.getPos().y+1, hitResult.getPos().z);
-				d.setBoundingBox(new Box(d.getX() - 1, d.getY() - 1, d.getZ() - 1, d.getX() + 1, d.getY() + 1, d.getZ() + 1));
 				world.spawnEntity(d);
 				if (!user.abilities.creativeMode) {
 					itemStack.decrement(1);

@@ -25,7 +25,7 @@ public class ServerInitializer implements ModInitializer {
 		DRONE_ENTITY = Registry.register(
 				Registry.ENTITY_TYPE,
 				new Identifier("fpvracing", "drone_entity"),
-				FabricEntityTypeBuilder.create(EntityCategory.MISC, DroneEntity::new).size(1, 1).build()
+				FabricEntityTypeBuilder.create(EntityCategory.MISC, DroneEntity::new).size(new EntityDimensions(1, 1, true)).build()
 		);
 
 		Registry.register(Registry.ITEM, new Identifier("fpvracing", "goggles_item"), GOGGLES_ITEM);
