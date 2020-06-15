@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Box;
 import net.minecraft.world.RayTraceContext;
 import net.minecraft.world.World;
 
@@ -33,6 +34,7 @@ public class DroneSpawnerItem extends Item {
 			if (hitResult.getType() == net.minecraft.util.hit.HitResult.Type.BLOCK) {
 				DroneEntity d = new DroneEntity(world);
 				d.setPos(hitResult.getPos().x, hitResult.getPos().y+1, hitResult.getPos().z);
+				d.setBoundingBox(new Box(d.getX() - 1, d.getY() - 1, d.getZ() - 1, d.getX() + 1, d.getY() + 1, d.getZ() + 1));
 				world.spawnEntity(d);
 				if (!user.abilities.creativeMode) {
 					itemStack.decrement(1);

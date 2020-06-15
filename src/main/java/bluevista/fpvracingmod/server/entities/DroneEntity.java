@@ -2,9 +2,14 @@ package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
+import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.ProjectileDamageSource;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.util.Identifier;
@@ -13,6 +18,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -146,5 +152,44 @@ public class DroneEntity extends Entity {
 	@Override
 	public boolean isGlowing() {
 		return false;
+	}
+
+	public boolean damage(DamageSource source, float amount) {
+
+		/*if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
+			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+				DroneSpawnerItem droneSpawnerItem = new DroneSpawnerItem(new Item.Settings());
+				this.dropItem(droneSpawnerItem);
+			}
+			this.remove();
+			return true;
+		}
+		return false;*/
+
+		//return super.damage(source, amount);
+
+		System.out.println("FML");
+
+		//if (!this.world.isClient && !this.removed) {
+		if (!this.removed) {
+			if (source instanceof ProjectileDamageSource && source.getAttacker() != null && this.hasPassenger(source.getAttacker())) {
+				return false;
+			} else {
+				this.scheduleVelocityUpdate();
+				boolean bl = source.getAttacker() instanceof PlayerEntity && ((PlayerEntity)source.getAttacker()).abilities.creativeMode;
+				if (bl) {
+					if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+						DroneSpawnerItem droneSpawnerItem = new DroneSpawnerItem(new Item.Settings());
+						this.dropItem(droneSpawnerItem);
+					}
+
+					this.remove();
+				}
+
+				return true;
+			}
+		} else {
+			return true;
+		}
 	}
 }
