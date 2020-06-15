@@ -54,7 +54,7 @@ public class DroneEntity extends Entity {
 //			this.move(MoverType.SELF, this.getMotion());
 //
 
-			// Player movement things...
+		// Player movement things...
 //			if(!world.isRemote) {
 //				PlayerEntity playerSP = RenderHandler.getPlayer();
 //				if (playerSP != null) this.player = (ServerPlayerEntity) world.getPlayerByUuid(playerSP.getUniqueID());
@@ -112,11 +112,11 @@ public class DroneEntity extends Entity {
 //		return this.properties.getInt("channel");
 //	}
 
-    public Quaternion getOrientation() {
-    	return orientation;
-    }
+	public Quaternion getOrientation() {
+		return orientation;
+	}
 
-    public void setOrientation(Quaternion q) {
+	public void setOrientation(Quaternion q) {
 		orientation = q;
 	}
 
@@ -129,7 +129,8 @@ public class DroneEntity extends Entity {
 	}
 
 	@Override
-	protected void initDataTracker() { }
+	protected void initDataTracker() {
+	}
 
 	public static DroneEntity getNearestTo(Entity entity) {
 		World world = entity.getEntityWorld();
@@ -138,7 +139,12 @@ public class DroneEntity extends Entity {
 				new Box(entity.getPos().getX() - 100, entity.getPos().getY() - 100, entity.getPos().getZ() - 100, entity.getPos().getX() + 100, entity.getPos().getY() + 100, entity.getPos().getZ() + 100),
 				null
 		);
-		if(drones.size() > 0) return drones.get(0);
+		if (drones.size() > 0) return drones.get(0);
 		else return null;
+	}
+
+	@Override
+	public boolean isGlowing() {
+		return false;
 	}
 }
