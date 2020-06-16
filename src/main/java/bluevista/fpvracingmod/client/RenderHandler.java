@@ -32,7 +32,7 @@ public class RenderHandler {
          * Rotate the screen using the drone's orientation quaternion
          */
         Entity currentViewEntity = mc.getCameraEntity();
-        if(currentViewEntity instanceof ViewHandler) {
+        if(currentViewEntity instanceof ViewHandler && !mc.gameRenderer.getCamera().isThirdPerson()) {
             if (((ViewHandler) currentViewEntity).getTarget() instanceof DroneEntity) {
                 DroneEntity drone = (DroneEntity) ((ViewHandler) currentViewEntity).getTarget();
                 Matrix4f newMat = new Matrix4f(drone.getOrientation());
