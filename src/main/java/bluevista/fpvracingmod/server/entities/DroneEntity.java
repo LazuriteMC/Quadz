@@ -28,14 +28,12 @@ public class DroneEntity extends Entity {
 	private int band;
 	private int channel;
 	private Quaternion orientation;
-//	private static final double HALF_BOX = 0.5;
 
 	private float throttle = 0.0f;
 
 	public DroneEntity(World worldIn) {
 		super(ServerInitializer.DRONE_ENTITY, worldIn);
 
-//		this.setBoundingBox(new Box(getX() - HALF_BOX, getY() - HALF_BOX, getZ() - HALF_BOX, getX() + HALF_BOX, getY() + HALF_BOX, getZ() + HALF_BOX));
 		this.orientation = QuaternionHelper.rotateX(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f), 0);
 
 		Random random = new Random(); // testing only
@@ -62,12 +60,6 @@ public class DroneEntity extends Entity {
 
 	@Override
 	public void tick() {
-		float w = orientation.getA();
-		float x = orientation.getB();
-		float y = orientation.getC();
-		float z = orientation.getD();
-		this.yaw = (float) Math.atan2(2.0*(y*z + w*x), w*w - x*x - y*y + z*z);
-
 //		this.prevPosX = this.posX;
 //		this.prevPosY = this.posY;
 //		this.prevPosZ = this.posZ;
@@ -99,14 +91,22 @@ public class DroneEntity extends Entity {
 	protected void readCustomDataFromTag(CompoundTag tag) {
 		band = tag.getInt("band");
 		channel = tag.getInt("channel");
-		System.out.println("Band:" + band);
-		System.out.println("Channel:" + channel);
+		orientation.set(
+				tag.getFloat("orientA"),
+				tag.getFloat("orientB"),
+				tag.getFloat("orientC"),
+				tag.getFloat("orientD")
+		);
 	}
 
 	@Override
 	protected void writeCustomDataToTag(CompoundTag tag) {
 		tag.putInt("band", band);
 		tag.putInt("channel", channel);
+		tag.putFloat("orientA", orientation.getA());
+		tag.putFloat("orientB", orientation.getB());
+		tag.putFloat("orientC", orientation.getC());
+		tag.putFloat("orientD", orientation.getD());
 	}
 
 	@Override
