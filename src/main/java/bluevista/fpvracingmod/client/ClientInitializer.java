@@ -2,7 +2,7 @@ package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.config.Config;
 import bluevista.fpvracingmod.server.ServerInitializer;
-import bluevista.fpvracingmod.client.network.DroneSpawnNetworkHandler;
+import bluevista.fpvracingmod.client.network.SpawnNetworkHandler;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
@@ -27,7 +27,7 @@ public class ClientInitializer implements ClientModInitializer {
     }
 
     public void initNetwork() {
-        ClientSidePacketRegistry.INSTANCE.register(new Identifier("fpvracing", "spawn_drone"), DroneSpawnNetworkHandler::accept);
+        ClientSidePacketRegistry.INSTANCE.register(new Identifier("fpvracing", "spawn_drone"), SpawnNetworkHandler::accept);
     }
 
     public static Config getConfig() {

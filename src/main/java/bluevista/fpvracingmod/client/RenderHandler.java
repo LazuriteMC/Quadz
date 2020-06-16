@@ -32,7 +32,7 @@ public class RenderHandler {
          * Rotate the screen using the drone's orientation quaternion
          */
         Entity currentViewEntity = mc.getCameraEntity();
-        if(currentViewEntity instanceof ViewHandler) {
+        if(currentViewEntity instanceof ViewHandler && !mc.gameRenderer.getCamera().isThirdPerson()) {
             if (((ViewHandler) currentViewEntity).getTarget() instanceof DroneEntity) {
                 DroneEntity drone = (DroneEntity) ((ViewHandler) currentViewEntity).getTarget();
                 Matrix4f newMat = new Matrix4f(drone.getOrientation());
@@ -44,11 +44,11 @@ public class RenderHandler {
 
         /*
          * If a world is loaded (if the player exists) ->
-         * If the player is holding the goggles item ->
+         * If the player is wearing the goggles item ->
          * Perform ViewHandler creation/deletion logic
          */
         if (mc.player != null) {
-            if (mc.player.getItemsHand().iterator().next().getItem() instanceof GogglesItem) {
+            if(mc.player.inventory.armor.get(3).getItem() instanceof GogglesItem) {
 
 //                mc.player.move(MoverType.PLAYER, new Vec3d(
 //                        playerPos.x - (mc.player.getPositionVec()).x,
