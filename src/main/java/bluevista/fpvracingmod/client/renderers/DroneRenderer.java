@@ -17,7 +17,7 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 public class DroneRenderer extends EntityRenderer<DroneEntity> {
 
-    private static final Identifier droneTexture = new Identifier("textures/entity/cow/cow.png");
+    private static final Identifier droneTexture = new Identifier("fpvracing", "textures/entity/drone.png");
     private static final DroneModel model = new DroneModel();
 
     public DroneRenderer(EntityRenderDispatcher dispatcher) {

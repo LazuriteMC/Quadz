@@ -2,7 +2,6 @@ package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
-import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.Entity;
@@ -177,31 +176,5 @@ public class DroneEntity extends Entity {
 			return true;
 		}
 		return false;
-
-		//return super.damage(source, amount);
-
-		//System.out.println("FML");
-
-		//if (!this.world.isClient && !this.removed) {
-		/*if (!this.removed) {
-			if (source instanceof ProjectileDamageSource && source.getAttacker() != null && this.hasPassenger(source.getAttacker())) {
-				return false;
-			} else {
-				this.scheduleVelocityUpdate();
-				boolean bl = source.getAttacker() instanceof PlayerEntity && ((PlayerEntity)source.getAttacker()).abilities.creativeMode;
-				if (bl) {
-					if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-						DroneSpawnerItem droneSpawnerItem = new DroneSpawnerItem(new Item.Settings());
-						this.dropItem(droneSpawnerItem);
-					}
-
-					this.remove();
-				}
-
-				return true;
-			}
-		} else {
-			return true;
-		}*/
 	}
 }

@@ -8,8 +8,6 @@ import net.fabricmc.fabric.api.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.vehicle.BoatEntity;
-import net.minecraft.item.BoatItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
@@ -27,7 +25,7 @@ public class ServerInitializer implements ModInitializer {
 		DRONE_ENTITY = Registry.register(
 				Registry.ENTITY_TYPE,
 				new Identifier("fpvracing", "drone_entity"),
-				FabricEntityTypeBuilder.create(EntityCategory.MISC, DroneEntity::new).size(new EntityDimensions(1.1F, 0.5234252623423423431234F, true)).build()
+				FabricEntityTypeBuilder.create(EntityCategory.MISC, DroneEntity::new).size(new EntityDimensions(1F, 0.25F, true)).build() // modify later if needed to fit the model
 		);
 
 		Registry.register(Registry.ITEM, new Identifier("fpvracing", "goggles_item"), GOGGLES_ITEM);
