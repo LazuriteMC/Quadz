@@ -44,11 +44,11 @@ public class RenderHandler {
 
         /*
          * If a world is loaded (if the player exists) ->
-         * If the player is holding the goggles item ->
+         * If the player is wearing the goggles item ->
          * Perform ViewHandler creation/deletion logic
          */
         if (mc.player != null) {
-            if (mc.player.getItemsHand().iterator().next().getItem() instanceof GogglesItem) {
+            if(mc.player.inventory.armor.get(3).getItem() instanceof GogglesItem) {
 
 //                mc.player.move(MoverType.PLAYER, new Vec3d(
 //                        playerPos.x - (mc.player.getPositionVec()).x,
