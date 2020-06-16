@@ -62,6 +62,12 @@ public class DroneEntity extends Entity {
 
 	@Override
 	public void tick() {
+		float w = orientation.getA();
+		float x = orientation.getB();
+		float y = orientation.getC();
+		float z = orientation.getD();
+		this.yaw = (float) Math.atan2(2.0*(y*z + w*x), w*w - x*x - y*y + z*z);
+
 //		this.prevPosX = this.posX;
 //		this.prevPosY = this.posY;
 //		this.prevPosZ = this.posZ;
