@@ -29,7 +29,6 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
 
     public void render(DroneEntity droneEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         matrixStack.push();
-        matrixStack.translate(0.0D, 1.5D, 0.0D);
         matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(270.0F - f)); // rotates 90 CCW
 
         matrixStack.scale(-1.0F, -1.0F, -1.0F); // makes a chonky cow (change -3.0 to -1.0 to revert chonkiness)
@@ -40,6 +39,7 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
         newMat.transpose();
         screenMat.multiply(newMat);
 
+        matrixStack.translate(0.0D, -1.5D, 0.0D);
         this.model.setAngles(droneEntity, g, 0.0F, -0.1F, 0.0F, 0.0F);
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(this.getTexture(droneEntity)));
         this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
