@@ -25,7 +25,6 @@ public class DroneModel extends EntityModel<DroneEntity> {
         base = new ModelPart(this, 0, 0);
         base.addCuboid(-4, -1, -4, 8, 2, 8);
 
-        //matrices.translate(0, 1.35, 0);
         matrices.translate(0, 1.4375, 0);
 
         base.render(matrices, vertexConsumer, light, overlay);
