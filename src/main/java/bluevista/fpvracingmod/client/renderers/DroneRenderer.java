@@ -24,7 +24,7 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
 
     public DroneRenderer(EntityRenderDispatcher dispatcher) {
         super(dispatcher);
-        this.shadowSize = 0.4F;
+        this.shadowSize = 0.2F;
     }
 
     public void render(DroneEntity droneEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {

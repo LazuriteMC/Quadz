@@ -6,9 +6,10 @@
   "mixins": [
   ],
   "client": [
-    "ExampleMixin",
     "RenderMixin",
-    "RenderHandMixin"
+    "RenderHandMixin",
+    "DumbMixin",
+    "StupidMixin"
   ],
   "injectors": {
     "defaultRequire": 1
