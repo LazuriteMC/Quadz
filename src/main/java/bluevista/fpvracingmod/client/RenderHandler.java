@@ -1,7 +1,6 @@
 package bluevista.fpvracingmod.client;
 
-import bluevista.fpvracingmod.client.controls.Controller;
-import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
+import bluevista.fpvracingmod.client.renderers.InputHandler;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.entities.ViewHandler;
 import bluevista.fpvracingmod.server.items.GogglesItem;
@@ -10,7 +9,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 
 public class RenderHandler {
 
@@ -19,10 +17,6 @@ public class RenderHandler {
     private static ViewHandler view;
     public static DroneEntity currentDrone;
 //    public static Vec3d playerPos;
-
-    private static float prevX;
-    private static float prevY;
-    private static float prevZ;
 
     public static void renderTick(MatrixStack stack, float delta) {
         /*
@@ -54,7 +48,7 @@ public class RenderHandler {
                 currentDrone = DroneEntity.getNearestTo(mc.player);
 
                 if(currentDrone != null) {
-                    inputTick(currentDrone, delta);
+                    InputHandler.tick(currentDrone, delta);
                 }
             }
 
@@ -86,34 +80,7 @@ public class RenderHandler {
         }
     }
 
-    public static void inputTick(DroneEntity drone, float delta) {
-        float currX = -Controller.getAxis(2); // yaw, pitch, or roll?
-        float currY = -Controller.getAxis(3); // yaw, pitch, or roll?
-        float currZ = -Controller.getAxis(1); // yaw, pitch, or roll?
-
-        float deltaX = prevX + (currX - prevX) * delta;
-        float deltaY = prevY + (currY - prevY) * delta;
-        float deltaZ = prevZ + (currZ - prevZ) * delta;
-
-        if(isPlayerControlling()) {
-            drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
-            drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
-            drone.setOrientation(QuaternionHelper.rotateZ(drone.getOrientation(), deltaZ));
-            drone.setThrottle(Controller.getAxis(0) + 1);
-        }
-
-        prevX = currX;
-        prevY = currY;
-        prevZ = currZ;
-    }
-
     public static boolean shouldRenderHand() {
         return view == null;
     }
-
-    public static boolean isPlayerControlling() {
-        return mc.player.inventory.getMainHandStack().getItem() instanceof TransmitterItem &&
-                mc.player.getUuidAsString().equals(currentDrone.getControllingPlayerUUID());
-    }
-
 }
