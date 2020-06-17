@@ -2,16 +2,29 @@ package bluevista.fpvracingmod.client.config;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
 public class Config {
 
     private File file;
+    private String configString;
 
     public Config(String filename, String[] keys) {
         this(filename);
-        // write keys=
+        if (file.length() == 0) {
+            try {
+                FileWriter fileWriter = new FileWriter(filename);
+                for (String key : keys) {
+                    fileWriter.write(key + "=\n");
+                }
+                fileWriter.close();
+            } catch (IOException e) {
+                System.out.println("Error writing to config file");
+                e.printStackTrace();
+            }
+        }
     }
 
     public Config(String filename) {
@@ -26,10 +39,6 @@ public class Config {
         }
     }
 
-    public String getFilename() {
-        return file.getName();
-    }
-
     public String getConfigValue(String key) {
         try {
             Scanner scanner = new Scanner(file);
@@ -38,7 +47,6 @@ public class Config {
                 if (line.split("=")[0].equals(key)) {
                     return line.split("=")[1];
                 }
-                System.out.println(line.split("=")[1]);
             }
             scanner.close();
         } catch (FileNotFoundException e) {
