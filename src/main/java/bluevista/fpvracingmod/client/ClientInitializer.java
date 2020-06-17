@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.config.Config;
+import bluevista.fpvracingmod.client.controls.Controller;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.network.SpawnNetworkHandler;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
@@ -19,6 +20,16 @@ public class ClientInitializer implements ClientModInitializer {
         initNetwork();
 
         config = new Config("config/fpvracing.cfg", new String[] {"controllerID", "throttle", "pitch", "yaw", "roll"});
+
+        setControllerSettings();
+    }
+
+    private void setControllerSettings() {
+        Controller.setControllerId();
+        Controller.setThrottle();
+        Controller.setPitch();
+        Controller.setYaw();
+        Controller.setRoll();
     }
 
     public void initRenderers() {

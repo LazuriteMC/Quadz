@@ -71,7 +71,7 @@ public class Config {
         return values;
     }
 
-    public String getConfigValue(String key) {
+    public String getValue(String key) {
         return values.get(key);
     }
 }
