@@ -9,6 +9,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
+
+import javax.sound.midi.Transmitter;
 
 public class RenderHandler {
 
@@ -44,16 +47,15 @@ public class RenderHandler {
          * Perform ViewHandler creation/deletion logic
          */
         if (mc.player != null) {
-            if(mc.player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
+            if(isPlayerHoldingTransmitter() || isPlayerWearingGoggles()) {
                 currentDrone = DroneEntity.getNearestTo(mc.player);
-
-                if(currentDrone != null) {
-                    InputHandler.tick(currentDrone, delta);
-                }
             }
 
-            if(mc.player.inventory.armor.get(3).getItem() instanceof GogglesItem) {
+            if(isPlayerHoldingTransmitter())
+                if(currentDrone != null)
+                    InputHandler.tick(currentDrone, delta);
 
+            if(isPlayerWearingGoggles()) {
 //                mc.player.move(MoverType.PLAYER, new Vec3d(
 //                        playerPos.x - (mc.player.getPositionVec()).x,
 //                        playerPos.y - (mc.player.getPositionVec()).y,
@@ -82,5 +84,13 @@ public class RenderHandler {
 
     public static boolean shouldRenderHand() {
         return view == null;
+    }
+
+    public static boolean isPlayerHoldingTransmitter() {
+        return mc.player.inventory.getMainHandStack().getItem() instanceof TransmitterItem;
+    }
+
+    public static boolean isPlayerWearingGoggles() {
+        return mc.player.inventory.armor.get(3).getItem() instanceof GogglesItem;
     }
 }

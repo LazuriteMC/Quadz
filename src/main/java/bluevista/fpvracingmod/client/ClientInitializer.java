@@ -1,7 +1,7 @@
 package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.config.Config;
-import bluevista.fpvracingmod.client.controls.Controller;
+import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.network.SpawnNetworkHandler;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;

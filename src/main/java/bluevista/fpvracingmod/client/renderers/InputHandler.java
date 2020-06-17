@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.client.renderers;
 
-import bluevista.fpvracingmod.client.controls.Controller;
+import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -13,26 +13,30 @@ public class InputHandler {
     private static float prevX;
     private static float prevY;
     private static float prevZ;
+    private static float prevT;
 
     public static void tick(DroneEntity drone, float delta) {
-        float currX = -Controller.getAxis(2); // yaw, pitch, or roll?
-        float currY = -Controller.getAxis(3); // yaw, pitch, or roll?
-        float currZ = -Controller.getAxis(1); // yaw, pitch, or roll?
+        float currX = -Controller.getAxis(Controller.ROLL_NUM);
+        float currY = -Controller.getAxis(Controller.PITCH_NUM);
+        float currZ = -Controller.getAxis(Controller.YAW_NUM);
+        float currT = Controller.getAxis(Controller.THROTTLE_NUM) + 1;
 
         float deltaX = prevX + (currX - prevX) * delta;
         float deltaY = prevY + (currY - prevY) * delta;
         float deltaZ = prevZ + (currZ - prevZ) * delta;
+        float deltaT = prevT + (currT - prevT) * delta;
 
         if(isPlayerControlling(drone)) {
             drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
             drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
             drone.setOrientation(QuaternionHelper.rotateZ(drone.getOrientation(), deltaZ));
-            drone.setThrottle(Controller.getAxis(0) + 1);
+            drone.setThrottle(deltaT);
         }
 
         prevX = currX;
         prevY = currY;
         prevZ = currZ;
+        prevT = currT;
     }
 
     public static boolean isPlayerControlling(DroneEntity drone) {
