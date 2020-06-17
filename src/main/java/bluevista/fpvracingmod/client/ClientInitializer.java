@@ -19,7 +19,6 @@ public class ClientInitializer implements ClientModInitializer {
         initNetwork();
 
         config = new Config("config/fpvracing.cfg", new String[] {"controllerID", "throttle", "pitch", "yaw", "roll"});
-        System.out.println("Hello statement: " + config.getConfigValue("hello"));
     }
 
     public void initRenderers() {
