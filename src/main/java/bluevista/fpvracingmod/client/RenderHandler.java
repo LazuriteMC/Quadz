@@ -87,9 +87,9 @@ public class RenderHandler {
     }
 
     public static void inputTick(DroneEntity drone, float delta) {
-        float currX = -Controller.getAxis(2);
-        float currY = -Controller.getAxis(3);
-        float currZ = -Controller.getAxis(1);
+        float currX = -Controller.getAxis(2); // yaw, pitch, or roll?
+        float currY = -Controller.getAxis(3); // yaw, pitch, or roll?
+        float currZ = -Controller.getAxis(1); // yaw, pitch, or roll?
 
         float deltaX = prevX + (currX - prevX) * delta;
         float deltaY = prevY + (currY - prevY) * delta;
