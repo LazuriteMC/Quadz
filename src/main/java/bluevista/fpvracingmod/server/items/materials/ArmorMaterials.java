@@ -1,11 +1,10 @@
-package bluevista.fpvracingmod.server.items.armor;
+package bluevista.fpvracingmod.server.items.materials;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -13,7 +12,7 @@ import net.minecraft.util.Lazy;
 
 import java.util.function.Supplier;
 
-public enum FPVArmorMaterials implements ArmorMaterial {
+public enum ArmorMaterials implements ArmorMaterial {
     GOGGLE("goggle", 1, new int[]{1, 2, 3, 1}, 0, SoundEvents.BLOCK_BELL_USE, 0.0F, () -> {
         return Ingredient.ofItems(ServerInitializer.GOGGLES_ITEM);
     });
@@ -27,7 +26,7 @@ public enum FPVArmorMaterials implements ArmorMaterial {
     private final float toughness;
     private final Lazy<Ingredient> repairIngredientSupplier;
 
-    private FPVArmorMaterials(String name, int durabilityMultiplier, int[] protectionAmounts, int enchantability, SoundEvent equipSound, float toughness, Supplier<Ingredient> ingredientSupplier) {
+    private ArmorMaterials(String name, int durabilityMultiplier, int[] protectionAmounts, int enchantability, SoundEvent equipSound, float toughness, Supplier<Ingredient> ingredientSupplier) {
         this.name = name;
         this.durabilityMultiplier = durabilityMultiplier;
         this.protectionAmounts = protectionAmounts;

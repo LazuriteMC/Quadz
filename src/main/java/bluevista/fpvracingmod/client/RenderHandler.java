@@ -5,10 +5,12 @@ import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.entities.ViewHandler;
 import bluevista.fpvracingmod.server.items.GogglesItem;
+import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 
 public class RenderHandler {
 
@@ -44,10 +46,18 @@ public class RenderHandler {
 
         /*
          * If a world is loaded (if the player exists) ->
-         * If the player is wearing the goggles item ->
+         * If the player is wearing the goggles item and holding a transmitter ->
          * Perform ViewHandler creation/deletion logic
          */
         if (mc.player != null) {
+            if(mc.player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
+                currentDrone = DroneEntity.getNearestTo(mc.player);
+
+                if(currentDrone != null) {
+                    inputTick(currentDrone, delta);
+                }
+            }
+
             if(mc.player.inventory.armor.get(3).getItem() instanceof GogglesItem) {
 
 //                mc.player.move(MoverType.PLAYER, new Vec3d(
@@ -65,8 +75,7 @@ public class RenderHandler {
                     }
 
                 } else if (((ViewHandler) mc.getCameraEntity()).getTarget() instanceof DroneEntity) {
-                    DroneEntity drone = (DroneEntity) ((ViewHandler) mc.getCameraEntity()).getTarget();
-                    inputTick(drone, delta);
+                    currentDrone = (DroneEntity) ((ViewHandler) mc.getCameraEntity()).getTarget();
                 }
 
             } else if(mc.getCameraEntity() instanceof ViewHandler) {
@@ -86,10 +95,12 @@ public class RenderHandler {
         float deltaY = prevY + (currY - prevY) * delta;
         float deltaZ = prevZ + (currZ - prevZ) * delta;
 
-        drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
-        drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
-        drone.setOrientation(QuaternionHelper.rotateZ(drone.getOrientation(), deltaZ));
-        drone.setThrottle(Controller.getAxis(0) + 1);
+        if(isPlayerControlling()) {
+            drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
+            drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
+            drone.setOrientation(QuaternionHelper.rotateZ(drone.getOrientation(), deltaZ));
+            drone.setThrottle(Controller.getAxis(0) + 1);
+        }
 
         prevX = currX;
         prevY = currY;
@@ -98,6 +109,11 @@ public class RenderHandler {
 
     public static boolean shouldRenderHand() {
         return view == null;
+    }
+
+    public static boolean isPlayerControlling() {
+        return mc.player.inventory.getMainHandStack().getItem() instanceof TransmitterItem &&
+                mc.player.getUuidAsString().equals(currentDrone.getControllingPlayerUUID());
     }
 
 }

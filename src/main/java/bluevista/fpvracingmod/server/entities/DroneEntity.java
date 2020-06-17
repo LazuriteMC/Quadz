@@ -2,6 +2,7 @@ package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
+import bluevista.fpvracingmod.server.items.TransmitterItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.Entity;
@@ -11,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.Box;
@@ -22,12 +24,14 @@ import net.minecraft.world.World;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class DroneEntity extends Entity {
 
 	private int band;
 	private int channel;
 	private Quaternion orientation;
+	private String controllingPlayer;
 
 	private float throttle = 0.0f;
 
@@ -182,5 +186,16 @@ public class DroneEntity extends Entity {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean interact(PlayerEntity player, Hand hand) {
+		if(player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
+			this.controllingPlayer = player.getUuidAsString();
+		}
+		return true;
+	}
+
+	public String getControllingPlayerUUID() {
+		return controllingPlayer;
 	}
 }
