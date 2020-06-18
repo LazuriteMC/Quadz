@@ -41,6 +41,6 @@ public class InputHandler {
 
     public static boolean isPlayerControlling(DroneEntity drone) {
         return mc.player.inventory.getMainHandStack().getItem() instanceof TransmitterItem &&
-                mc.player.getUuidAsString().equals(drone.getControllingPlayerUUID());
+                mc.player.getUuidAsString().equals(drone.getBoundPlayerUUID());
     }
 }

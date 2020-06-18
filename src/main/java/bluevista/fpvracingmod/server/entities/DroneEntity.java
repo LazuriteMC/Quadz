@@ -9,7 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.util.Hand;
@@ -31,7 +30,7 @@ public class DroneEntity extends Entity {
 	private int band;
 	private int channel;
 	private Quaternion orientation;
-	private String controllingPlayer;
+	private UUID boundPlayer;
 
 	private float throttle = 0.0f;
 
@@ -101,6 +100,7 @@ public class DroneEntity extends Entity {
 				tag.getFloat("orientC"),
 				tag.getFloat("orientD")
 		);
+		boundPlayer = tag.getUuid("bindUUID");
 	}
 
 	@Override
@@ -111,6 +111,7 @@ public class DroneEntity extends Entity {
 		tag.putFloat("orientB", orientation.getB());
 		tag.putFloat("orientC", orientation.getC());
 		tag.putFloat("orientD", orientation.getD());
+		tag.putUuid("bindUUID", getBoundPlayerUUID());
 	}
 
 	@Override
@@ -185,13 +186,12 @@ public class DroneEntity extends Entity {
 	}
 
 	public boolean interact(PlayerEntity player, Hand hand) {
-		if(player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
-			this.controllingPlayer = player.getUuidAsString();
-		}
+		if(player.inventory.getMainHandStack().getItem() instanceof TransmitterItem)
+			this.boundPlayer = player.getUuid();
 		return true;
 	}
 
-	public String getControllingPlayerUUID() {
-		return controllingPlayer;
+	public UUID getBoundPlayerUUID() {
+		return boundPlayer;
 	}
 }
