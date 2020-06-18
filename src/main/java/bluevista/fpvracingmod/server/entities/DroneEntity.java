@@ -175,13 +175,9 @@ public class DroneEntity extends Entity {
 
 	@Override
 	public boolean damage(DamageSource source, float amount) {
-
 		if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
-			System.out.println("Entity Drops: " + this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS));
-			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-				Item item = ServerInitializer.DRONE_SPAWNER_ITEM.asItem();
+			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS))
 				this.dropItem(ServerInitializer.DRONE_SPAWNER_ITEM.asItem());
-			}
 			this.remove();
 			return true;
 		}
