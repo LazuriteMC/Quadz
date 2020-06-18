@@ -13,8 +13,6 @@ import net.minecraft.world.World;
 
 public class DroneSpawnerItem extends Item {
 
-	private CompoundTag compoundTag;
-
 	public DroneSpawnerItem(Settings settings) {
 		super(settings);
 	}
