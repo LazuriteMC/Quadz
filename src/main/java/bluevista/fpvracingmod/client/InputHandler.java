@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.client.renderers;
+package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;

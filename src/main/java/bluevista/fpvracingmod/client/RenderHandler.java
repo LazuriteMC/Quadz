@@ -1,6 +1,5 @@
 package bluevista.fpvracingmod.client;
 
-import bluevista.fpvracingmod.client.renderers.InputHandler;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.entities.ViewHandler;
 import bluevista.fpvracingmod.server.items.GogglesItem;
@@ -9,9 +8,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-
-import javax.sound.midi.Transmitter;
 
 public class RenderHandler {
 
