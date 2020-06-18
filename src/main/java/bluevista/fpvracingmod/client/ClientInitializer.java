@@ -19,7 +19,7 @@ public class ClientInitializer implements ClientModInitializer {
         initRenderers();
         initNetwork();
 
-        config = new Config("config/fpvracing.cfg", new String[] {"controllerID", "throttle", "pitch", "yaw", "roll"});
+        config = new Config("fpvracing", new String[] {"controllerID", "throttle", "pitch", "yaw", "roll"});
 
         setControllerSettings();
     }

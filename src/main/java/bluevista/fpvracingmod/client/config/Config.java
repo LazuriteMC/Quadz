@@ -12,11 +12,11 @@ public class Config {
     private final File file;
     private final HashMap<String, String> values;
 
-    public Config(String filename, String[] keys) {
-        this.file = new File(filename);
+    public Config(String configName, String[] keys) {
+        this.file = new File("config/" + configName + ".cfg");
         this.values = new HashMap<>();
         createFileIfNotFound();
-        safeWriteValues(filename, keys);
+        safeWriteValues(file.getName(), keys);
         readValues();
     }
 
