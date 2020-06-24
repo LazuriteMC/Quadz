@@ -16,7 +16,7 @@ public class Config {
         this.file = new File("config/" + configName + ".cfg");
         this.values = new HashMap<>();
         createFileIfNotFound();
-        safeWriteValues(file.getName(), keys);
+        safeWriteValues(file.getPath(), keys);
         readValues();
     }
 
