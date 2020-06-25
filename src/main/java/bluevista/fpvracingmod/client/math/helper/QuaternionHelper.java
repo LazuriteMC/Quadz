@@ -94,10 +94,10 @@ public class QuaternionHelper {
 	public static Matrix4f quatToMatrix(Quaternion q) {
 		Matrix4f mat = new Matrix4f();
 
-	    double sqw = q.getA() * q.getA();
-	    double sqx = q.getB() * q.getB();
-	    double sqy = q.getC() * q.getC();
-	    double sqz = q.getD() * q.getD();
+	    double sqw = q.getW() * q.getW();
+	    double sqx = q.getX() * q.getX();
+	    double sqy = q.getY() * q.getY();
+	    double sqz = q.getZ() * q.getZ();
 
 //	     invs (inverse square length) is only required if quaternion is not already normalised
 	    double invs = 1 / (sqx + sqy + sqz + sqw);
@@ -105,17 +105,17 @@ public class QuaternionHelper {
 	    mat.set(1, 1, (float) ((-sqx + sqy - sqz + sqw)*invs));
 	    mat.set(2, 2, (float) ((-sqx - sqy + sqz + sqw)*invs));
 
-	    double tmp1 = q.getB() * q.getC();
-	    double tmp2 = q.getD() * q.getA();
+	    double tmp1 = q.getX() * q.getY();
+	    double tmp2 = q.getZ() * q.getW();
 	    mat.set(1, 0, (float) (2.0 * (tmp1 + tmp2)*invs));
 	    mat.set(0, 1, (float) (2.0 * (tmp1 - tmp2)*invs));
 
-	    tmp1 = q.getB() * q.getD();
-	    tmp2 = q.getC() * q.getA();
+	    tmp1 = q.getX() * q.getZ();
+	    tmp2 = q.getY() * q.getW();
 	    mat.set(2, 0, (float) (2.0 * (tmp1 - tmp2)*invs));
 	    mat.set(0, 2, (float) (2.0 * (tmp1 + tmp2)*invs));
-	    tmp1 = q.getC() * q.getD();
-	    tmp2 = q.getB() * q.getA();
+	    tmp1 = q.getY() * q.getZ();
+	    tmp2 = q.getX() * q.getW();
 	    mat.set(2, 1, (float) (2.0 * (tmp1 + tmp2)*invs));
 	    mat.set(1, 2, (float) (2.0 * (tmp1 - tmp2)*invs));
 

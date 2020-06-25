@@ -7,9 +7,7 @@
   ],
   "client": [
     "RenderMixin",
-    "RenderHandMixin",
-    "DumbMixin",
-    "StupidMixin"
+    "RenderHandMixin"
   ],
   "injectors": {
     "defaultRequire": 1

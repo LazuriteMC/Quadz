@@ -6,9 +6,10 @@ import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.FabricEntityTypeBuilder;
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
@@ -27,7 +28,7 @@ public class ServerInitializer implements ModInitializer {
 		DRONE_ENTITY = Registry.register(
 				Registry.ENTITY_TYPE,
 				new Identifier("fpvracing", "drone_entity"),
-				FabricEntityTypeBuilder.create(EntityCategory.MISC, DroneEntity::new).size(new EntityDimensions(0.5F, 0.125F, true)).build() // modify later if needed to fit the model
+				FabricEntityTypeBuilder.create(SpawnGroup.MISC, DroneEntity::new).size(new EntityDimensions(0.5F, 0.125F, true)).build() // modify later if needed to fit the model
 		);
 
 		Registry.register(Registry.ITEM, new Identifier("fpvracing", "goggles_item"), GOGGLES_ITEM);

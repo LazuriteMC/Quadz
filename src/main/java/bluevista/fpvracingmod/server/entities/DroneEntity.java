@@ -1,6 +1,5 @@
 package bluevista.fpvracingmod.server.entities;
 
-import bluevista.fpvracingmod.client.RenderHandler;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -12,14 +11,14 @@ import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -186,11 +185,11 @@ public class DroneEntity extends Entity {
 		return false;
 	}
 
-	public boolean interact(PlayerEntity player, Hand hand) {
+	public ActionResult interact(PlayerEntity player, Hand hand) {
 		if(player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
 			this.boundPlayer = player.getUuid();
 		}
-		return true;
+		return null;
 	}
 
 	public UUID getBoundPlayerUUID() {

@@ -5,11 +5,10 @@ import bluevista.fpvracingmod.server.entities.ViewHandler;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Matrix4f;
 
-import java.util.UUID;
 
 public class RenderHandler {
 
