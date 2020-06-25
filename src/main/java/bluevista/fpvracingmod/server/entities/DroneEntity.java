@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.server.entities;
 
+import bluevista.fpvracingmod.client.RenderHandler;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -94,12 +95,12 @@ public class DroneEntity extends Entity {
 	protected void readCustomDataFromTag(CompoundTag tag) {
 		band = tag.getInt("band");
 		channel = tag.getInt("channel");
-		orientation.set(
-				tag.getFloat("orientA"),
-				tag.getFloat("orientB"),
-				tag.getFloat("orientC"),
-				tag.getFloat("orientD")
-		);
+//		orientation.set(
+//				tag.getFloat("orientB"),
+//				tag.getFloat("orientC"),
+//				tag.getFloat("orientD"),
+//				tag.getFloat("orientA")
+//		);
 		boundPlayer = tag.getUuid("bindUUID");
 	}
 
@@ -107,11 +108,11 @@ public class DroneEntity extends Entity {
 	protected void writeCustomDataToTag(CompoundTag tag) {
 		tag.putInt("band", band);
 		tag.putInt("channel", channel);
-		tag.putFloat("orientA", orientation.getA());
-		tag.putFloat("orientB", orientation.getB());
-		tag.putFloat("orientC", orientation.getC());
-		tag.putFloat("orientD", orientation.getD());
-		tag.putUuid("bindUUID", getBoundPlayerUUID());
+//		tag.putFloat("orientA", orientation.getA());
+//		tag.putFloat("orientB", orientation.getB());
+//		tag.putFloat("orientC", orientation.getC());
+//		tag.putFloat("orientD", orientation.getD());
+		tag.putUuid("bindUUID", boundPlayer);
 	}
 
 	@Override
@@ -177,7 +178,7 @@ public class DroneEntity extends Entity {
 	@Override
 	public boolean damage(DamageSource source, float amount) {
 		if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
-			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS))
+//			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS))
 				this.dropItem(ServerInitializer.DRONE_SPAWNER_ITEM.asItem());
 			this.remove();
 			return true;
@@ -186,8 +187,9 @@ public class DroneEntity extends Entity {
 	}
 
 	public boolean interact(PlayerEntity player, Hand hand) {
-		if(player.inventory.getMainHandStack().getItem() instanceof TransmitterItem)
+		if(player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
 			this.boundPlayer = player.getUuid();
+		}
 		return true;
 	}
 

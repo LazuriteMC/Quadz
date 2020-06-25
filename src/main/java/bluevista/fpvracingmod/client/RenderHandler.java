@@ -9,6 +9,8 @@ import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 
+import java.util.UUID;
+
 public class RenderHandler {
 
     private static final MinecraftClient mc = MinecraftClient.getInstance();

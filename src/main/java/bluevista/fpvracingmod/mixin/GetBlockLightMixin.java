@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityRenderer.class)
-public class StupidMixin {
-    @Inject(at = @At("HEAD"), method = "getLight", cancellable = true)
-    public int getLight(Entity entity, float tickDelta, CallbackInfoReturnable info) {
+public class GetBlockLightMixin {
+    @Inject(at = @At("HEAD"), method = "getBlockLight", cancellable = true)
+    public int getBlockLight(Entity entity, float tickDelta, CallbackInfoReturnable info) {
         if(entity.world == null) {
             info.setReturnValue(100);
         }
