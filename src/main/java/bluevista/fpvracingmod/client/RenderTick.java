@@ -2,13 +2,16 @@ package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.entities.ViewHandler;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Matrix4f;
 
-public class RenderTick {
+@Environment(EnvType.CLIENT)
 
+public class RenderTick {
     private static final MinecraftClient mc = MinecraftClient.getInstance();
 
     public static void tick(MatrixStack stack, float delta) {

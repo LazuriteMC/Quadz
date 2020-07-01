@@ -25,6 +25,7 @@ public class ClientInitializer implements ClientModInitializer {
         EntityRendererRegistry.INSTANCE.register(ServerInitializer.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
         ClientSidePacketRegistry.INSTANCE.register(new Identifier("fpvracing", "spawn_drone"), SpawnNetworkHandler::accept);
         ClientTickCallback.EVENT.register(ClientTick::tick);
+
         initControllerSettings();
         InputTick.initKeyBindings();
     }
