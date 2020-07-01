@@ -9,12 +9,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
@@ -30,7 +32,7 @@ public class DroneEntity extends Entity {
 	private int band;
 	private int channel;
 	private Quaternion orientation;
-	private UUID boundPlayer;
+	private TransmitterItem boundTransmitter;
 
 	private float throttle = 0.0f;
 
@@ -46,20 +48,7 @@ public class DroneEntity extends Entity {
 		// TODO nbt tags - channel, camera_angle, etc.
 	}
 
-	@Override
-	public boolean collides() {
-		return true;
-	}
 
-	@Override
-	public Box getCollisionBox() {
-		return super.getBoundingBox();
-	}
-
-	@Override
-	public Box getHardCollisionBox(Entity collidingEntity) {
-		return collidingEntity.isPushable() ? collidingEntity.getBoundingBox() : null;
-	}
 
 	@Override
 	public void tick() {
@@ -94,24 +83,12 @@ public class DroneEntity extends Entity {
 	protected void readCustomDataFromTag(CompoundTag tag) {
 		band = tag.getInt("band");
 		channel = tag.getInt("channel");
-//		orientation.set(
-//				tag.getFloat("orientB"),
-//				tag.getFloat("orientC"),
-//				tag.getFloat("orientD"),
-//				tag.getFloat("orientA")
-//		);
-		boundPlayer = tag.getUuid("bindUUID");
 	}
 
 	@Override
 	protected void writeCustomDataToTag(CompoundTag tag) {
 		tag.putInt("band", band);
 		tag.putInt("channel", channel);
-//		tag.putFloat("orientA", orientation.getA());
-//		tag.putFloat("orientB", orientation.getB());
-//		tag.putFloat("orientC", orientation.getC());
-//		tag.putFloat("orientD", orientation.getD());
-		tag.putUuid("bindUUID", boundPlayer);
 	}
 
 	@Override
@@ -128,6 +105,54 @@ public class DroneEntity extends Entity {
 		buf.writeByte(MathHelper.floor(this.yaw * 256.0F / 360.0F));
 
 		return ServerSidePacketRegistry.INSTANCE.toPacket(new Identifier("fpvracing", "spawn_drone"), buf);
+	}
+
+	public static DroneEntity getNearestTo(Entity entity) {
+		World world = entity.getEntityWorld();
+		List<DroneEntity> drones = world.getEntities(
+				DroneEntity.class,
+				new Box(entity.getPos().getX() - 100, entity.getPos().getY() - 100, entity.getPos().getZ() - 100, entity.getPos().getX() + 100, entity.getPos().getY() + 100, entity.getPos().getZ() + 100),
+				null
+		);
+		if (drones.size() > 0) return drones.get(0);
+		else return null;
+	}
+
+	public static DroneEntity getByUuid(Entity entity, UUID uuid) {
+		World world = entity.getEntityWorld();
+		List<DroneEntity> drones = world.getEntities(
+				DroneEntity.class,
+				new Box(entity.getPos().getX() - 100, entity.getPos().getY() - 100, entity.getPos().getZ() - 100, entity.getPos().getX() + 100, entity.getPos().getY() + 100, entity.getPos().getZ() + 100),
+				null
+		);
+
+		if (drones.size() > 0) {
+			for(Entity e : drones) {
+				if(uuid.equals(e.getUuid()) && e instanceof DroneEntity)
+					return (DroneEntity) e;
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public boolean damage(DamageSource source, float amount) {
+		if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
+//			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS))
+				this.dropItem(ServerInitializer.DRONE_SPAWNER_ITEM.asItem());
+			this.remove();
+			return true;
+		}
+		return false;
+	}
+
+	public ActionResult interact(PlayerEntity player, Hand hand) {
+		if(player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
+			CompoundTag subTag = player.inventory.getMainHandStack().getOrCreateSubTag("bind");
+			subTag.putUuid("bind", this.getUuid());
+		}
+		return ActionResult.SUCCESS;
 	}
 
 	public void setChannel(int channel) {
@@ -158,41 +183,23 @@ public class DroneEntity extends Entity {
 	protected void initDataTracker() {
 	}
 
-	public static DroneEntity getNearestTo(Entity entity) {
-		World world = entity.getEntityWorld();
-		List<DroneEntity> drones = world.getEntities(
-				DroneEntity.class,
-				new Box(entity.getPos().getX() - 100, entity.getPos().getY() - 100, entity.getPos().getZ() - 100, entity.getPos().getX() + 100, entity.getPos().getY() + 100, entity.getPos().getZ() + 100),
-				null
-		);
-		if (drones.size() > 0) return drones.get(0);
-		else return null;
-	}
-
 	@Override
 	public boolean isGlowing() {
 		return false;
 	}
 
 	@Override
-	public boolean damage(DamageSource source, float amount) {
-		if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
-//			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS))
-				this.dropItem(ServerInitializer.DRONE_SPAWNER_ITEM.asItem());
-			this.remove();
-			return true;
-		}
-		return false;
+	public boolean collides() {
+		return true;
 	}
 
-	public ActionResult interact(PlayerEntity player, Hand hand) {
-		if(player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
-			this.boundPlayer = player.getUuid();
-		}
-		return null;
+	@Override
+	public Box getCollisionBox() {
+		return super.getBoundingBox();
 	}
 
-	public UUID getBoundPlayerUUID() {
-		return boundPlayer;
+	@Override
+	public Box getHardCollisionBox(Entity collidingEntity) {
+		return collidingEntity.isPushable() ? collidingEntity.getBoundingBox() : null;
 	}
 }

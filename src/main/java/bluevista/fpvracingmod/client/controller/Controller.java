@@ -2,10 +2,12 @@ package bluevista.fpvracingmod.client.controller;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.client.math.helper.BetaflightHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 
-
+@Environment(EnvType.CLIENT)
 public class Controller {
 
 	public static int CONTROLLER_ID;

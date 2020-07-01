@@ -1,11 +1,14 @@
 package bluevista.fpvracingmod.client.models;
 
 import bluevista.fpvracingmod.server.entities.DroneEntity;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 
+@Environment(EnvType.CLIENT)
 public class DroneModel extends EntityModel<DroneEntity> {
 
     private ModelPart base;

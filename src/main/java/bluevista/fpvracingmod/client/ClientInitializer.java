@@ -6,10 +6,13 @@ import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.network.SpawnNetworkHandler;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.util.Identifier;
 
+@Environment(EnvType.CLIENT)
 public class ClientInitializer implements ClientModInitializer {
 
     private static Config config;

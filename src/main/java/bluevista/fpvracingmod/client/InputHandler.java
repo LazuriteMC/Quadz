@@ -4,8 +4,11 @@ import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 
+@Environment(EnvType.CLIENT)
 public class InputHandler {
 
     private static final MinecraftClient mc = MinecraftClient.getInstance();
@@ -26,21 +29,14 @@ public class InputHandler {
         float deltaZ = prevZ + (currZ - prevZ) * delta;
         float deltaT = prevT + (currT - prevT) * delta;
 
-        if(isPlayerControlling(drone)) {
-            drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
-            drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
-            drone.setOrientation(QuaternionHelper.rotateZ(drone.getOrientation(), deltaZ));
-            drone.setThrottle(deltaT);
-        }
+        drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
+        drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
+        drone.setOrientation(QuaternionHelper.rotateZ(drone.getOrientation(), deltaZ));
+        drone.setThrottle(deltaT);
 
         prevX = currX;
         prevY = currY;
         prevZ = currZ;
         prevT = currT;
-    }
-
-    public static boolean isPlayerControlling(DroneEntity drone) {
-        return mc.player.inventory.getMainHandStack().getItem() instanceof TransmitterItem &&
-                mc.player.getUuid().equals(drone.getBoundPlayerUUID());
     }
 }
