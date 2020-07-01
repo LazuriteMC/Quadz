@@ -60,6 +60,6 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
 
     @Override
     protected int method_27950(DroneEntity entity, BlockPos blockPos) {
-        return entity.world.getLightLevel(LightType.SKY, blockPos);
+        return 15;
     }
 }
