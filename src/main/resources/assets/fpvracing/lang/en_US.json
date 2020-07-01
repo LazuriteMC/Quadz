@@ -1,5 +1,6 @@
 {
   "entity.fpvracing.drone_entity":"Drone",
   "item.fpvracing.drone_spawner_item":"Drone Spawner",
-  "item.fpvracing.goggles_item":"Goggles"
+  "item.fpvracing.goggles_item":"Goggles",
+  "item.fpvracing.transmitter_item":"Transmitter"
 }
