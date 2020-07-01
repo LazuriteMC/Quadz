@@ -12,9 +12,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
-public class InputHandler {
+public class InputTick {
 
     private static final MinecraftClient mc = MinecraftClient.getInstance();
+
+    private static boolean shouldTick;
 
     private static float prevX;
     private static float prevY;
@@ -33,25 +35,35 @@ public class InputHandler {
     }
 
     public static void tick(DroneEntity drone, float delta) {
-        float currX = -Controller.getAxis(Controller.ROLL_NUM);
-        float currY = -Controller.getAxis(Controller.PITCH_NUM);
-        float currZ = -Controller.getAxis(Controller.YAW_NUM);
-        float currT = Controller.getAxis(Controller.THROTTLE_NUM) + 1;
+        if(shouldTick()) {
+            float currX = -Controller.getAxis(Controller.ROLL_NUM);
+            float currY = -Controller.getAxis(Controller.PITCH_NUM);
+            float currZ = -Controller.getAxis(Controller.YAW_NUM);
+            float currT = Controller.getAxis(Controller.THROTTLE_NUM) + 1;
 
-        float deltaX = prevX + (currX - prevX) * delta;
-        float deltaY = prevY + (currY - prevY) * delta;
-        float deltaZ = prevZ + (currZ - prevZ) * delta;
-        float deltaT = prevT + (currT - prevT) * delta;
+            float deltaX = prevX + (currX - prevX) * delta;
+            float deltaY = prevY + (currY - prevY) * delta;
+            float deltaZ = prevZ + (currZ - prevZ) * delta;
+            float deltaT = prevT + (currT - prevT) * delta;
 
-        drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
-        drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
-        drone.setOrientation(QuaternionHelper.rotateZ(drone.getOrientation(), deltaZ));
-        drone.setThrottle(deltaT);
+            drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
+            drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
+            drone.setOrientation(QuaternionHelper.rotateZ(drone.getOrientation(), deltaZ));
+            drone.setThrottle(deltaT);
 
-        prevX = currX;
-        prevY = currY;
-        prevZ = currZ;
-        prevT = currT;
+            prevX = currX;
+            prevY = currY;
+            prevZ = currZ;
+            prevT = currT;
+        }
+    }
+
+    public static void setShouldTick(boolean should) {
+        shouldTick = should;
+    }
+
+    public static boolean shouldTick() {
+        return shouldTick && !mc.isPaused();
     }
 
 }

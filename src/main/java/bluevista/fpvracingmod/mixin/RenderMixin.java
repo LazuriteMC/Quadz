@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.mixin;
 
-import bluevista.fpvracingmod.client.RenderHandler;
+import bluevista.fpvracingmod.client.RenderTick;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,6 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class RenderMixin {
 	@Inject(at = @At("HEAD"), method = "renderWorld")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
-		RenderHandler.renderTick(matrix, tickDelta);
+		RenderTick.tick(matrix, tickDelta);
 	}
 }

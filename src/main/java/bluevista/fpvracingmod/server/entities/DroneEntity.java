@@ -13,6 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -148,9 +150,16 @@ public class DroneEntity extends Entity {
 	}
 
 	public ActionResult interact(PlayerEntity player, Hand hand) {
-		if(player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
-			CompoundTag subTag = player.inventory.getMainHandStack().getOrCreateSubTag("bind");
-			subTag.putUuid("bind", this.getUuid());
+		if(!world.isClient()) {
+			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
+				CompoundTag subTag = player.inventory.getMainHandStack().getOrCreateSubTag("bind");
+				if(subTag.getUuid("bind").equals(this.getUuid())) {
+					player.sendMessage(new TranslatableText("Already bound"), false);
+				} else {
+					subTag.putUuid("bind", this.getUuid());
+					player.sendMessage(new TranslatableText("Transmitter bound"), false);
+				}
+			}
 		}
 		return ActionResult.SUCCESS;
 	}
