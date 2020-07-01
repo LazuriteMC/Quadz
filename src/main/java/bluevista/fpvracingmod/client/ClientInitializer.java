@@ -2,6 +2,8 @@ package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.config.Config;
 import bluevista.fpvracingmod.client.controller.Controller;
+import bluevista.fpvracingmod.client.input.InputTick;
+import bluevista.fpvracingmod.client.input.RemoveGogglesKeybinding;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.network.SpawnNetworkHandler;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
@@ -25,9 +27,9 @@ public class ClientInitializer implements ClientModInitializer {
         EntityRendererRegistry.INSTANCE.register(ServerInitializer.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
         ClientSidePacketRegistry.INSTANCE.register(new Identifier("fpvracing", "spawn_drone"), SpawnNetworkHandler::accept);
         ClientTickCallback.EVENT.register(ClientTick::tick);
+        ClientTickCallback.EVENT.register(RemoveGogglesKeybinding::callback);
 
         initControllerSettings();
-        InputTick.initKeyBindings();
     }
 
     private void initControllerSettings() {

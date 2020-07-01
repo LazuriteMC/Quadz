@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.client;
 
+import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.entities.ViewHandler;
 import bluevista.fpvracingmod.server.items.GogglesItem;
