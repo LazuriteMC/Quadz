@@ -72,6 +72,10 @@ public class Config {
     }
 
     public String getValue(String key) {
-        return values.get(key);
+        try {
+            return values.get(key);
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 }
