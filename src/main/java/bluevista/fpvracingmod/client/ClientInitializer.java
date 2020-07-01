@@ -21,10 +21,11 @@ public class ClientInitializer implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         config = new Config("fpvracing", new String[] {"controllerID", "throttle", "pitch", "yaw", "roll"});
+
+        EntityRendererRegistry.INSTANCE.register(ServerInitializer.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
+        ClientSidePacketRegistry.INSTANCE.register(new Identifier("fpvracing", "spawn_drone"), SpawnNetworkHandler::accept);
+        ClientTickCallback.EVENT.register(ClientTick::tick);
         initControllerSettings();
-        initRenderers();
-        initNetwork();
-        initCallbacks();
         InputTick.initKeyBindings();
     }
 
@@ -39,18 +40,6 @@ public class ClientInitializer implements ClientModInitializer {
             System.err.println("Error loading config");
             e.printStackTrace();
         }
-    }
-
-    public void initRenderers() {
-        EntityRendererRegistry.INSTANCE.register(ServerInitializer.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
-    }
-
-    public void initNetwork() {
-        ClientSidePacketRegistry.INSTANCE.register(new Identifier("fpvracing", "spawn_drone"), SpawnNetworkHandler::accept);
-    }
-
-    public void initCallbacks() {
-        ClientTickCallback.EVENT.register(ClientTick::tick);
     }
 
     public static Config getConfig() {
