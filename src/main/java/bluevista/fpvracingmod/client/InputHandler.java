@@ -2,11 +2,14 @@ package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
+import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
-import bluevista.fpvracingmod.server.items.TransmitterItem;
+import bluevista.fpvracingmod.server.items.GogglesItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
 public class InputHandler {
@@ -17,6 +20,17 @@ public class InputHandler {
     private static float prevY;
     private static float prevZ;
     private static float prevT;
+
+    public static void initKeyBindings() {
+        ClientTickCallback.EVENT.register(client -> {
+            while (mc.options.keySneak.wasPressed()) {
+                if(client.player.inventory.armor.get(3).getItem() instanceof GogglesItem) {
+                    client.player.inventory.armor.get(3).decrement(1);
+                    client.player.giveItemStack(new ItemStack(ServerInitializer.GOGGLES_ITEM));
+                }
+            }
+        });
+    }
 
     public static void tick(DroneEntity drone, float delta) {
         float currX = -Controller.getAxis(Controller.ROLL_NUM);
@@ -39,4 +53,5 @@ public class InputHandler {
         prevZ = currZ;
         prevT = currT;
     }
+
 }

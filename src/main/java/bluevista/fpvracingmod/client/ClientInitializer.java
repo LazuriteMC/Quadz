@@ -8,6 +8,7 @@ import bluevista.fpvracingmod.client.renderers.DroneRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.options.KeyBinding;
@@ -19,7 +20,6 @@ import org.lwjgl.glfw.GLFW;
 public class ClientInitializer implements ClientModInitializer {
 
     private static Config config;
-    private static KeyBinding exitGogglesKeyBinding;
 
     @Override
     public void onInitializeClient() {
@@ -27,14 +27,20 @@ public class ClientInitializer implements ClientModInitializer {
         initControllerSettings();
         initRenderers();
         initNetwork();
+        InputHandler.initKeyBindings();
     }
 
     private void initControllerSettings() {
-        Controller.setControllerId(Integer.parseInt(config.getValue("controllerID")));
-        Controller.setThrottle(Integer.parseInt(config.getValue("throttle")));
-        Controller.setPitch(Integer.parseInt(config.getValue("pitch")));
-        Controller.setYaw(Integer.parseInt(config.getValue("yaw")));
-        Controller.setRoll(Integer.parseInt(config.getValue("roll")));
+        try {
+            Controller.setControllerId(Integer.parseInt(config.getValue("controllerID")));
+            Controller.setThrottle(Integer.parseInt(config.getValue("throttle")));
+            Controller.setPitch(Integer.parseInt(config.getValue("pitch")));
+            Controller.setYaw(Integer.parseInt(config.getValue("yaw")));
+            Controller.setRoll(Integer.parseInt(config.getValue("roll")));
+        } catch (Exception e) {
+            System.err.println("Error loading config");
+            e.printStackTrace();
+        }
     }
 
     public void initRenderers() {
@@ -43,15 +49,6 @@ public class ClientInitializer implements ClientModInitializer {
 
     public void initNetwork() {
         ClientSidePacketRegistry.INSTANCE.register(new Identifier("fpvracing", "spawn_drone"), SpawnNetworkHandler::accept);
-    }
-
-    public void initKeybindings() {
-        exitGogglesKeyBinding = new KeyBinding(
-                "key.fpvracing.exit_goggles",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_LEFT_SHIFT,
-                "category.fpvracing.drone"
-        );
     }
 
     public static Config getConfig() {

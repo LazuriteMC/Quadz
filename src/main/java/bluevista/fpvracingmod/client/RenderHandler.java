@@ -52,9 +52,10 @@ public class RenderHandler {
                     if (isValidTransmitter(mc.player, currentDrone))
                         InputHandler.tick(currentDrone, delta);
                 }
-            } else if(mc.getCameraEntity() instanceof ViewHandler) {
-                resetView();
             }
+
+            if(!isWearingGoggles(mc.player) && mc.getCameraEntity() instanceof ViewHandler)
+                resetView();
         }
     }
 
@@ -113,8 +114,10 @@ public class RenderHandler {
     }
 
     public static void setView(Entity entity) {
-        view = new ViewHandler(mc.world, entity);
-        mc.setCameraEntity(view);
+        if(!(mc.getCameraEntity() instanceof ViewHandler)) {
+            view = new ViewHandler(mc.world, entity);
+            mc.setCameraEntity(view);
+        }
     }
 
     public static void resetView() {
