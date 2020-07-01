@@ -37,11 +37,10 @@ public class ViewHandler extends Entity {
     public void clientTick(float delta) {
         if(target != null) {
             float deltaPosX = (float) (this.prevPosX + (this.target.getPos().x - this.prevPosX) * delta);
-            float deltaPosY = (float) (this.prevPosY + (this.target.getPos().y - this.prevPosY) * delta);
+            float deltaPosY = (float) (this.prevPosY + (this.target.getPos().y-1 - this.prevPosY) * delta);
             float deltaPosZ = (float) (this.prevPosZ + (this.target.getPos().z - this.prevPosZ) * delta);
 
             this.resetPosition(deltaPosX, deltaPosY, deltaPosZ);
-//            this.setPos(deltaPosX, deltaPosY, deltaPosZ);
 
             this.prevPosX = this.getPos().x;
             this.prevPosY = this.getPos().y;
