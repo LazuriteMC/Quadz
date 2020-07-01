@@ -22,7 +22,7 @@ public class ServerInitializer implements ModInitializer {
 	public static final TransmitterItem TRANSMITTER_ITEM = new TransmitterItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1));
 	public static final DroneSpawnerItem DRONE_SPAWNER_ITEM = new DroneSpawnerItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1));
 
-	private static final Identifier REMOVE_GOGGLES_PACKET_ID = new Identifier("fpvracing", "goggles");
+	public static final Identifier REMOVE_GOGGLES_PACKET_ID = new Identifier("fpvracing", "goggles");
 	public static EntityType<DroneEntity> DRONE_ENTITY;
 
 	@Override

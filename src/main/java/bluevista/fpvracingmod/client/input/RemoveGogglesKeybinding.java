@@ -1,9 +1,11 @@
 package bluevista.fpvracingmod.client.input;
 
+import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 
@@ -12,11 +14,7 @@ public class RemoveGogglesKeybinding {
     public static void callback(MinecraftClient mc) {
         while (mc.options.keySneak.wasPressed()) {
             if(mc.player.inventory.armor.get(3).getItem() instanceof GogglesItem) {
-                PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-
-
-//                mc.player.inventory.armor.get(3).decrement(1);
-//                mc.player.giveItemStack(new ItemStack(ServerInitializer.GOGGLES_ITEM));
+                ClientSidePacketRegistry.INSTANCE.sendToServer(ServerInitializer.REMOVE_GOGGLES_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
             }
         }
     }
