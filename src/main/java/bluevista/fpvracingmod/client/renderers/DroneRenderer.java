@@ -15,6 +15,7 @@ import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.world.LightType;
 
 @Environment(EnvType.CLIENT)
 public class DroneRenderer extends EntityRenderer<DroneEntity> {
@@ -55,5 +56,10 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
     @Override
     protected int getBlockLight(DroneEntity entity, BlockPos blockPos) {
         return 15;
+    }
+
+    @Override
+    protected int method_27950(DroneEntity entity, BlockPos blockPos) {
+        return entity.world.getLightLevel(LightType.SKY, blockPos);
     }
 }
