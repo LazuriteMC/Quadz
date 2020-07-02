@@ -95,5 +95,6 @@ public class ClientTick {
 
     public static void resetView(MinecraftClient mc) {
         mc.setCameraEntity(null);
+        view = null;
     }
 }
