@@ -6,6 +6,7 @@ import bluevista.fpvracingmod.server.items.TransmitterItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,10 +19,10 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
@@ -34,14 +35,17 @@ public class DroneEntity extends Entity {
 	private int band;
 	private int channel;
 	private Quaternion orientation;
-	private TransmitterItem boundTransmitter;
 
 	private float throttle = 0.0f;
+
+	private static final float gravity = -0.001F;
 
 	public DroneEntity(World worldIn) {
 		super(ServerInitializer.DRONE_ENTITY, worldIn);
 
 		this.orientation = QuaternionHelper.rotateX(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f), 0);
+		this.noClip = false;
+		this.setNoGravity(false);
 
 		Random random = new Random(); // testing only
 		band = random.nextInt(6) + 1; // 1 - 6
@@ -50,14 +54,16 @@ public class DroneEntity extends Entity {
 		// TODO nbt tags - channel, camera_angle, etc.
 	}
 
-
-
 	@Override
 	public void tick() {
 //		this.prevPosX = this.posX;
 //		this.prevPosY = this.posY;
 //		this.prevPosZ = this.posZ;
 //		super.tick();
+
+//		this.addVelocity(0, gravity, 0);
+//		this.move(MovementType.PLAYER, this.getVelocity());
+//		this.setPos(getX() + velocity.getX(), getY() + velocity.getY(), getZ() + velocity.getZ());
 
 //		if(RenderHandler.isPlayerViewingDrone()) {
 //			Vector3f d = QuaternionHelper.rotationMatrixToVector(QuaternionHelper.quatToMatrix(getOrientation()));
@@ -150,15 +156,15 @@ public class DroneEntity extends Entity {
 	}
 
 	public ActionResult interact(PlayerEntity player, Hand hand) {
-		if(!world.isClient()) {
+		if(!player.world.isClient()) {
 			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
 				CompoundTag subTag = player.inventory.getMainHandStack().getOrCreateSubTag("bind");
-				if(subTag.getUuid("bind").equals(this.getUuid())) {
-					player.sendMessage(new TranslatableText("Already bound"), false);
-				} else {
+//				if(subTag.getUuid("bind").equals(this.getUuid())) {
+//					player.sendMessage(new TranslatableText("Already bound"), false);
+//				} else {
 					subTag.putUuid("bind", this.getUuid());
 					player.sendMessage(new TranslatableText("Transmitter bound"), false);
-				}
+//				}
 			}
 		}
 		return ActionResult.SUCCESS;

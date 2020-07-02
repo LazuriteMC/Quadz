@@ -38,6 +38,7 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
         Matrix4f newMat = new Matrix4f(droneEntity.getOrientation());
         Matrix4f screenMat = matrixStack.peek().getModel();
         newMat.transpose();
+        newMat.invert();
         screenMat.multiply(newMat);
 
         matrixStack.translate(0.0D, -1.5D, 0.0D);
