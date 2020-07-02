@@ -43,7 +43,7 @@ public class DroneEntity extends Entity {
 	public DroneEntity(World worldIn) {
 		super(ServerInitializer.DRONE_ENTITY, worldIn);
 
-		this.orientation = QuaternionHelper.rotateX(new Quaternion(0.0f, 1.0f, 0.0f, 0.0f), 0);
+		this.orientation = new Quaternion(0, 1, 0, 0);
 		this.noClip = false;
 		this.setNoGravity(false);
 

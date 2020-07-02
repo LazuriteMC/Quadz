@@ -21,9 +21,9 @@ public class InputTick {
 
     public static void tick(DroneEntity drone, float delta) {
         if(shouldTick()) {
-            float currX = -Controller.getAxis(Controller.ROLL_NUM);
-            float currY = -Controller.getAxis(Controller.PITCH_NUM);
-            float currZ = -Controller.getAxis(Controller.YAW_NUM);
+            float currX = -Controller.getAxis(Controller.PITCH_NUM);
+            float currY = -Controller.getAxis(Controller.YAW_NUM);
+            float currZ = -Controller.getAxis(Controller.ROLL_NUM);
             float currT = Controller.getAxis(Controller.THROTTLE_NUM) + 1;
 
             float deltaX = prevX + (currX - prevX) * delta;
