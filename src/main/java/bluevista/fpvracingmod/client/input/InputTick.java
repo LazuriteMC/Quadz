@@ -19,12 +19,36 @@ public class InputTick {
     private static float prevZ;
     private static float prevT;
 
+
     public static void tick(DroneEntity drone, float delta) {
         if(shouldTick()) {
+
+            // Note: There's probably a better way of doing this, but yeah... it ignores input within the deadzone range
+
             float currX = -Controller.getAxis(Controller.PITCH_NUM);
             float currY = -Controller.getAxis(Controller.YAW_NUM);
             float currZ = -Controller.getAxis(Controller.ROLL_NUM);
             float currT = Controller.getAxis(Controller.THROTTLE_NUM) + 1;
+
+            if (Controller.DEADZONE != 0) {
+                float halfDeadzone = Controller.DEADZONE / 2.0f;
+
+                if (currX < halfDeadzone && currX > -halfDeadzone) {
+                    currX = 0.0f;
+                }
+
+                if (currY < halfDeadzone && currY > -halfDeadzone) {
+                    currY = 0.0f;
+                }
+
+                if (currZ < halfDeadzone && currZ > -halfDeadzone) {
+                    currZ = 0.0f;
+                }
+
+                if (currT < halfDeadzone && currT > -halfDeadzone) {
+                    currT = 0.0f;
+                }
+            }
 
             float deltaX = prevX + (currX - prevX) * delta;
             float deltaY = prevY + (currY - prevY) * delta;

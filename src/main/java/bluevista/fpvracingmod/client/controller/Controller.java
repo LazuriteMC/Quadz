@@ -15,6 +15,10 @@ public class Controller {
 	public static int PITCH_NUM;
 	public static int YAW_NUM;
 	public static int ROLL_NUM;
+	public static float DEADZONE;
+	public static float RATE;
+	public static float SUPER_RATE;
+	public static float EXPO;
 
 	public static void setControllerId(int controllerId) {
 		CONTROLLER_ID = controllerId;
@@ -34,6 +38,22 @@ public class Controller {
 
 	public static void setRoll(int rollChannel) {
 		ROLL_NUM = rollChannel;
+	}
+
+	public static void setDeadzone(float deadzone) {
+		DEADZONE = deadzone;
+	}
+
+	public static void setRate(float rate) {
+		RATE = rate;
+	}
+
+	public static void setSuperRate(float superRate) {
+		SUPER_RATE = superRate;
+	}
+
+	public static void setExpo(float expo) {
+		EXPO = expo;
 	}
 
 	public static float getAxis(int axis) {

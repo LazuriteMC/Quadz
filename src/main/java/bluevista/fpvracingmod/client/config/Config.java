@@ -45,6 +45,8 @@ public class Config {
                     String line = scanner.nextLine();
                     if (line.split("=").length == 2) {
                         values.put(line.split("=")[0], line.split("=")[1]);
+                    } else {
+                        values.put(line.split("=")[0], "0"); // default value, works for ints and floats
                     }
                 }
             } catch (FileNotFoundException e) {

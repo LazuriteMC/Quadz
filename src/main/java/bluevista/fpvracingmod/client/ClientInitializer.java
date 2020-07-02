@@ -22,7 +22,7 @@ public class ClientInitializer implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        config = new Config("fpvracing", new String[] {"controllerID", "throttle", "pitch", "yaw", "roll"});
+        config = new Config("fpvracing", new String[] {"controllerID",  "throttle", "pitch", "yaw", "roll", "deadzone", "rate", "superRate", "expo"});
 
         EntityRendererRegistry.INSTANCE.register(ServerInitializer.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
         ClientSidePacketRegistry.INSTANCE.register(new Identifier("fpvracing", "spawn_drone"), SpawnNetworkHandler::accept);
@@ -39,6 +39,10 @@ public class ClientInitializer implements ClientModInitializer {
             Controller.setPitch(Integer.parseInt(config.getValue("pitch")));
             Controller.setYaw(Integer.parseInt(config.getValue("yaw")));
             Controller.setRoll(Integer.parseInt(config.getValue("roll")));
+            Controller.setDeadzone(Float.parseFloat(config.getValue("deadzone")));
+            Controller.setRate(Float.parseFloat(config.getValue("rate")));
+            Controller.setSuperRate(Float.parseFloat(config.getValue("superRate")));
+            Controller.setExpo(Float.parseFloat(config.getValue("expo")));
         } catch (Exception e) {
             System.err.println("Error loading config");
             e.printStackTrace();
