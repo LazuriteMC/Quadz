@@ -12,7 +12,7 @@ import net.minecraft.network.PacketByteBuf;
 @Environment(EnvType.CLIENT)
 public class RemoveGogglesKeybinding {
     public static void callback(MinecraftClient mc) {
-        while (mc.options.keySneak.wasPressed()) {
+        if (mc.options.keySneak.wasPressed()) {
             if(mc.player.inventory.armor.get(3).getItem() instanceof GogglesItem) {
                 ClientSidePacketRegistry.INSTANCE.sendToServer(ServerInitializer.REMOVE_GOGGLES_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
             }
