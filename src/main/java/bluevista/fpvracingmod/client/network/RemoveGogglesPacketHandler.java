@@ -15,7 +15,9 @@ public class RemoveGogglesPacketHandler {
 
             if(context.getPlayer() != null) {
                 context.getPlayer().inventory.armor.get(3).decrement(1);
-                context.getPlayer().giveItemStack(new ItemStack(ServerInitializer.GOGGLES_ITEM));
+                if (!context.getPlayer().abilities.creativeMode) { // Fixes duplication of goggles when in creative
+                    context.getPlayer().giveItemStack(new ItemStack(ServerInitializer.GOGGLES_ITEM));
+                }
             }
         });
     }
