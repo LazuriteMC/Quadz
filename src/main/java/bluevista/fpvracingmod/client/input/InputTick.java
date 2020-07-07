@@ -19,16 +19,17 @@ public class InputTick {
     private static float prevZ;
     private static float prevT;
 
-
     public static void tick(DroneEntity drone, float delta) {
         if(shouldTick()) {
 
             // Note: There's probably a better way of doing this, but yeah... it ignores input within the deadzone range
 
-            float currX = -Controller.getAxis(Controller.PITCH_NUM);
-            float currY = -Controller.getAxis(Controller.YAW_NUM);
-            float currZ = -Controller.getAxis(Controller.ROLL_NUM);
-            float currT = Controller.getAxis(Controller.THROTTLE_NUM) + 1;
+            // order: axis, rate, expo, superRate
+
+            float currX = -Controller.getBetaflightAxis(Controller.PITCH_NUM, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE);
+            float currY = -Controller.getBetaflightAxis(Controller.YAW_NUM, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE);
+            float currZ = -Controller.getBetaflightAxis(Controller.ROLL_NUM, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE);
+            float currT = Controller.getBetaflightAxis(Controller.THROTTLE_NUM, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE) + 1;
 
             if (Controller.DEADZONE != 0) {
                 float halfDeadzone = Controller.DEADZONE / 2.0f;

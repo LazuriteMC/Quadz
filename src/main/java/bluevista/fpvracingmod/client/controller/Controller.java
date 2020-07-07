@@ -60,7 +60,7 @@ public class Controller {
 		return glfwGetJoystickAxes(CONTROLLER_ID).get(axis);
 	}
 
-	public float getBetaflightAxis(int axis, float rate, float expo, float superRate) { // logistic yo
+	public static float getBetaflightAxis(int axis, float rate, float expo, float superRate) { // logistic yo
 		return (float) BetaflightHelper.calculateRates(getAxis(axis), rate, expo, superRate) / 10;
 	}
 }
