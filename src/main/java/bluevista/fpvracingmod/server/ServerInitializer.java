@@ -6,9 +6,10 @@ import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
@@ -23,14 +24,14 @@ public class ServerInitializer implements ModInitializer {
 	public static final DroneSpawnerItem DRONE_SPAWNER_ITEM = new DroneSpawnerItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1));
 
 	public static final Identifier REMOVE_GOGGLES_PACKET_ID = new Identifier("fpvracing", "goggles");
-	public static EntityType<DroneEntity> DRONE_ENTITY;
+	public static EntityType<Entity> DRONE_ENTITY;
 
 	@Override
 	public void onInitialize() {
 		DRONE_ENTITY = Registry.register(
 				Registry.ENTITY_TYPE,
 				new Identifier("fpvracing", "drone_entity"),
-				FabricEntityTypeBuilder.create(SpawnGroup.MISC, DroneEntity::new).trackable(100, 1, true).size(new EntityDimensions(0.5F, 0.125F, true)).build() // modify later if needed to fit the model
+				FabricEntityTypeBuilder.create(SpawnGroup.MISC, DroneEntity::new).dimensions(EntityDimensions.fixed(0.5F, 0.125F)).trackable(80, 3, true).build()
 		);
 
 		Registry.register(Registry.ITEM, new Identifier("fpvracing", "goggles_item"), GOGGLES_ITEM);

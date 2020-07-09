@@ -9,6 +9,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
@@ -42,8 +43,12 @@ public class DroneEntity extends Entity {
 
 	private float throttle = 0.0f;
 
-	public DroneEntity(World worldIn) {
-		super(ServerInitializer.DRONE_ENTITY, worldIn);
+	public DroneEntity(EntityType<?> type, World world) {
+		this(world);
+	}
+
+	public DroneEntity(World world) {
+		super(ServerInitializer.DRONE_ENTITY, world);
 
 		this.orientation = new Quaternion(0, 1, 0, 0);
 
@@ -56,10 +61,6 @@ public class DroneEntity extends Entity {
 
 	@Override
 	public void tick() {
-		this.prevX = this.getX();
-		this.prevY = this.getY();
-		this.prevZ = this.getZ();
-
 		super.tick();
 //		System.out.println("Is Server?: " + isLogicalSideForUpdatingMovement());
 //		if(isLogicalSideForUpdatingMovement()) {
@@ -208,15 +209,15 @@ public class DroneEntity extends Entity {
 		return true;
 	}
 
-	@Override
-	public Box getCollisionBox() {
-		return super.getBoundingBox();
-	}
-
-	@Override
-	public Box getHardCollisionBox(Entity collidingEntity) {
-		return collidingEntity.isPushable() ? collidingEntity.getBoundingBox() : null;
-	}
+//	@Override
+//	public Box getCollisionBox() {
+//		return super.getBoundingBox();
+//	}
+//
+//	@Override
+//	public Box getHardCollisionBox(Entity collidingEntity) {
+//		return collidingEntity.isPushable() ? collidingEntity.getBoundingBox() : null;
+//	}
 
 	@Override
 	public boolean isPushable() {
