@@ -15,15 +15,10 @@ import net.minecraft.item.ItemStack;
 @Environment(EnvType.CLIENT)
 public class ClientTick {
 
-    private static ViewHandler view;
+    public static ViewHandler view;
     public static DroneEntity currentDrone;
 
     public static void tick(MinecraftClient mc) {
-        float delta = mc.getTickDelta();
-
-        if(view != null)
-            view.clientTick(delta);
-
         /*
          * Drone view and control logic
          */
