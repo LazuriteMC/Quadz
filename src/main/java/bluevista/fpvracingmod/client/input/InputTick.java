@@ -73,7 +73,7 @@ public class InputTick {
     }
 
     public static boolean shouldTick() {
-        return shouldTick && !mc.isPaused();
+        return false;//shouldTick && !mc.isPaused();
     }
 
 }

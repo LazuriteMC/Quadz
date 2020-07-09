@@ -4,6 +4,7 @@
   "package": "bluevista.fpvracingmod.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "SpawnMixin"
   ],
   "client": [
     "RenderMixin",

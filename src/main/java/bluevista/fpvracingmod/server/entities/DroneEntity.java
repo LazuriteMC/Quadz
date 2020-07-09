@@ -1,28 +1,32 @@
 package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
-import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.Text;
+import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.tag.BlockTags;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.crash.CrashException;
+import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.crash.CrashReportSection;
+import net.minecraft.util.math.*;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
@@ -38,14 +42,10 @@ public class DroneEntity extends Entity {
 
 	private float throttle = 0.0f;
 
-	private static final float gravity = -0.001F;
-
 	public DroneEntity(World worldIn) {
 		super(ServerInitializer.DRONE_ENTITY, worldIn);
 
 		this.orientation = new Quaternion(0, 1, 0, 0);
-		this.noClip = false;
-		this.setNoGravity(false);
 
 		Random random = new Random(); // testing only
 		band = random.nextInt(6) + 1; // 1 - 6
@@ -56,14 +56,24 @@ public class DroneEntity extends Entity {
 
 	@Override
 	public void tick() {
-//		this.prevPosX = this.posX;
-//		this.prevPosY = this.posY;
-//		this.prevPosZ = this.posZ;
-//		super.tick();
+		this.prevX = this.getX();
+		this.prevY = this.getY();
+		this.prevZ = this.getZ();
 
-//		this.addVelocity(0, gravity, 0);
-//		this.move(MovementType.PLAYER, this.getVelocity());
-//		this.setPos(getX() + velocity.getX(), getY() + velocity.getY(), getZ() + velocity.getZ());
+		super.tick();
+//		System.out.println("Is Server?: " + isLogicalSideForUpdatingMovement());
+//		if(isLogicalSideForUpdatingMovement()) {
+			this.setVelocity(0.1, 0, 0);
+//			this.updateTrackedPosition(getX(), getY(), getZ());
+//			this.addVelocity(1000, 0, 0);
+			this.move(MovementType.SELF, this.getVelocity());
+//		}
+
+//		System.out.println("X: " + this.getX());
+//		System.out.println("Y: " + this.getY());
+//		System.out.println("Z: " + this.getZ());
+//		System.out.println();
+//		this.setPos(getX() + getVelocity().getX(), getY() + getVelocity().getY(), getZ() + getVelocity().getZ());
 
 //		if(RenderHandler.isPlayerViewingDrone()) {
 //			Vector3f d = QuaternionHelper.rotationMatrixToVector(QuaternionHelper.quatToMatrix(getOrientation()));
@@ -101,18 +111,7 @@ public class DroneEntity extends Entity {
 
 	@Override
 	public Packet<?> createSpawnPacket() {
-		final PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-
-		buf.writeVarInt(this.getEntityId());
-		buf.writeUuid(this.uuid);
-		buf.writeVarInt(Registry.ENTITY_TYPE.getRawId(this.getType()));
-		buf.writeDouble(this.getX());
-		buf.writeDouble(this.getY());
-		buf.writeDouble(this.getZ());
-		buf.writeByte(MathHelper.floor(this.pitch * 256.0F / 360.0F));
-		buf.writeByte(MathHelper.floor(this.yaw * 256.0F / 360.0F));
-
-		return ServerSidePacketRegistry.INSTANCE.toPacket(new Identifier("fpvracing", "spawn_drone"), buf);
+		return new EntitySpawnS2CPacket(this);
 	}
 
 	public static DroneEntity getNearestTo(Entity entity) {
@@ -148,7 +147,7 @@ public class DroneEntity extends Entity {
 	public boolean damage(DamageSource source, float amount) {
 		if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
 //			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS))
-				this.dropItem(ServerInitializer.DRONE_SPAWNER_ITEM.asItem());
+			this.dropItem(ServerInitializer.DRONE_SPAWNER_ITEM.asItem());
 			this.remove();
 			return true;
 		}
@@ -196,6 +195,7 @@ public class DroneEntity extends Entity {
 
 	@Override
 	protected void initDataTracker() {
+
 	}
 
 	@Override
@@ -216,5 +216,14 @@ public class DroneEntity extends Entity {
 	@Override
 	public Box getHardCollisionBox(Entity collidingEntity) {
 		return collidingEntity.isPushable() ? collidingEntity.getBoundingBox() : null;
+	}
+
+	@Override
+	public boolean isPushable() {
+		return true;
+	}
+
+	@Override
+	protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
 	}
 }
