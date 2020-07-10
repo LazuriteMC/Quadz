@@ -9,7 +9,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 
 @Environment(EnvType.CLIENT)
 public class ClientInitializer implements ClientModInitializer {
@@ -18,17 +17,16 @@ public class ClientInitializer implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        config = new Config("fpvracing", new String[] {"controllerID",  "throttle", "pitch", "yaw", "roll", "deadzone", "rate", "superRate", "expo"});
+        RemoveGogglesKeybinding.register();
+        ClientTick.register();
 
-        EntityRendererRegistry.INSTANCE.register(ServerInitializer.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
-//        ClientSidePacketRegistry.INSTANCE.register(new Identifier("fpvracing", "spawn_drone"), SpawnNetworkHandler::accept);
-        ClientTickCallback.EVENT.register(ClientTick::tick);
-        ClientTickCallback.EVENT.register(RemoveGogglesKeybinding::callback);
-
+        registerRenderers();
         initControllerSettings();
     }
 
     private void initControllerSettings() {
+        config = new Config(ServerInitializer.MODID, new String[] {"controllerID",  "throttle", "pitch", "yaw", "roll", "deadzone", "rate", "superRate", "expo"});
+
         try {
             Controller.setControllerId(Integer.parseInt(config.getValue("controllerID")));
             Controller.setThrottle(Integer.parseInt(config.getValue("throttle")));
@@ -43,6 +41,10 @@ public class ClientInitializer implements ClientModInitializer {
             System.err.println("Error loading config");
             e.printStackTrace();
         }
+    }
+
+    private void registerRenderers() {
+        EntityRendererRegistry.INSTANCE.register(ServerInitializer.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
     }
 
     public static Config getConfig() {

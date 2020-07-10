@@ -2,10 +2,13 @@ package bluevista.fpvracingmod.client.input;
 
 import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
+import bluevista.fpvracingmod.client.network.InputPacketHandler;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
+import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.PacketByteBuf;
 
 @Environment(EnvType.CLIENT)
 public class InputTick {
@@ -17,19 +20,27 @@ public class InputTick {
     private static float prevX;
     private static float prevY;
     private static float prevZ;
-    private static float prevT;
 
     public static void tick(DroneEntity drone, float delta) {
         if(shouldTick()) {
 
             // Note: There's probably a better way of doing this, but yeah... it ignores input within the deadzone range
 
-            // order: axis, rate, expo, superRate
-
             float currX = -Controller.getBetaflightAxis(Controller.PITCH_NUM, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE);
             float currY = -Controller.getBetaflightAxis(Controller.YAW_NUM, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE);
             float currZ = -Controller.getBetaflightAxis(Controller.ROLL_NUM, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE);
             float currT = Controller.getBetaflightAxis(Controller.THROTTLE_NUM, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE) + 1;
+
+            PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+            buf.writeFloat(currT);
+            buf.writeUuid(drone.getUuid());
+            InputPacketHandler.send(buf);
+
+//            System.out.println(currX);
+//            System.out.println(currY);
+//            System.out.println(currZ);
+//            System.out.println(currT);
+//            System.out.println();
 
             if (Controller.DEADZONE != 0) {
                 float halfDeadzone = Controller.DEADZONE / 2.0f;
@@ -45,26 +56,20 @@ public class InputTick {
                 if (currZ < halfDeadzone && currZ > -halfDeadzone) {
                     currZ = 0.0f;
                 }
-
-                if (currT < halfDeadzone && currT > -halfDeadzone) {
-                    currT = 0.0f;
-                }
             }
 
             float deltaX = prevX + (currX - prevX) * delta;
             float deltaY = prevY + (currY - prevY) * delta;
             float deltaZ = prevZ + (currZ - prevZ) * delta;
-            float deltaT = prevT + (currT - prevT) * delta;
 
             drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
             drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
             drone.setOrientation(QuaternionHelper.rotateZ(drone.getOrientation(), deltaZ));
-            drone.setThrottle(deltaT);
+            drone.setThrottle(currT);
 
             prevX = currX;
             prevY = currY;
             prevZ = currZ;
-            prevT = currT;
         }
     }
 
@@ -73,7 +78,7 @@ public class InputTick {
     }
 
     public static boolean shouldTick() {
-        return false;//shouldTick && !mc.isPaused();
+        return shouldTick && !mc.isPaused();
     }
 
 }

@@ -7,6 +7,7 @@ import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
@@ -91,5 +92,9 @@ public class ClientTick {
     public static void resetView(MinecraftClient mc) {
         mc.setCameraEntity(null);
         view = null;
+    }
+
+    public static void register() {
+        ClientTickCallback.EVENT.register(ClientTick::tick);
     }
 }

@@ -13,6 +13,10 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandler;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
@@ -40,8 +44,7 @@ public class DroneEntity extends Entity {
 	private int band;
 	private int channel;
 	private Quaternion orientation;
-
-	private float throttle = 0.0f;
+	private float throttle;
 
 	public DroneEntity(EntityType<?> type, World world) {
 		this(world);
@@ -64,7 +67,7 @@ public class DroneEntity extends Entity {
 		super.tick();
 //		System.out.println("Is Server?: " + isLogicalSideForUpdatingMovement());
 //		if(isLogicalSideForUpdatingMovement()) {
-			this.setVelocity(0.1, 0, 0);
+			this.setVelocity(0.01*getThrottle(), 0, 0);
 //			this.updateTrackedPosition(getX(), getY(), getZ());
 //			this.addVelocity(1000, 0, 0);
 			this.move(MovementType.SELF, this.getVelocity());
@@ -196,7 +199,6 @@ public class DroneEntity extends Entity {
 
 	@Override
 	protected void initDataTracker() {
-
 	}
 
 	@Override
