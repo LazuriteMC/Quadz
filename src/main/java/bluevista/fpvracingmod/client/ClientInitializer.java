@@ -5,6 +5,7 @@ import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.input.RemoveGogglesKeybinding;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
+import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -25,7 +26,19 @@ public class ClientInitializer implements ClientModInitializer {
     }
 
     private void initControllerSettings() {
-        config = new Config(ServerInitializer.MODID, new String[] {"controllerID",  "throttle", "pitch", "yaw", "roll", "deadzone", "rate", "superRate", "expo"});
+        config = new Config(ServerInitializer.MODID, new String[] {
+                "controllerID",
+                "throttle",
+                "pitch",
+                "yaw",
+                "roll",
+                "deadzone",
+                "rate",
+                "superRate",
+                "expo",
+                "band",
+                "channel"
+        });
 
         try {
             Controller.setControllerId(Integer.parseInt(config.getValue("controllerID")));
@@ -37,6 +50,9 @@ public class ClientInitializer implements ClientModInitializer {
             Controller.setRate(Float.parseFloat(config.getValue("rate")));
             Controller.setSuperRate(Float.parseFloat(config.getValue("superRate")));
             Controller.setExpo(Float.parseFloat(config.getValue("expo")));
+
+            DroneEntity.setBand(Integer.parseInt(config.getValue("band")));
+            DroneEntity.setChannel(Integer.parseInt(config.getValue("channel")));
         } catch (Exception e) {
             System.err.println("Error loading config");
             e.printStackTrace();

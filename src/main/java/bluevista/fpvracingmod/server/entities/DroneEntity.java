@@ -20,13 +20,12 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class DroneEntity extends Entity {
 
-	private int band;
-	private int channel;
+	private static int band;
+	private static int channel;
 	private int cameraAngle;
 
 	private Quaternion orientation;
@@ -154,12 +153,20 @@ public class DroneEntity extends Entity {
 		return ActionResult.SUCCESS;
 	}
 
-	public void setChannel(int channel) {
-		this.channel = channel;
+	public static void setBand(int band) {
+		DroneEntity.band = band;
 	}
 
-	public int getChannel() {
-		return this.channel;
+	public static int getBand() {
+		return DroneEntity.band;
+	}
+
+	public static void setChannel(int channel) {
+		DroneEntity.channel = channel;
+	}
+
+	public static int getChannel() {
+		return DroneEntity.channel;
 	}
 
 	public Quaternion getOrientation() {
