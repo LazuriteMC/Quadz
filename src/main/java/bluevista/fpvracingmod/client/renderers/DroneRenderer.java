@@ -15,7 +15,6 @@ import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix4f;
-import net.minecraft.world.LightType;
 
 @Environment(EnvType.CLIENT)
 public class DroneRenderer extends EntityRenderer<DroneEntity> {
