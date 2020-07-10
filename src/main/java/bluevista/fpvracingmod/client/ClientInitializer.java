@@ -26,19 +26,7 @@ public class ClientInitializer implements ClientModInitializer {
     }
 
     private void initControllerSettings() {
-        config = new Config(ServerInitializer.MODID, new String[] {
-                "controllerID",
-                "throttle",
-                "pitch",
-                "yaw",
-                "roll",
-                "deadzone",
-                "rate",
-                "superRate",
-                "expo",
-                "band",
-                "channel"
-        });
+        config = new Config(ServerInitializer.MODID);
 
         try {
             Controller.setControllerId(Integer.parseInt(config.getValue("controllerID")));
@@ -48,11 +36,11 @@ public class ClientInitializer implements ClientModInitializer {
             Controller.setRoll(Integer.parseInt(config.getValue("roll")));
             Controller.setDeadzone(Float.parseFloat(config.getValue("deadzone")));
             Controller.setRate(Float.parseFloat(config.getValue("rate")));
-            Controller.setSuperRate(Float.parseFloat(config.getValue("superRate")));
+            Controller.setSuperRate(Float.parseFloat(config.getValue("super_rate")));
             Controller.setExpo(Float.parseFloat(config.getValue("expo")));
 
-            DroneEntity.setBand(Integer.parseInt(config.getValue("band")));
-            DroneEntity.setChannel(Integer.parseInt(config.getValue("channel")));
+            DroneEntity.setBand(Integer.parseInt(config.getValue("drone_band")));
+            DroneEntity.setChannel(Integer.parseInt(config.getValue("drone_channel")));
         } catch (Exception e) {
             System.err.println("Error loading config");
             e.printStackTrace();

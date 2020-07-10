@@ -1,5 +1,7 @@
 package bluevista.fpvracingmod.client.config;
 
+import com.google.common.io.Files;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -9,21 +11,15 @@ import java.util.Scanner;
 
 public class Config {
 
+    private static final File defaultConfig = new File("resources/fpvracing.cfg");
+
     private final File file;
     private final HashMap<String, String> values;
 
-    public Config(String configName, String[] keys) {
+    public Config(String configName) {
         this.file = new File("config/" + configName + ".cfg");
         this.values = new HashMap<>();
-        createFileIfNotFound();
-        safeWriteValues(file.getPath(), keys);
-        readValues();
-    }
-
-    public Config(String filename) {
-        this.file = new File(filename);
-        this.values = new HashMap<>();
-        createFileIfNotFound();
+        copyFileIfNotFound();
         readValues();
     }
 
@@ -31,6 +27,16 @@ public class Config {
         try {
             if (!file.exists()) {
                 file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void copyFileIfNotFound() {
+        try {
+            if(!file.exists()) {
+                Files.copy(defaultConfig, file);
             }
         } catch (IOException e) {
             e.printStackTrace();
