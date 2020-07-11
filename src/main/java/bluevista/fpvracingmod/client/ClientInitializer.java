@@ -6,6 +6,7 @@ import bluevista.fpvracingmod.client.input.RemoveGogglesKeybinding;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
+import bluevista.fpvracingmod.server.items.GogglesItem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -38,9 +39,6 @@ public class ClientInitializer implements ClientModInitializer {
             Controller.setRate(Float.parseFloat(config.getValue("rate")));
             Controller.setSuperRate(Float.parseFloat(config.getValue("super_rate")));
             Controller.setExpo(Float.parseFloat(config.getValue("expo")));
-
-            DroneEntity.setBand(Integer.parseInt(config.getValue("drone_band")));
-            DroneEntity.setChannel(Integer.parseInt(config.getValue("drone_channel")));
         } catch (Exception e) {
             System.err.println("Error loading config");
             e.printStackTrace();

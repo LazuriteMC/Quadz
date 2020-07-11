@@ -24,10 +24,6 @@ import java.util.UUID;
 
 public class DroneEntity extends Entity {
 
-	private static int band;
-	private static int channel;
-	private int cameraAngle;
-
 	private Quaternion orientation;
 	private float throttle;
 
@@ -40,9 +36,9 @@ public class DroneEntity extends Entity {
 
 		this.orientation = new Quaternion(0, 1, 0, 0);
 
-		band = random.nextInt(6) + 1; // 1 - 6
-		channel = random.nextInt(8) + 1; // 1 - 8
-		cameraAngle = 20;
+//		band = random.nextInt(6) + 1; // 1 - 6
+//		channel = random.nextInt(8) + 1; // 1 - 8
+//		cameraAngle = 20;
 	}
 
 	@Override
@@ -72,16 +68,16 @@ public class DroneEntity extends Entity {
 
 	@Override
 	protected void readCustomDataFromTag(CompoundTag tag) {
-		band = tag.getInt("band");
-		channel = tag.getInt("channel");
-		cameraAngle = tag.getInt("camera_angle");
+//		band = tag.getInt("band");
+//		channel = tag.getInt("channel");
+//		cameraAngle = tag.getInt("camera_angle");
 	}
 
 	@Override
 	protected void writeCustomDataToTag(CompoundTag tag) {
-		tag.putInt("band", band);
-		tag.putInt("channel", channel);
-		tag.putInt("camera_angle", cameraAngle);
+//		tag.putInt("band", band);
+//		tag.putInt("channel", channel);
+//		tag.putInt("camera_angle", cameraAngle);
 	}
 
 	@Override
@@ -151,22 +147,6 @@ public class DroneEntity extends Entity {
 		}
 
 		return ActionResult.SUCCESS;
-	}
-
-	public static void setBand(int band) {
-		DroneEntity.band = band;
-	}
-
-	public static int getBand() {
-		return DroneEntity.band;
-	}
-
-	public static void setChannel(int channel) {
-		DroneEntity.channel = channel;
-	}
-
-	public static int getChannel() {
-		return DroneEntity.channel;
 	}
 
 	public Quaternion getOrientation() {
