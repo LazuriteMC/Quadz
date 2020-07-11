@@ -1,7 +1,7 @@
 package bluevista.fpvracingmod.client.input;
 
 import bluevista.fpvracingmod.client.controller.Controller;
-import bluevista.fpvracingmod.client.math.helper.QuaternionHelper;
+import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.client.network.InputPacketHandler;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import io.netty.buffer.Unpooled;

@@ -1,7 +1,6 @@
 package bluevista.fpvracingmod.client.controller;
 
-import bluevista.fpvracingmod.client.ClientInitializer;
-import bluevista.fpvracingmod.client.math.helper.BetaflightHelper;
+import bluevista.fpvracingmod.client.math.BetaflightHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 

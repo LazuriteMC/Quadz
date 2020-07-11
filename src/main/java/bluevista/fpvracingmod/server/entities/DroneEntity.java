@@ -1,5 +1,7 @@
 package bluevista.fpvracingmod.server.entities;
 
+import bluevista.fpvracingmod.client.math.MatrixInjection;
+import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.minecraft.block.BlockState;
@@ -45,14 +47,12 @@ public class DroneEntity extends Entity {
 	public void tick() {
 		super.tick();
 
-		this.setVelocity(0.01*getThrottle(), 0, 0);
+		Vec3d d = MatrixInjection.from(new Matrix4f(getOrientation())).matrixToVector();
+		this.addVelocity(d.getY() * throttle / 5, d.getX() * throttle / 5, d.getZ() * throttle / 5);
 		this.move(MovementType.SELF, this.getVelocity());
 
 //		if(RenderHandler.isPlayerViewingDrone()) {
-//			Vector3f d = QuaternionHelper.rotationMatrixToVector(QuaternionHelper.quatToMatrix(getOrientation()));
-//			this.addVelocity(d.getY() * throttle / 5, d.getX() * throttle / 5, d.getZ() * throttle / 5);
 //			this.move(MoverType.SELF, this.getMotion());
-//
 
 		// Player movement things...
 //			if(!world.isRemote) {
