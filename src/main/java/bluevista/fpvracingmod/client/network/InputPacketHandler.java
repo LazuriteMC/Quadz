@@ -8,7 +8,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
@@ -23,8 +22,8 @@ public class InputPacketHandler {
         UUID droneID = buffer.readUuid();
 
         context.getTaskQueue().execute(() -> {
-            PlayerEntity player = context.getPlayer();
-            DroneEntity drone = DroneEntity.getByUuid(player, droneID);
+            DroneEntity drone = null;
+            if(context.getPlayer() != null) drone = DroneEntity.getByUuid(context.getPlayer(), droneID);
             if(drone != null) drone.setThrottle(throttle);
         });
     }

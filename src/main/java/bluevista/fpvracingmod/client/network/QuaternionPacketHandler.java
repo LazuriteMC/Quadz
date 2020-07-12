@@ -28,8 +28,9 @@ public class QuaternionPacketHandler {
         UUID droneID = buffer.readUuid();
 
         context.getTaskQueue().execute(() -> {
-            DroneEntity drone = DroneEntity.getByUuid(context.getPlayer(), droneID);
-            drone.setOrientation(orientation);
+            DroneEntity drone = null;
+            if(context.getPlayer() != null) drone = DroneEntity.getByUuid(context.getPlayer(), droneID);
+            if(drone != null) drone.setOrientation(orientation);
         });
     }
 
