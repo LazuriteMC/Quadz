@@ -8,35 +8,41 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Quaternion;
 
 import java.util.UUID;
 
 @Environment(EnvType.CLIENT)
-public class InputPacketHandler {
-    public static final Identifier INPUT_PACKET_ID = new Identifier(ServerInitializer.MODID, "input_packet");
+public class QuaternionPacketHandler {
+    public static final Identifier QUATERNION_PACKET_ID = new Identifier(ServerInitializer.MODID, "quaternion_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buffer) {
-        float throttle = buffer.readFloat();
+        Quaternion orientation = new Quaternion(
+                buffer.readFloat(),
+                buffer.readFloat(),
+                buffer.readFloat(),
+                buffer.readFloat()
+        );
         UUID droneID = buffer.readUuid();
 
         context.getTaskQueue().execute(() -> {
-            PlayerEntity player = context.getPlayer();
-            DroneEntity drone = DroneEntity.getByUuid(player, droneID);
-            if(drone != null) drone.setThrottle(throttle);
+            DroneEntity drone = DroneEntity.getByUuid(context.getPlayer(), droneID);
+            drone.setOrientation(orientation);
         });
     }
 
-    public static void send(float throttle, DroneEntity drone) {
+    public static void send(Quaternion q, DroneEntity drone) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeFloat(throttle);
+        buf.writeFloat(q.getX());
+        buf.writeFloat(q.getY());
+        buf.writeFloat(q.getZ());
+        buf.writeFloat(q.getW());
         buf.writeUuid(drone.getUuid());
-        ClientSidePacketRegistry.INSTANCE.sendToServer(INPUT_PACKET_ID, buf);
+        ClientSidePacketRegistry.INSTANCE.sendToServer(QUATERNION_PACKET_ID, buf);
     }
-
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(INPUT_PACKET_ID, InputPacketHandler::accept);
+        ServerSidePacketRegistry.INSTANCE.register(QUATERNION_PACKET_ID, QuaternionPacketHandler::accept);
     }
 }

@@ -2,8 +2,10 @@ package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.math.MatrixInjection;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
+import bluevista.fpvracingmod.client.network.QuaternionPacketHandler;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
+import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -13,6 +15,7 @@ import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -35,20 +38,18 @@ public class DroneEntity extends Entity {
 
 	public DroneEntity(World world) {
 		super(ServerInitializer.DRONE_ENTITY, world);
-
 		this.orientation = new Quaternion(0, 1, 0, 0);
-
-//		band = random.nextInt(6) + 1; // 1 - 6
-//		channel = random.nextInt(8) + 1; // 1 - 8
-//		cameraAngle = 20;
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
 
+		if(this.world.isClient())
+			QuaternionPacketHandler.send(this.getOrientation(), this);
+
 		Vec3d d = MatrixInjection.from(new Matrix4f(getOrientation())).matrixToVector();
-		this.addVelocity(d.getY() * throttle / 5, d.getX() * throttle / 5, d.getZ() * throttle / 5);
+		this.addVelocity(d.getY() * throttle / 500, d.getX() * throttle / 500, d.getZ() * throttle / 500);
 		this.move(MovementType.SELF, this.getVelocity());
 
 //		if(RenderHandler.isPlayerViewingDrone()) {

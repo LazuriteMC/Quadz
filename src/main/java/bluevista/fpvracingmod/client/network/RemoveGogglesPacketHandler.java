@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class RemoveGogglesPacketHandler {
-    public static final Identifier REMOVE_GOGGLES_PACKET_ID = new Identifier(ServerInitializer.MODID, "goggles");
+    public static final Identifier REMOVE_GOGGLES_PACKET_ID = new Identifier(ServerInitializer.MODID, "goggles_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buffer) {
         context.getTaskQueue().execute(() -> {

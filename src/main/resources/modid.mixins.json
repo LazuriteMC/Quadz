@@ -8,7 +8,8 @@
   ],
   "client": [
     "RenderMixin",
-    "RenderHandMixin"
+    "RenderHandMixin",
+    "MatrixMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -4,11 +4,9 @@ import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.client.network.InputPacketHandler;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
-import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.PacketByteBuf;
 
 @Environment(EnvType.CLIENT)
 public class InputTick {
@@ -31,16 +29,7 @@ public class InputTick {
             float currZ = -Controller.getBetaflightAxis(Controller.ROLL_NUM, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE);
             float currT = Controller.getBetaflightAxis(Controller.THROTTLE_NUM, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE) + 1;
 
-            PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-            buf.writeFloat(currT);
-            buf.writeUuid(drone.getUuid());
-            InputPacketHandler.send(buf);
-
-//            System.out.println(currX);
-//            System.out.println(currY);
-//            System.out.println(currZ);
-//            System.out.println(currT);
-//            System.out.println();
+            InputPacketHandler.send(currT, drone);
 
             if (Controller.DEADZONE != 0) {
                 float halfDeadzone = Controller.DEADZONE / 2.0f;
