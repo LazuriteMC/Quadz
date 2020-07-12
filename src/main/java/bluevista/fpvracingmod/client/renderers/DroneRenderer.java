@@ -4,7 +4,6 @@ import bluevista.fpvracingmod.client.models.DroneModel;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -15,6 +14,8 @@ import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vec3d;
+import org.lwjgl.opengl.GL11;
 
 @Environment(EnvType.CLIENT)
 public class DroneRenderer extends EntityRenderer<DroneEntity> {
@@ -31,7 +32,7 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
         matrixStack.push();
         matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(270.0F - f)); // rotates 90 CCW
 
-        matrixStack.scale(-1.0F, -1.0F, -1.0F); // makes a chonky cow (change -3.0 to -1.0 to revert chonkiness)
+        matrixStack.scale(-1.0F, -1.0F, -1.0F);
         matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90.0F));
 
         Matrix4f newMat = new Matrix4f(droneEntity.getOrientation());

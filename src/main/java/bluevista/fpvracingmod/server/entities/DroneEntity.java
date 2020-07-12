@@ -2,6 +2,7 @@ package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.math.MatrixInjection;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
+import bluevista.fpvracingmod.client.network.InputPacketHandler;
 import bluevista.fpvracingmod.client.network.QuaternionPacketHandler;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -45,11 +46,13 @@ public class DroneEntity extends Entity {
 	public void tick() {
 		super.tick();
 
-		if(this.world.isClient())
+		if(this.world.isClient()) {
 			QuaternionPacketHandler.send(this.getOrientation(), this);
+			InputPacketHandler.send(this.throttle, this);
+		}
 
-		Vec3d d = MatrixInjection.from(new Matrix4f(getOrientation())).matrixToVector();
-		this.addVelocity(d.getY() * throttle / 500, d.getX() * throttle / 500, d.getZ() * throttle / 500);
+		Vec3d d = getThrustVector();
+		this.addVelocity(d.getY() * (throttle / 1000), d.getX() * (throttle / 1000), d.getZ() * (throttle / 1000));
 		this.move(MovementType.SELF, this.getVelocity());
 
 //		if(RenderHandler.isPlayerViewingDrone()) {
@@ -84,6 +87,12 @@ public class DroneEntity extends Entity {
 	@Override
 	public Packet<?> createSpawnPacket() {
 		return new EntitySpawnS2CPacket(this);
+	}
+
+	public Vec3d getThrustVector() {
+		Matrix4f mat = new Matrix4f(getOrientation());
+		mat.transpose();
+		return MatrixInjection.from(mat).matrixToVector();
 	}
 
 	public static DroneEntity getNearestTo(Entity entity) {

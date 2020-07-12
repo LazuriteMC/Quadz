@@ -29,8 +29,6 @@ public class InputTick {
             float currZ = -Controller.getBetaflightAxis(Controller.ROLL_NUM, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE);
             float currT = Controller.getBetaflightAxis(Controller.THROTTLE_NUM, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE) + 1;
 
-            InputPacketHandler.send(currT, drone);
-
             if (Controller.DEADZONE != 0) {
                 float halfDeadzone = Controller.DEADZONE / 2.0f;
 
