@@ -78,7 +78,7 @@ public class ClientTick {
     /*
      * Well?? Should u????
      */
-    public static boolean shouldRenderHand() {
+    public static boolean shouldRender() {
         return view == null;
     }
 

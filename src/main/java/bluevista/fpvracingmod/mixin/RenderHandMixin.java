@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class RenderHandMixin {
 	@Inject(at = @At("HEAD"), method = "renderHand", cancellable = true)
 	public void renderHand(MatrixStack matrices, Camera camera, float tickDelta, CallbackInfo info) {
-		if(!ClientTick.shouldRenderHand()) {
+		if(!ClientTick.shouldRender()) {
 			info.cancel();
 		}
 	}
