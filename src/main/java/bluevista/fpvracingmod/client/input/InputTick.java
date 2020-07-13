@@ -19,8 +19,11 @@ public class InputTick {
     private static float prevY;
     private static float prevZ;
 
+    private static float previousDelta;
+
     public static void tick(DroneEntity drone, float delta) {
         if(shouldTick()) {
+            float correction;
 
             // Note: There's probably a better way of doing this, but yeah... it ignores input within the deadzone range
 
@@ -45,9 +48,15 @@ public class InputTick {
                 }
             }
 
-            float deltaX = prevX + (currX - prevX) * delta;
-            float deltaY = prevY + (currY - prevY) * delta;
-            float deltaZ = prevZ + (currZ - prevZ) * delta;
+            if (delta < previousDelta) {
+                correction = 1 + delta - previousDelta;
+            } else {
+                correction = delta - previousDelta;
+            }
+
+            float deltaX = (prevX + currX - prevX) * correction;
+            float deltaY = (prevY + currY - prevY) * correction;
+            float deltaZ = (prevZ + currZ - prevZ) * correction;
 
             drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
             drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
@@ -57,6 +66,7 @@ public class InputTick {
             prevX = currX;
             prevY = currY;
             prevZ = currZ;
+            previousDelta = delta;
         }
     }
 
