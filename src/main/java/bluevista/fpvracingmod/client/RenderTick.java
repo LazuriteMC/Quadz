@@ -31,6 +31,6 @@ public class RenderTick {
             ClientTick.view.clientTick(delta);
 
         if(ClientTick.currentDrone != null)
-            InputTick.tick(ClientTick.currentDrone, delta);
+            InputTick.tick(ClientTick.currentDrone);
     }
 }

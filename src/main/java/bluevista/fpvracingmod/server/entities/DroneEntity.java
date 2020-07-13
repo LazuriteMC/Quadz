@@ -1,12 +1,10 @@
 package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.math.MatrixInjection;
-import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.client.network.InputPacketHandler;
 import bluevista.fpvracingmod.client.network.QuaternionPacketHandler;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
-import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -16,7 +14,6 @@ import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -52,7 +49,8 @@ public class DroneEntity extends Entity {
 		}
 
 		Vec3d d = getThrustVector();
-		this.addVelocity(d.getY() * (throttle / 1000), d.getX() * (throttle / 1000), d.getZ() * (throttle / 1000));
+		this.addVelocity(0, -0.2, 0);
+		this.addVelocity(d.getY() * (throttle), d.getX() * (throttle), d.getZ() * (throttle));
 		this.move(MovementType.SELF, this.getVelocity());
 
 //		if(RenderHandler.isPlayerViewingDrone()) {
@@ -91,7 +89,7 @@ public class DroneEntity extends Entity {
 
 	public Vec3d getThrustVector() {
 		Matrix4f mat = new Matrix4f(getOrientation());
-		mat.transpose();
+//		mat.transpose();
 		return MatrixInjection.from(mat).matrixToVector();
 	}
 
