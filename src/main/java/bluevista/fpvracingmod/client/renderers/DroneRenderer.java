@@ -2,6 +2,7 @@ package bluevista.fpvracingmod.client.renderers;
 
 import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.client.models.DroneModel;
+import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,13 +16,11 @@ import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
 
 @Environment(EnvType.CLIENT)
 public class DroneRenderer extends EntityRenderer<DroneEntity> {
 
-    private static final Identifier droneTexture = new Identifier("fpvracing", "textures/entity/drone.png");
+    private static final Identifier droneTexture = new Identifier(ServerInitializer.MODID, "textures/entity/drone.png");
     private static final DroneModel model = new DroneModel();
 
     public DroneRenderer(EntityRenderDispatcher dispatcher) {
@@ -33,19 +32,20 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
         if(ClientTick.shouldRender()) {
             this.shadowRadius = 0.2F;
             matrixStack.push();
-            matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(270.0F - f)); // rotates 90 CCW
 
             matrixStack.scale(-1.0F, -1.0F, -1.0F);
-            matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90.0F));
 
             Matrix4f newMat = new Matrix4f(droneEntity.getOrientation());
             Matrix4f screenMat = matrixStack.peek().getModel();
             newMat.transpose();
+            newMat.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180F));
             newMat.invert();
             screenMat.multiply(newMat);
 
             matrixStack.translate(0.0D, -1.5D, 0.0D);
-            this.model.setAngles(droneEntity, g, 0.0F, -0.1F, 0.0F, 0.0F);
+
+            // this literally does nothing???
+            //this.model.setAngles(droneEntity, g, 0.0F, -0.1F, 0.0F, 0.0F);
             VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(this.getTexture(droneEntity)));
             this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
             matrixStack.pop();

@@ -18,7 +18,7 @@ public class BetaflightHelper {
 	        angleRate *= rcSuperFactor;
 	    }
 
-	    return angleRate * 10;
+	    return angleRate;
 	}
 	
     private static double clamp(double n, double minn, double maxn) {

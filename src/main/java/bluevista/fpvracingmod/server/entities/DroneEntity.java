@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.math.MatrixInjection;
+import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.client.network.InputPacketHandler;
 import bluevista.fpvracingmod.client.network.QuaternionPacketHandler;
 import bluevista.fpvracingmod.server.ServerInitializer;
