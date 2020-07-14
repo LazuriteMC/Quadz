@@ -26,10 +26,11 @@ public class ClientTick {
         if (mc.player != null) {
             InputTick.setShouldTick(false);
             if(isWearingGoggles(mc.player) || isHoldingTransmitter(mc.player)) {
-                if(mc.getCameraEntity() instanceof ViewHandler &&
-                        ((ViewHandler) mc.getCameraEntity()).getTarget() instanceof DroneEntity)
+                if(mc.getCameraEntity() instanceof ViewHandler && ((ViewHandler) mc.getCameraEntity()).getTarget() instanceof DroneEntity) {
                     currentDrone = (DroneEntity) ((ViewHandler) mc.getCameraEntity()).getTarget();
-                else currentDrone = DroneEntity.getNearestTo(mc.player);
+                } else {
+                    currentDrone = DroneEntity.getNearestTo(mc.player);
+                }
 
                 if(currentDrone != null) {
                     if(isWearingGoggles(mc.player))

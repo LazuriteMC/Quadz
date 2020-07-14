@@ -60,6 +60,6 @@ public class Controller {
 	}
 
 	public static float getBetaflightAxis(int axis, float rate, float expo, float superRate) { // logistic yo
-		return (float) BetaflightHelper.calculateRates(getAxis(axis), rate, expo, superRate) / 10;
+		return (float) BetaflightHelper.calculateRates(getAxis(axis), rate, expo, superRate);
 	}
 }
