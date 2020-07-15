@@ -30,6 +30,7 @@ public class DroneEntity extends Entity {
 
 	private Quaternion orientation;
 	private float throttle;
+	private float cameraAngle;
 
 	public DroneEntity(EntityType<?> type, World world) {
 		this(world);
@@ -50,8 +51,9 @@ public class DroneEntity extends Entity {
 		}
 
 		Vec3d d = getThrustVector();
-		this.addVelocity(0, -0.2, 0);
-		this.addVelocity(d.getY() * (throttle), d.getX() * (throttle), d.getZ() * (throttle));
+
+		this.addVelocity(0, -0.04, 0);
+		this.addVelocity(d.getX() * (throttle), -d.getY() * (throttle), d.getZ() * (throttle));
 		this.move(MovementType.SELF, this.getVelocity());
 
 //		if(RenderHandler.isPlayerViewingDrone()) {
@@ -89,9 +91,29 @@ public class DroneEntity extends Entity {
 	}
 
 	public Vec3d getThrustVector() {
-		Matrix4f mat = new Matrix4f(getOrientation());
+		Quaternion q = new Quaternion(getOrientation());
+		QuaternionHelper.rotateX(q, 90);
+//		Vec3d v = new Vec3d(
+//				-(2 * (q.getX()*q.getY() - q.getW()*q.getZ())),
+//				(1 - 2 * (q.getX()*q.getX() + q.getZ()*q.getZ())),
+//				-(2 * (q.getY()*q.getZ() + q.getW()*q.getX()))
+//				);
+//		return v;
+
+		Matrix4f mat = new Matrix4f();
+		MatrixInjection.from(mat).fromQuaternion(q);
+//		mat.transpose();
+
+//		return new Vec3d(
+//				2 * (q.getX()*q.getZ() + q.getW()*q.getY()),
+//				2 * (q.getY()*q.getZ() - q.getW()*q.getX()),
+//				1 - 2 * (q.getX()*q.getX() + q.getY()*q.getY())
+//		);
+
+//		Matrix4f mat = new Matrix4f(getOrientation());
 //		mat.transpose();
 		return MatrixInjection.from(mat).matrixToVector();
+//		return QuaternionHelper.toEulerAngles(q);
 	}
 
 	public static DroneEntity getNearestTo(Entity entity) {

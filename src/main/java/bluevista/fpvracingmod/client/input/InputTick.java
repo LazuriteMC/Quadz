@@ -24,7 +24,7 @@ public class InputTick {
             float currX = -Controller.getAxis(Controller.PITCH_NUM);
             float currY = -Controller.getAxis(Controller.YAW_NUM);
             float currZ = -Controller.getAxis(Controller.ROLL_NUM);
-            float currT = Controller.getAxis(Controller.THROTTLE_NUM) + 1;
+            float currT = (Controller.getAxis(Controller.THROTTLE_NUM) + 1) / 25;
 
             // Note: There's probably a better way of doing this, but yeah... it ignores input within the deadzone range
             if (Controller.DEADZONE != 0) {
@@ -50,7 +50,7 @@ public class InputTick {
             drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
             drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
             drone.setOrientation(QuaternionHelper.rotateZ(drone.getOrientation(), deltaZ));
-            //drone.setThrottle(currT);
+            drone.setThrottle(currT);
 
             prevTime = System.currentTimeMillis();
         }
