@@ -42,6 +42,8 @@ public class ClientTick {
 
             if(!isWearingGoggles(mc.player) && mc.getCameraEntity() instanceof ViewHandler)
                 resetView(mc);
+        } else {
+            resetView(mc);
         }
     }
 
