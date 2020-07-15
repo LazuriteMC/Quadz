@@ -39,6 +39,9 @@ public class ClientInitializer implements ClientModInitializer {
             Controller.setRate(Float.parseFloat(config.getValue("rate")));
             Controller.setSuperRate(Float.parseFloat(config.getValue("super_rate")));
             Controller.setExpo(Float.parseFloat(config.getValue("expo")));
+            Controller.setInvertPitch(Integer.parseInt(config.getValue("invertPitch")));
+            Controller.setInvertYaw(Integer.parseInt(config.getValue("invertYaw")));
+            Controller.setInvertRoll(Integer.parseInt(config.getValue("invertRoll")));
         } catch (Exception e) {
             System.err.println("Error loading config");
             e.printStackTrace();

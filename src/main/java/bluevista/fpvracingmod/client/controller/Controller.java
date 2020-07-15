@@ -18,6 +18,9 @@ public class Controller {
 	public static float RATE;
 	public static float SUPER_RATE;
 	public static float EXPO;
+	public static int INVERT_PITCH;
+	public static int INVERT_YAW;
+	public static int INVERT_ROLL;
 
 	public static void setControllerId(int controllerId) {
 		CONTROLLER_ID = controllerId;
@@ -53,6 +56,18 @@ public class Controller {
 
 	public static void setExpo(float expo) {
 		EXPO = expo;
+	}
+
+	public static void setInvertPitch(int invertPitch) {
+		INVERT_PITCH = invertPitch;
+	}
+
+	public static void setInvertYaw(int invertYaw) {
+		INVERT_YAW = invertYaw;
+	}
+
+	public static void setInvertRoll(int invertRoll) {
+		INVERT_ROLL = invertRoll;
 	}
 
 	public static float getAxis(int axis) {

@@ -26,6 +26,18 @@ public class InputTick {
             float currZ = -Controller.getAxis(Controller.ROLL_NUM);
             float currT = Controller.getAxis(Controller.THROTTLE_NUM) + 1;
 
+            if (Controller.INVERT_PITCH == 1) {
+                currX *= -1;
+            }
+
+            if (Controller.INVERT_YAW == 1) {
+                currY *= -1;
+            }
+
+            if (Controller.INVERT_ROLL == 1) {
+                currZ *= -1;
+            }
+
             // Note: There's probably a better way of doing this, but yeah... it ignores input within the deadzone range
             if (Controller.DEADZONE != 0) {
                 float halfDeadzone = Controller.DEADZONE / 2.0f;
