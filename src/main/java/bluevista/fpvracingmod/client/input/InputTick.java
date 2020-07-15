@@ -24,7 +24,7 @@ public class InputTick {
             float currX = -Controller.getAxis(Controller.PITCH_NUM);
             float currY = -Controller.getAxis(Controller.YAW_NUM);
             float currZ = -Controller.getAxis(Controller.ROLL_NUM);
-            float currT = (Controller.getAxis(Controller.THROTTLE_NUM) + 1) / 25;
+            float currT = (Controller.getAxis(Controller.THROTTLE_NUM) + 1) / 15;
 
             if (Controller.INVERT_PITCH == 1) {
                 currX *= -1;
