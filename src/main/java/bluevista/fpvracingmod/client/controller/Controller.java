@@ -15,9 +15,11 @@ public class Controller {
 	public static int YAW_NUM;
 	public static int ROLL_NUM;
 	public static float DEADZONE;
+	public static int THROTTLE_CENTER_POSITION;
 	public static float RATE;
 	public static float SUPER_RATE;
 	public static float EXPO;
+	public static int INVERT_THROTTLE;
 	public static int INVERT_PITCH;
 	public static int INVERT_YAW;
 	public static int INVERT_ROLL;
@@ -46,6 +48,10 @@ public class Controller {
 		DEADZONE = deadzone;
 	}
 
+	public static void setThrottleCenterPosition(int throttleCenterPosition) {
+		THROTTLE_CENTER_POSITION = throttleCenterPosition;
+	}
+
 	public static void setRate(float rate) {
 		RATE = rate;
 	}
@@ -56,6 +62,10 @@ public class Controller {
 
 	public static void setExpo(float expo) {
 		EXPO = expo;
+	}
+
+	public static void setInvertThrottle(int invertThrottle) {
+		INVERT_THROTTLE = invertThrottle;
 	}
 
 	public static void setInvertPitch(int invertPitch) {
