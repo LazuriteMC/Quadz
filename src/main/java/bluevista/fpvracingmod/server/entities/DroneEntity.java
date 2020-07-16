@@ -39,6 +39,7 @@ public class DroneEntity extends Entity {
 	public DroneEntity(World world) {
 		super(ServerInitializer.DRONE_ENTITY, world);
 		this.orientation = new Quaternion(0, 1, 0, 0);
+		this.cameraAngle = 20;
 	}
 
 	@Override
@@ -93,27 +94,11 @@ public class DroneEntity extends Entity {
 	public Vec3d getThrustVector() {
 		Quaternion q = new Quaternion(getOrientation());
 		QuaternionHelper.rotateX(q, 90);
-//		Vec3d v = new Vec3d(
-//				-(2 * (q.getX()*q.getY() - q.getW()*q.getZ())),
-//				(1 - 2 * (q.getX()*q.getX() + q.getZ()*q.getZ())),
-//				-(2 * (q.getY()*q.getZ() + q.getW()*q.getX()))
-//				);
-//		return v;
 
 		Matrix4f mat = new Matrix4f();
 		MatrixInjection.from(mat).fromQuaternion(q);
-//		mat.transpose();
 
-//		return new Vec3d(
-//				2 * (q.getX()*q.getZ() + q.getW()*q.getY()),
-//				2 * (q.getY()*q.getZ() - q.getW()*q.getX()),
-//				1 - 2 * (q.getX()*q.getX() + q.getY()*q.getY())
-//		);
-
-//		Matrix4f mat = new Matrix4f(getOrientation());
-//		mat.transpose();
 		return MatrixInjection.from(mat).matrixToVector();
-//		return QuaternionHelper.toEulerAngles(q);
 	}
 
 	public static DroneEntity getNearestTo(Entity entity) {
@@ -186,6 +171,10 @@ public class DroneEntity extends Entity {
 
 	public void setOrientation(Quaternion q) {
 		orientation = q;
+	}
+
+	public float getCameraAngle() {
+		return this.cameraAngle;
 	}
 
 	public float getThrottle() {
