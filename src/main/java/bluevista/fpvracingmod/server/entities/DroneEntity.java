@@ -27,10 +27,10 @@ import java.util.UUID;
 
 public class DroneEntity extends Entity {
 	private static final Vec3d G = new Vec3d(0, -0.04, 0);
+	private static float cameraAngle;
 
 	private Quaternion orientation;
 	private float throttle;
-	private float cameraAngle;
 
 	public DroneEntity(EntityType<?> type, World world) {
 		this(world);
@@ -182,6 +182,10 @@ public class DroneEntity extends Entity {
 
 	public void setThrottle(float throttle) {
 		this.throttle = throttle;
+	}
+
+	public static void setCameraAngle(float angle) {
+		DroneEntity.cameraAngle = angle;
 	}
 
 	public void addVelocity(Vec3d... vecs) {
