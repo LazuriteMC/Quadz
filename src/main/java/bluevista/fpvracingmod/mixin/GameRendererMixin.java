@@ -16,11 +16,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class GameRendererMixin {
 	@Shadow MinecraftClient client;
 
+	/*
+	 * Call the RenderTick.tick method within renderWorld. The idea is that
+	 * RenderTick.tick will run every frame rather than every game tick.
+	 */
 	@Inject(at = @At("HEAD"), method = "renderWorld")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
 		RenderTick.tick(matrix, tickDelta);
 	}
 
+	/*
+	 * Cancel the method which renders the player's hand if the
+	 * player is viewing a drone through goggles.
+	 */
 	@Inject(at = @At("HEAD"), method = "renderHand", cancellable = true)
 	public void renderHand(MatrixStack matrices, Camera camera, float tickDelta, CallbackInfo info) {
 		if(!ClientTick.shouldRenderHand()) info.cancel();
