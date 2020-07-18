@@ -12,10 +12,9 @@ import net.minecraft.client.MinecraftClient;
 public class InputTick {
 
     private static final MinecraftClient mc = MinecraftClient.getInstance();
-
     private static boolean shouldTick;
-
     private static long prevTime;
+    private static final int throttleScalar = 15;
 
     public static void tick(DroneEntity drone) {
         if(shouldTick()) {
@@ -24,7 +23,19 @@ public class InputTick {
             float currX = -Controller.getAxis(Controller.PITCH_NUM);
             float currY = -Controller.getAxis(Controller.YAW_NUM);
             float currZ = -Controller.getAxis(Controller.ROLL_NUM);
-            float currT = (Controller.getAxis(Controller.THROTTLE_NUM) + 1) / 15;
+            float currT = (Controller.getAxis(Controller.THROTTLE_NUM) + 1);
+
+            if (Controller.INVERT_THROTTLE == 1) {
+                currT = Math.abs(2 - currT);
+            }
+
+            if (Controller.THROTTLE_CENTER_POSITION == 1) {
+                --currT;
+                if (currT < 0) {
+                    currT = 0;
+                }
+                currT *= 2;
+            }
 
             if (Controller.INVERT_PITCH == 1) {
                 currX *= -1;
@@ -62,6 +73,7 @@ public class InputTick {
             drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
             drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
             drone.setOrientation(QuaternionHelper.rotateZ(drone.getOrientation(), deltaZ));
+            currT /= throttleScalar;
             drone.setThrottle(currT);
 
             prevTime = System.currentTimeMillis();

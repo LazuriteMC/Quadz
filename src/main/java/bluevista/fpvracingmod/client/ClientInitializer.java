@@ -36,9 +36,11 @@ public class ClientInitializer implements ClientModInitializer {
             Controller.setYaw(Integer.parseInt(config.getValue("yaw")));
             Controller.setRoll(Integer.parseInt(config.getValue("roll")));
             Controller.setDeadzone(Float.parseFloat(config.getValue("deadzone")));
+            Controller.setThrottleCenterPosition(Integer.parseInt(config.getValue("throttleCenterPosition")));
             Controller.setRate(Float.parseFloat(config.getValue("rate")));
             Controller.setSuperRate(Float.parseFloat(config.getValue("super_rate")));
             Controller.setExpo(Float.parseFloat(config.getValue("expo")));
+            Controller.setInvertThrottle(Integer.parseInt(config.getValue("invertThrottle")));
             Controller.setInvertPitch(Integer.parseInt(config.getValue("invertPitch")));
             Controller.setInvertYaw(Integer.parseInt(config.getValue("invertYaw")));
             Controller.setInvertRoll(Integer.parseInt(config.getValue("invertRoll")));
