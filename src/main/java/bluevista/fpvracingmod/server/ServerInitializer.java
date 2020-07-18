@@ -8,6 +8,7 @@ import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
@@ -31,6 +32,7 @@ public class ServerInitializer implements ModInitializer {
 		registerEntities();
 		registerItems();
 		registerPackets();
+		Commands.registerCommands();
 
 		ServerTick.register();
 	}
