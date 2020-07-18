@@ -7,7 +7,8 @@
     "SpawnMixin"
   ],
   "client": [
-    "RenderMixin",
+    "GameRendererMixin",
+    "WorldRendererMixin",
     "RenderHandMixin",
     "MatrixMixin"
   ],

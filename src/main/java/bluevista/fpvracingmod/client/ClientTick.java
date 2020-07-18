@@ -10,6 +10,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 
@@ -42,6 +43,8 @@ public class ClientTick {
 
             if(!isWearingGoggles(mc.player) && mc.getCameraEntity() instanceof ViewHandler)
                 resetView(mc);
+
+            System.out.println(mc.player.getPos());
         } else {
             resetView(mc);
         }
