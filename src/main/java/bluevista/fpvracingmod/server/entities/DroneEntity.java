@@ -2,8 +2,7 @@ package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.math.MatrixInjection;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
-import bluevista.fpvracingmod.client.network.InputPacketHandler;
-import bluevista.fpvracingmod.client.network.QuaternionPacketHandler;
+import bluevista.fpvracingmod.client.network.DroneInfoPacketHandler;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.minecraft.block.BlockState;
@@ -46,13 +45,10 @@ public class DroneEntity extends Entity {
 	public void tick() {
 		super.tick();
 
-		if(this.world.isClient()) {
-			QuaternionPacketHandler.send(this.getOrientation(), this);
-			InputPacketHandler.send(this.throttle, this);
-		}
+		if(this.world.isClient())
+			DroneInfoPacketHandler.send(this.getOrientation(), this.throttle, this);
 
 		Vec3d d = getThrustVector();
-
 		this.addVelocity(0, -0.04, 0);
 		this.addVelocity(d.getX() * (throttle), -d.getY() * (throttle), d.getZ() * (throttle));
 		this.move(MovementType.SELF, this.getVelocity());

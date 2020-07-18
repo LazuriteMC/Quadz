@@ -15,35 +15,44 @@ import net.minecraft.util.math.Quaternion;
 import java.util.UUID;
 
 @Environment(EnvType.CLIENT)
-public class QuaternionPacketHandler {
+public class DroneInfoPacketHandler {
     public static final Identifier QUATERNION_PACKET_ID = new Identifier(ServerInitializer.MODID, "quaternion_packet");
 
-    public static void accept(PacketContext context, PacketByteBuf buffer) {
+    public static void accept(PacketContext context, PacketByteBuf buf) {
         Quaternion orientation = new Quaternion(
-                buffer.readFloat(),
-                buffer.readFloat(),
-                buffer.readFloat(),
-                buffer.readFloat()
+                buf.readFloat(),
+                buf.readFloat(),
+                buf.readFloat(),
+                buf.readFloat()
         );
-        UUID droneID = buffer.readUuid();
+
+        float throttle = buf.readFloat();
+        UUID droneID = buf.readUuid();
 
         context.getTaskQueue().execute(() -> {
             DroneEntity drone = null;
-            if(context.getPlayer() != null) drone = DroneEntity.getByUuid(context.getPlayer(), droneID);
-            if(drone != null) drone.setOrientation(orientation);
+
+            if(context.getPlayer() != null)
+                drone = DroneEntity.getByUuid(context.getPlayer(), droneID);
+
+            if(drone != null) {
+                drone.setOrientation(orientation);
+                drone.setThrottle(throttle);
+            }
         });
     }
 
-    public static void send(Quaternion q, DroneEntity drone) {
+    public static void send(Quaternion q, float throttle, DroneEntity drone) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeFloat(q.getX());
         buf.writeFloat(q.getY());
         buf.writeFloat(q.getZ());
         buf.writeFloat(q.getW());
+        buf.writeFloat(throttle);
         buf.writeUuid(drone.getUuid());
         ClientSidePacketRegistry.INSTANCE.sendToServer(QUATERNION_PACKET_ID, buf);
     }
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(QUATERNION_PACKET_ID, QuaternionPacketHandler::accept);
+        ServerSidePacketRegistry.INSTANCE.register(QUATERNION_PACKET_ID, DroneInfoPacketHandler::accept);
     }
 }
