@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class DroneEntity extends Entity {
+	private static final Vec3d G = new Vec3d(0, -0.04, 0);
 
 	private Quaternion orientation;
 	private float throttle;
@@ -45,27 +46,14 @@ public class DroneEntity extends Entity {
 	public void tick() {
 		super.tick();
 
+		// Send info to server
 		if(this.world.isClient())
 			DroneInfoPacketHandler.send(this.getOrientation(), this.throttle, this);
 
-		Vec3d d = getThrustVector();
-		this.addVelocity(0, -0.04, 0);
-		this.addVelocity(d.getX() * (throttle), -d.getY() * (throttle), d.getZ() * (throttle));
+		// Update velocity
+		Vec3d d = getThrustVector().multiply(1, -1, 1).multiply(throttle);
+		this.addVelocity(G, d);
 		this.move(MovementType.SELF, this.getVelocity());
-
-//		if(RenderHandler.isPlayerViewingDrone()) {
-//			this.move(MoverType.SELF, this.getMotion());
-
-		// Player movement things...
-//			if(!world.isRemote) {
-//				PlayerEntity playerSP = RenderHandler.getPlayer();
-//				if (playerSP != null) this.player = (ServerPlayerEntity) world.getPlayerByUuid(playerSP.getUniqueID());
-//				if (player != null) {
-//					System.out.println(getDistanceSq(player));
-//					if(getDistanceSq(player) >= 2500) {
-//						player.connection.setPlayerLocation((float) Math.round(getPositionVec().x), 50, (float) Math.round(getPositionVec().z), player.rotationYaw, player.rotationPitch);
-//						if (!player.abilities.isCreativeMode) player.abilities.allowFlying = true;
-
 	}
 
 	@Override
@@ -82,11 +70,10 @@ public class DroneEntity extends Entity {
 //		tag.putInt("camera_angle", cameraAngle);
 	}
 
-	@Override
-	public Packet<?> createSpawnPacket() {
-		return new EntitySpawnS2CPacket(this);
-	}
-
+	/*
+	 * Essentially get the direction the bottom
+	 * of the drone is facing. Returned in vector form.
+	 */
 	public Vec3d getThrustVector() {
 		Quaternion q = new Quaternion(getOrientation());
 		QuaternionHelper.rotateX(q, 90);
@@ -97,6 +84,11 @@ public class DroneEntity extends Entity {
 		return MatrixInjection.from(mat).matrixToVector();
 	}
 
+	/*
+	 * Returns the drone that is nearest to
+	 * the provided entity. The provided entity is
+	 * typically just the player.
+	 */
 	public static DroneEntity getNearestTo(Entity entity) {
 		World world = entity.getEntityWorld();
 		List<DroneEntity> drones = world.getEntities(
@@ -114,6 +106,10 @@ public class DroneEntity extends Entity {
 		else return null;
 	}
 
+	/*
+	 * Get a drone by it's UUID given it is nearby the
+	 * provided entity.
+	 */
 	public static DroneEntity getByUuid(Entity entity, UUID uuid) {
 		World world = entity.getEntityWorld();
 		List<DroneEntity> drones = world.getEntities(
@@ -137,6 +133,9 @@ public class DroneEntity extends Entity {
 		return null;
 	}
 
+	/*
+	 * Break the drone when it's shot or hit by the player.
+	 */
 	@Override
 	public boolean damage(DamageSource source, float amount) {
 		if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
@@ -149,6 +148,10 @@ public class DroneEntity extends Entity {
 		return false;
 	}
 
+	/*
+	 * If the player is holding a transmitter item when they right click
+	 * on the drone, bind it using the drone's UUID.
+	 */
 	public ActionResult interact(PlayerEntity player, Hand hand) {
 		if(!player.world.isClient()) {
 			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
@@ -170,7 +173,7 @@ public class DroneEntity extends Entity {
 	}
 
 	public float getCameraAngle() {
-		return this.cameraAngle;
+		return cameraAngle;
 	}
 
 	public float getThrottle() {
@@ -181,9 +184,14 @@ public class DroneEntity extends Entity {
 		this.throttle = throttle;
 	}
 
+	public void addVelocity(Vec3d... vecs) {
+		for(Vec3d vec : vecs) {
+			this.addVelocity(vec.x, vec.y, vec.z);
+		}
+	}
+
 	@Override
 	protected void initDataTracker() {
-
 	}
 
 	@Override
@@ -211,7 +219,12 @@ public class DroneEntity extends Entity {
 		return true;
 	}
 
+//	@Override
+//	protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
+//	}
+
 	@Override
-	protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
+	public Packet<?> createSpawnPacket() {
+		return new EntitySpawnS2CPacket(this);
 	}
 }
