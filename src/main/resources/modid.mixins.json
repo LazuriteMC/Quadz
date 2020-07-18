@@ -4,12 +4,12 @@
   "package": "bluevista.fpvracingmod.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "SpawnMixin"
+    "SpawnMixin",
+    "MatrixMixin"
   ],
   "client": [
     "GameRendererMixin",
-    "WorldRendererMixin",
-    "MatrixMixin"
+    "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
