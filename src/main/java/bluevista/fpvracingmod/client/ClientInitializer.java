@@ -7,7 +7,6 @@ import bluevista.fpvracingmod.client.input.RemoveGogglesKeybinding;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
-import bluevista.fpvracingmod.server.items.GogglesItem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

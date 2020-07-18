@@ -17,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class SpawnMixin {
-
     @Shadow private ClientWorld world;
 
     @Inject(
@@ -37,8 +36,6 @@ public class SpawnMixin {
             entity.setVelocity(Vec3d.ZERO);
             entity.updatePosition(x, y, z);
             entity.updateTrackedPosition(x, y, z);
-//            entity.pitch = (float) (packet.getPitch() * 360) / 256.0F;
-//            entity.yaw = (float) (packet.getYaw() * 360) / 256.0F;
             entity.setEntityId(i);
             entity.setUuid(packet.getUuid());
             this.world.addEntity(i, entity);

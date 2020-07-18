@@ -17,7 +17,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-
 public class ServerInitializer implements ModInitializer {
 	public static final String MODID = "fpvracing";
 
@@ -51,7 +50,7 @@ public class ServerInitializer implements ModInitializer {
 	private void registerEntities() {
 		DRONE_ENTITY = Registry.register(
 				Registry.ENTITY_TYPE,
-				new Identifier("fpvracing", "drone_entity"),
+				new Identifier(MODID, "drone_entity"),
 				FabricEntityTypeBuilder.create(SpawnGroup.MISC, DroneEntity::new).dimensions(EntityDimensions.fixed(0.5F, 0.125F)).trackable(80, 3, true).build()
 		);
 	}

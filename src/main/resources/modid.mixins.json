@@ -9,7 +9,6 @@
   "client": [
     "GameRendererMixin",
     "WorldRendererMixin",
-    "RenderHandMixin",
     "MatrixMixin"
   ],
   "injectors": {

@@ -29,7 +29,7 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
     }
 
     public void render(DroneEntity droneEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
-        if(ClientTick.shouldRender()) {
+//        if(ClientTick.shouldRender()) {
             this.shadowRadius = 0.2F;
             matrixStack.push();
 
@@ -49,9 +49,9 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
             VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(this.getTexture(droneEntity)));
             this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
             matrixStack.pop();
-        } else {
-            this.shadowRadius = 0;
-        }
+//        } else {
+//            this.shadowRadius = 0;
+//        }
         super.render(droneEntity, f, g, matrixStack, vertexConsumerProvider, i);
     }
 

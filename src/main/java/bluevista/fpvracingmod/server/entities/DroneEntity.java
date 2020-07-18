@@ -39,7 +39,6 @@ public class DroneEntity extends Entity {
 	public DroneEntity(World world) {
 		super(ServerInitializer.DRONE_ENTITY, world);
 		this.orientation = new Quaternion(0, 1, 0, 0);
-		this.cameraAngle = 20;
 	}
 
 	@Override
