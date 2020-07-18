@@ -34,17 +34,17 @@ public class ClientTick {
                 }
 
                 if(currentDrone != null) {
-                    if(isWearingGoggles(mc.player))
-                        setView(mc, currentDrone);
-                    if (isValidTransmitter(mc.player, currentDrone))
-                        InputTick.setShouldTick(true);
+                    if(!currentDrone.removed) {
+                        if (isWearingGoggles(mc.player))
+                            setView(mc, currentDrone);
+                        if (isValidTransmitter(mc.player, currentDrone))
+                            InputTick.setShouldTick(true);
+                    } else resetView(mc);
                 }
             }
 
             if(!isWearingGoggles(mc.player) && mc.getCameraEntity() instanceof ViewHandler)
                 resetView(mc);
-
-            System.out.println(mc.player.getPos());
         } else {
             resetView(mc);
         }

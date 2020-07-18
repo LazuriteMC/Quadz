@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Environment(EnvType.CLIENT)
 public class DroneInfoPacketHandler {
-    public static final Identifier QUATERNION_PACKET_ID = new Identifier(ServerInitializer.MODID, "quaternion_packet");
+    public static final Identifier DRONE_INFO_PACKET_ID = new Identifier(ServerInitializer.MODID, "quaternion_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
         Quaternion orientation = new Quaternion(
@@ -50,9 +50,9 @@ public class DroneInfoPacketHandler {
         buf.writeFloat(q.getW());
         buf.writeFloat(throttle);
         buf.writeUuid(drone.getUuid());
-        ClientSidePacketRegistry.INSTANCE.sendToServer(QUATERNION_PACKET_ID, buf);
+        ClientSidePacketRegistry.INSTANCE.sendToServer(DRONE_INFO_PACKET_ID, buf);
     }
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(QUATERNION_PACKET_ID, DroneInfoPacketHandler::accept);
+        ServerSidePacketRegistry.INSTANCE.register(DRONE_INFO_PACKET_ID, DroneInfoPacketHandler::accept);
     }
 }

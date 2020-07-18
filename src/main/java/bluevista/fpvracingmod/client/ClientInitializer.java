@@ -2,6 +2,7 @@ package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.config.Config;
 import bluevista.fpvracingmod.client.controller.Controller;
+import bluevista.fpvracingmod.client.input.EMPKeybinding;
 import bluevista.fpvracingmod.client.input.RemoveGogglesKeybinding;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
@@ -20,6 +21,8 @@ public class ClientInitializer implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         RemoveGogglesKeybinding.register();
+        EMPKeybinding.register();
+
         ClientTick.register();
 
         registerRenderers();
