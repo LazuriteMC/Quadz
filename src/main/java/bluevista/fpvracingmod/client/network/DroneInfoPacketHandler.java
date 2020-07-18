@@ -3,8 +3,6 @@ package bluevista.fpvracingmod.client.network;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import io.netty.buffer.Unpooled;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -14,7 +12,6 @@ import net.minecraft.util.math.Quaternion;
 
 import java.util.UUID;
 
-@Environment(EnvType.CLIENT)
 public class DroneInfoPacketHandler {
     public static final Identifier DRONE_INFO_PACKET_ID = new Identifier(ServerInitializer.MODID, "quaternion_packet");
 

@@ -15,7 +15,6 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-@Environment(EnvType.CLIENT)
 public class EMPPacketHandler {
     public static final Identifier EMP_PACKET_ID = new Identifier(ServerInitializer.MODID, "emp_packet");
 

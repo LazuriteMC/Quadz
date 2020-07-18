@@ -11,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
-@Environment(EnvType.CLIENT)
 public class RemoveGogglesPacketHandler {
     public static final Identifier REMOVE_GOGGLES_PACKET_ID = new Identifier(ServerInitializer.MODID, "goggles_packet");
 
