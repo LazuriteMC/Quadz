@@ -1,9 +1,7 @@
-package bluevista.fpvracingmod.client.network;
+package bluevista.fpvracingmod.network;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
 import io.netty.buffer.Unpooled;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;

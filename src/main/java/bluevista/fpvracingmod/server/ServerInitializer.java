@@ -1,8 +1,8 @@
 package bluevista.fpvracingmod.server;
 
-import bluevista.fpvracingmod.client.network.DroneInfoPacketHandler;
-import bluevista.fpvracingmod.client.network.EMPPacketHandler;
-import bluevista.fpvracingmod.client.network.RemoveGogglesPacketHandler;
+import bluevista.fpvracingmod.network.DroneInfoPacketHandler;
+import bluevista.fpvracingmod.network.EMPPacketHandler;
+import bluevista.fpvracingmod.network.RemoveGogglesPacketHandler;
 import bluevista.fpvracingmod.server.commands.FPVRacing;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;

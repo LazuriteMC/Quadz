@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.server.network;
+package bluevista.fpvracingmod.network;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -44,8 +44,8 @@ public class QuaternionPacketHandler {
         buf.writeUuid(drone.getUuid());
 
         Stream<PlayerEntity> watchingPlayers = PlayerStream.watching(drone.getEntityWorld(), new BlockPos(drone.getPos()));
-        watchingPlayers.forEach(player ->
-                ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, QUATERNION_PACKET_ID, buf));
+        watchingPlayers.forEach(p->
+                ServerSidePacketRegistry.INSTANCE.sendToPlayer(p, QUATERNION_PACKET_ID, buf));
     }
 
     public static void register() {

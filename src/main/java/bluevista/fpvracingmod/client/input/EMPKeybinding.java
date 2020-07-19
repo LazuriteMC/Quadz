@@ -1,9 +1,7 @@
 package bluevista.fpvracingmod.client.input;
 
-import bluevista.fpvracingmod.client.network.EMPPacketHandler;
-import bluevista.fpvracingmod.client.network.RemoveGogglesPacketHandler;
+import bluevista.fpvracingmod.network.EMPPacketHandler;
 import bluevista.fpvracingmod.server.ServerInitializer;
-import bluevista.fpvracingmod.server.items.GogglesItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;

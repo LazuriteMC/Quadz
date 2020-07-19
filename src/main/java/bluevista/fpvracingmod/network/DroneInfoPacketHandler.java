@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.client.network;
+package bluevista.fpvracingmod.network;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
