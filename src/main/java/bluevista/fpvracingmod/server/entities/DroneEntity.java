@@ -5,7 +5,6 @@ import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.network.DroneInfoPacketHandler;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
-import bluevista.fpvracingmod.network.QuaternionPacketHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MovementType;
