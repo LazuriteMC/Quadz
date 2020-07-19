@@ -1,10 +1,12 @@
 package bluevista.fpvracingmod.server.items;
 
+import bluevista.fpvracingmod.client.math.QuaternionHelper;
+import bluevista.fpvracingmod.server.ServerTick;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.HitResult;
@@ -29,9 +31,9 @@ public class DroneSpawnerItem extends Item {
 				return TypedActionResult.pass(itemStack);
 
 			if (hitResult.getType() == net.minecraft.util.hit.HitResult.Type.BLOCK) {
-				DroneEntity d = new DroneEntity(world);
-				d.refreshPositionAndAngles(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z, 0, 0);
-				world.spawnEntity(d);
+				DroneEntity drone = DroneEntity.create(world, hitResult.getPos());
+				QuaternionHelper.rotateY(drone.getOrientation(), 180f - user.yaw);
+
 				if (!user.abilities.creativeMode) {
 					itemStack.decrement(1);
 				}

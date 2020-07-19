@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.server.MinecraftServer;
 
 public class ServerTick {
+    public static MinecraftServer server;
 
     public static void tick(MinecraftServer mc) {
 

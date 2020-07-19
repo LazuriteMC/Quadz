@@ -8,6 +8,7 @@ import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
@@ -15,6 +16,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 public class ServerInitializer implements ModInitializer {
@@ -33,6 +35,7 @@ public class ServerInitializer implements ModInitializer {
 		registerPackets();
 
 		ServerTick.register();
+		ServerStartCallback.EVENT.register(ServerInitializer::start);
 	}
 
 	private void registerPackets() {
@@ -53,5 +56,9 @@ public class ServerInitializer implements ModInitializer {
 				new Identifier(MODID, "drone_entity"),
 				FabricEntityTypeBuilder.create(SpawnGroup.MISC, DroneEntity::new).dimensions(EntityDimensions.fixed(0.5F, 0.125F)).trackable(80, 3, true).build()
 		);
+	}
+
+	public static void start(MinecraftServer server) {
+		ServerTick.server = server;
 	}
 }
