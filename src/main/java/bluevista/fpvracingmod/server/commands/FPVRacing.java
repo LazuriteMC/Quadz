@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.server;
+package bluevista.fpvracingmod.server.commands;
 
 import bluevista.fpvracingmod.client.controller.Controller;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -8,66 +8,66 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
-public class Commands {
+public class FPVRacing {
 
     public static void registerCommands() {
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             dispatcher.register(CommandManager.literal("fpvracing")
                     .then(CommandManager.literal("controllerID")
                             .then(CommandManager.argument("controllerIDValue", IntegerArgumentType.integer(0))
-                                    .executes(Commands::setControllerID)))
+                                    .executes(FPVRacing::setControllerID)))
 
                     .then(CommandManager.literal("throttleNum")
                             .then(CommandManager.argument("throttleNumValue", IntegerArgumentType.integer(0))
-                                    .executes(Commands::setThrottleNum)))
+                                    .executes(FPVRacing::setThrottleNum)))
 
                     .then(CommandManager.literal("pitchNum")
                             .then(CommandManager.argument("pitchNumValue", IntegerArgumentType.integer(0))
-                                    .executes(Commands::setPitchNum)))
+                                    .executes(FPVRacing::setPitchNum)))
 
                     .then(CommandManager.literal("yawNum")
                             .then(CommandManager.argument("yawNumValue", IntegerArgumentType.integer(0))
-                                    .executes(Commands::setYawNum)))
+                                    .executes(FPVRacing::setYawNum)))
 
                     .then(CommandManager.literal("rollNum")
                             .then(CommandManager.argument("rollNumValue", IntegerArgumentType.integer(0))
-                                    .executes(Commands::setRollNum)))
+                                    .executes(FPVRacing::setRollNum)))
 
                     .then(CommandManager.literal("deadzone")
                             .then(CommandManager.argument("deadzoneValue", FloatArgumentType.floatArg(0, 1))
-                                    .executes(Commands::setDeadzone)))
+                                    .executes(FPVRacing::setDeadzone)))
 
                     .then(CommandManager.literal("throttleCenterPosition")
                             .then(CommandManager.argument("throttleCenterPositionValue", IntegerArgumentType.integer(0, 1))
-                                    .executes(Commands::setThrottleCenterPosition)))
+                                    .executes(FPVRacing::setThrottleCenterPosition)))
 
                     .then(CommandManager.literal("rate")
                             .then(CommandManager.argument("rateValue", FloatArgumentType.floatArg(0)) // max value?
-                                    .executes(Commands::setRate)))
+                                    .executes(FPVRacing::setRate)))
 
                     .then(CommandManager.literal("superRate")
                             .then(CommandManager.argument("superRateValue", FloatArgumentType.floatArg(0)) // max value?
-                                    .executes(Commands::setSuperRate)))
+                                    .executes(FPVRacing::setSuperRate)))
 
                     .then(CommandManager.literal("expo")
                             .then(CommandManager.argument("expoValue", FloatArgumentType.floatArg(0)) // max value?
-                                    .executes(Commands::setExpo)))
+                                    .executes(FPVRacing::setExpo)))
 
                     .then(CommandManager.literal("invertThrottle")
                             .then(CommandManager.argument("invertThrottleValue", IntegerArgumentType.integer(0, 1))
-                                    .executes(Commands::setInvertThrottle)))
+                                    .executes(FPVRacing::setInvertThrottle)))
 
                     .then(CommandManager.literal("invertPitch")
                             .then(CommandManager.argument("invertPitchValue", IntegerArgumentType.integer(0, 1))
-                                    .executes(Commands::setInvertPitch)))
+                                    .executes(FPVRacing::setInvertPitch)))
 
                     .then(CommandManager.literal("invertYaw")
                             .then(CommandManager.argument("invertYawValue", IntegerArgumentType.integer(0, 1))
-                                    .executes(Commands::setInvertYaw)))
+                                    .executes(FPVRacing::setInvertYaw)))
 
                     .then(CommandManager.literal("invertRoll")
                             .then(CommandManager.argument("invertRollValue", IntegerArgumentType.integer(0, 1))
-                                    .executes(Commands::setInvertRoll))));
+                                    .executes(FPVRacing::setInvertRoll))));
         });
     }
 
