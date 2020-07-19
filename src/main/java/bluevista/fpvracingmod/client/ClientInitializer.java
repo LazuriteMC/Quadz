@@ -4,6 +4,7 @@ import bluevista.fpvracingmod.client.config.Config;
 import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.input.EMPKeybinding;
 import bluevista.fpvracingmod.client.input.RemoveGogglesKeybinding;
+import bluevista.fpvracingmod.network.DroneInfoToClient;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -11,6 +12,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 
 @Environment(EnvType.CLIENT)
 public class ClientInitializer implements ClientModInitializer {
@@ -22,9 +24,9 @@ public class ClientInitializer implements ClientModInitializer {
         RemoveGogglesKeybinding.register();
         EMPKeybinding.register();
         ClientTick.register();
-        QuaternionPacketHandler.register();
 
         registerRenderers();
+        registerNetwork();
         initControllerSettings();
     }
 
@@ -56,6 +58,10 @@ public class ClientInitializer implements ClientModInitializer {
 
     private void registerRenderers() {
         EntityRendererRegistry.INSTANCE.register(ServerInitializer.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
+    }
+
+    private void registerNetwork() {
+        DroneInfoToClient.register();
     }
 
     public static Config getConfig() {

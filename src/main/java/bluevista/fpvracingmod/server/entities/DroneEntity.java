@@ -2,7 +2,8 @@ package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.math.MatrixInjection;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
-import bluevista.fpvracingmod.network.DroneInfoPacketHandler;
+import bluevista.fpvracingmod.network.DroneInfoToClient;
+import bluevista.fpvracingmod.network.DroneInfoToServer;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.minecraft.entity.Entity;
@@ -45,9 +46,9 @@ public class DroneEntity extends Entity {
 		super.tick();
 
 		if(this.world.isClient())
-			DroneInfoPacketHandler.send(this);
+			DroneInfoToServer.send(this);
 		else
-			QuaternionPacketHandler.send(this);
+			DroneInfoToClient.send(this);
 
 		// Update velocity
 		Vec3d d = getThrustVector().multiply(1, -1, 1).multiply(throttle);
