@@ -33,6 +33,7 @@ public class ServerInitializer implements ModInitializer {
 		registerEntities();
 		registerItems();
 		registerPackets();
+		Commands.registerCommands();
 
 		ServerTick.register();
 		ServerStartCallback.EVENT.register(ServerInitializer::start);

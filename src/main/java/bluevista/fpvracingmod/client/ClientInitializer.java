@@ -34,10 +34,10 @@ public class ClientInitializer implements ClientModInitializer {
 
         try {
             Controller.setControllerId(Integer.parseInt(config.getValue("controllerID")));
-            Controller.setThrottle(Integer.parseInt(config.getValue("throttle")));
-            Controller.setPitch(Integer.parseInt(config.getValue("pitch")));
-            Controller.setYaw(Integer.parseInt(config.getValue("yaw")));
-            Controller.setRoll(Integer.parseInt(config.getValue("roll")));
+            Controller.setThrottleNum(Integer.parseInt(config.getValue("throttle")));
+            Controller.setPitchNum(Integer.parseInt(config.getValue("pitch")));
+            Controller.setYawNum(Integer.parseInt(config.getValue("yaw")));
+            Controller.setRollNum(Integer.parseInt(config.getValue("roll")));
             Controller.setDeadzone(Float.parseFloat(config.getValue("deadzone")));
             Controller.setThrottleCenterPosition(Integer.parseInt(config.getValue("throttleCenterPosition")));
             Controller.setRate(Float.parseFloat(config.getValue("rate")));

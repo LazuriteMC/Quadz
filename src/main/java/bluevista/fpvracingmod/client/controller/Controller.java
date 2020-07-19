@@ -28,19 +28,19 @@ public class Controller {
 		CONTROLLER_ID = controllerId;
 	}
 
-	public static void setThrottle(int throttleChannel) {
+	public static void setThrottleNum(int throttleChannel) {
 		THROTTLE_NUM = throttleChannel;
 	}
 
-	public static void setPitch(int pitchChannel) {
+	public static void setPitchNum(int pitchChannel) {
 		PITCH_NUM = pitchChannel;
 	}
 
-	public static void setYaw(int yawChannel) {
+	public static void setYawNum(int yawChannel) {
 		YAW_NUM = yawChannel;
 	}
 
-	public static void setRoll(int rollChannel) {
+	public static void setRollNum(int rollChannel) {
 		ROLL_NUM = rollChannel;
 	}
 
