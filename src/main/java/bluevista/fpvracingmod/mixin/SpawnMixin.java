@@ -28,7 +28,7 @@ public class SpawnMixin {
     private void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo ci, double x, double y, double z, EntityType<?> type) {
         Entity entity = null;
         if (type == ServerInitializer.DRONE_ENTITY) {
-            entity = new DroneEntity(this.world);
+            entity = DroneEntity.create(world, new Vec3d(x, y, z));
         }
 
         if (entity != null) {

@@ -5,7 +5,7 @@ import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.client.network.DroneInfoPacketHandler;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
-import net.minecraft.block.BlockState;
+import bluevista.fpvracingmod.server.network.QuaternionPacketHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MovementType;
@@ -45,9 +45,10 @@ public class DroneEntity extends Entity {
 	public void tick() {
 		super.tick();
 
-		// Send info to server
 		if(this.world.isClient())
-			DroneInfoPacketHandler.send(this.getOrientation(), this.throttle, this);
+			DroneInfoPacketHandler.send(this);
+		else
+			QuaternionPacketHandler.send(this);
 
 		// Update velocity
 		Vec3d d = getThrustVector().multiply(1, -1, 1).multiply(throttle);
@@ -229,5 +230,17 @@ public class DroneEntity extends Entity {
 	@Override
 	public Packet<?> createSpawnPacket() {
 		return new EntitySpawnS2CPacket(this);
+	}
+
+	public static DroneEntity create(World world, Vec3d pos) {
+		DroneEntity d = new DroneEntity(world);
+		d.refreshPositionAndAngles(pos.x, pos.y, pos.z, 0, 0);
+
+//		PlayerManager manager = ServerTick.server.getPlayerManager();
+//		WorldLoader l = PlayerManagerInjection.from(manager).createWorldLoader(d);
+//		manager.sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.ADD_PLAYER, new ServerPlayerEntity[]{l}));
+
+		world.spawnEntity(d);
+		return d;
 	}
 }

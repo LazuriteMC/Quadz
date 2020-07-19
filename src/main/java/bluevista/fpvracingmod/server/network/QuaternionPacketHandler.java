@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.client.network;
+package bluevista.fpvracingmod.server.network;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -6,53 +6,49 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.server.PlayerStream;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Quaternion;
 
-import java.util.UUID;
+import java.util.stream.Stream;
 
-public class DroneInfoPacketHandler {
-    public static final Identifier DRONE_INFO_PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_info_packet");
+public class QuaternionPacketHandler {
+    public static final Identifier QUATERNION_PACKET_ID = new Identifier(ServerInitializer.MODID, "quaternion_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
-        Quaternion orientation = new Quaternion(
+        Quaternion q = new Quaternion(
                 buf.readFloat(),
                 buf.readFloat(),
                 buf.readFloat(),
                 buf.readFloat()
         );
-
-        float throttle = buf.readFloat();
-        UUID droneID = buf.readUuid();
+        DroneEntity drone = DroneEntity.getByUuid(context.getPlayer(), buf.readUuid());
 
         context.getTaskQueue().execute(() -> {
-            DroneEntity drone = null;
-
-            if(context.getPlayer() != null)
-                drone = DroneEntity.getByUuid(context.getPlayer(), droneID);
-
-            if(drone != null) {
-                drone.setOrientation(orientation);
-                drone.setThrottle(throttle);
-            }
+            if(drone != null && (drone.age < 20 || !context.getPlayer().isMainPlayer()))
+                drone.setOrientation(q);
         });
     }
 
     public static void send(DroneEntity drone) {
         Quaternion q = drone.getOrientation();
-        float throttle = drone.getThrottle();
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+
         buf.writeFloat(q.getX());
         buf.writeFloat(q.getY());
         buf.writeFloat(q.getZ());
         buf.writeFloat(q.getW());
-        buf.writeFloat(throttle);
         buf.writeUuid(drone.getUuid());
-        ClientSidePacketRegistry.INSTANCE.sendToServer(DRONE_INFO_PACKET_ID, buf);
+
+        Stream<PlayerEntity> watchingPlayers = PlayerStream.watching(drone.getEntityWorld(), new BlockPos(drone.getPos()));
+        watchingPlayers.forEach(player ->
+                ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, QUATERNION_PACKET_ID, buf));
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(DRONE_INFO_PACKET_ID, DroneInfoPacketHandler::accept);
+        ClientSidePacketRegistry.INSTANCE.register(QUATERNION_PACKET_ID, QuaternionPacketHandler::accept);
     }
 }

@@ -7,6 +7,7 @@ import bluevista.fpvracingmod.client.input.RemoveGogglesKeybinding;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
+import bluevista.fpvracingmod.server.network.QuaternionPacketHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -21,8 +22,8 @@ public class ClientInitializer implements ClientModInitializer {
     public void onInitializeClient() {
         RemoveGogglesKeybinding.register();
         EMPKeybinding.register();
-
         ClientTick.register();
+        QuaternionPacketHandler.register();
 
         registerRenderers();
         initControllerSettings();
