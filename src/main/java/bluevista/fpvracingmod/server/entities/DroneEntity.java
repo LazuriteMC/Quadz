@@ -12,6 +12,7 @@ import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
@@ -191,6 +192,14 @@ public class DroneEntity extends Entity {
 	public void addVelocity(Vec3d... vecs) {
 		for(Vec3d vec : vecs) {
 			this.addVelocity(vec.x, vec.y, vec.z);
+		}
+	}
+
+	public boolean isTransmitterBound(ItemStack transmitter) {
+		try {
+			return this.getUuid().equals(transmitter.getSubTag("bind").getUuid("bind"));
+		} catch(Exception e) {
+			return false;
 		}
 	}
 

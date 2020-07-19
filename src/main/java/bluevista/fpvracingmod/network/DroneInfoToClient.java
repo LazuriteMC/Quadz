@@ -2,12 +2,14 @@ package bluevista.fpvracingmod.network;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
+import bluevista.fpvracingmod.server.items.TransmitterItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.server.PlayerStream;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -51,8 +53,11 @@ public class DroneInfoToClient {
         buf.writeUuid(drone.getUuid());
 
         Stream<PlayerEntity> watchingPlayers = PlayerStream.watching(drone.getEntityWorld(), new BlockPos(drone.getPos()));
-        watchingPlayers.forEach(player ->
-                ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, PACKET_ID , buf));
+        watchingPlayers.forEach(player -> {
+            ItemStack handStack = player.getMainHandStack();
+            if(!(handStack.getItem() instanceof TransmitterItem) && !drone.isTransmitterBound(handStack))
+                ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, PACKET_ID , buf);
+        });
     }
 
     public static void register() {
