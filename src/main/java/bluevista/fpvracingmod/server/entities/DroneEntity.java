@@ -12,6 +12,7 @@ import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
@@ -28,6 +29,9 @@ import java.util.UUID;
 public class DroneEntity extends Entity {
 	private static final Vec3d G = new Vec3d(0, -0.04, 0);
 	private static float cameraAngle;
+
+	private int band;
+	private int channel;
 
 	private Quaternion orientation;
 	private float throttle;
@@ -58,16 +62,24 @@ public class DroneEntity extends Entity {
 
 	@Override
 	protected void readCustomDataFromTag(CompoundTag tag) {
-//		band = tag.getInt("band");
-//		channel = tag.getInt("channel");
+		band = tag.getInt("band");
+		channel = tag.getInt("channel");
 //		cameraAngle = tag.getInt("camera_angle");
 	}
 
 	@Override
 	protected void writeCustomDataToTag(CompoundTag tag) {
-//		tag.putInt("band", band);
-//		tag.putInt("channel", channel);
+		tag.putInt("band", band);
+		tag.putInt("channel", channel);
 //		tag.putInt("camera_angle", cameraAngle);
+	}
+
+	public void setBand(int band) {
+		this.band = band;
+	}
+
+	public void setChannel(int channel) {
+		this.channel = channel;
 	}
 
 	/*
@@ -139,8 +151,12 @@ public class DroneEntity extends Entity {
 	@Override
 	public boolean damage(DamageSource source, float amount) {
 		if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
-			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS))
-			this.dropItem(ServerInitializer.DRONE_SPAWNER_ITEM.asItem());
+			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+				ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
+				itemStack.getOrCreateSubTag("frequency").putInt("band", band);
+				itemStack.getOrCreateSubTag("frequency").putInt("channel", channel);
+				this.dropItem(itemStack.getItem());
+			}
 			this.remove();
 			return true;
 		}
@@ -155,8 +171,7 @@ public class DroneEntity extends Entity {
 	public ActionResult interact(PlayerEntity player, Hand hand) {
 		if(!player.world.isClient()) {
 			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
-				CompoundTag subTag = player.inventory.getMainHandStack().getOrCreateSubTag("bind");
-				subTag.putUuid("bind", this.getUuid());
+				player.inventory.getMainHandStack().getOrCreateSubTag("bind").putUuid("bind", this.getUuid());
 				player.sendMessage(new TranslatableText("Transmitter bound"), false);
 			}
 		}

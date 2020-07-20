@@ -18,6 +18,9 @@ public class ClientInitializer implements ClientModInitializer {
 
     private static Config config;
 
+    public static int configBand;
+    public static int configChannel;
+
     @Override
     public void onInitializeClient() {
         RemoveGogglesKeybinding.register();
@@ -26,10 +29,10 @@ public class ClientInitializer implements ClientModInitializer {
         QuaternionPacketHandler.register();
 
         registerRenderers();
-        initControllerSettings();
+        initConfigSettings();
     }
 
-    private void initControllerSettings() {
+    private void initConfigSettings() {
         config = new Config(ServerInitializer.MODID);
 
         try {
@@ -48,6 +51,9 @@ public class ClientInitializer implements ClientModInitializer {
             Controller.setInvertYaw(Integer.parseInt(config.getValue("invertYaw")));
             Controller.setInvertRoll(Integer.parseInt(config.getValue("invertRoll")));
 
+            setConfigBand(Integer.parseInt(config.getValue("band")));
+            setConfigChannel(Integer.parseInt(config.getValue("channel")));
+
             DroneEntity.setCameraAngle(Float.parseFloat(config.getValue("cameraAngle")));
         } catch (Exception e) {
             System.err.println("Error loading config");
@@ -62,4 +68,13 @@ public class ClientInitializer implements ClientModInitializer {
     public static Config getConfig() {
         return config;
     }
+
+    public static void setConfigBand(int band) {
+        configBand = band;
+    }
+
+    public static void setConfigChannel(int channel) {
+        configChannel = channel;
+    }
+
 }

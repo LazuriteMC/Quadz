@@ -1,10 +1,16 @@
 package bluevista.fpvracingmod.server.commands;
 
 import bluevista.fpvracingmod.client.controller.Controller;
+import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
+import bluevista.fpvracingmod.server.items.GogglesItem;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -67,7 +73,15 @@ public class FPVRacing {
 
                     .then(CommandManager.literal("invertRoll")
                             .then(CommandManager.argument("invertRollValue", IntegerArgumentType.integer(0, 1))
-                                    .executes(FPVRacing::setInvertRoll))));
+                                    .executes(FPVRacing::setInvertRoll)))
+
+                    .then(CommandManager.literal("band")
+                    .then(CommandManager.argument("bandValue", IntegerArgumentType.integer(0))
+                            .executes(FPVRacing::setBand)))
+
+                    .then(CommandManager.literal("channel")
+                    .then(CommandManager.argument("channelValue", IntegerArgumentType.integer(0))
+                            .executes(FPVRacing::setChannel))));
         });
     }
 
@@ -195,6 +209,36 @@ public class FPVRacing {
         if (Controller.INVERT_ROLL != value) {
             Controller.setInvertRoll(value);
             return 1;
+        }
+        return 0;
+    }
+
+    private static int setBand(CommandContext<ServerCommandSource> context) {
+        final int value = IntegerArgumentType.getInteger(context, "bandValue");
+        try {
+            final ItemStack selectedItem = context.getSource().getPlayer().inventory.getMainHandStack();
+            if (selectedItem.getItem() instanceof DroneSpawnerItem) {
+                DroneSpawnerItem.setBand(selectedItem, value);
+                return 1;
+            }
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
+            return -1;
+        }
+        return 0;
+    }
+
+    private static int setChannel(CommandContext<ServerCommandSource> context) {
+        final int value = IntegerArgumentType.getInteger(context, "channelValue");
+        try {
+            final ItemStack selectedItem = context.getSource().getPlayer().inventory.getMainHandStack();
+            if (selectedItem.getItem() instanceof DroneSpawnerItem) {
+                DroneSpawnerItem.setChannel(selectedItem, value);
+                return 1;
+            }
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
+            return -1;
         }
         return 0;
     }

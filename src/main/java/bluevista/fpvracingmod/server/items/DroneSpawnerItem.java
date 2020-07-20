@@ -1,12 +1,11 @@
 package bluevista.fpvracingmod.server.items;
 
+import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
-import bluevista.fpvracingmod.server.ServerTick;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.HitResult;
@@ -34,6 +33,18 @@ public class DroneSpawnerItem extends Item {
 				DroneEntity drone = DroneEntity.create(world, hitResult.getPos());
 				QuaternionHelper.rotateY(drone.getOrientation(), 180f - user.yaw);
 
+				if (itemStack.getSubTag("frequency") != null) {
+					drone.setBand(itemStack.getSubTag("frequency").getInt("band"));
+				} else {
+					drone.setBand(ClientInitializer.configBand);
+				}
+
+				if (itemStack.getSubTag("frequency") != null) {
+					drone.setChannel(itemStack.getSubTag("frequency").getInt("channel"));
+				} else {
+					drone.setChannel(ClientInitializer.configChannel);
+				}
+
 				if (!user.abilities.creativeMode) {
 					itemStack.decrement(1);
 				}
@@ -42,6 +53,13 @@ public class DroneSpawnerItem extends Item {
 
 		return TypedActionResult.success(itemStack);
 	}
-	
+
+	public static void setBand(ItemStack itemStack, int band) {
+		itemStack.getOrCreateSubTag("frequency").putInt("band", band);
+	}
+
+	public static void setChannel(ItemStack itemStack, int channel) {
+		itemStack.getOrCreateSubTag("frequency").putInt("channel", channel);
+	}
 }
 
