@@ -1,15 +1,15 @@
-package bluevista.fpvracingmod.mixin.inject;
+package bluevista.fpvracingmod.inject;
 
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 
-public interface MatrixInjection {
+public interface MatrixInject {
     Vec3d matrixToVector();
     void fromQuaternion(Quaternion q);
 
     @SuppressWarnings("ConstantConditions")
-    static MatrixInjection from(Matrix4f self) {
-        return (MatrixInjection) (Object) self;
+    static MatrixInject from(Matrix4f self) {
+        return (MatrixInject) (Object) self;
     }
 }
