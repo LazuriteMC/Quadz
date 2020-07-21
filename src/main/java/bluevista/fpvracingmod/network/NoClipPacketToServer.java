@@ -27,7 +27,12 @@ public class NoClipPacketToServer {
 
                     if(drone != null) {
                         drone.noClip = !drone.noClip;
-                        player.sendMessage(new TranslatableText("No Clip Enabled"), false);
+
+                        String t;
+                        if(drone.noClip) t = "No Clip Enabled";
+                        else t = "No Clip Disabled";
+
+                        player.sendMessage(new TranslatableText(t), false);
                     }
                 }
             }
