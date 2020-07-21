@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.network;
 
+import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -22,13 +23,8 @@ public class DroneInfoToClient {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_info_client_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
-        Quaternion orientation = new Quaternion(
-                buf.readFloat(),
-                buf.readFloat(),
-                buf.readFloat(),
-                buf.readFloat()
-        );
         UUID droneID = buf.readUuid();
+        Quaternion q = QuaternionHelper.deserialize(buf);
 
         context.getTaskQueue().execute(() -> {
             DroneEntity drone = null;
@@ -36,21 +32,18 @@ public class DroneInfoToClient {
             if(context.getPlayer() != null)
                 drone = DroneEntity.getByUuid(context.getPlayer(), droneID);
 
-            if(drone != null) {
-                drone.setOrientation(orientation);
-            }
+            if(drone != null)
+                drone.setOrientation(q);
         });
     }
 
     public static void send(DroneEntity drone) {
         Quaternion q = drone.getOrientation();
+        UUID droneUUID = drone.getUuid();
 
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeFloat(q.getX());
-        buf.writeFloat(q.getY());
-        buf.writeFloat(q.getZ());
-        buf.writeFloat(q.getW());
-        buf.writeUuid(drone.getUuid());
+        buf.writeUuid(droneUUID);
+        QuaternionHelper.serialize(q, buf);
 
         Stream<PlayerEntity> watchingPlayers = PlayerStream.watching(drone.getEntityWorld(), new BlockPos(drone.getPos()));
         watchingPlayers.forEach(player -> {

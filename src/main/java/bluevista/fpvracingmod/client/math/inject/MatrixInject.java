@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.inject;
+package bluevista.fpvracingmod.client.math.inject;
 
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;

@@ -1,9 +1,8 @@
 package bluevista.fpvracingmod.server.entities;
 
-import bluevista.fpvracingmod.client.math.MatrixInjection;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
+import bluevista.fpvracingmod.client.math.inject.MatrixInject;
 import bluevista.fpvracingmod.network.DroneInfoToClient;
-import bluevista.fpvracingmod.network.DroneInfoToServer;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.minecraft.entity.Entity;
@@ -30,6 +29,7 @@ public class DroneEntity extends Entity {
 	private static final Vec3d G = new Vec3d(0, -0.04, 0);
 	private static float cameraAngle;
 
+	private Quaternion prevOrientation;
 	private Quaternion orientation;
 	private float throttle;
 
@@ -40,15 +40,14 @@ public class DroneEntity extends Entity {
 	public DroneEntity(World world) {
 		super(ServerInitializer.DRONE_ENTITY, world);
 		this.orientation = new Quaternion(0, 1, 0, 0);
+		this.prevOrientation = new Quaternion(0, 1, 0 , 0);
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
 
-		if(this.world.isClient())
-			DroneInfoToServer.send(this);
-		else
+		if(!this.world.isClient())
 			DroneInfoToClient.send(this);
 
 		// Update velocity
@@ -80,9 +79,9 @@ public class DroneEntity extends Entity {
 		QuaternionHelper.rotateX(q, 90);
 
 		Matrix4f mat = new Matrix4f();
-		MatrixInjection.from(mat).fromQuaternion(q);
+		MatrixInject.from(mat).fromQuaternion(q);
 
-		return MatrixInjection.from(mat).matrixToVector();
+		return MatrixInject.from(mat).matrixToVector();
 	}
 
 	/*
@@ -171,6 +170,14 @@ public class DroneEntity extends Entity {
 
 	public void setOrientation(Quaternion q) {
 		orientation = q;
+	}
+
+	public Quaternion getPrevOrientation() {
+		return prevOrientation;
+	}
+
+	public void setPrevOrientation(Quaternion q) {
+		prevOrientation.set(q.getX(), q.getY(), q.getZ(), q.getW());
 	}
 
 	public float getCameraAngle() {

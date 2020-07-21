@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.network;
 
+import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import io.netty.buffer.Unpooled;
@@ -16,15 +17,9 @@ public class DroneInfoToServer {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_info_server_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
-        Quaternion orientation = new Quaternion(
-                buf.readFloat(),
-                buf.readFloat(),
-                buf.readFloat(),
-                buf.readFloat()
-        );
-
-        float throttle = buf.readFloat();
         UUID droneID = buf.readUuid();
+        float throttle = buf.readFloat();
+        Quaternion q = QuaternionHelper.deserialize(buf);
 
         context.getTaskQueue().execute(() -> {
             DroneEntity drone = null;
@@ -33,7 +28,7 @@ public class DroneInfoToServer {
                 drone = DroneEntity.getByUuid(context.getPlayer(), droneID);
 
             if(drone != null) {
-                drone.setOrientation(orientation);
+                drone.setOrientation(q);
                 drone.setThrottle(throttle);
             }
         });
@@ -44,12 +39,9 @@ public class DroneInfoToServer {
         float throttle = drone.getThrottle();
 
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeFloat(q.getX());
-        buf.writeFloat(q.getY());
-        buf.writeFloat(q.getZ());
-        buf.writeFloat(q.getW());
-        buf.writeFloat(throttle);
         buf.writeUuid(drone.getUuid());
+        buf.writeFloat(throttle);
+        QuaternionHelper.serialize(q, buf);
 
         ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
     }

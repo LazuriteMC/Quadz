@@ -7,6 +7,7 @@ import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.math.Quaternion;
 
 @Environment(EnvType.CLIENT)
 public class InputTick {
@@ -70,9 +71,11 @@ public class InputTick {
             float deltaY = (float) BetaflightHelper.calculateRates(currY, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE) * d;
             float deltaZ = (float) BetaflightHelper.calculateRates(currZ, Controller.RATE, Controller.EXPO, Controller.SUPER_RATE) * d;
 
-            drone.setOrientation(QuaternionHelper.rotateX(drone.getOrientation(), deltaX));
-            drone.setOrientation(QuaternionHelper.rotateY(drone.getOrientation(), deltaY));
-            drone.setOrientation(QuaternionHelper.rotateZ(drone.getOrientation(), deltaZ));
+            Quaternion q = drone.getOrientation();
+            QuaternionHelper.rotateX(q, deltaX);
+            QuaternionHelper.rotateY(q, deltaY);
+            QuaternionHelper.rotateZ(q, deltaZ);
+
             currT /= throttleScalar;
             drone.setThrottle(currT);
 

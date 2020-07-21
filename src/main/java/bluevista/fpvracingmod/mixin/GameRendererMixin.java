@@ -22,7 +22,7 @@ public class GameRendererMixin {
 	 */
 	@Inject(at = @At("HEAD"), method = "renderWorld")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
-		RenderTick.tick(matrix, tickDelta);
+		RenderTick.tick(client, matrix, tickDelta);
 	}
 
 	/*

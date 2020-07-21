@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.input.InputTick;
+import bluevista.fpvracingmod.network.DroneInfoToServer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -31,8 +32,10 @@ public class ClientTick {
                     if(!currentDrone.removed) {
                         if (isWearingGoggles(mc.player))
                             setView(mc, currentDrone);
-                        if (isValidTransmitter(mc.player, currentDrone))
+                        if (isValidTransmitter(mc.player.getMainHandStack(), currentDrone)) {
                             InputTick.setShouldTick(true);
+                            DroneInfoToServer.send(currentDrone);
+                        }
                     } else resetView(mc);
                 }
             }
@@ -49,13 +52,12 @@ public class ClientTick {
      * the given player is holding is also
      * bound to the given drone entity.
      */
-    public static boolean isValidTransmitter(ClientPlayerEntity player, DroneEntity drone) {
-        ItemStack heldStack = player.inventory.getMainHandStack();
-
+    public static boolean isValidTransmitter(ItemStack item, DroneEntity drone) {
         try {
-            return isHoldingTransmitter(player) &&
-                    drone.getUuid().equals(heldStack.getSubTag("bind").getUuid("bind"));
-        } catch (NullPointerException e) {
+            if (item.getSubTag("bind") != null)
+                return (drone.getUuid().equals(item.getSubTag("bind").getUuid("bind")));
+            else return false;
+        } catch (Exception e) {
             return false;
         }
     }
