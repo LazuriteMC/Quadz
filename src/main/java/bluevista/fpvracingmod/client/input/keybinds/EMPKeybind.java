@@ -15,7 +15,7 @@ import org.lwjgl.glfw.GLFW;
 public class EMPKeybind {
     private static KeyBinding key;
 
-    public static void callback(MinecraftClient mc) {
+    public static void callback(MinecraftClient client) {
         if (key.wasPressed()) EMPPacketToServer.send();
     }
 
@@ -24,7 +24,7 @@ public class EMPKeybind {
                 "key." + ServerInitializer.MODID + ".emp",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_O,
-                ServerInitializer.MODID + ".keys"
+                "category." + ServerInitializer.MODID + ".keys"
         );
 
         KeyBindingHelper.registerKeyBinding(key);

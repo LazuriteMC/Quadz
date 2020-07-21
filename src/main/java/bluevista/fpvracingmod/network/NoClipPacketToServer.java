@@ -7,23 +7,30 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class NoClipPacketToServer {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "noclip_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
+        PlayerEntity player = context.getPlayer();
+        ItemStack hand = player.getMainHandStack();
+
         context.getTaskQueue().execute(() -> {
-            ItemStack hand = context.getPlayer().getMainHandStack();
             if(hand.getItem() instanceof TransmitterItem) {
                 if(hand.getSubTag("bind") != null) {
                     DroneEntity drone = DroneEntity.getByUuid(context.getPlayer(), hand.getSubTag("bind").getUuid("bind"));
-                    drone.noClip = !drone.noClip;
+
+                    if(drone != null) {
+                        drone.noClip = !drone.noClip;
+                        player.sendMessage(new TranslatableText("No Clip Enabled"), false);
+                    }
                 }
             }
-
         });
     }
 

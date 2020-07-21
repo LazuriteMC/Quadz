@@ -16,19 +16,19 @@ import org.lwjgl.glfw.GLFW;
 public class NoClipKeybind {
     private static KeyBinding key;
 
-    public static void callback(MinecraftClient mc) {
+    public static void callback(MinecraftClient client) {
         if (key.wasPressed()) NoClipPacketToServer.send();
     }
 
     public static void register() {
         key = new KeyBinding(
-                "key." + ServerInitializer.MODID + ".emp",
+                "key." + ServerInitializer.MODID + ".noclip",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_N,
-                ServerInitializer.MODID + ".keys"
+                "category." + ServerInitializer.MODID + ".keys"
         );
 
         KeyBindingHelper.registerKeyBinding(key);
-        ClientTickCallback.EVENT.register(EMPKeybind::callback);
+        ClientTickCallback.EVENT.register(NoClipKeybind::callback);
     }
 }

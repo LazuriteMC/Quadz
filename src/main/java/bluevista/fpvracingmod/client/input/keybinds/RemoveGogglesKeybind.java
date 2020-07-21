@@ -9,9 +9,9 @@ import net.minecraft.client.MinecraftClient;
 
 @Environment(EnvType.CLIENT)
 public class RemoveGogglesKeybind {
-    public static void callback(MinecraftClient mc) {
-        if (mc.options.keySneak.wasPressed())
-            if(mc.player.inventory.armor.get(3).getItem() instanceof GogglesItem)
+    public static void callback(MinecraftClient client) {
+        if (client.options.keySneak.wasPressed())
+            if(client.player.inventory.armor.get(3).getItem() instanceof GogglesItem)
                 RemoveGogglesPacketToServer.send();
     }
 
