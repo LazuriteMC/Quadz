@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.client.input;
 
-import bluevista.fpvracingmod.network.EMPPacketHandler;
+import bluevista.fpvracingmod.network.EMPPacketToServer;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,7 +16,7 @@ public class EMPKeybinding {
     private static KeyBinding key;
 
     public static void callback(MinecraftClient mc) {
-        if (key.wasPressed()) EMPPacketHandler.send();
+        if (key.wasPressed()) EMPPacketToServer.send();
     }
 
     public static void register() {

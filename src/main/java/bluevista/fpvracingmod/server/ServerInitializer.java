@@ -1,8 +1,8 @@
 package bluevista.fpvracingmod.server;
 
 import bluevista.fpvracingmod.network.DroneInfoToServer;
-import bluevista.fpvracingmod.network.EMPPacketHandler;
-import bluevista.fpvracingmod.network.RemoveGogglesPacketHandler;
+import bluevista.fpvracingmod.network.EMPPacketToServer;
+import bluevista.fpvracingmod.network.RemoveGogglesPacketToServer;
 import bluevista.fpvracingmod.server.commands.FPVRacing;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
@@ -42,9 +42,9 @@ public class ServerInitializer implements ModInitializer {
 	}
 
 	private void registerNetwork() {
-		RemoveGogglesPacketHandler.register();
+		RemoveGogglesPacketToServer.register();
 		DroneInfoToServer.register();
-		EMPPacketHandler.register();
+		EMPPacketToServer.register();
 	}
 
 	private void registerItems() {

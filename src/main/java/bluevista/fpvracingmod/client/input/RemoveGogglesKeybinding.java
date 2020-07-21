@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.client.input;
 
-import bluevista.fpvracingmod.network.RemoveGogglesPacketHandler;
+import bluevista.fpvracingmod.network.RemoveGogglesPacketToServer;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -12,7 +12,7 @@ public class RemoveGogglesKeybinding {
     public static void callback(MinecraftClient mc) {
         if (mc.options.keySneak.wasPressed())
             if(mc.player.inventory.armor.get(3).getItem() instanceof GogglesItem)
-                RemoveGogglesPacketHandler.send();
+                RemoveGogglesPacketToServer.send();
     }
 
     public static void register() {

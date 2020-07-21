@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-public class EMPPacketHandler {
+public class EMPPacketToServer {
     public static final Identifier EMP_PACKET_ID = new Identifier(ServerInitializer.MODID, "emp_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
@@ -39,6 +39,6 @@ public class EMPPacketHandler {
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(EMP_PACKET_ID, EMPPacketHandler::accept);
+        ServerSidePacketRegistry.INSTANCE.register(EMP_PACKET_ID, EMPPacketToServer::accept);
     }
 }

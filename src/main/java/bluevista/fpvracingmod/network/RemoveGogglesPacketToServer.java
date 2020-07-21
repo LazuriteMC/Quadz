@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
-public class RemoveGogglesPacketHandler {
+public class RemoveGogglesPacketToServer {
     public static final Identifier REMOVE_GOGGLES_PACKET_ID = new Identifier(ServerInitializer.MODID, "goggles_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buffer) {
@@ -28,6 +28,6 @@ public class RemoveGogglesPacketHandler {
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(REMOVE_GOGGLES_PACKET_ID, RemoveGogglesPacketHandler::accept);
+        ServerSidePacketRegistry.INSTANCE.register(REMOVE_GOGGLES_PACKET_ID, RemoveGogglesPacketToServer::accept);
     }
 }
