@@ -31,7 +31,9 @@ public class EMPPacketToServer {
         String t;
         if(kill == 1) t = "Rekt 1 drone";
         else t = "Rekt " + kill + " drones";
-        p.sendMessage(new TranslatableText(t), false);
+        List<? extends PlayerEntity> players = context.getPlayer().getEntityWorld().getPlayers();
+        for(PlayerEntity player : players)
+            player.sendMessage(new TranslatableText(t), false);
     }
 
     public static void send() {
