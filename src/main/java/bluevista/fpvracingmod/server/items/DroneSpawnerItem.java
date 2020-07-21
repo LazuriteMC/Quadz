@@ -51,9 +51,9 @@ public class DroneSpawnerItem extends Item {
 					drone.setCameraAngle(20);
 				}
 
-				if (!user.abilities.creativeMode) {
+//				if (!user.abilities.creativeMode) {
 					itemStack.decrement(1);
-				}
+//				}
 			}
 		}
 
