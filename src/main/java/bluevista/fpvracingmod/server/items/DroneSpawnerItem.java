@@ -45,6 +45,12 @@ public class DroneSpawnerItem extends Item {
 					drone.setChannel(ClientInitializer.configChannel);
 				}
 
+				if(itemStack.getSubTag("misc") != null) {
+					drone.setCameraAngle(itemStack.getSubTag("misc").getInt("cameraAngle"));
+				} else {
+					drone.setCameraAngle(ClientInitializer.configCameraAngle);
+				}
+
 				if (!user.abilities.creativeMode) {
 					itemStack.decrement(1);
 				}
@@ -60,6 +66,10 @@ public class DroneSpawnerItem extends Item {
 
 	public static void setChannel(ItemStack itemStack, int channel) {
 		itemStack.getOrCreateSubTag("frequency").putInt("channel", channel);
+	}
+
+	public static void setCameraAngle(ItemStack itemStack, int angle) {
+		itemStack.getOrCreateSubTag("misc").putInt("cameraAngle", angle);
 	}
 }
 

@@ -2,14 +2,11 @@ package bluevista.fpvracingmod.server.commands;
 
 import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
-import bluevista.fpvracingmod.server.items.GogglesItem;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -81,7 +78,11 @@ public class FPVRacing {
 
                     .then(CommandManager.literal("channel")
                     .then(CommandManager.argument("channelValue", IntegerArgumentType.integer(0))
-                            .executes(FPVRacing::setChannel))));
+                            .executes(FPVRacing::setChannel)))
+
+                    .then(CommandManager.literal("cameraAngle")
+                    .then(CommandManager.argument("angleValue", IntegerArgumentType.integer(0))
+                            .executes(FPVRacing::setCameraAngle))));
         });
     }
 
@@ -243,4 +244,18 @@ public class FPVRacing {
         return 0;
     }
 
+    private static int setCameraAngle(CommandContext<ServerCommandSource> context) {
+        final int value = IntegerArgumentType.getInteger(context, "angleValue");
+        try {
+            final ItemStack selectedItem = context.getSource().getPlayer().inventory.getMainHandStack();
+            if (selectedItem.getItem() instanceof DroneSpawnerItem) {
+                DroneSpawnerItem.setCameraAngle(selectedItem, value);
+                return 1;
+            }
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
+            return -1;
+        }
+        return 0;
+    }
 }

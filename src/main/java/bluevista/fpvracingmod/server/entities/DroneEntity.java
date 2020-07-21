@@ -28,7 +28,7 @@ import java.util.UUID;
 public class DroneEntity extends Entity {
 	private static final Vec3d G = new Vec3d(0, -0.04, 0);
 
-	private static float cameraAngle;
+	private int cameraAngle;
 	private int band;
 	private int channel;
 
@@ -57,20 +57,22 @@ public class DroneEntity extends Entity {
 		Vec3d d = getThrustVector().multiply(1, -1, 1).multiply(throttle);
 		this.addVelocity(G, d);
 		this.move(MovementType.SELF, this.getVelocity());
+
+		System.out.println(getCameraAngle());
 	}
 
 	@Override
 	protected void readCustomDataFromTag(CompoundTag tag) {
 		band = tag.getInt("band");
 		channel = tag.getInt("channel");
-//		cameraAngle = tag.getInt("camera_angle");
+		cameraAngle = tag.getInt("cameraAngle");
 	}
 
 	@Override
 	protected void writeCustomDataToTag(CompoundTag tag) {
 		tag.putInt("band", band);
 		tag.putInt("channel", channel);
-//		tag.putInt("camera_angle", cameraAngle);
+		tag.putInt("cameraAngle", cameraAngle);
 	}
 
 	public void setBand(int band) {
@@ -198,16 +200,16 @@ public class DroneEntity extends Entity {
 		return cameraAngle;
 	}
 
+	public void setCameraAngle(int angle) {
+		cameraAngle = angle;
+	}
+
 	public float getThrottle() {
 		return throttle;
 	}
 
 	public void setThrottle(float throttle) {
 		this.throttle = throttle;
-	}
-
-	public static void setCameraAngle(float angle) {
-		DroneEntity.cameraAngle = angle;
 	}
 
 	public void addVelocity(Vec3d... vecs) {

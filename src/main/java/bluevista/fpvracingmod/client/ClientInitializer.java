@@ -20,6 +20,7 @@ public class ClientInitializer implements ClientModInitializer {
 
     public static int configBand;
     public static int configChannel;
+    public static int configCameraAngle;
 
     @Override
     public void onInitializeClient() {
@@ -53,8 +54,7 @@ public class ClientInitializer implements ClientModInitializer {
 
             setConfigBand(Integer.parseInt(config.getValue("band")));
             setConfigChannel(Integer.parseInt(config.getValue("channel")));
-
-            DroneEntity.setCameraAngle(Float.parseFloat(config.getValue("cameraAngle")));
+            setConfigCameraAngle(Integer.parseInt(config.getValue("cameraAngle")));
         } catch (Exception e) {
             System.err.println("Error loading config");
             e.printStackTrace();
@@ -81,4 +81,7 @@ public class ClientInitializer implements ClientModInitializer {
         configChannel = channel;
     }
 
+    public static void setConfigCameraAngle(int angle) {
+        configCameraAngle = angle;
+    }
 }
