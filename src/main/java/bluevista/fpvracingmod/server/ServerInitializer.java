@@ -2,6 +2,7 @@ package bluevista.fpvracingmod.server;
 
 import bluevista.fpvracingmod.network.DroneInfoToServer;
 import bluevista.fpvracingmod.network.EMPPacketToServer;
+import bluevista.fpvracingmod.network.NoClipPacketToServer;
 import bluevista.fpvracingmod.network.RemoveGogglesPacketToServer;
 import bluevista.fpvracingmod.server.commands.FPVRacing;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -45,6 +46,7 @@ public class ServerInitializer implements ModInitializer {
 		RemoveGogglesPacketToServer.register();
 		DroneInfoToServer.register();
 		EMPPacketToServer.register();
+		NoClipPacketToServer.register();
 	}
 
 	private void registerItems() {

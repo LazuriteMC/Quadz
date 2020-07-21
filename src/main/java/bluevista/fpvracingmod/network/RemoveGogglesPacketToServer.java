@@ -10,7 +10,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
 public class RemoveGogglesPacketToServer {
-    public static final Identifier REMOVE_GOGGLES_PACKET_ID = new Identifier(ServerInitializer.MODID, "goggles_packet");
+    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "goggles_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buffer) {
         context.getTaskQueue().execute(() -> {
@@ -24,10 +24,10 @@ public class RemoveGogglesPacketToServer {
     }
 
     public static void send() {
-        ClientSidePacketRegistry.INSTANCE.sendToServer(REMOVE_GOGGLES_PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
+        ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, new PacketByteBuf(Unpooled.buffer()));
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(REMOVE_GOGGLES_PACKET_ID, RemoveGogglesPacketToServer::accept);
+        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, RemoveGogglesPacketToServer::accept);
     }
 }

@@ -3,6 +3,7 @@ package bluevista.fpvracingmod.client;
 import bluevista.fpvracingmod.client.config.Config;
 import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.input.keybinds.EMPKeybind;
+import bluevista.fpvracingmod.client.input.keybinds.NoClipKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.RemoveGogglesKeybind;
 import bluevista.fpvracingmod.network.DroneInfoToClient;
 import bluevista.fpvracingmod.server.ServerInitializer;
@@ -19,10 +20,9 @@ public class ClientInitializer implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        RemoveGogglesKeybind.register();
-        EMPKeybind.register();
         ClientTick.register();
 
+        registerKeybinds();
         registerRenderers();
         registerNetwork();
         registerConfig();
@@ -54,6 +54,12 @@ public class ClientInitializer implements ClientModInitializer {
             System.err.println("Error loading config");
             e.printStackTrace();
         }
+    }
+
+    private void registerKeybinds() {
+        RemoveGogglesKeybind.register();
+        EMPKeybind.register();
+        NoClipKeybind.register();
     }
 
     private void registerRenderers() {
