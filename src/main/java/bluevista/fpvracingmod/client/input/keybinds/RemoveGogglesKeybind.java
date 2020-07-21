@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.client.input;
+package bluevista.fpvracingmod.client.input.keybinds;
 
 import bluevista.fpvracingmod.network.RemoveGogglesPacketToServer;
 import bluevista.fpvracingmod.server.items.GogglesItem;
@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.minecraft.client.MinecraftClient;
 
 @Environment(EnvType.CLIENT)
-public class RemoveGogglesKeybinding {
+public class RemoveGogglesKeybind {
     public static void callback(MinecraftClient mc) {
         if (mc.options.keySneak.wasPressed())
             if(mc.player.inventory.armor.get(3).getItem() instanceof GogglesItem)
@@ -16,6 +16,6 @@ public class RemoveGogglesKeybinding {
     }
 
     public static void register() {
-        ClientTickCallback.EVENT.register(RemoveGogglesKeybinding::callback);
+        ClientTickCallback.EVENT.register(RemoveGogglesKeybind::callback);
     }
 }

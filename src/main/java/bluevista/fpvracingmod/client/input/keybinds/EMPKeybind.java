@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.client.input;
+package bluevista.fpvracingmod.client.input.keybinds;
 
 import bluevista.fpvracingmod.network.EMPPacketToServer;
 import bluevista.fpvracingmod.server.ServerInitializer;
@@ -12,7 +12,7 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 @Environment(EnvType.CLIENT)
-public class EMPKeybinding {
+public class EMPKeybind {
     private static KeyBinding key;
 
     public static void callback(MinecraftClient mc) {
@@ -28,6 +28,6 @@ public class EMPKeybinding {
         );
 
         KeyBindingHelper.registerKeyBinding(key);
-        ClientTickCallback.EVENT.register(EMPKeybinding::callback);
+        ClientTickCallback.EVENT.register(EMPKeybind::callback);
     }
 }
