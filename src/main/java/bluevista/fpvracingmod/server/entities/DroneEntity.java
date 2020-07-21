@@ -57,8 +57,6 @@ public class DroneEntity extends Entity {
 		Vec3d d = getThrustVector().multiply(1, -1, 1).multiply(throttle);
 		this.addVelocity(G, d);
 		this.move(MovementType.SELF, this.getVelocity());
-
-		System.out.println(getCameraAngle());
 	}
 
 	@Override
@@ -79,8 +77,16 @@ public class DroneEntity extends Entity {
 		this.band = band;
 	}
 
+	public int getBand() {
+		return band;
+	}
+
 	public void setChannel(int channel) {
 		this.channel = channel;
+	}
+
+	public int getChannel() {
+		return channel;
 	}
 
 	/*
@@ -196,7 +202,7 @@ public class DroneEntity extends Entity {
 		prevOrientation.set(q.getX(), q.getY(), q.getZ(), q.getW());
 	}
 
-	public float getCameraAngle() {
+	public int getCameraAngle() {
 		return cameraAngle;
 	}
 

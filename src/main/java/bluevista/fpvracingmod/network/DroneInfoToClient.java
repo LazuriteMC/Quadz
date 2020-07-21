@@ -23,8 +23,11 @@ public class DroneInfoToClient {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_info_client_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
-        UUID droneID = buf.readUuid();
         Quaternion q = QuaternionHelper.deserialize(buf);
+        UUID droneID = buf.readUuid();
+        int band = buf.readInt();
+        int channel = buf.readInt();
+        int cameraAngle = buf.readInt();
 
         context.getTaskQueue().execute(() -> {
             DroneEntity drone = null;
@@ -32,18 +35,22 @@ public class DroneInfoToClient {
             if(context.getPlayer() != null)
                 drone = DroneEntity.getByUuid(context.getPlayer(), droneID);
 
-            if(drone != null)
+            if(drone != null) {
                 drone.setOrientation(q);
+                drone.setBand(band);
+                drone.setChannel(channel);
+                drone.setCameraAngle(cameraAngle);
+            }
         });
     }
 
     public static void send(DroneEntity drone) {
-        Quaternion q = drone.getOrientation();
-        UUID droneUUID = drone.getUuid();
-
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeUuid(droneUUID);
-        QuaternionHelper.serialize(q, buf);
+        QuaternionHelper.serialize(drone.getOrientation(), buf);
+        buf.writeUuid(drone.getUuid());
+        buf.writeInt(drone.getBand());
+        buf.writeInt(drone.getChannel());
+        buf.writeInt(drone.getCameraAngle());
 
         Stream<PlayerEntity> watchingPlayers = PlayerStream.watching(drone.getEntityWorld(), new BlockPos(drone.getPos()));
         watchingPlayers.forEach(player -> {
