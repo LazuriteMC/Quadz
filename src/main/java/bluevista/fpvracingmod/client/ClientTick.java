@@ -29,7 +29,7 @@ public class ClientTick {
                 currentDrone = DroneEntity.getNearestTo(mc.player);
 
                 if(currentDrone != null) {
-                    if (isWearingGoggles(mc.player))
+                    if (isOnRightChannel(mc.player, currentDrone))
                         setView(mc, currentDrone);
                     if (isValidTransmitter(mc.player.getMainHandStack(), currentDrone)) {
                         InputTick.setShouldTick(true);
@@ -73,6 +73,15 @@ public class ClientTick {
      */
     public static boolean isWearingGoggles(ClientPlayerEntity player) {
         return player.inventory.armor.get(3).getItem() instanceof GogglesItem;
+    }
+
+    public static boolean isOnRightChannel(ClientPlayerEntity player, DroneEntity drone) {
+        if(isWearingGoggles(player)) {
+            ItemStack stack = player.inventory.armor.get(3);
+            return drone.getBand() == GogglesItem.getBand(stack) && drone.getChannel() == GogglesItem.getChannel(stack);
+        }
+
+        return false;
     }
 
     public static boolean shouldRenderHand() {
