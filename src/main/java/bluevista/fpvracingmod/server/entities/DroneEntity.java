@@ -159,21 +159,28 @@ public class DroneEntity extends Entity {
 	@Override
 	public boolean damage(DamageSource source, float amount) {
 		if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
-			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-				ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
-
-				DroneSpawnerItem.setBand(itemStack, band);
-				DroneSpawnerItem.setBand(itemStack, channel);
-				DroneSpawnerItem.setCameraAngle(itemStack, cameraAngle);
-
-				this.dropStack(itemStack);
-			}
-
-			this.remove();
+			this.kill();
 			return true;
 		}
-
 		return false;
+	}
+
+	/*
+	 * Called whenever the drone is broken. Drops drone spawner item containing nbt info
+	 */
+	@Override
+	public void kill() {
+		if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+			ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
+
+			DroneSpawnerItem.setBand(itemStack, band);
+			DroneSpawnerItem.setBand(itemStack, channel);
+			DroneSpawnerItem.setCameraAngle(itemStack, cameraAngle);
+
+			this.dropStack(itemStack);
+		}
+
+		this.remove();
 	}
 
 	/*
