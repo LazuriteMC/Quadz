@@ -7,7 +7,6 @@ import bluevista.fpvracingmod.client.input.RemoveGogglesKeybinding;
 import bluevista.fpvracingmod.network.DroneInfoToClient;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
-import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -17,10 +16,6 @@ import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 public class ClientInitializer implements ClientModInitializer {
 
     private static Config config;
-
-    public static int configBand;
-    public static int configChannel;
-    public static int configCameraAngle;
 
     @Override
     public void onInitializeClient() {
@@ -52,9 +47,9 @@ public class ClientInitializer implements ClientModInitializer {
             Controller.setInvertYaw(Integer.parseInt(config.getValue("invertYaw")));
             Controller.setInvertRoll(Integer.parseInt(config.getValue("invertRoll")));
 
-            setConfigBand(Integer.parseInt(config.getValue("band")));
-            setConfigChannel(Integer.parseInt(config.getValue("channel")));
-            setConfigCameraAngle(Integer.parseInt(config.getValue("cameraAngle")));
+//            setConfigBand(Integer.parseInt(config.getValue("band")));
+//            setConfigChannel(Integer.parseInt(config.getValue("channel")));
+//            setConfigCameraAngle(Integer.parseInt(config.getValue("cameraAngle")));
         } catch (Exception e) {
             System.err.println("Error loading config");
             e.printStackTrace();
@@ -71,17 +66,5 @@ public class ClientInitializer implements ClientModInitializer {
 
     public static Config getConfig() {
         return config;
-    }
-
-    public static void setConfigBand(int band) {
-        configBand = band;
-    }
-
-    public static void setConfigChannel(int channel) {
-        configChannel = channel;
-    }
-
-    public static void setConfigCameraAngle(int angle) {
-        configCameraAngle = angle;
     }
 }

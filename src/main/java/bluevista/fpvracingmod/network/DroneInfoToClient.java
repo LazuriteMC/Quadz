@@ -46,6 +46,7 @@ public class DroneInfoToClient {
 
     public static void send(DroneEntity drone) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+
         QuaternionHelper.serialize(drone.getOrientation(), buf);
         buf.writeUuid(drone.getUuid());
         buf.writeInt(drone.getBand());
