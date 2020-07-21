@@ -4,6 +4,7 @@ import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.client.math.inject.MatrixInject;
 import bluevista.fpvracingmod.network.DroneInfoToClient;
 import bluevista.fpvracingmod.server.ServerInitializer;
+import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -160,10 +161,14 @@ public class DroneEntity extends Entity {
 		if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
 			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
 				ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
-				itemStack.getOrCreateSubTag("frequency").putInt("band", band);
-				itemStack.getOrCreateSubTag("frequency").putInt("channel", channel);
-				this.dropItem(itemStack.getItem());
+
+				DroneSpawnerItem.setBand(itemStack, band);
+				DroneSpawnerItem.setBand(itemStack, channel);
+				DroneSpawnerItem.setCameraAngle(itemStack, cameraAngle);
+
+				this.dropStack(itemStack);
 			}
+
 			this.remove();
 			return true;
 		}
