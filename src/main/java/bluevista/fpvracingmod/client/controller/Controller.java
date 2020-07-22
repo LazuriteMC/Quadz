@@ -84,6 +84,15 @@ public class Controller {
 		return glfwGetJoystickAxes(CONTROLLER_ID).get(axis);
 	}
 
+	public static boolean controllerExists() {
+		try {
+			glfwGetJoystickAxes(CONTROLLER_ID).get();
+			return true;
+		} catch (NullPointerException e) {
+			return false;
+		}
+	}
+
 	public static float getBetaflightAxis(int axis, float rate, float expo, float superRate) { // logistic yo
 		return (float) BetaflightHelper.calculateRates(getAxis(axis), rate, expo, superRate);
 	}

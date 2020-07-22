@@ -1,6 +1,5 @@
 package bluevista.fpvracingmod.client;
 
-import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -40,9 +39,5 @@ public class RenderTick {
             newMat.transpose();
             screenMat.multiply(newMat);
         }
-
-        DroneEntity drone = TransmitterItem.droneFromTransmitter(client.player.getMainHandStack(), client.player);
-        if(drone != null && TransmitterItem.isHoldingTransmitter(client.player) && !client.isPaused())
-            InputTick.tick(drone);
     }
 }

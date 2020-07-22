@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.client;
 
+import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.network.DroneInfoToServer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.GogglesItem;
@@ -15,7 +16,6 @@ import java.util.List;
 public class ClientTick {
     public static void tick(MinecraftClient mc) {
         if (mc.player != null) {
-
             if(GogglesItem.isWearingGoggles(mc.player) && !isInView(mc)) {
                 List<DroneEntity> drones = DroneEntity.getNearbyDrones(mc.player, 100);
                 for (DroneEntity drone : drones) {
