@@ -28,6 +28,11 @@ public class ClientTick {
             if(isWearingGoggles(mc.player) || isHoldingTransmitter(mc.player)) {
                 currentDrone = DroneEntity.getNearestTo(mc.player);
 
+                if(isHoldingTransmitter(mc.player)) {
+                    ItemStack hand = mc.player.getMainHandStack();
+                    System.out.println("UUID: " + hand.getSubTag("bind"));
+                }
+
                 if(currentDrone != null) {
                     if (isOnRightChannel(mc.player, currentDrone))
                         setView(mc, currentDrone);
