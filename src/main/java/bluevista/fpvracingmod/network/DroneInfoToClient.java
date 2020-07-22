@@ -16,6 +16,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Quaternion;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -53,12 +54,15 @@ public class DroneInfoToClient {
         buf.writeInt(drone.getChannel());
         buf.writeInt(drone.getCameraAngle());
 
-        Stream<PlayerEntity> watchingPlayers = PlayerStream.watching(drone.getEntityWorld(), new BlockPos(drone.getPos()));
-        watchingPlayers.forEach(player -> {
+//        Stream<PlayerEntity> watchingPlayers = PlayerStream.watching(drone.getEntityWorld(), new BlockPos(drone.getPos()));
+//        watchingPlayers.forEach(player -> {
+        List<? extends PlayerEntity> players = drone.getEntityWorld().getPlayers();
+        for(PlayerEntity player : players) {
             ItemStack handStack = player.getMainHandStack();
-            if(!(handStack.getItem() instanceof TransmitterItem) && !drone.isTransmitterBound(handStack))
-                ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, PACKET_ID , buf);
-        });
+            if (!(handStack.getItem() instanceof TransmitterItem) && !drone.isTransmitterBound(handStack))
+                ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, PACKET_ID, buf);
+        }
+//        });
     }
 
     public static void register() {
