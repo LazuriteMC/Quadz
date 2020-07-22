@@ -18,7 +18,8 @@ public class InputTick {
     private static final int throttleScalar = 15;
 
     public static void tick(DroneEntity drone) {
-        if(shouldTick()) {
+
+        if(shouldTick() && Controller.controllerExists()) {
             float d = (System.currentTimeMillis() - prevTime) / 1000f;
 
             float currX = -Controller.getAxis(Controller.PITCH_NUM);

@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.server.entities;
 
+import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.client.math.inject.MatrixInject;
 import bluevista.fpvracingmod.network.DroneInfoToClient;
@@ -192,6 +193,9 @@ public class DroneEntity extends Entity {
 			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
 				player.inventory.getMainHandStack().getOrCreateSubTag("bind").putUuid("bind", this.getUuid());
 				player.sendMessage(new TranslatableText("Transmitter bound"), false);
+				if (!Controller.controllerExists()) {
+					player.sendMessage(new TranslatableText("Controller not found"), false);
+				}
 			}
 		}
 
