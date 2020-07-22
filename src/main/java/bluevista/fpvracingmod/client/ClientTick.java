@@ -78,6 +78,10 @@ public class ClientTick {
     public static boolean isOnRightChannel(ClientPlayerEntity player, DroneEntity drone) {
         if(isWearingGoggles(player)) {
             ItemStack stack = player.inventory.armor.get(3);
+            System.out.println("Channel: " + GogglesItem.getChannel(stack));
+            System.out.println("Band: " + GogglesItem.getBand(stack));
+            System.out.println("Drone Channel: " + drone.getChannel());
+            System.out.println("Drone Band: " + drone.getBand());
             return drone.getBand() == GogglesItem.getBand(stack) && drone.getChannel() == GogglesItem.getChannel(stack);
         }
 

@@ -32,6 +32,6 @@ public class GogglesInfoToClient {
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, GogglesInfoToClient::accept);
+        ClientSidePacketRegistry.INSTANCE.register(PACKET_ID, GogglesInfoToClient::accept);
     }
 }
