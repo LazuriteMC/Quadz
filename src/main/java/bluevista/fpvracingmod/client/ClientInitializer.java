@@ -6,6 +6,7 @@ import bluevista.fpvracingmod.client.input.keybinds.EMPKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.NoClipKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.RemoveGogglesKeybind;
 import bluevista.fpvracingmod.network.DroneInfoToClient;
+import bluevista.fpvracingmod.network.GogglesInfoToClient;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
 import net.fabricmc.api.ClientModInitializer;
@@ -68,6 +69,7 @@ public class ClientInitializer implements ClientModInitializer {
 
     private void registerNetwork() {
         DroneInfoToClient.register();
+        GogglesInfoToClient.register();
     }
 
     public static Config getConfig() {

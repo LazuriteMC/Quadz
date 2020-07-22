@@ -226,7 +226,7 @@ public class FPVRacing {
     private static int setDroneBand(CommandContext<ServerCommandSource> context) {
         final int value = IntegerArgumentType.getInteger(context, "droneBandValue");
         try {
-            final ItemStack selectedItem = context.getSource().getPlayer().inventory.getMainHandStack();
+            final ItemStack selectedItem = context.getSource().getPlayer().getMainHandStack();
             if (selectedItem.getItem() instanceof DroneSpawnerItem) {
                 DroneSpawnerItem.setBand(selectedItem, value);
                 return 1;
@@ -241,7 +241,7 @@ public class FPVRacing {
     private static int setDroneChannel(CommandContext<ServerCommandSource> context) {
         final int value = IntegerArgumentType.getInteger(context, "droneChannelValue");
         try {
-            final ItemStack selectedItem = context.getSource().getPlayer().inventory.getMainHandStack();
+            final ItemStack selectedItem = context.getSource().getPlayer().getMainHandStack();
             if (selectedItem.getItem() instanceof DroneSpawnerItem) {
                 DroneSpawnerItem.setChannel(selectedItem, value);
                 return 1;
@@ -256,7 +256,7 @@ public class FPVRacing {
     private static int setCameraAngle(CommandContext<ServerCommandSource> context) {
         final int value = IntegerArgumentType.getInteger(context, "angleValue");
         try {
-            final ItemStack selectedItem = context.getSource().getPlayer().inventory.getMainHandStack();
+            final ItemStack selectedItem = context.getSource().getPlayer().getMainHandStack();
             if (selectedItem.getItem() instanceof DroneSpawnerItem) {
                 DroneSpawnerItem.setCameraAngle(selectedItem, value);
                 return 1;
@@ -271,9 +271,9 @@ public class FPVRacing {
     private static int setGogglesBand(CommandContext<ServerCommandSource> context) {
         final int value = IntegerArgumentType.getInteger(context, "gogglesBandValue");
         try {
-            final ItemStack selectedItem = context.getSource().getPlayer().inventory.getMainHandStack();
+            final ItemStack selectedItem = context.getSource().getPlayer().getMainHandStack();
             if (selectedItem.getItem() instanceof GogglesItem) {
-                GogglesItem.setBand(selectedItem, value);
+                GogglesItem.setBand(selectedItem, value, context.getSource().getPlayer());
                 return 1;
             }
         } catch (CommandSyntaxException e) {
@@ -288,7 +288,7 @@ public class FPVRacing {
         try {
             final ItemStack selectedItem = context.getSource().getPlayer().inventory.getMainHandStack();
             if (selectedItem.getItem() instanceof GogglesItem) {
-                GogglesItem.setChannel(selectedItem, value);
+                GogglesItem.setChannel(selectedItem, value, context.getSource().getPlayer());
                 return 1;
             }
         } catch (CommandSyntaxException e) {
