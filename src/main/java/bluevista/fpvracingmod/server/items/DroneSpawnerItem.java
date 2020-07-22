@@ -1,6 +1,5 @@
 package bluevista.fpvracingmod.server.items;
 
-import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,7 +47,7 @@ public class DroneSpawnerItem extends Item {
 				if(itemStack.getSubTag("misc") != null) {
 					drone.setCameraAngle(itemStack.getSubTag("misc").getInt("cameraAngle"));
 				} else {
-					drone.setCameraAngle(20);
+					drone.setCameraAngle(0); // default to 0
 				}
 
 //				if (!user.abilities.creativeMode) {
@@ -64,12 +63,33 @@ public class DroneSpawnerItem extends Item {
 		itemStack.getOrCreateSubTag("frequency").putInt("band", band);
 	}
 
+	public static int getBand(ItemStack itemStack) {
+		if (itemStack.getSubTag("frequency") != null) {
+			return itemStack.getSubTag("frequency").getInt("band");
+		}
+		return 0;
+	}
+
 	public static void setChannel(ItemStack itemStack, int channel) {
 		itemStack.getOrCreateSubTag("frequency").putInt("channel", channel);
 	}
 
+	public static int getChannel(ItemStack itemStack) {
+		if (itemStack.getSubTag("frequency") != null) {
+			return itemStack.getSubTag("frequency").getInt("channel");
+		}
+		return 0;
+	}
+
 	public static void setCameraAngle(ItemStack itemStack, int angle) {
 		itemStack.getOrCreateSubTag("misc").putInt("cameraAngle", angle);
+	}
+
+	public static int getCameraAngle(ItemStack itemStack) {
+		if (itemStack.getSubTag("misc") != null) {
+			return itemStack.getSubTag("misc").getInt("cameraAngle");
+		}
+		return 0;
 	}
 }
 
