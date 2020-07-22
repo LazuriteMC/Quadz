@@ -109,21 +109,19 @@ public class DroneEntity extends Entity {
 	 * the provided entity. The provided entity is
 	 * typically just the player.
 	 */
-	public static DroneEntity getNearestTo(Entity entity) {
+	public static List<DroneEntity> getNearbyDrones(Entity entity, int x) {
 		World world = entity.getEntityWorld();
 		List<DroneEntity> drones = world.getEntities(
 				DroneEntity.class,
-				new Box(entity.getPos().getX() - 100,
-						entity.getPos().getY() - 100,
-						entity.getPos().getZ() - 100,
-						entity.getPos().getX() + 100,
-						entity.getPos().getY() + 100,
-						entity.getPos().getZ() + 100),
+				new Box(entity.getPos().getX() - x,
+						entity.getPos().getY() - x,
+						entity.getPos().getZ() - x,
+						entity.getPos().getX() + x,
+						entity.getPos().getY() + x,
+						entity.getPos().getZ() + x),
 				null
 		);
-
-		if (drones.size() > 0) return drones.get(0);
-		else return null;
+		return drones;
 	}
 
 	/*

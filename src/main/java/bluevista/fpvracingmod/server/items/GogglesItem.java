@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.server.items;
 
 import bluevista.fpvracingmod.network.GogglesInfoToClient;
+import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.materials.ArmorMaterials;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
@@ -37,5 +38,17 @@ public class GogglesItem extends ArmorItem {
 		if(itemStack.getSubTag("frequency") != null)
 			return itemStack.getSubTag("frequency").getInt("channel");
 		return 0;
+	}
+
+	public static boolean isWearingGoggles(PlayerEntity player) {
+		return player.inventory.armor.get(3).getItem() instanceof GogglesItem;
+	}
+
+	public static boolean isOnRightChannel(DroneEntity drone, PlayerEntity player) {
+		if (GogglesItem.isWearingGoggles(player)) {
+			ItemStack stack = player.inventory.armor.get(3);
+			return drone.getBand() == GogglesItem.getBand(stack) && drone.getChannel() == GogglesItem.getChannel(stack);
+		}
+		return false;
 	}
 }

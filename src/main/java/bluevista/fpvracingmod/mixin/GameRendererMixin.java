@@ -31,6 +31,6 @@ public class GameRendererMixin {
 	 */
 	@Inject(at = @At("HEAD"), method = "renderHand", cancellable = true)
 	public void renderHand(MatrixStack matrices, Camera camera, float tickDelta, CallbackInfo info) {
-		if(!ClientTick.shouldRenderHand()) info.cancel();
+		if(ClientTick.isInView(client)) info.cancel();
 	}
 }

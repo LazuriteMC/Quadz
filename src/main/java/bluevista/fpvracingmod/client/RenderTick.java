@@ -3,6 +3,7 @@ package bluevista.fpvracingmod.client;
 import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
+import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -13,7 +14,6 @@ import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
 
 @Environment(EnvType.CLIENT)
-
 public class RenderTick {
     public static void tick(MinecraftClient client, MatrixStack stack, float delta) {
         Entity entity = client.getCameraEntity();
@@ -22,7 +22,7 @@ public class RenderTick {
             DroneEntity drone = (DroneEntity) entity;
             Quaternion q = new Quaternion(drone.getOrientation());
 
-            if (!ClientTick.isValidTransmitter(client.player.getMainHandStack(), drone)) {
+            if (!TransmitterItem.isBoundTransmitter(client.player.getMainHandStack(), drone)) {
                 Quaternion prevQ = drone.getPrevOrientation();
 
                 float dX = MathHelper.lerp(delta, prevQ.getX(), q.getX());
@@ -41,7 +41,8 @@ public class RenderTick {
             screenMat.multiply(newMat);
         }
 
-        if(ClientTick.currentDrone != null)
-            InputTick.tick(ClientTick.currentDrone);
+        DroneEntity drone = TransmitterItem.droneFromTransmitter(client.player.getMainHandStack(), client.player);
+        if(drone != null && TransmitterItem.isHoldingTransmitter(client.player) && !client.isPaused())
+            InputTick.tick(drone);
     }
 }
