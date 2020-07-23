@@ -24,6 +24,62 @@ public class Controller {
 	public static int INVERT_YAW;
 	public static int INVERT_ROLL;
 
+	public static void setValue(String key, int value) {
+		switch(key) {
+			case "controllerID":
+				setControllerId(value);
+				break;
+			case "throttleNum":
+				setThrottleNum(value);
+				break;
+			case "pitchNum":
+				setPitchNum(value);
+				break;
+			case "yawNum":
+				setYawNum(value);
+				break;
+			case "rollNum":
+				setRollNum(value);
+				break;
+			case "throttleCenterPosition":
+				setThrottleCenterPosition(value);
+				break;
+			case "invertThrottle":
+				setInvertThrottle(value);
+				break;
+			case "invertPitch":
+				setInvertPitch(value);
+				break;
+			case "invertYaw":
+				setInvertYaw(value);
+				break;
+			case "invertRoll":
+				setInvertRoll(value);
+				break;
+			default:
+				break;
+		}
+	}
+
+	public static void setValue(String key, float value) {
+		switch(key) {
+			case "deadzone":
+				setDeadzone(value);
+				break;
+			case "rate":
+				setRate(value);
+				break;
+			case "superRate":
+				setSuperRate(value);
+				break;
+			case "expo":
+				setExpo(value);
+				break;
+			default:
+				break;
+		}
+	}
+
 	public static void setControllerId(int controllerId) {
 		CONTROLLER_ID = controllerId;
 	}
