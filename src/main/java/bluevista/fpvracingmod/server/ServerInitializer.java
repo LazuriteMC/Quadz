@@ -1,9 +1,6 @@
 package bluevista.fpvracingmod.server;
 
-import bluevista.fpvracingmod.network.DroneInfoToServer;
-import bluevista.fpvracingmod.network.EMPPacketToServer;
-import bluevista.fpvracingmod.network.NoClipPacketToServer;
-import bluevista.fpvracingmod.network.RemoveGogglesPacketToServer;
+import bluevista.fpvracingmod.network.*;
 import bluevista.fpvracingmod.server.commands.FPVRacing;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
@@ -21,6 +18,12 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 public class ServerInitializer implements ModInitializer {
 	public static final String MODID = "fpvracing";
 
@@ -30,8 +33,12 @@ public class ServerInitializer implements ModInitializer {
 
 	public static EntityType<Entity> DRONE_ENTITY;
 
+	public static Map<UUID, List<Integer>> serverPlayerConfig; // may need to be Object if non-ints are used in the future
+
 	@Override
 	public void onInitialize() {
+		serverPlayerConfig = new HashMap<>();
+
 		registerEntities();
 		registerItems();
 		registerNetwork();
@@ -47,6 +54,7 @@ public class ServerInitializer implements ModInitializer {
 		DroneInfoToServer.register();
 		EMPPacketToServer.register();
 		NoClipPacketToServer.register();
+		ClientConfigToServer.register();
 	}
 
 	private void registerItems() {

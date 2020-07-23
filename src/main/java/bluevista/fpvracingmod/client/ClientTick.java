@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.input.InputTick;
+import bluevista.fpvracingmod.network.ClientConfigToServer;
 import bluevista.fpvracingmod.network.DroneInfoToServer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.GogglesItem;
@@ -14,8 +15,18 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class ClientTick {
+
+    private static boolean haveSentPacket = false;
+
     public static void tick(MinecraftClient mc) {
         if (mc.player != null) {
+
+            // send packet and set haveSentPacket
+            if (!haveSentPacket) {
+                ClientConfigToServer.send();
+                haveSentPacket = true;
+            }
+
             if(GogglesItem.isWearingGoggles(mc.player) && !isInView(mc)) {
                 List<DroneEntity> drones = DroneEntity.getNearbyDrones(mc.player, 100);
                 for (DroneEntity drone : drones) {
@@ -32,6 +43,10 @@ public class ClientTick {
 
             if (!GogglesItem.isWearingGoggles(mc.player) && isInView(mc) || mc.getCameraEntity().removed)
                 resetView(mc);
+        } else {
+            if (haveSentPacket) {
+                haveSentPacket = false;
+            }
         }
     }
 
