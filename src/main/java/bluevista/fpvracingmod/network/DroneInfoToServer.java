@@ -19,6 +19,7 @@ public class DroneInfoToServer {
     public static void accept(PacketContext context, PacketByteBuf buf) {
         UUID droneID = buf.readUuid();
         float throttle = buf.readFloat();
+        boolean infiniteTracking = buf.readBoolean();
         Quaternion q = QuaternionHelper.deserialize(buf);
 
         context.getTaskQueue().execute(() -> {
@@ -30,6 +31,7 @@ public class DroneInfoToServer {
             if(drone != null) {
                 drone.setOrientation(q);
                 drone.setThrottle(throttle);
+                drone.setInfiniteTracking(infiniteTracking);
             }
         });
     }
@@ -37,10 +39,12 @@ public class DroneInfoToServer {
     public static void send(DroneEntity drone) {
         Quaternion q = drone.getOrientation();
         float throttle = drone.getThrottle();
+        boolean infiniteTracking = drone.hasInfiniteTracking();
 
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeUuid(drone.getUuid());
         buf.writeFloat(throttle);
+        buf.writeBoolean(infiniteTracking);
         QuaternionHelper.serialize(q, buf);
 
         ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
