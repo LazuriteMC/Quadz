@@ -30,6 +30,8 @@ import java.util.UUID;
 public class DroneEntity extends Entity {
 	private static final Vec3d G = new Vec3d(0, -0.04, 0);
 
+	private boolean infiniteTracking;
+
 	private int cameraAngle;
 	private int band;
 	private int channel;
@@ -279,6 +281,14 @@ public class DroneEntity extends Entity {
 //	protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
 //	}
 
+	public void setInfiniteTracking(boolean infiniteTracking) {
+		this.infiniteTracking = infiniteTracking;
+	}
+
+	public boolean hasInfiniteTracking() {
+		return infiniteTracking;
+	}
+
 	@Override
 	public Packet<?> createSpawnPacket() {
 		return new EntitySpawnS2CPacket(this);
@@ -287,11 +297,6 @@ public class DroneEntity extends Entity {
 	public static DroneEntity create(World world, Vec3d pos) {
 		DroneEntity d = new DroneEntity(world);
 		d.refreshPositionAndAngles(pos.x, pos.y, pos.z, 0, 0);
-
-//		PlayerManager manager = ServerTick.server.getPlayerManager();
-//		WorldLoader l = PlayerManagerInjection.from(manager).createWorldLoader(d);
-//		manager.sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.ADD_PLAYER, new ServerPlayerEntity[]{l}));
-
 		world.spawnEntity(d);
 		return d;
 	}

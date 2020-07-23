@@ -5,11 +5,14 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "SpawnMixin",
-    "MatrixMixin"
+    "MatrixMixin",
+    "ServerChunkManagerMixin",
+    "ServerPlayerEntityMixin"
   ],
   "client": [
     "GameRendererMixin",
-    "WorldRendererMixin"
+    "WorldRendererMixin",
+    "ClientChunkManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
