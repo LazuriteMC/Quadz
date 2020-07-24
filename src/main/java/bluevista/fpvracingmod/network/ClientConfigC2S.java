@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ClientConfigToServer {
+public class ClientConfigC2S {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "client_config_server_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
@@ -40,6 +40,6 @@ public class ClientConfigToServer {
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, ClientConfigToServer::accept);
+        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, ClientConfigC2S::accept);
     }
 }

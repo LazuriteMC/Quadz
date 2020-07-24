@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
-public class PowerOffGogglesPacketToServer {
+public class PowerOffGogglesC2S {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "goggles_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buffer) {
@@ -28,6 +28,6 @@ public class PowerOffGogglesPacketToServer {
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, PowerOffGogglesPacketToServer::accept);
+        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, PowerOffGogglesC2S::accept);
     }
 }

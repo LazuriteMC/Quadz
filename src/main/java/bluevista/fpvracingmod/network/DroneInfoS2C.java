@@ -3,7 +3,6 @@ package bluevista.fpvracingmod.network;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
-import bluevista.fpvracingmod.server.items.TransmitterItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
@@ -16,11 +15,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Quaternion;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public class DroneInfoToClient {
+public class DroneInfoS2C {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_info_client_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
@@ -66,6 +64,6 @@ public class DroneInfoToClient {
     }
 
     public static void register() {
-        ClientSidePacketRegistry.INSTANCE.register(PACKET_ID, DroneInfoToClient::accept);
+        ClientSidePacketRegistry.INSTANCE.register(PACKET_ID, DroneInfoS2C::accept);
     }
 }

@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.server.items;
 
-import bluevista.fpvracingmod.network.GogglesInfoToClient;
+import bluevista.fpvracingmod.network.GogglesInfoS2C;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.materials.ArmorMaterials;
 import net.minecraft.entity.EquipmentSlot;
@@ -18,14 +18,14 @@ public class GogglesItem extends ArmorItem {
 		itemStack.getOrCreateSubTag("frequency").putInt("band", band);
 
 		if(!player.getEntityWorld().isClient())
-			GogglesInfoToClient.send(itemStack, player);
+			GogglesInfoS2C.send(itemStack, player);
 	}
 
 	public static void setChannel(ItemStack itemStack, int channel, PlayerEntity player) {
 		itemStack.getOrCreateSubTag("frequency").putInt("channel", channel);
 
 		if(!player.getEntityWorld().isClient())
-			GogglesInfoToClient.send(itemStack, player);
+			GogglesInfoS2C.send(itemStack, player);
 	}
 
 	public static int getBand(ItemStack itemStack) {

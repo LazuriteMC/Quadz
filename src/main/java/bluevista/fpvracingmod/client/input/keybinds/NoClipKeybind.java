@@ -1,7 +1,6 @@
 package bluevista.fpvracingmod.client.input.keybinds;
 
-import bluevista.fpvracingmod.network.EMPPacketToServer;
-import bluevista.fpvracingmod.network.NoClipPacketToServer;
+import bluevista.fpvracingmod.network.NoClipC2S;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -17,7 +16,7 @@ public class NoClipKeybind {
     private static KeyBinding key;
 
     public static void callback(MinecraftClient client) {
-        if (key.wasPressed()) NoClipPacketToServer.send();
+        if (key.wasPressed()) NoClipC2S.send();
     }
 
     public static void register() {

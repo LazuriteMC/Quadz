@@ -13,7 +13,7 @@ import net.minecraft.util.math.Quaternion;
 
 import java.util.UUID;
 
-public class DroneInfoToServer {
+public class DroneInfoC2S {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_info_server_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
@@ -51,6 +51,6 @@ public class DroneInfoToServer {
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, DroneInfoToServer::accept);
+        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, DroneInfoC2S::accept);
     }
 }

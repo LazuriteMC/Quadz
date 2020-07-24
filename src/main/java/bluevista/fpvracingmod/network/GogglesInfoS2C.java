@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
-public class GogglesInfoToClient {
+public class GogglesInfoS2C {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "goggles_info_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
@@ -32,6 +32,6 @@ public class GogglesInfoToClient {
     }
 
     public static void register() {
-        ClientSidePacketRegistry.INSTANCE.register(PACKET_ID, GogglesInfoToClient::accept);
+        ClientSidePacketRegistry.INSTANCE.register(PACKET_ID, GogglesInfoS2C::accept);
     }
 }

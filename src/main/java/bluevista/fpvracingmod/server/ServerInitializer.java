@@ -50,11 +50,11 @@ public class ServerInitializer implements ModInitializer {
 	}
 
 	private void registerNetwork() {
-		PowerOffGogglesPacketToServer.register();
-		DroneInfoToServer.register();
-		EMPPacketToServer.register();
-		NoClipPacketToServer.register();
-		ClientConfigToServer.register();
+		PowerOffGogglesC2S.register();
+		DroneInfoC2S.register();
+		EMPC2S.register();
+		NoClipC2S.register();
+		ClientConfigC2S.register();
 	}
 
 	private void registerItems() {

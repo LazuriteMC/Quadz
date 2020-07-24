@@ -13,7 +13,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
-public class NoClipPacketToServer {
+public class NoClipC2S {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "noclip_packet");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
@@ -44,6 +44,6 @@ public class NoClipPacketToServer {
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, NoClipPacketToServer::accept);
+        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, NoClipC2S::accept);
     }
 }

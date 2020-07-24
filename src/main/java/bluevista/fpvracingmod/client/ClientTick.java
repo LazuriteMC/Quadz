@@ -1,7 +1,7 @@
 package bluevista.fpvracingmod.client;
 
-import bluevista.fpvracingmod.network.ClientConfigToServer;
-import bluevista.fpvracingmod.network.DroneInfoToServer;
+import bluevista.fpvracingmod.network.ClientConfigC2S;
+import bluevista.fpvracingmod.network.DroneInfoC2S;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -23,7 +23,7 @@ public class ClientTick {
 
             // send packet and set haveSentPacket
             if (!haveSentPacket) {
-                ClientConfigToServer.send();
+                ClientConfigC2S.send();
                 haveSentPacket = true;
             }
 
@@ -39,7 +39,7 @@ public class ClientTick {
             if (TransmitterItem.isHoldingTransmitter(mc.player)) {
                 if(boundDrone == null)
                     boundDrone = TransmitterItem.droneFromTransmitter(mc.player.getMainHandStack(), mc.player);
-                else DroneInfoToServer.send(boundDrone);
+                else DroneInfoC2S.send(boundDrone);
             } else boundDrone = null;
 
             if (!GogglesItem.isWearingGoggles(mc.player) && isInView(mc) || mc.getCameraEntity().removed)
