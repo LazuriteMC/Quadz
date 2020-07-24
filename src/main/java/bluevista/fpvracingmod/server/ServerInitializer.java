@@ -50,7 +50,7 @@ public class ServerInitializer implements ModInitializer {
 	}
 
 	private void registerNetwork() {
-		RemoveGogglesPacketToServer.register();
+		PowerOffGogglesPacketToServer.register();
 		DroneInfoToServer.register();
 		EMPPacketToServer.register();
 		NoClipPacketToServer.register();

@@ -4,7 +4,7 @@ import bluevista.fpvracingmod.client.config.Config;
 import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.input.keybinds.EMPKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.NoClipKeybind;
-import bluevista.fpvracingmod.client.input.keybinds.RemoveGogglesKeybind;
+import bluevista.fpvracingmod.client.input.keybinds.PowerOffGogglesKeybind;
 import bluevista.fpvracingmod.network.DroneInfoToClient;
 import bluevista.fpvracingmod.network.GogglesInfoToClient;
 import bluevista.fpvracingmod.server.ServerInitializer;
@@ -58,7 +58,7 @@ public class ClientInitializer implements ClientModInitializer {
     }
 
     private void registerKeybinds() {
-        RemoveGogglesKeybind.register();
+        PowerOffGogglesKeybind.register();
         EMPKeybind.register();
         NoClipKeybind.register();
     }
