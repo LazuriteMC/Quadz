@@ -3,15 +3,35 @@ package bluevista.fpvracingmod.server.items;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.materials.ArmorMaterials;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.world.World;
 
 public class GogglesItem extends ArmorItem {
 	public GogglesItem(Item.Settings settings) {
 		super(ArmorMaterials.GOGGLE, EquipmentSlot.HEAD, settings);
+	}
+
+	@Override
+	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+		ItemStack itemStack = user.getStackInHand(hand);
+		EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(itemStack);
+		ItemStack itemStack2 = user.getEquippedStack(equipmentSlot);
+
+		if (itemStack2.isEmpty()) {
+			user.equipStack(equipmentSlot, itemStack.copy());
+			if(world.isClient())
+				itemStack.setCount(0);
+			return TypedActionResult.method_29237(itemStack, world.isClient());
+		} else {
+			return TypedActionResult.fail(itemStack);
+		}
 	}
 
 	public static void setBand(ItemStack itemStack, int band, PlayerEntity player) {
