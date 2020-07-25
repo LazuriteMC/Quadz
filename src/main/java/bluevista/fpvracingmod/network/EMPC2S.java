@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 import java.util.List;
 
 public class EMPC2S {
-    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "emp_packet");
+    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "emp_c2s");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
         PlayerEntity p = context.getPlayer();

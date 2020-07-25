@@ -20,8 +20,6 @@ public class ClientTick {
 
     public static void tick(MinecraftClient mc) {
         if (mc.player != null) {
-
-            // send packet and set haveSentPacket
             if (!haveSentPacket) {
                 ClientConfigC2S.send();
                 haveSentPacket = true;
@@ -42,12 +40,15 @@ public class ClientTick {
                 else DroneInfoC2S.send(boundDrone);
             } else boundDrone = null;
 
-            if (!GogglesItem.isWearingGoggles(mc.player) && isInView(mc) || mc.getCameraEntity().removed)
+            if(mc.getCameraEntity() != null)
+                if(mc.getCameraEntity().removed)
+                    resetView(mc);
+
+            if (!GogglesItem.isWearingGoggles(mc.player) && isInView(mc) || !GogglesItem.isOn(mc.player))
                 resetView(mc);
-        } else {
-            if (haveSentPacket) {
-                haveSentPacket = false;
-            }
+
+        } else if (haveSentPacket) {
+            haveSentPacket = false;
         }
     }
 

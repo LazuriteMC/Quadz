@@ -5,8 +5,9 @@ import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.input.keybinds.EMPKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.NoClipKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.PowerOffGogglesKeybind;
+import bluevista.fpvracingmod.client.input.keybinds.PowerOnGogglesKeybind;
 import bluevista.fpvracingmod.network.DroneInfoS2C;
-import bluevista.fpvracingmod.network.GogglesInfoS2C;
+import bluevista.fpvracingmod.network.DroneQuaternionS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
 import net.fabricmc.api.ClientModInitializer;
@@ -47,10 +48,6 @@ public class ClientInitializer implements ClientModInitializer {
             Controller.setInvertPitch(Integer.parseInt(config.getValue("invertPitch")));
             Controller.setInvertYaw(Integer.parseInt(config.getValue("invertYaw")));
             Controller.setInvertRoll(Integer.parseInt(config.getValue("invertRoll")));
-
-//            setConfigBand(Integer.parseInt(config.getValue("band")));
-//            setConfigChannel(Integer.parseInt(config.getValue("channel")));
-//            setConfigCameraAngle(Integer.parseInt(config.getValue("cameraAngle")));
         } catch (Exception e) {
             System.err.println("Error loading config");
             e.printStackTrace();
@@ -59,8 +56,9 @@ public class ClientInitializer implements ClientModInitializer {
 
     private void registerKeybinds() {
         PowerOffGogglesKeybind.register();
-        EMPKeybind.register();
+        PowerOnGogglesKeybind.register();
         NoClipKeybind.register();
+        EMPKeybind.register();
     }
 
     private void registerRenderers() {
@@ -69,7 +67,7 @@ public class ClientInitializer implements ClientModInitializer {
 
     private void registerNetwork() {
         DroneInfoS2C.register();
-        GogglesInfoS2C.register();
+        DroneQuaternionS2C.register();
     }
 
     public static Config getConfig() {

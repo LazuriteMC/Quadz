@@ -14,7 +14,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class NoClipC2S {
-    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "noclip_packet");
+    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "noclip_c2s");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
         PlayerEntity player = context.getPlayer();

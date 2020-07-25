@@ -4,6 +4,7 @@ import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.client.math.inject.MatrixInject;
 import bluevista.fpvracingmod.network.DroneInfoS2C;
+import bluevista.fpvracingmod.network.DroneQuaternionS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -54,8 +55,10 @@ public class DroneEntity extends Entity {
 	public void tick() {
 		super.tick();
 
-		if(!this.world.isClient())
+		if(!this.world.isClient()) {
 			DroneInfoS2C.send(this);
+			DroneQuaternionS2C.send(this);
+		}
 
 		// Update velocity
 		Vec3d d = getThrustVector().multiply(1, -1, 1).multiply(throttle);

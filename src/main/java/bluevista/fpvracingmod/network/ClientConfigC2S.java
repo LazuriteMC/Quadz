@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class ClientConfigC2S {
-    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "client_config_server_packet");
+    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "client_config_c2s");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
 

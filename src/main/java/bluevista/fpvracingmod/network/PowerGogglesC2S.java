@@ -11,27 +11,30 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
-public class GogglesInfoS2C {
-    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "goggles_info_packet");
+public class PowerGogglesC2S {
+    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "power_goggles_c2s");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
         PlayerEntity player = context.getPlayer();
-        ItemStack stack = buf.readItemStack();
-        ItemStack hand = player.getMainHandStack();
+        ItemStack hat = player.inventory.armor.get(3);
+        boolean on = buf.readBoolean();
 
         context.getTaskQueue().execute(() -> {
-            if(hand.getItem() instanceof GogglesItem)
-                hand.setTag(stack.getTag());
+            if(hat.getItem() instanceof GogglesItem) {
+                System.out.println("Before: " + GogglesItem.isOn(player));
+                GogglesItem.setOn(hat, on, player);
+                System.out.println("After: " + GogglesItem.isOn(player));
+            }
         });
     }
 
-    public static void send(ItemStack stack, PlayerEntity player) {
+    public static void send(boolean on) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeItemStack(stack);
-        ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, PACKET_ID, buf);
+        buf.writeBoolean(on);
+        ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
     }
 
     public static void register() {
-        ClientSidePacketRegistry.INSTANCE.register(PACKET_ID, GogglesInfoS2C::accept);
+        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, PowerGogglesC2S::accept);
     }
 }

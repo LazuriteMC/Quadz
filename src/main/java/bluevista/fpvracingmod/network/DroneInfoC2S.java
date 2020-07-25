@@ -14,7 +14,7 @@ import net.minecraft.util.math.Quaternion;
 import java.util.UUID;
 
 public class DroneInfoC2S {
-    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_info_server_packet");
+    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_info_c2s");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
         UUID droneID = buf.readUuid();

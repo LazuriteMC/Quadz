@@ -1,8 +1,10 @@
 package bluevista.fpvracingmod.server.commands;
 
 import bluevista.fpvracingmod.client.controller.Controller;
+import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.GogglesItem;
+import bluevista.fpvracingmod.server.items.TransmitterItem;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -390,6 +392,12 @@ public class FPVRacing {
             if (selectedItem.getItem() instanceof DroneSpawnerItem) {
                 DroneSpawnerItem.setBand(selectedItem, value);
                 return 1;
+            } else if(selectedItem.getItem() instanceof TransmitterItem) {
+                DroneEntity drone = TransmitterItem.droneFromTransmitter(selectedItem, context.getSource().getPlayer());
+                if(drone != null) {
+                    drone.setBand(value);
+                    return 1;
+                }
             }
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
@@ -418,6 +426,12 @@ public class FPVRacing {
             if (selectedItem.getItem() instanceof DroneSpawnerItem) {
                 DroneSpawnerItem.setChannel(selectedItem, value);
                 return 1;
+            } else if(selectedItem.getItem() instanceof TransmitterItem) {
+                DroneEntity drone = TransmitterItem.droneFromTransmitter(selectedItem, context.getSource().getPlayer());
+                if(drone != null) {
+                    drone.setChannel(value);
+                    return 1;
+                }
             }
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
@@ -446,6 +460,12 @@ public class FPVRacing {
             if (selectedItem.getItem() instanceof DroneSpawnerItem) {
                 DroneSpawnerItem.setCameraAngle(selectedItem, value);
                 return 1;
+            } else if(selectedItem.getItem() instanceof TransmitterItem) {
+                DroneEntity drone = TransmitterItem.droneFromTransmitter(selectedItem, context.getSource().getPlayer());
+                if(drone != null) {
+                    drone.setCameraAngle(value);
+                    return 1;
+                }
             }
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
@@ -470,6 +490,12 @@ public class FPVRacing {
     private static int setGogglesBand(CommandContext<ServerCommandSource> context) {
         final int value = IntegerArgumentType.getInteger(context, "gogglesBandValue");
         try {
+            final ItemStack hat = context.getSource().getPlayer().inventory.armor.get(3);
+            if(hat.getItem() instanceof GogglesItem) {
+                GogglesItem.setChannel(hat, value, context.getSource().getPlayer());
+                return 1;
+            }
+
             final ItemStack selectedItem = context.getSource().getPlayer().getMainHandStack();
             if (selectedItem.getItem() instanceof GogglesItem) {
                 GogglesItem.setBand(selectedItem, value, context.getSource().getPlayer());
@@ -498,6 +524,12 @@ public class FPVRacing {
     private static int setGogglesChannel(CommandContext<ServerCommandSource> context) {
         final int value = IntegerArgumentType.getInteger(context, "gogglesChannelValue");
         try {
+            final ItemStack hat = context.getSource().getPlayer().inventory.armor.get(3);
+            if(hat.getItem() instanceof GogglesItem) {
+                GogglesItem.setChannel(hat, value, context.getSource().getPlayer());
+                return 1;
+            }
+
             final ItemStack selectedItem = context.getSource().getPlayer().getMainHandStack();
             if (selectedItem.getItem() instanceof GogglesItem) {
                 GogglesItem.setChannel(selectedItem, value, context.getSource().getPlayer());
