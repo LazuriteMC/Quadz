@@ -9,6 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
 
@@ -53,15 +54,24 @@ public class ClientTick {
     }
 
     public static void setView(MinecraftClient mc, DroneEntity drone) {
-        if(!(mc.getCameraEntity() instanceof DroneEntity))
+        if(!(mc.getCameraEntity() instanceof DroneEntity)) {
             drone.setInfiniteTracking(true);
+//            drone.setPlayerPos(mc.player.getBlockPos());
             mc.setCameraEntity(drone);
+        }
     }
 
     public static void resetView(MinecraftClient mc) {
-        if(mc.getCameraEntity() instanceof DroneEntity)
-            ((DroneEntity) mc.getCameraEntity()).setInfiniteTracking(false);
-        mc.setCameraEntity(null);
+        if(mc.getCameraEntity() instanceof DroneEntity) {
+            DroneEntity drone = (DroneEntity) mc.getCameraEntity();
+            drone.setInfiniteTracking(false);
+            BlockPos pp = drone.getPlayerPos();
+
+            // TODO Put it back!!!
+//            mc.player.setPos(pp.getX(), pp.getY(), pp.getZ());
+
+            mc.setCameraEntity(null);
+        }
     }
 
     public static boolean isInView(MinecraftClient mc) {

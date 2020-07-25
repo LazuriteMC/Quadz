@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Quaternion;
 
 import java.util.UUID;
@@ -20,6 +21,7 @@ public class DroneInfoC2S {
         UUID droneID = buf.readUuid();
         float throttle = buf.readFloat();
         boolean infiniteTracking = buf.readBoolean();
+//        BlockPos playerPos = buf.readBlockPos();
         Quaternion q = QuaternionHelper.deserialize(buf);
 
         context.getTaskQueue().execute(() -> {
@@ -32,6 +34,7 @@ public class DroneInfoC2S {
                 drone.setOrientation(q);
                 drone.setThrottle(throttle);
                 drone.setInfiniteTracking(infiniteTracking);
+//                drone.setPlayerPos(playerPos);
             }
         });
     }
@@ -40,11 +43,16 @@ public class DroneInfoC2S {
         Quaternion q = drone.getOrientation();
         float throttle = drone.getThrottle();
         boolean infiniteTracking = drone.hasInfiniteTracking();
+        BlockPos playerPos = drone.getPlayerPos();
 
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeUuid(drone.getUuid());
         buf.writeFloat(throttle);
         buf.writeBoolean(infiniteTracking);
+
+//        if(playerPos != null)
+//            buf.writeBlockPos(playerPos);
+
         QuaternionHelper.serialize(q, buf);
 
         ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);

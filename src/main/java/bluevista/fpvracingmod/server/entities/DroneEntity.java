@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -36,6 +37,9 @@ public class DroneEntity extends Entity {
 	private int cameraAngle;
 	private int band;
 	private int channel;
+
+	private UUID playerUuid;
+	private BlockPos playerPos;
 
 	private Quaternion prevOrientation;
 	private Quaternion orientation;
@@ -58,6 +62,13 @@ public class DroneEntity extends Entity {
 		if(!this.world.isClient()) {
 			DroneInfoS2C.send(this);
 			DroneQuaternionS2C.send(this);
+
+			if (hasInfiniteTracking() && playerUuid != null) {
+				ServerPlayerEntity player = (ServerPlayerEntity) this.world.getPlayerByUuid(playerUuid);
+				if (player != null) {
+					player.teleport(getX(), getY() + 25, getZ());
+				}
+			}
 		}
 
 		// Update velocity
@@ -201,6 +212,10 @@ public class DroneEntity extends Entity {
 			player.sendMessage(new TranslatableText("Controller not found"), false);
 		}
 
+		if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
+			this.playerUuid = player.getUuid();
+		}
+
 		return ActionResult.SUCCESS;
 	}
 
@@ -234,6 +249,14 @@ public class DroneEntity extends Entity {
 
 	public void setThrottle(float throttle) {
 		this.throttle = throttle;
+	}
+
+	public BlockPos getPlayerPos() {
+		return playerPos;
+	}
+
+	public void setPlayerPos(BlockPos playerPos) {
+		this.playerPos = playerPos;
 	}
 
 	public void addVelocity(Vec3d... vecs) {

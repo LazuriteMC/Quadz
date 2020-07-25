@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.mixin;
 
+import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
@@ -12,10 +13,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
+	@Shadow BuiltChunkStorage chunks;
 	@Shadow MinecraftClient client;
 
 	@Inject(at = @At("HEAD"), method = "renderEntity")
 	public void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo info) {
+
+	}
+
+	@Inject(at = @At("TAIL"), method = "setupTerrain")
+	public void setupTerrain(Camera camera, Frustum frustum, boolean hasForcedFrustum, int frame, boolean spectator, CallbackInfo info) {
 
 	}
 }
