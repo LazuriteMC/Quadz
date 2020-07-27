@@ -43,7 +43,7 @@ public class DroneInfoC2S {
         Quaternion q = drone.getOrientation();
         float throttle = drone.getThrottle();
         boolean infiniteTracking = drone.hasInfiniteTracking();
-        BlockPos playerPos = drone.getPlayerPos();
+        BlockPos playerPos = drone.getOriginalPlayerPos();
 
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeUuid(drone.getUuid());

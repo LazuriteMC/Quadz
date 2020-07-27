@@ -72,6 +72,6 @@ public class ServerInitializer implements ModInitializer {
 	}
 
 	public static void start(MinecraftServer server) {
-		ServerTick.server = server;
+
 	}
 }

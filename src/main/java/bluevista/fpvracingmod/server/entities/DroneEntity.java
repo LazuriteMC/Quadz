@@ -3,6 +3,7 @@ package bluevista.fpvracingmod.server.entities;
 import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.client.math.inject.MatrixInject;
+import bluevista.fpvracingmod.network.DroneInfoC2S;
 import bluevista.fpvracingmod.network.DroneInfoS2C;
 import bluevista.fpvracingmod.network.DroneQuaternionS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
@@ -30,17 +31,17 @@ import java.util.List;
 import java.util.UUID;
 
 public class DroneEntity extends Entity {
-	private static final Vec3d G = new Vec3d(0, -0.04, 0);
-
+	// Infinite Range Information
 	private boolean infiniteTracking;
+	private BlockPos playerPos;
 
+	// Camera/VTX Information
 	private int cameraAngle;
 	private int band;
 	private int channel;
 
-	private UUID playerUuid;
-	private BlockPos playerPos;
-
+	// Physics Information
+	private static final Vec3d G = new Vec3d(0, -0.04, 0);
 	private Quaternion prevOrientation;
 	private Quaternion orientation;
 	private float throttle;
@@ -51,8 +52,11 @@ public class DroneEntity extends Entity {
 
 	public DroneEntity(World world) {
 		super(ServerInitializer.DRONE_ENTITY, world);
+
 		this.orientation = new Quaternion(0, 1, 0, 0);
 		this.prevOrientation = new Quaternion(0, 1, 0 , 0);
+
+		this.playerPos = new BlockPos(0 ,0, 0);
 	}
 
 	@Override
@@ -63,11 +67,10 @@ public class DroneEntity extends Entity {
 			DroneInfoS2C.send(this);
 			DroneQuaternionS2C.send(this);
 
-			if (hasInfiniteTracking() && playerUuid != null) {
-				ServerPlayerEntity player = (ServerPlayerEntity) this.world.getPlayerByUuid(playerUuid);
-				if (player != null) {
-					player.teleport(getX(), getY() + 25, getZ());
-				}
+			if (hasInfiniteTracking()) {
+//				if (player != null) {
+//					player.teleport(getX(), getY() + 25, getZ());
+//				}
 			}
 		}
 
@@ -212,10 +215,6 @@ public class DroneEntity extends Entity {
 			player.sendMessage(new TranslatableText("Controller not found"), false);
 		}
 
-		if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
-			this.playerUuid = player.getUuid();
-		}
-
 		return ActionResult.SUCCESS;
 	}
 
@@ -251,7 +250,7 @@ public class DroneEntity extends Entity {
 		this.throttle = throttle;
 	}
 
-	public BlockPos getPlayerPos() {
+	public BlockPos getOriginalPlayerPos() {
 		return playerPos;
 	}
 

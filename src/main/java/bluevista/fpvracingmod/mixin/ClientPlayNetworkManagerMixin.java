@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ClientPlayNetworkHandler.class)
-public class SpawnMixin {
+public class ClientPlayNetworkManagerMixin {
     @Shadow private ClientWorld world;
 
     @Inject(

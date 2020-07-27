@@ -20,8 +20,8 @@ public class PowerOnGogglesKeybind {
         if(client.player != null)
             if (key.wasPressed())
                 if(GogglesItem.isWearingGoggles(client.player))
-                    GogglesItem.setOn(client.player.inventory.armor.get(3), true, client.player);
-    //                PowerGogglesC2S.send(true);
+//                    GogglesItem.setOn(client.player.inventory.armor.get(3), true, client.player);
+                    PowerGogglesC2S.send(true);
     }
 
     public static void register() {

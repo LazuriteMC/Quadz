@@ -13,8 +13,8 @@ public class PowerOffGogglesKeybind {
         if(client.player != null) {
             if (client.options.keySneak.wasPressed()) {
                 if (GogglesItem.isWearingGoggles(client.player)) {
-//                    PowerGogglesC2S.send(false);
-                    GogglesItem.setOn(client.player.inventory.armor.get(3), false, client.player);
+                    PowerGogglesC2S.send(false);
+//                    GogglesItem.setOn(client.player.inventory.armor.get(3), false, client.player);
                 }
             }
         }

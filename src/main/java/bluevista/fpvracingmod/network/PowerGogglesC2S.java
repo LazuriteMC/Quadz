@@ -20,11 +20,8 @@ public class PowerGogglesC2S {
         boolean on = buf.readBoolean();
 
         context.getTaskQueue().execute(() -> {
-            if(hat.getItem() instanceof GogglesItem) {
-                System.out.println("Before: " + GogglesItem.isOn(player));
+            if(hat.getItem() instanceof GogglesItem)
                 GogglesItem.setOn(hat, on, player);
-                System.out.println("After: " + GogglesItem.isOn(player));
-            }
         });
     }
 
