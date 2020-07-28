@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.server;
 
 import bluevista.fpvracingmod.network.*;
+import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.commands.FPVRacing;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
@@ -20,8 +21,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class ServerInitializer implements ModInitializer {
@@ -33,11 +32,11 @@ public class ServerInitializer implements ModInitializer {
 
 	public static EntityType<Entity> DRONE_ENTITY;
 
-	public static Map<UUID, List<Integer>> serverPlayerConfig; // may need to be Object if non-ints are used in the future
+	public static HashMap<UUID, Config> serverPlayerConfigs; // may need to be Object if non-ints are used in the future
 
 	@Override
 	public void onInitialize() {
-		serverPlayerConfig = new HashMap<>();
+		serverPlayerConfigs = new HashMap<>();
 
 		registerEntities();
 		registerItems();
@@ -54,13 +53,13 @@ public class ServerInitializer implements ModInitializer {
 		DroneInfoToServer.register();
 		EMPPacketToServer.register();
 		NoClipPacketToServer.register();
-		ClientConfigToServer.register();
+		ConfigC2S.register();
 	}
 
 	private void registerItems() {
-		Registry.register(Registry.ITEM, new Identifier("fpvracing", "goggles_item"), GOGGLES_ITEM);
-		Registry.register(Registry.ITEM, new Identifier("fpvracing", "transmitter_item"), TRANSMITTER_ITEM);
-		Registry.register(Registry.ITEM, new Identifier("fpvracing", "drone_spawner_item"), DRONE_SPAWNER_ITEM);
+		Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), GOGGLES_ITEM);
+		Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), TRANSMITTER_ITEM);
+		Registry.register(Registry.ITEM, new Identifier(MODID, "drone_spawner_item"), DRONE_SPAWNER_ITEM);
 	}
 
 	private void registerEntities() {
