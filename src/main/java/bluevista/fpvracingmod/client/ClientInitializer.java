@@ -1,13 +1,13 @@
 package bluevista.fpvracingmod.client;
 
-import bluevista.fpvracingmod.client.config.Config;
-import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.input.keybinds.EMPKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.NoClipKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.PowerOffGogglesKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.PowerOnGogglesKeybind;
 import bluevista.fpvracingmod.network.DroneInfoS2C;
 import bluevista.fpvracingmod.network.DroneQuaternionS2C;
+import bluevista.fpvracingmod.network.ConfigS2C;
+import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
 import net.fabricmc.api.ClientModInitializer;
@@ -31,27 +31,8 @@ public class ClientInitializer implements ClientModInitializer {
     }
 
     private void registerConfig() {
-        config = new Config(ServerInitializer.MODID);
-
-        try {
-            Controller.setControllerId(Integer.parseInt(config.getValue("controllerID")));
-            Controller.setThrottleNum(Integer.parseInt(config.getValue("throttle")));
-            Controller.setPitchNum(Integer.parseInt(config.getValue("pitch")));
-            Controller.setYawNum(Integer.parseInt(config.getValue("yaw")));
-            Controller.setRollNum(Integer.parseInt(config.getValue("roll")));
-            Controller.setDeadzone(Float.parseFloat(config.getValue("deadzone")));
-            Controller.setThrottleCenterPosition(Integer.parseInt(config.getValue("throttleCenterPosition")));
-            Controller.setRate(Float.parseFloat(config.getValue("rate")));
-            Controller.setSuperRate(Float.parseFloat(config.getValue("superRate")));
-            Controller.setExpo(Float.parseFloat(config.getValue("expo")));
-            Controller.setInvertThrottle(Integer.parseInt(config.getValue("invertThrottle")));
-            Controller.setInvertPitch(Integer.parseInt(config.getValue("invertPitch")));
-            Controller.setInvertYaw(Integer.parseInt(config.getValue("invertYaw")));
-            Controller.setInvertRoll(Integer.parseInt(config.getValue("invertRoll")));
-        } catch (Exception e) {
-            System.err.println("Error loading config");
-            e.printStackTrace();
-        }
+        config = new Config();
+        config.loadConfig();
     }
 
     private void registerKeybinds() {
@@ -68,9 +49,11 @@ public class ClientInitializer implements ClientModInitializer {
     private void registerNetwork() {
         DroneInfoS2C.register();
         DroneQuaternionS2C.register();
+        ConfigS2C.register();
     }
 
     public static Config getConfig() {
         return config;
     }
+
 }

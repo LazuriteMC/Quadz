@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.client;
 
-import bluevista.fpvracingmod.network.ClientConfigC2S;
+import bluevista.fpvracingmod.network.ConfigC2S;
 import bluevista.fpvracingmod.network.DroneInfoC2S;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -17,7 +17,7 @@ public class ClientTick {
             boundDrone = d == null ? boundDrone : d;
 
             if (!haveSentPacket) {
-                ClientConfigC2S.send();
+                ConfigC2S.send(ClientInitializer.getConfig());
                 haveSentPacket = true;
             }
 
