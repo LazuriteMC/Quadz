@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.server;
 
+import bluevista.fpvracingmod.client.math.inject.ServerPlayerEntityInject;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -11,8 +12,11 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Environment(EnvType.CLIENT)
 public class ServerTick {
@@ -33,8 +37,9 @@ public class ServerTick {
             if (player.getCameraEntity() instanceof DroneEntity) {
                 DroneEntity drone = (DroneEntity) player.getCameraEntity();
                 if (isInGoggles(player) && TransmitterItem.isBoundTransmitter(player.getMainHandStack(), drone)) {
-                    Packet packet = new PlayerPositionLookS2CPacket(drone.getX(), drone.getY(), drone.getZ(), 0, 0, null, 10);
-                    ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, packet);
+//                    Set<PlayerPositionLookS2CPacket.Flag> set = Collections.emptySet();
+//                    Packet packet = new PlayerPositionLookS2CPacket(drone.getX(), drone.getY(), drone.getZ(), 0, 0, set, 10);
+//                    ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, packet);
                 }
             }
 
@@ -46,9 +51,9 @@ public class ServerTick {
     public static void setView(ServerPlayerEntity player, DroneEntity drone) {
         if(!(player.getCameraEntity() instanceof DroneEntity)) {
             drone.setInfiniteTracking(true);
-            player.setCameraEntity(drone);
-            if (TransmitterItem.isHoldingTransmitter(player));
-                drone.setPlayerPos(player.getBlockPos());
+            ServerPlayerEntityInject.from(player).setDroneView(drone);
+//            if (TransmitterItem.isHoldingTransmitter(player));
+//                drone.setPlayerPos(player.getBlockPos());
         }
     }
 
@@ -61,7 +66,11 @@ public class ServerTick {
 //            BlockPos pp = drone.getOriginalPlayerPos();
 //            mc.player.setPos(pp.getX(), pp.getY(), pp.getZ());
 
-            player.setCameraEntity(player);
+            ServerPlayerEntityInject.from(player).setDroneView(player);
+
+//            System.out.println("FINNA TP BACK");
+//            BlockPos pos = drone.getOriginalPlayerPos();
+//            player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
         }
     }
 
