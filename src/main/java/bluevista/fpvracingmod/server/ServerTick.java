@@ -1,6 +1,5 @@
 package bluevista.fpvracingmod.server;
 
-import bluevista.fpvracingmod.inject.ServerPlayerEntityInject;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -45,7 +44,7 @@ public class ServerTick {
     public static void setView(ServerPlayerEntity player, DroneEntity drone) {
         if(!(player.getCameraEntity() instanceof DroneEntity)) {
             drone.setInfiniteTracking(true);
-            ServerPlayerEntityInject.from(player).setDroneView(drone);
+            player.setCameraEntity(drone);
 //            if (TransmitterItem.isHoldingTransmitter(player));
 //                drone.setPlayerPos(player.getBlockPos());
         }
@@ -60,7 +59,7 @@ public class ServerTick {
 //            BlockPos pp = drone.getOriginalPlayerPos();
 //            mc.player.setPos(pp.getX(), pp.getY(), pp.getZ());
 
-            ServerPlayerEntityInject.from(player).setDroneView(player);
+            player.setCameraEntity(player);
 
 //            System.out.println("FINNA TP BACK");
 //            BlockPos pos = drone.getOriginalPlayerPos();

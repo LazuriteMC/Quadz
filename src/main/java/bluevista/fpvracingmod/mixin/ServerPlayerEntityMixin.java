@@ -1,6 +1,5 @@
 package bluevista.fpvracingmod.mixin;
 
-import bluevista.fpvracingmod.inject.ServerPlayerEntityInject;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.SetCameraEntityS2CPacket;
@@ -13,9 +12,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin implements ServerPlayerEntityInject {
+public abstract class ServerPlayerEntityMixin {
     public abstract Entity getCameraEntity();
     public abstract void requestTeleport(double destX, double destY, double destZ);
+
     @Shadow Entity cameraEntity;
     @Shadow ServerPlayNetworkHandler networkHandler;
 
@@ -28,13 +28,15 @@ public abstract class ServerPlayerEntityMixin implements ServerPlayerEntityInjec
         }
     }
 
-    @Override
-    public void setDroneView(Entity entity) {
-        Entity entity2 = this.getCameraEntity();
-        this.cameraEntity = (Entity)(entity == null ? this : entity);
-        if (entity2 != this.cameraEntity) {
-            this.networkHandler.sendPacket(new SetCameraEntityS2CPacket(this.cameraEntity));
-            this.requestTeleport(this.cameraEntity.getX(), this.cameraEntity.getY(), this.cameraEntity.getZ());
+    @Inject(at = @At("HEAD"), method = "setCameraEntity", cancellable = true)
+    public void setCameraEntity(Entity entity, CallbackInfo info) {
+        Entity prevEntity = this.getCameraEntity();
+        Entity nextEntity = (Entity)(entity == null ? this : entity);
+
+        if(prevEntity instanceof DroneEntity || nextEntity instanceof DroneEntity) {
+            networkHandler.sendPacket(new SetCameraEntityS2CPacket(nextEntity));
+            cameraEntity = nextEntity;
+            info.cancel();
         }
     }
 }
