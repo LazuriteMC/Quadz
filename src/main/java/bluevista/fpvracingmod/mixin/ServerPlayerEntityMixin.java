@@ -12,10 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin {
-    public abstract Entity getCameraEntity();
-    public abstract void requestTeleport(double destX, double destY, double destZ);
-
+public class ServerPlayerEntityMixin {
     @Shadow Entity cameraEntity;
     @Shadow ServerPlayNetworkHandler networkHandler;
 
@@ -30,7 +27,7 @@ public abstract class ServerPlayerEntityMixin {
 
     @Inject(at = @At("HEAD"), method = "setCameraEntity", cancellable = true)
     public void setCameraEntity(Entity entity, CallbackInfo info) {
-        Entity prevEntity = this.getCameraEntity();
+        Entity prevEntity = cameraEntity;
         Entity nextEntity = (Entity)(entity == null ? this : entity);
 
         if(prevEntity instanceof DroneEntity || nextEntity instanceof DroneEntity) {

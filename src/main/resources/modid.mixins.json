@@ -4,18 +4,16 @@
   "package": "bluevista.fpvracingmod.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "Matrix4fMixin"
+    "Matrix4fMixin",
+    "ServerPlayerEntityMixin",
+    "ServerPlayNetworkManagerMixin",
+    "ServerChunkManagerMixin"
   ],
   "client": [
     "GameRendererMixin",
     "WorldRendererMixin",
     "ClientPlayNetworkManagerMixin",
     "ClientChunkManagerMixin"
-  ],
-  "server": [
-    "ServerPlayerEntityMixin",
-    "ServerPlayNetworkManagerMixin",
-    "ServerChunkManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
