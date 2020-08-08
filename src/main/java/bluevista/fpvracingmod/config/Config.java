@@ -115,35 +115,18 @@ public class Config {
     /* OTHER METHODS */
 
     public void loadConfig() {
-
-        // this should be reworked so that if one value doesn't exist
-        // it is the only one skipped and not every one past it
-        try {
-            this.getOptions().put(Config.CONTROLLER_ID, Integer.parseInt(configReader.getValue(Config.CONTROLLER_ID)));
-            this.getOptions().put(Config.THROTTLE_NUM, Integer.parseInt(configReader.getValue(Config.THROTTLE_NUM)));
-            this.getOptions().put(Config.PITCH_NUM, Integer.parseInt(configReader.getValue(Config.PITCH_NUM)));
-            this.getOptions().put(Config.YAW_NUM, Integer.parseInt(configReader.getValue(Config.YAW_NUM)));
-            this.getOptions().put(Config.ROLL_NUM, Integer.parseInt(configReader.getValue(Config.ROLL_NUM)));
-            this.getOptions().put(Config.DEADZONE, Float.parseFloat(configReader.getValue(Config.DEADZONE)));
-            this.getOptions().put(Config.THROTTLE_CENTER_POSITION, Integer.parseInt(configReader.getValue(Config.THROTTLE_CENTER_POSITION)));
-            this.getOptions().put(Config.RATE, Float.parseFloat(configReader.getValue(Config.RATE)));
-            this.getOptions().put(Config.SUPER_RATE, Float.parseFloat(configReader.getValue(Config.SUPER_RATE)));
-            this.getOptions().put(Config.EXPO, Float.parseFloat(configReader.getValue(Config.EXPO)));
-            this.getOptions().put(Config.INVERT_THROTTLE, Integer.parseInt(configReader.getValue(Config.INVERT_THROTTLE)));
-            this.getOptions().put(Config.INVERT_PITCH, Integer.parseInt(configReader.getValue(Config.INVERT_PITCH)));
-            this.getOptions().put(Config.INVERT_YAW, Integer.parseInt(configReader.getValue(Config.INVERT_YAW)));
-            this.getOptions().put(Config.INVERT_ROLL, Integer.parseInt(configReader.getValue(Config.INVERT_ROLL)));
-            this.getOptions().put(Config.CAMERA_ANGLE, Integer.parseInt(configReader.getValue(Config.CAMERA_ANGLE)));
-            this.getOptions().put(Config.BAND, Integer.parseInt(configReader.getValue(Config.BAND)));
-            this.getOptions().put(Config.CHANNEL, Integer.parseInt(configReader.getValue(Config.CHANNEL)));
-        } catch (Exception e) {
-            System.err.println("Error loading config file");
-            e.printStackTrace();
+        for (String key : ALL_OPTIONS) {
+            try {
+                this.getOptions().put(key, configReader.getValue(key));
+            } catch (Exception e) {
+                System.err.println("Error loading config file");
+                e.printStackTrace();
+            }
         }
     }
 
     public void writeConfig() {
-        configReader.writeChangedValues();
+        configReader.writeValues();
     }
 
     public void serialize(PacketByteBuf buf) {

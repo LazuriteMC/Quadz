@@ -5,6 +5,7 @@ import bluevista.fpvracingmod.server.ServerInitializer;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 
 public class ConfigReader {
@@ -12,7 +13,7 @@ public class ConfigReader {
     private static final String CONFIG_NAME = ServerInitializer.MODID + ".cfg";
 
     private final File file;
-    private final HashMap<String, String> values;
+    private final HashMap<String, Number> values;
 
     public ConfigReader() {
         this.file = new File("config/" + CONFIG_NAME);
@@ -34,7 +35,6 @@ public class ConfigReader {
         }
     }
 
-    // rework this to parse the values into their respective datatypes before storing them in values
     private void readValues() {
         if (file.length() != 0) {
             try {
@@ -43,14 +43,33 @@ public class ConfigReader {
 
                 while (scanner.hasNextLine()) {
                     line = scanner.nextLine();
-                    if(line.contains("#")) {
+
+                    if(line.contains("#") || line.isEmpty()) {
+                        // this handles a case where the line is a comment or a newline
                         continue;
                     }
 
                     if (line.split("=").length == 2) {
-                        values.put(line.split("=")[0], line.split("=")[1]);
-                    } else {
-                        values.put(line.split("=")[0], "0"); // default value, works for ints and floats
+                        // this handles a case where the value of a key is defined in the config
+
+                        String key = line.split("=")[0].trim();
+                        String value = line.split("=")[1].trim();
+
+                        if (Config.INT_KEYS.contains(key)) {
+                            values.put(key, Integer.parseInt(value));
+                        } else if (Config.FLOAT_KEYS.contains(key)) {
+                            values.put(key, Float.parseFloat(value));
+                        }
+                    } else if (!line.startsWith("=") && line.contains("=")) {
+                        // this handles a case where the value of a key is removed, leaving the line ending with an '='
+
+                        String key = line.split("=")[0].trim();
+
+                        if (Config.INT_KEYS.contains(key)) {
+                            values.put(key, 0);
+                        } else if (Config.FLOAT_KEYS.contains(key)) {
+                            values.put(key, 0.0F);
+                        }
                     }
                 }
             } catch (FileNotFoundException e) {
@@ -60,7 +79,7 @@ public class ConfigReader {
         }
     }
 
-    public void writeChangedValues() {
+    public void writeValues() {
         if (file.length() != 0) {
             try {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -69,20 +88,25 @@ public class ConfigReader {
 
                 while (scanner.hasNextLine()) {
                     line = scanner.nextLine();
+
                     if (line.startsWith("#") || line.isEmpty()) {
-                        stringBuilder.append(line).append("\n");
+                        // this handles a case where the line is a comment or a newline
+
+                        stringBuilder.append(line).append(System.lineSeparator());
                     } else {
+                        // this handles a case where the line is a key & value pair
+
                         for (String key : Config.ALL_OPTIONS) {
                             if (line.split("=")[0].equals(key)) {
-                                stringBuilder.append(key).append("=").append(ClientInitializer.getConfig().getOption(key)).append("\n");
+                                stringBuilder.append(key).append("=").append(ClientInitializer.getConfig().getOption(key)).append(System.lineSeparator());
                             }
                         }
                     }
                 }
 
-                FileWriter fileWriter = new FileWriter(file);
-                fileWriter.write(stringBuilder.toString());
-                fileWriter.close();
+                OutputStream out = new FileOutputStream("config/" + CONFIG_NAME);
+
+                IOUtils.write(stringBuilder, out, Charset.defaultCharset());
             } catch (IOException e) {
                 System.err.println("Error writing config values");
                 e.printStackTrace();
@@ -90,11 +114,7 @@ public class ConfigReader {
         }
     }
 
-    public String getValue(String key) {
-        try {
-            return values.get(key);
-        } catch (NullPointerException e) {
-            return null;
-        }
+    public Number getValue(String key) {
+        return values.get(key);
     }
 }
