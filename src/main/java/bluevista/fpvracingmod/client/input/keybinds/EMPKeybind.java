@@ -16,7 +16,7 @@ public class EMPKeybind {
     private static KeyBinding key;
 
     public static void callback(MinecraftClient client) {
-        if (key.wasPressed()) EMPPacketToServer.send(client.player, 250);
+        if (key.wasPressed()) EMPPacketToServer.send(250);
     }
 
     public static void register() {
