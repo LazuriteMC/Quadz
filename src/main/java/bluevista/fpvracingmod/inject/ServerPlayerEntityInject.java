@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.client.math.inject;
+package bluevista.fpvracingmod.inject;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;

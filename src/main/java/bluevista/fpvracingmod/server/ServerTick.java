@@ -1,22 +1,16 @@
 package bluevista.fpvracingmod.server;
 
-import bluevista.fpvracingmod.client.math.inject.ServerPlayerEntityInject;
+import bluevista.fpvracingmod.inject.ServerPlayerEntityInject;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.network.Packet;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Environment(EnvType.CLIENT)
 public class ServerTick {

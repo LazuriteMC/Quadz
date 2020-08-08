@@ -2,8 +2,7 @@ package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
-import bluevista.fpvracingmod.client.math.inject.MatrixInject;
-import bluevista.fpvracingmod.network.DroneInfoC2S;
+import bluevista.fpvracingmod.inject.MatrixInject;
 import bluevista.fpvracingmod.network.DroneInfoS2C;
 import bluevista.fpvracingmod.network.DroneQuaternionS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
@@ -19,8 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -28,7 +25,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.*;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkStatus;
 
 import java.util.List;
 import java.util.UUID;

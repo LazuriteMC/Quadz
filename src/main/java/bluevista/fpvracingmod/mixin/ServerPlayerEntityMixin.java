@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.mixin;
 
-import bluevista.fpvracingmod.client.math.inject.ServerPlayerEntityInject;
+import bluevista.fpvracingmod.inject.ServerPlayerEntityInject;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.SetCameraEntityS2CPacket;
