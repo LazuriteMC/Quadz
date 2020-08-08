@@ -4,7 +4,7 @@
   "package": "bluevista.fpvracingmod.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MatrixMixin"
+    "Matrix4fMixin"
   ],
   "client": [
     "GameRendererMixin",
