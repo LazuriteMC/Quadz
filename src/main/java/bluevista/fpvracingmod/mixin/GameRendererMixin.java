@@ -3,7 +3,6 @@ package bluevista.fpvracingmod.mixin;
 import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.client.RenderTick;
 import bluevista.fpvracingmod.client.input.InputTick;
-import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;

@@ -18,8 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.server.world.ChunkTicketType;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -31,9 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class DroneEntity extends Entity {
-	// Infinite Range Information
 	private boolean infiniteTracking;
-	private BlockPos playerPos;
 
 	// Camera/VTX Information
 	private int cameraAngle;
@@ -55,8 +51,6 @@ public class DroneEntity extends Entity {
 
 		this.orientation = new Quaternion(0, 1, 0, 0);
 		this.prevOrientation = new Quaternion(0, 1, 0 , 0);
-
-		this.playerPos = new BlockPos(0 ,0, 0);
 	}
 
 	@Override
@@ -68,29 +62,9 @@ public class DroneEntity extends Entity {
 			DroneQuaternionS2C.send(this);
 
 			if (hasInfiniteTracking()) {
-//				if (player != null) {
-//					player.teleport(getX(), getY() + 25, getZ());
-//				}
+
 			}
 		}
-
-		int x = (int) this.getX();
-		int z = (int) this.getZ();
-		if(!this.world.isClient()) {
-			ServerWorld w = (ServerWorld) world;
-
-//			w.getChunkManager().threadedAnvilChunkStorage.getPlayersWatchingChunk(new ChunkPos(x, z), false).forEach(each -> {
-//				System.out.println("KILL ME");
-//			});
-//			if(!w.getChunkManager().isChunkLoaded(x, z)) {
-//				System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-//				w.getChunkManager().addTicket(ChunkTicketType.PLAYER, new ChunkPos(x, z), 16, new ChunkPos(x, z));
-//			}
-			System.out.println("IS CHUNK LOADED?" + w.getChunkManager().isChunkLoaded(x, z));
-			System.out.println();
-		}
-
-//		System.out.println("AAAAAAAAA" + (world.getChunk(x, z, ChunkStatus.FULL, false) != null));
 
 		// Update velocity
 		Vec3d d = getThrustVector().multiply(1, -1, 1).multiply(throttle);
@@ -266,14 +240,6 @@ public class DroneEntity extends Entity {
 
 	public void setThrottle(float throttle) {
 		this.throttle = throttle;
-	}
-
-	public BlockPos getOriginalPlayerPos() {
-		return playerPos;
-	}
-
-	public void setPlayerPos(BlockPos playerPos) {
-		this.playerPos = playerPos;
 	}
 
 	public void addVelocity(Vec3d... vecs) {
