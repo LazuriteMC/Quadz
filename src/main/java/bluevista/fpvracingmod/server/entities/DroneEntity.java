@@ -2,7 +2,7 @@ package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.controller.Controller;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
-import bluevista.fpvracingmod.inject.MatrixInject;
+import bluevista.fpvracingmod.inject.Matrix4fInject;
 import bluevista.fpvracingmod.network.DroneInfoS2C;
 import bluevista.fpvracingmod.network.DroneQuaternionS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
@@ -136,9 +136,9 @@ public class DroneEntity extends Entity {
 		QuaternionHelper.rotateX(q, 90);
 
 		Matrix4f mat = new Matrix4f();
-		MatrixInject.from(mat).fromQuaternion(q);
+		Matrix4fInject.from(mat).fromQuaternion(q);
 
-		return MatrixInject.from(mat).matrixToVector();
+		return Matrix4fInject.from(mat).matrixToVector();
 	}
 
 	/*

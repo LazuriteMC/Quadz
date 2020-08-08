@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.mixin;
 
-import bluevista.fpvracingmod.inject.MatrixInject;
+import bluevista.fpvracingmod.inject.Matrix4fInject;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Matrix4f.class)
-public class MatrixMixin implements MatrixInject {
+public class Matrix4fMixin implements Matrix4fInject {
     @Shadow float a02;
     @Shadow float a12;
     @Shadow float a22;
