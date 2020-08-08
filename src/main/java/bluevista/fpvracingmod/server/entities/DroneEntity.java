@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -85,8 +86,8 @@ public class DroneEntity extends Entity {
 //				System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 //				w.getChunkManager().addTicket(ChunkTicketType.PLAYER, new ChunkPos(x, z), 16, new ChunkPos(x, z));
 //			}
-//			System.out.println("IS CHUNK LOADED?" + w.getChunkManager().isChunkLoaded(x, z));
-//			System.out.println();
+			System.out.println("IS CHUNK LOADED?" + w.getChunkManager().isChunkLoaded(x, z));
+			System.out.println();
 		}
 
 //		System.out.println("AAAAAAAAA" + (world.getChunk(x, z, ChunkStatus.FULL, false) != null));

@@ -9,19 +9,20 @@ import net.minecraft.client.MinecraftClient;
 
 public class ClientTick {
     private static boolean haveSentPacket = false;
+    public static DroneEntity boundDrone;
 
     public static void tick(MinecraftClient mc) {
         if (mc.player != null) {
+            DroneEntity d = TransmitterItem.droneFromTransmitter(mc.player.getMainHandStack(), mc.player);
+            boundDrone = d == null ? boundDrone : d;
+
             if (!haveSentPacket) {
                 ClientConfigC2S.send();
                 haveSentPacket = true;
             }
 
-            if (TransmitterItem.isHoldingTransmitter(mc.player)) {
-                DroneEntity drone = TransmitterItem.droneFromTransmitter(mc.player.getMainHandStack(), mc.player);
-                if(drone != null)
-                    DroneInfoC2S.send(drone);
-            }
+            if (TransmitterItem.isHoldingTransmitter(mc.player))
+                if(boundDrone != null) DroneInfoC2S.send(boundDrone);
         } else if (haveSentPacket) {
             haveSentPacket = false;
         }
