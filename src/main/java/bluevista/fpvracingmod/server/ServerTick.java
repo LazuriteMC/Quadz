@@ -3,15 +3,12 @@ package bluevista.fpvracingmod.server;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.List;
 
-@Environment(EnvType.CLIENT)
 public class ServerTick {
 
     public static void tick(MinecraftServer server) {
