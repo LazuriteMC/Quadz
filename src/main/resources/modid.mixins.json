@@ -7,13 +7,15 @@
     "Matrix4fMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkManagerMixin",
-    "ServerChunkManagerMixin"
+    "ServerChunkManagerMixin",
+    "BuiltChunkStorageMixin"
   ],
   "client": [
     "GameRendererMixin",
     "WorldRendererMixin",
     "ClientPlayNetworkManagerMixin",
-    "ClientChunkManagerMixin"
+    "ClientChunkManagerMixin",
+    "ClientWorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1
