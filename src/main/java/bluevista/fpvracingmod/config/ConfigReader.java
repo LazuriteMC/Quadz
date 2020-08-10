@@ -61,17 +61,6 @@ public class ConfigReader {
                             values.put(key, Float.parseFloat(value));
                         }
                     }
-//                    } else if (!line.startsWith("=") && line.contains("=")) {
-//                        // this handles a case where the value of a key is removed, leaving the line ending with an '='
-//
-//                        String key = line.split("=")[0].trim();
-//
-//                        if (Config.INT_KEYS.contains(key)) {
-//                            values.put(key, 0);
-//                        } else if (Config.FLOAT_KEYS.contains(key)) {
-//                            values.put(key, 0.0F);
-//                        }
-//                    }
                 }
             } catch (FileNotFoundException e) {
                 System.err.println("Error reading config file");
