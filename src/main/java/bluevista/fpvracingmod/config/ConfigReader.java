@@ -45,7 +45,7 @@ public class ConfigReader {
                     line = scanner.nextLine();
 
                     if(line.contains("#") || line.isEmpty()) {
-                        // this handles a case where the line is a comment or a newline
+                        // this handles a case where the line is a comment or a blank line (line separator)
                         continue;
                     }
 
@@ -59,16 +59,6 @@ public class ConfigReader {
                             values.put(key, Integer.parseInt(value));
                         } else if (Config.FLOAT_KEYS.contains(key)) {
                             values.put(key, Float.parseFloat(value));
-                        }
-                    } else if (!line.startsWith("=") && line.contains("=")) {
-                        // this handles a case where the value of a key is removed, leaving the line ending with an '='
-
-                        String key = line.split("=")[0].trim();
-
-                        if (Config.INT_KEYS.contains(key)) {
-                            values.put(key, 0);
-                        } else if (Config.FLOAT_KEYS.contains(key)) {
-                            values.put(key, 0.0F);
                         }
                     }
                 }
@@ -86,19 +76,42 @@ public class ConfigReader {
                 Scanner scanner = new Scanner(file);
                 String line;
 
+                Config config = ClientInitializer.getConfig();
+                int lastWrittenKeyIndex = -1; // no value yet written
+
                 while (scanner.hasNextLine()) {
                     line = scanner.nextLine();
 
                     if (line.startsWith("#") || line.isEmpty()) {
                         // this handles a case where the line is a comment or a newline
 
+                        Scanner scanner2 = new Scanner(new File("config/" + CONFIG_NAME)); // prevents scanner from being updated by using scanner2
+                        scanner2.useDelimiter(scanner.delimiter());
+
+                        String pattern = scanner2.findWithinHorizon(Config.ALL_OPTIONS.get(lastWrittenKeyIndex + 1) + "=", 0);
+
+                        while (true) {
+                            if (pattern != null && pattern.startsWith("#")) {
+                                pattern = scanner2.findWithinHorizon(Config.ALL_OPTIONS.get(lastWrittenKeyIndex + 1) + "=", 0);
+                            } else {
+                                break;
+                            }
+                        }
+
+                        if (pattern == null) {
+                            ++lastWrittenKeyIndex;
+                            String value = Config.ALL_OPTIONS.get(lastWrittenKeyIndex);
+                            stringBuilder.append(value).append("=").append(config.getOption(value)).append(System.lineSeparator());
+                        }
+
                         stringBuilder.append(line).append(System.lineSeparator());
                     } else {
-                        // this handles a case where the line is a key & value pair
+                        // this handles a case where the line is a key & value pair, hopefully
 
                         for (String key : Config.ALL_OPTIONS) {
                             if (line.split("=")[0].equals(key)) {
-                                stringBuilder.append(key).append("=").append(ClientInitializer.getConfig().getOption(key)).append(System.lineSeparator());
+                                lastWrittenKeyIndex = Config.ALL_OPTIONS.indexOf(key);
+                                stringBuilder.append(key).append("=").append(config.getOption(key)).append(System.lineSeparator());
                             }
                         }
                     }
@@ -115,6 +128,14 @@ public class ConfigReader {
     }
 
     public Number getValue(String key) {
+        if (values.get(key) == null) {
+            if (Config.INT_KEYS.contains(key)) {
+                return 0;
+            } else if (Config.FLOAT_KEYS.contains(key)) {
+                return 0.0F;
+            }
+        }
+
         return values.get(key);
     }
 }
