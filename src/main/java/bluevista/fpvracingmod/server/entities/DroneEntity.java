@@ -86,16 +86,16 @@ public class DroneEntity extends Entity {
 		tag.putInt("cameraAngle", cameraAngle);
 	}
 
-	public void setValue(String key, int value) {
+	public void setValue(String key, Number value) {
 		switch (key) {
 			case "band":
-				setBand(value);
+				setBand(value.intValue());
 				break;
 			case "channel":
-				setChannel(value);
+				setChannel(value.intValue());
 				break;
 			case "cameraAngle":
-				setCameraAngle(value);
+				setCameraAngle(value.intValue());
 				break;
 			default:
 				break;

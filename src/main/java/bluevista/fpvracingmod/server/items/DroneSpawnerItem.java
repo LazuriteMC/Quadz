@@ -59,16 +59,16 @@ public class DroneSpawnerItem extends Item {
 		return TypedActionResult.success(itemStack);
 	}
 
-	public static void setValue(ItemStack itemStack, String key, int value) {
+	public static void setValue(ItemStack itemStack, String key, Number value) {
 		switch (key) {
 			case "band":
-				setBand(itemStack, value);
+				setBand(itemStack, value.intValue());
 				break;
 			case "channel":
-				setChannel(itemStack, value);
+				setChannel(itemStack, value.intValue());
 				break;
 			case "cameraAngle":
-				setCameraAngle(itemStack, value);
+				setCameraAngle(itemStack, value.intValue());
 				break;
 			default:
 				break;

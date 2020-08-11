@@ -40,13 +40,13 @@ public class GogglesItem extends ArmorItem {
 		}
 	}
 
-	public static void setValue(ItemStack stack, String key, int value) {
+	public static void setValue(ItemStack stack, String key, Number value) {
 		switch (key) {
 			case "band":
-				setBand(stack, value);
+				setBand(stack, value.intValue());
 				break;
 			case "channel":
-				setChannel(stack, value);
+				setChannel(stack, value.intValue());
 				break;
 			default:
 				break;
