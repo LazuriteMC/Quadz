@@ -86,6 +86,35 @@ public class DroneEntity extends Entity {
 		tag.putInt("cameraAngle", cameraAngle);
 	}
 
+	public void setValue(String key, int value) {
+		switch (key) {
+			case "band":
+				setBand(value);
+				break;
+			case "channel":
+				setChannel(value);
+				break;
+			case "cameraAngle":
+				setCameraAngle(value);
+				break;
+			default:
+				break;
+		}
+	}
+
+	public int getValue(String key) {
+		switch (key) {
+			case "band":
+				return getBand();
+			case "channel":
+				return getChannel();
+			case "cameraAngle":
+				return getCameraAngle();
+			default:
+				return 0; // unknown key, default value
+		}
+	}
+
 	public void setBand(int band) {
 		this.band = band;
 	}
@@ -100,6 +129,14 @@ public class DroneEntity extends Entity {
 
 	public int getChannel() {
 		return channel;
+	}
+
+	public void setCameraAngle(int angle) {
+		cameraAngle = angle;
+	}
+
+	public int getCameraAngle() {
+		return cameraAngle;
 	}
 
 	/*
@@ -224,14 +261,6 @@ public class DroneEntity extends Entity {
 
 	public void setPrevOrientation(Quaternion q) {
 		prevOrientation.set(q.getX(), q.getY(), q.getZ(), q.getW());
-	}
-
-	public int getCameraAngle() {
-		return cameraAngle;
-	}
-
-	public void setCameraAngle(int angle) {
-		cameraAngle = angle;
 	}
 
 	public float getThrottle() {

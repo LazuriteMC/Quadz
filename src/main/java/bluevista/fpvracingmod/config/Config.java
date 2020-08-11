@@ -10,10 +10,10 @@ public class Config {
 
     public static final String ALL = "all";
     public static final String CONTROLLER_ID = "controllerID";
-    public static final String THROTTLE_NUM = "throttle";
-    public static final String PITCH_NUM = "pitch";
-    public static final String YAW_NUM = "yaw";
-    public static final String ROLL_NUM = "roll";
+    public static final String THROTTLE = "throttle";
+    public static final String PITCH = "pitch";
+    public static final String YAW = "yaw";
+    public static final String ROLL = "roll";
     public static final String DEADZONE = "deadzone";
     public static final String THROTTLE_CENTER_POSITION = "throttleCenterPosition";
     public static final String RATE = "rate";
@@ -29,10 +29,10 @@ public class Config {
 
     public static final List<String> ALL_OPTIONS = Arrays.asList(
             CONTROLLER_ID,
-            THROTTLE_NUM,
-            PITCH_NUM,
-            YAW_NUM,
-            ROLL_NUM,
+            THROTTLE,
+            PITCH,
+            YAW,
+            ROLL,
             DEADZONE,
             THROTTLE_CENTER_POSITION,
             RATE,
@@ -49,10 +49,10 @@ public class Config {
 
     public static final List<String> INT_KEYS = Arrays.asList(
             CONTROLLER_ID,
-            THROTTLE_NUM,
-            PITCH_NUM,
-            YAW_NUM,
-            ROLL_NUM,
+            THROTTLE,
+            PITCH,
+            YAW,
+            ROLL,
             THROTTLE_CENTER_POSITION,
             INVERT_THROTTLE,
             INVERT_PITCH,

@@ -27,10 +27,10 @@ public class InputTick {
         if(drone != null && TransmitterItem.isHoldingTransmitter(client.player) && !client.isPaused() && controllerExists()) {
             float d = (System.currentTimeMillis() - prevTime) / 1000f;
 
-            float currT = glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get(clientConfig.getIntOption(Config.THROTTLE_NUM)) + 1;
-            float currX = -glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get(clientConfig.getIntOption(Config.PITCH_NUM));
-            float currY = -glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get(clientConfig.getIntOption(Config.YAW_NUM));
-            float currZ = -glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get(clientConfig.getIntOption(Config.ROLL_NUM));
+            float currT = glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get(clientConfig.getIntOption(Config.THROTTLE)) + 1;
+            float currX = -glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get(clientConfig.getIntOption(Config.PITCH));
+            float currY = -glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get(clientConfig.getIntOption(Config.YAW));
+            float currZ = -glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get(clientConfig.getIntOption(Config.ROLL));
 
             if (clientConfig.getIntOption(Config.INVERT_THROTTLE) == 1) {
                 currT = Math.abs(2 - currT);

@@ -40,19 +40,32 @@ public class GogglesItem extends ArmorItem {
 		}
 	}
 
-	public static void setBand(ItemStack itemStack, int band, PlayerEntity player) {
+	public static void setValue(ItemStack stack, String key, int value) {
+		switch (key) {
+			case "band":
+				setBand(stack, value);
+				break;
+			case "channel":
+				setChannel(stack, value);
+				break;
+			default:
+				break;
+		}
+	}
+
+	public static int getValue(ItemStack stack, String key) {
+		switch (key) {
+			case "band":
+				return getBand(stack);
+			case "channel":
+				return getChannel(stack);
+			default:
+				return 0; // unknown key, default value
+		}
+	}
+
+	public static void setBand(ItemStack itemStack, int band) {
 		itemStack.getOrCreateSubTag("frequency").putInt("band", band);
-	}
-
-	public static void setChannel(ItemStack itemStack, int channel, PlayerEntity player) {
-		itemStack.getOrCreateSubTag("frequency").putInt("channel", channel);
-	}
-
-	public static void setOn(ItemStack itemStack, boolean on, PlayerEntity player) {
-		if(itemStack.getSubTag("misc") != null)
-			if(on && !itemStack.getSubTag("misc").getBoolean("on"))
-				player.sendMessage(new TranslatableText("Press SHIFT to power off goggles"), true);
-		itemStack.getOrCreateSubTag("misc").putBoolean("on", on);
 	}
 
 	public static int getBand(ItemStack itemStack) {
@@ -61,10 +74,21 @@ public class GogglesItem extends ArmorItem {
 		return 0;
 	}
 
+	public static void setChannel(ItemStack itemStack, int channel) {
+		itemStack.getOrCreateSubTag("frequency").putInt("channel", channel);
+	}
+
 	public static int getChannel(ItemStack itemStack) {
 		if(itemStack.getSubTag("frequency") != null)
 			return itemStack.getSubTag("frequency").getInt("channel");
 		return 0;
+	}
+
+	public static void setOn(ItemStack itemStack, boolean on, PlayerEntity player) {
+		if(itemStack.getSubTag("misc") != null)
+			if(on && !itemStack.getSubTag("misc").getBoolean("on"))
+				player.sendMessage(new TranslatableText("Press SHIFT to power off goggles"), true);
+		itemStack.getOrCreateSubTag("misc").putBoolean("on", on);
 	}
 
 	public static boolean isOn(PlayerEntity player) {

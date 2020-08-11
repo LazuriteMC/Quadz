@@ -59,6 +59,35 @@ public class DroneSpawnerItem extends Item {
 		return TypedActionResult.success(itemStack);
 	}
 
+	public static void setValue(ItemStack itemStack, String key, int value) {
+		switch (key) {
+			case "band":
+				setBand(itemStack, value);
+				break;
+			case "channel":
+				setChannel(itemStack, value);
+				break;
+			case "cameraAngle":
+				setCameraAngle(itemStack, value);
+				break;
+			default:
+				break;
+		}
+	}
+
+	public static int getValue(ItemStack itemStack, String key) {
+		switch (key) {
+			case "band":
+				return getBand(itemStack);
+			case "channel":
+				return getChannel(itemStack);
+			case "cameraAngle":
+				return getCameraAngle(itemStack);
+			default:
+				return 0; // unknown key, default value
+		}
+	}
+
 	public static void setBand(ItemStack itemStack, int band) {
 		itemStack.getOrCreateSubTag("frequency").putInt("band", band);
 	}
