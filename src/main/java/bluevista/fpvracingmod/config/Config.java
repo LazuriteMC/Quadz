@@ -8,7 +8,9 @@ import java.util.List;
 
 public class Config {
 
-    public static final String ALL = "all";
+    public static final String ALL = "all"; // used to represent all config options
+    public static final String WRITE = "write"; // used to write config options to local config file
+
     public static final String CONTROLLER_ID = "controllerID";
     public static final String THROTTLE = "throttle";
     public static final String PITCH = "pitch";
