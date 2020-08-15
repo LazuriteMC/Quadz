@@ -8,7 +8,9 @@
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkManagerMixin",
     "ServerChunkManagerMixin",
-    "BuiltChunkStorageMixin"
+    "BuiltChunkStorageMixin",
+    "ThreadedAnvilChunkStorageMixin",
+    "ChunkSectionPosMixin"
   ],
   "client": [
     "GameRendererMixin",

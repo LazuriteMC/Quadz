@@ -18,12 +18,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.server.world.ChunkTicketType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.*;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.ChunkStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -61,9 +64,22 @@ public class DroneEntity extends Entity {
 			DroneInfoS2C.send(this);
 			DroneQuaternionS2C.send(this);
 
-			if (hasInfiniteTracking()) {
+			ServerWorld w = (ServerWorld) world;
+			int x = MathHelper.floor(this.getX() / 15.0D);
+			int z = MathHelper.floor(this.getZ() / 15.0D);
 
-			}
+//			if (hasInfiniteTracking()) {
+//				w.getChunkManager().threadedAnvilChunkStorage.getPlayersWatchingChunk(new ChunkPos(x, z), false).forEach(each -> {
+//					System.out.println("KILL ME");
+//				});
+
+//				if(!w.getChunkManager().isChunkLoaded(x, z)) {
+//					w.getChunkManager().addTicket(ChunkTicketType.PLAYER, new ChunkPos(x, z), 16, new ChunkPos(x, z));
+//				}
+
+//				w.getChunkManager().getChunk(x, z);
+//				System.out.println("IS CHUNK LOADED?" + w.getChunkManager().isChunkLoaded(chunkX, chunkZ));
+//			}
 		}
 
 		// Update velocity

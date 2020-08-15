@@ -10,10 +10,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BuiltChunkStorage.class)
 public abstract class BuiltChunkStorageMixin {
-    @Inject(at = @At("HEAD"), method = "updateCameraPosition", cancellable = true)
-    public void updateCameraPosition(double x, double z, CallbackInfo info) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if(client.getCameraEntity() instanceof DroneEntity && client.player.getX() == x && client.player.getZ() == z)
-            info.cancel();
-    }
+//    @Inject(at = @At("HEAD"), method = "updateCameraPosition", cancellable = true)
+//    public void updateCameraPosition(double x, double z, CallbackInfo info) {
+//        MinecraftClient client = MinecraftClient.getInstance();
+//        if(client.getCameraEntity() instanceof DroneEntity && client.player.getX() == x && client.player.getZ() == z)
+//            info.cancel();
+//    }
 }

@@ -23,7 +23,7 @@ public abstract class ClientChunkManagerMixin {
         if(entity instanceof DroneEntity) {
             DroneEntity drone = (DroneEntity) entity;
             if(drone.hasInfiniteTracking()) {
-                Chunk c = world.getChunkManager().getChunk((int) drone.getX(), (int) drone.getZ(), ChunkStatus.FULL, false);
+//                Chunk c = world.getChunkManager().getChunk((int) drone.getX(), (int) drone.getZ(), ChunkStatus.FULL, false);
 //                setChunkMapCenter(c.getPos().x, c.getPos().z);
                 info.setReturnValue(true);
             }

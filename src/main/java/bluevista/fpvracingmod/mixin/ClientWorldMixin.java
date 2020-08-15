@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ClientWorldMixin {
     @Shadow @Final MinecraftClient client;
 
-    @Inject(at = @At("HEAD"), method = "doRandomBlockDisplayTicks", cancellable = true)
-    public void doRandomBlockDisplayTicks(int xCenter, int yCenter, int zCenter, CallbackInfo info) {
+//    @Inject(at = @At("HEAD"), method = "doRandomBlockDisplayTicks", cancellable = true)
+//    public void doRandomBlockDisplayTicks(int xCenter, int yCenter, int zCenter, CallbackInfo info) {
 //        Camera cam = client.gameRenderer.getCamera();
 //        int camX = MathHelper.floor(cam.getPos().getX());
 //        int camY = MathHelper.floor(cam.getPos().getY());
@@ -31,5 +31,5 @@ public abstract class ClientWorldMixin {
 //            client.world.doRandomBlockDisplayTicks(camX, camY, camZ);
 //            info.cancel();
 //        }
-    }
+//    }
 }
