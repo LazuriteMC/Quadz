@@ -223,7 +223,7 @@ public class FPVRacing {
             final ServerPlayerEntity player = context.getSource().getPlayer();
             final Config config = ServerInitializer.serverPlayerConfigs.get(player.getUuid());
 
-            player.sendMessage(new TranslatableText(key + ": " + config.getOption(key)), false);
+            player.sendMessage(new LiteralText(key + ": " + config.getOption(key)), false);
             return 1;
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
@@ -272,12 +272,12 @@ public class FPVRacing {
             final ItemStack stack = player.getMainHandStack();
 
             if (stack.getItem() instanceof DroneSpawnerItem) {
-                player.sendMessage(new TranslatableText(key + ": " + DroneSpawnerItem.getValue(stack, key)), false);
+                player.sendMessage(new LiteralText(key + ": " + DroneSpawnerItem.getValue(stack, key)), false);
                 return 1;
             } else if (stack.getItem() instanceof TransmitterItem) {
                 DroneEntity drone = TransmitterItem.droneFromTransmitter(stack, player);
                 if (drone != null) {
-                    player.sendMessage(new TranslatableText(key + ": " + drone.getValue(key)), false);
+                    player.sendMessage(new LiteralText(key + ": " + drone.getValue(key)), false);
                     return 1;
                 }
             }
@@ -332,10 +332,10 @@ public class FPVRacing {
             final ItemStack helmet = player.inventory.armor.get(3);
 
             if (stack.getItem() instanceof GogglesItem) {
-                player.sendMessage(new TranslatableText(key + ": " + GogglesItem.getValue(stack, key)), false);
+                player.sendMessage(new LiteralText(key + ": " + GogglesItem.getValue(stack, key)), false);
                 return 1;
             } else if (helmet.getItem() instanceof GogglesItem) {
-                player.sendMessage(new TranslatableText(key + ": " + GogglesItem.getValue(stack, key)), false);
+                player.sendMessage(new LiteralText(key + ": " + GogglesItem.getValue(stack, key)), false);
                 return 1;
             }
             player.sendMessage(GOGGLES_ERROR_MESSAGE, false);
