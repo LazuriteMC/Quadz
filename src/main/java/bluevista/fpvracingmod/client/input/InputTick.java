@@ -15,13 +15,11 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 
 @Environment(EnvType.CLIENT)
 public class InputTick {
-
     private static final MinecraftClient client = MinecraftClient.getInstance();
+    private static final Config clientConfig = ClientInitializer.getConfig(); // 3 long 5 me 3 type
 
     private static long prevTime;
     private static final int throttleScalar = 15; // find a scientific value for this, no more guessing ;)
-
-    private static final Config clientConfig = ClientInitializer.getConfig(); // 3 long 5 me 3 type
 
     public static void tick(DroneEntity drone) {
         if(drone != null && TransmitterItem.isHoldingTransmitter(client.player) && !client.isPaused() && controllerExists()) {
@@ -78,9 +76,11 @@ public class InputTick {
             float deltaZ = (float) BetaflightHelper.calculateRates(currZ, clientConfig.getFloatOption(Config.RATE), clientConfig.getFloatOption(Config.EXPO), clientConfig.getFloatOption(Config.SUPER_RATE)) * d;
 
             Quaternion q = drone.getOrientation();
-            QuaternionHelper.rotateX(q, deltaX);
-            QuaternionHelper.rotateY(q, deltaY);
-            QuaternionHelper.rotateZ(q, deltaZ);
+            if(prevTime != 0) {
+                QuaternionHelper.rotateX(q, deltaX);
+                QuaternionHelper.rotateY(q, deltaY);
+                QuaternionHelper.rotateZ(q, deltaZ);
+            }
 
             currT /= throttleScalar;
             drone.setThrottle(currT);
