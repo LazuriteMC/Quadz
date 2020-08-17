@@ -13,11 +13,12 @@ import net.minecraft.util.Lazy;
 import java.util.function.Supplier;
 
 public enum ArmorMaterials implements ArmorMaterial {
-    GOGGLE("goggle", 1, new int[]{1, 2, 3, 1}, 0, SoundEvents.BLOCK_BELL_USE, 0.0F, () -> {
+    GOGGLE("goggle", 0, new int[]{0, 0, 0, 0}, 0, SoundEvents.BLOCK_BELL_USE, 0.0F, () -> {
         return Ingredient.ofItems(ServerInitializer.GOGGLES_ITEM);
     });
 
     private static final int[] BASE_DURABILITY = new int[]{13, 15, 16, 11};
+
     private final String name;
     private final int durabilityMultiplier;
     private final int[] protectionAmounts;
@@ -26,7 +27,7 @@ public enum ArmorMaterials implements ArmorMaterial {
     private final float toughness;
     private final Lazy<Ingredient> repairIngredientSupplier;
 
-    private ArmorMaterials(String name, int durabilityMultiplier, int[] protectionAmounts, int enchantability, SoundEvent equipSound, float toughness, Supplier<Ingredient> ingredientSupplier) {
+    ArmorMaterials(String name, int durabilityMultiplier, int[] protectionAmounts, int enchantability, SoundEvent equipSound, float toughness, Supplier<Ingredient> ingredientSupplier) {
         this.name = name;
         this.durabilityMultiplier = durabilityMultiplier;
         this.protectionAmounts = protectionAmounts;

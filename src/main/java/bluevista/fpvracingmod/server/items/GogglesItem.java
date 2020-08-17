@@ -2,8 +2,11 @@ package bluevista.fpvracingmod.server.items;
 
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.materials.ArmorMaterials;
+import com.google.common.collect.Multimap;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
@@ -19,6 +22,11 @@ import net.minecraft.world.World;
 public class GogglesItem extends ArmorItem {
 	public GogglesItem(Item.Settings settings) {
 		super(ArmorMaterials.GOGGLE, EquipmentSlot.HEAD, settings);
+	}
+
+	@Override
+	public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
+		return super.getAttributeModifiers(EquipmentSlot.MAINHAND); // not HEAD
 	}
 
 	@Override
