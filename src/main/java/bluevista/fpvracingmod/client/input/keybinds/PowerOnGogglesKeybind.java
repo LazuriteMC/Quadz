@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.client.input.keybinds;
 
-import bluevista.fpvracingmod.network.PowerGogglesC2S;
+import bluevista.fpvracingmod.network.keybinds.PowerGogglesC2S;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import net.fabricmc.api.EnvType;

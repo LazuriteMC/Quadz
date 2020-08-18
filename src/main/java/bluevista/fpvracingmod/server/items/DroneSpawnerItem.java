@@ -1,6 +1,5 @@
 package bluevista.fpvracingmod.server.items;
 
-import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -29,8 +28,7 @@ public class DroneSpawnerItem extends Item {
 				return TypedActionResult.pass(itemStack);
 
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
-				DroneEntity drone = DroneEntity.create(world, hitResult.getPos());
-				QuaternionHelper.rotateY(drone.getOrientation(), 180f - user.yaw);
+				DroneEntity drone = DroneEntity.create(world, hitResult.getPos(), 180f - user.yaw);
 
 				if (itemStack.getSubTag("frequency") != null) {
 					drone.setBand(itemStack.getSubTag("frequency").getInt("band"));

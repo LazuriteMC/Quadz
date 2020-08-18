@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.network;
+package bluevista.fpvracingmod.network.entity;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -15,8 +15,8 @@ import net.minecraft.util.math.BlockPos;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public class DroneInfoS2C {
-    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_info_s2c");
+public class DroneEntityS2C {
+    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_entity_s2c");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
         PlayerEntity player = context.getPlayer();
@@ -58,6 +58,6 @@ public class DroneInfoS2C {
     }
 
     public static void register() {
-        ClientSidePacketRegistry.INSTANCE.register(PACKET_ID, DroneInfoS2C::accept);
+        ClientSidePacketRegistry.INSTANCE.register(PACKET_ID, DroneEntityS2C::accept);
     }
 }

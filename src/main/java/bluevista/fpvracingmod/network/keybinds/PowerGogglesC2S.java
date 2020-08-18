@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.network;
+package bluevista.fpvracingmod.network.keybinds;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.GogglesItem;

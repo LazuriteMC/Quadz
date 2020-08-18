@@ -3,6 +3,8 @@ package bluevista.fpvracingmod.client.math;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Quaternion;
 
+import javax.vecmath.Quat4f;
+
 public class QuaternionHelper {
     public static void rotateX(Quaternion q, double deg) {
         double radHalfAngle = Math.toRadians(deg) / 2.0;
@@ -20,6 +22,14 @@ public class QuaternionHelper {
         double radHalfAngle = Math.toRadians(deg) / 2.0;
         Quaternion rot = new Quaternion(0.0f, 0.0f, (float) Math.sin(radHalfAngle), (float) Math.cos(radHalfAngle));
         q.hamiltonProduct(rot);
+    }
+
+    public static Quaternion quat4fToQuaternion(Quat4f quat) {
+        return new Quaternion(quat.x, quat.y, quat.z, quat.w);
+    }
+
+    public static Quat4f quaternionToQuat4f(Quaternion quat) {
+        return new Quat4f(quat.getX(), quat.getY(), quat.getZ(), quat.getW());
     }
 
     public static void serialize(Quaternion q, PacketByteBuf buf) {

@@ -1,7 +1,7 @@
 package bluevista.fpvracingmod.server.commands;
 
 import bluevista.fpvracingmod.server.entities.DroneEntity;
-import bluevista.fpvracingmod.network.ConfigS2C;
+import bluevista.fpvracingmod.network.config.ConfigS2C;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;

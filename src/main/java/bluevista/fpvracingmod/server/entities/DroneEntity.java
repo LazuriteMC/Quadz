@@ -3,14 +3,13 @@ package bluevista.fpvracingmod.server.entities;
 import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.inject.Matrix4fInject;
-import bluevista.fpvracingmod.network.DroneInfoS2C;
-import bluevista.fpvracingmod.network.DroneQuaternionS2C;
+import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
+import bluevista.fpvracingmod.physics.PhysicsEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -26,34 +24,32 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.*;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkStatus;
 
+import javax.vecmath.Vector3f;
 import java.util.List;
 import java.util.UUID;
 
 public class DroneEntity extends Entity {
-	private boolean infiniteTracking;
-
 	// Camera/VTX Information
+	private boolean infiniteTracking;
 	private int cameraAngle;
 	private int band;
 	private int channel;
 
 	// Physics Information
-	private static final Vec3d G = new Vec3d(0, -0.04, 0);
-	private Quaternion prevOrientation;
-	private Quaternion orientation;
+	public PhysicsEntity physics;
+//	private static final Vec3d G = new Vec3d(0, -0.04, 0);
 	private float throttle;
 
 	public DroneEntity(EntityType<?> type, World world) {
-		this(world);
+		this(world, Vec3d.ZERO);
 	}
 
-	public DroneEntity(World world) {
+	public DroneEntity(World world, Vec3d pos) {
 		super(ServerInitializer.DRONE_ENTITY, world);
-
-		this.orientation = new Quaternion(0, 1, 0, 0);
-		this.prevOrientation = new Quaternion(0, 1, 0 , 0);
+		this.refreshPositionAndAngles(pos.x, pos.y, pos.z, 0, 0);
+		this.physics = new PhysicsEntity(this);
+		this.noClip = true;
 	}
 
 	@Override
@@ -61,8 +57,7 @@ public class DroneEntity extends Entity {
 		super.tick();
 
 		if(!this.world.isClient()) {
-			DroneInfoS2C.send(this);
-			DroneQuaternionS2C.send(this);
+			DroneEntityS2C.send(this);
 
 			ServerWorld w = (ServerWorld) world;
 			int x = MathHelper.floor(this.getX() / 15.0D);
@@ -82,10 +77,18 @@ public class DroneEntity extends Entity {
 //			}
 		}
 
+		if(physics != null) {
+			Vec3d pos = this.physics.getPosition();
+			this.setPos(pos.x, pos.y, pos.z);
+
+			Vec3d v = getThrustVector().multiply(1, -1, 1).multiply(throttle * 1000);
+			this.physics.applyForce(new Vector3f((float) v.x, (float) v.y, (float) v.z));
+		}
+
 		// Update velocity
-		Vec3d d = getThrustVector().multiply(1, -1, 1).multiply(throttle);
-		this.addVelocity(G, d);
-		this.move(MovementType.SELF, this.getVelocity());
+//		Vec3d d = getThrustVector().multiply(1, -1, 1).multiply(throttle);
+//		this.addVelocity(G, d);
+//		this.move(MovementType.SELF, this.getVelocity());
 	}
 
 	@Override
@@ -264,19 +267,29 @@ public class DroneEntity extends Entity {
 	}
 
 	public Quaternion getOrientation() {
-		return orientation;
+		return QuaternionHelper.quat4fToQuaternion(this.physics.getOrientation());
 	}
 
-	public void setOrientation(Quaternion q) {
-		orientation = q;
+	public void setOrientation(Quaternion orientation) {
+		this.physics.setOrientation(QuaternionHelper.quaternionToQuat4f(orientation));
 	}
 
-	public Quaternion getPrevOrientation() {
-		return prevOrientation;
+	public void rotateX(float deg) {
+		Quaternion q = getOrientation();
+		QuaternionHelper.rotateX(q, deg);
+		setOrientation(q);
 	}
 
-	public void setPrevOrientation(Quaternion q) {
-		prevOrientation.set(q.getX(), q.getY(), q.getZ(), q.getW());
+	public void rotateY(float deg) {
+		Quaternion q = getOrientation();
+		QuaternionHelper.rotateY(q, deg);
+		setOrientation(q);
+	}
+
+	public void rotateZ(float deg) {
+		Quaternion q = getOrientation();
+		QuaternionHelper.rotateZ(q, deg);
+		setOrientation(q);
 	}
 
 	public float getThrottle() {
@@ -287,11 +300,15 @@ public class DroneEntity extends Entity {
 		this.throttle = throttle;
 	}
 
-	public void addVelocity(Vec3d... vecs) {
-		for(Vec3d vec : vecs) {
-			this.addVelocity(vec.x, vec.y, vec.z);
-		}
+	public PhysicsEntity getPhysics() {
+		return this.physics;
 	}
+
+//	public void addVelocity(Vec3d... vecs) {
+//		for(Vec3d vec : vecs) {
+//			this.addVelocity(vec.x, vec.y, vec.z);
+//		}
+//	}
 
 	public boolean isTransmitterBound(ItemStack transmitter) {
 		try {
@@ -321,17 +338,8 @@ public class DroneEntity extends Entity {
 	}
 
 //	@Override
-//	public Box getHardCollisionBox(Entity collidingEntity) {
-//		return collidingEntity.isPushable() ? collidingEntity.getBoundingBox() : null;
-//	}
-
-	@Override
-	public boolean isPushable() {
-		return true;
-	}
-
-//	@Override
-//	protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
+//	public boolean isPushable() {
+//		return true;
 //	}
 
 	public void setInfiniteTracking(boolean infiniteTracking) {
@@ -347,9 +355,9 @@ public class DroneEntity extends Entity {
 		return new EntitySpawnS2CPacket(this);
 	}
 
-	public static DroneEntity create(World world, Vec3d pos) {
-		DroneEntity d = new DroneEntity(world);
-		d.refreshPositionAndAngles(pos.x, pos.y, pos.z, 0, 0);
+	public static DroneEntity create(World world, Vec3d pos, float yaw) {
+		DroneEntity d = new DroneEntity(world, pos);
+		d.rotateY(yaw);
 		world.spawnEntity(d);
 		return d;
 	}

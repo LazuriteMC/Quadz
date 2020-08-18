@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.network;
+package bluevista.fpvracingmod.network.entity;
 
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
@@ -13,8 +13,8 @@ import net.minecraft.util.math.Quaternion;
 
 import java.util.UUID;
 
-public class DroneInfoC2S {
-    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_info_c2s");
+public class DroneEntityC2S {
+    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_entity_c2s");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
         UUID droneID = buf.readUuid();
@@ -47,6 +47,6 @@ public class DroneInfoC2S {
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, DroneInfoC2S::accept);
+        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, DroneEntityC2S::accept);
     }
 }

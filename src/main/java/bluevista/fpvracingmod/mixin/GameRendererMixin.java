@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.mixin;
 
+import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.client.RenderTick;
 import bluevista.fpvracingmod.client.input.InputTick;
@@ -33,6 +34,6 @@ public class GameRendererMixin {
 	 */
 	@Inject(at = @At("HEAD"), method = "renderHand", cancellable = true)
 	public void renderHand(MatrixStack matrices, Camera camera, float tickDelta, CallbackInfo info) {
-		if(ClientTick.isInGoggles(client)) info.cancel();
+		if(ClientInitializer.isInGoggles(client)) info.cancel();
 	}
 }

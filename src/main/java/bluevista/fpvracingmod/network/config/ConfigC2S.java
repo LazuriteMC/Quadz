@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.network;
+package bluevista.fpvracingmod.network.config;
 
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.ServerInitializer;

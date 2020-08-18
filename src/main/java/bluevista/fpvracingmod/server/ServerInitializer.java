@@ -1,12 +1,17 @@
 package bluevista.fpvracingmod.server;
 
-import bluevista.fpvracingmod.network.*;
 import bluevista.fpvracingmod.config.Config;
+import bluevista.fpvracingmod.network.config.ConfigC2S;
+import bluevista.fpvracingmod.network.entity.DroneEntityC2S;
+import bluevista.fpvracingmod.network.keybinds.EMPC2S;
+import bluevista.fpvracingmod.network.keybinds.NoClipC2S;
+import bluevista.fpvracingmod.network.keybinds.PowerGogglesC2S;
 import bluevista.fpvracingmod.server.commands.FPVRacing;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
+import bluevista.fpvracingmod.physics.PhysicsWorld;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -26,6 +31,8 @@ import java.util.UUID;
 public class ServerInitializer implements ModInitializer {
 	public static final String MODID = "fpvracing";
 
+	public static PhysicsWorld physicsWorld;
+
 	public static final GogglesItem GOGGLES_ITEM = new GogglesItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1));
 	public static final TransmitterItem TRANSMITTER_ITEM = new TransmitterItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1));
 	public static final DroneSpawnerItem DRONE_SPAWNER_ITEM = new DroneSpawnerItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1));
@@ -41,6 +48,7 @@ public class ServerInitializer implements ModInitializer {
 		registerEntities();
 		registerItems();
 		registerNetwork();
+		setupPhysics();
 
 		FPVRacing.registerCommands();
 		ServerTick.register();
@@ -48,8 +56,12 @@ public class ServerInitializer implements ModInitializer {
 		ServerStartCallback.EVENT.register(ServerInitializer::start);
 	}
 
+	private void setupPhysics() {
+		physicsWorld = new PhysicsWorld();
+	}
+
 	private void registerNetwork() {
-		DroneInfoC2S.register();
+		DroneEntityC2S.register();
 		EMPC2S.register();
 		NoClipC2S.register();
 		PowerGogglesC2S.register();

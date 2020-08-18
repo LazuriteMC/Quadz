@@ -4,26 +4,28 @@ import bluevista.fpvracingmod.client.input.keybinds.EMPKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.NoClipKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.PowerOffGogglesKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.PowerOnGogglesKeybind;
-import bluevista.fpvracingmod.network.DroneInfoS2C;
-import bluevista.fpvracingmod.network.DroneQuaternionS2C;
-import bluevista.fpvracingmod.network.ConfigS2C;
-import bluevista.fpvracingmod.config.Config;
-import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
+import bluevista.fpvracingmod.config.Config;
+import bluevista.fpvracingmod.network.config.ConfigS2C;
+import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
+import bluevista.fpvracingmod.server.ServerInitializer;
+import bluevista.fpvracingmod.physics.PhysicsWorld;
+import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
+import net.minecraft.client.MinecraftClient;
 
 @Environment(EnvType.CLIENT)
 public class ClientInitializer implements ClientModInitializer {
 
+    public static PhysicsWorld physicsWorld;
     private static Config config;
 
     @Override
     public void onInitializeClient() {
         ClientTick.register();
-
         registerKeybinds();
         registerRenderers();
         registerNetwork();
@@ -47,8 +49,7 @@ public class ClientInitializer implements ClientModInitializer {
     }
 
     private void registerNetwork() {
-        DroneInfoS2C.register();
-        DroneQuaternionS2C.register();
+        DroneEntityS2C.register();
         ConfigS2C.register();
     }
 
@@ -56,4 +57,7 @@ public class ClientInitializer implements ClientModInitializer {
         return config;
     }
 
+    public static boolean isInGoggles(MinecraftClient client) {
+        return client.getCameraEntity() instanceof DroneEntity;
+    }
 }
