@@ -25,10 +25,10 @@ public class DroneSpawnerItem extends Item {
 		HitResult hitResult = rayTrace(world, user, RayTraceContext.FluidHandling.ANY);
 
 		if (!world.isClient()) {
-			if (hitResult.getType() == net.minecraft.util.hit.HitResult.Type.MISS)
+			if (hitResult.getType() == HitResult.Type.MISS)
 				return TypedActionResult.pass(itemStack);
 
-			if (hitResult.getType() == net.minecraft.util.hit.HitResult.Type.BLOCK) {
+			if (hitResult.getType() == HitResult.Type.BLOCK) {
 				DroneEntity drone = DroneEntity.create(world, hitResult.getPos());
 				QuaternionHelper.rotateY(drone.getOrientation(), 180f - user.yaw);
 

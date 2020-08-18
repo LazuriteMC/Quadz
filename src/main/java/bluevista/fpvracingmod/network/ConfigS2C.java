@@ -33,6 +33,9 @@ public class ConfigS2C {
                 ClientInitializer.getConfig().setOption(key, finalValue);
             } else if (key.equals(Config.WRITE)) {
                 ClientInitializer.getConfig().writeConfig();
+            } else if (key.equals(Config.REVERT)) {
+                ClientInitializer.registerConfig();
+                ConfigC2S.send(ClientInitializer.getConfig());
             }
 
         });

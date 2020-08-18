@@ -30,7 +30,7 @@ public class ClientInitializer implements ClientModInitializer {
         registerConfig();
     }
 
-    private void registerConfig() {
+    public static void registerConfig() {
         config = new Config();
         config.loadConfig();
     }

@@ -16,7 +16,6 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 @Environment(EnvType.CLIENT)
 public class InputTick {
     private static final MinecraftClient client = MinecraftClient.getInstance();
-    private static final Config clientConfig = ClientInitializer.getConfig(); // 3 long 5 me 3 type
 
     private static long prevTime;
     private static final int throttleScalar = 15; // find a scientific value for this, no more guessing ;)
@@ -25,16 +24,16 @@ public class InputTick {
         if(drone != null && TransmitterItem.isHoldingTransmitter(client.player) && !client.isPaused() && controllerExists()) {
             float d = (System.currentTimeMillis() - prevTime) / 1000f;
 
-            float currT = glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get(clientConfig.getIntOption(Config.THROTTLE)) + 1;
-            float currX = -glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get(clientConfig.getIntOption(Config.PITCH));
-            float currY = -glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get(clientConfig.getIntOption(Config.YAW));
-            float currZ = -glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get(clientConfig.getIntOption(Config.ROLL));
+            float currT = glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.THROTTLE)) + 1;
+            float currX = -glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.PITCH));
+            float currY = -glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.YAW));
+            float currZ = -glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.ROLL));
 
-            if (clientConfig.getIntOption(Config.INVERT_THROTTLE) == 1) {
+            if (ClientInitializer.getConfig().getIntOption(Config.INVERT_THROTTLE) == 1) {
                 currT = Math.abs(2 - currT);
             }
 
-            if (clientConfig.getIntOption(Config.THROTTLE_CENTER_POSITION) == 1) {
+            if (ClientInitializer.getConfig().getIntOption(Config.THROTTLE_CENTER_POSITION) == 1) {
                 --currT;
                 if (currT < 0) {
                     currT = 0;
@@ -42,21 +41,21 @@ public class InputTick {
                 currT *= 2;
             }
 
-            if (clientConfig.getIntOption(Config.INVERT_PITCH) == 1) {
+            if (ClientInitializer.getConfig().getIntOption(Config.INVERT_PITCH) == 1) {
                 currX *= -1;
             }
 
-            if (clientConfig.getIntOption(Config.INVERT_YAW) == 1) {
+            if (ClientInitializer.getConfig().getIntOption(Config.INVERT_YAW) == 1) {
                 currY *= -1;
             }
 
-            if (clientConfig.getIntOption(Config.INVERT_ROLL) == 1) {
+            if (ClientInitializer.getConfig().getIntOption(Config.INVERT_ROLL) == 1) {
                 currZ *= -1;
             }
 
             // Note: There's probably a better way of doing this, but yeah... it ignores input within the deadzone range
-            if (clientConfig.getFloatOption(Config.DEADZONE) != 0.0F) {
-                float halfDeadzone = clientConfig.getFloatOption(Config.DEADZONE) / 2.0f;
+            if (ClientInitializer.getConfig().getFloatOption(Config.DEADZONE) != 0.0F) {
+                float halfDeadzone = ClientInitializer.getConfig().getFloatOption(Config.DEADZONE) / 2.0f;
 
                 if (currX < halfDeadzone && currX > -halfDeadzone) {
                     currX = 0.0f;
@@ -71,9 +70,9 @@ public class InputTick {
                 }
             }
 
-            float deltaX = (float) BetaflightHelper.calculateRates(currX, clientConfig.getFloatOption(Config.RATE), clientConfig.getFloatOption(Config.EXPO), clientConfig.getFloatOption(Config.SUPER_RATE)) * d;
-            float deltaY = (float) BetaflightHelper.calculateRates(currY, clientConfig.getFloatOption(Config.RATE), clientConfig.getFloatOption(Config.EXPO), clientConfig.getFloatOption(Config.SUPER_RATE)) * d;
-            float deltaZ = (float) BetaflightHelper.calculateRates(currZ, clientConfig.getFloatOption(Config.RATE), clientConfig.getFloatOption(Config.EXPO), clientConfig.getFloatOption(Config.SUPER_RATE)) * d;
+            float deltaX = (float) BetaflightHelper.calculateRates(currX, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
+            float deltaY = (float) BetaflightHelper.calculateRates(currY, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
+            float deltaZ = (float) BetaflightHelper.calculateRates(currZ, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
 
             Quaternion q = drone.getOrientation();
             if(prevTime != 0) {
@@ -91,7 +90,7 @@ public class InputTick {
 
     public static boolean controllerExists() {
         try {
-            glfwGetJoystickAxes(clientConfig.getIntOption(Config.CONTROLLER_ID)).get();
+            glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get();
             return true;
         } catch (NullPointerException e) {
             return false;

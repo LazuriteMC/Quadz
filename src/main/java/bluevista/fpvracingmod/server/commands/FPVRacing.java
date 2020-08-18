@@ -22,7 +22,7 @@ import net.minecraft.text.TranslatableText;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Collection;
+import java.util.*;
 
 public class FPVRacing {
 
@@ -63,7 +63,10 @@ public class FPVRacing {
     private static final Text GOGGLES_ERROR_MESSAGE = new LiteralText("Must be holding or wearing ")
             .append(new TranslatableText("item.fpvracing.goggles_item"));
 
-    private static final Text SUCCESSFUL_WRITE_MESSAGE = new LiteralText("Successfully wrote config");
+    private static final Map<String, Text> SUCCESS_MESSAGES = new HashMap<String, Text>() {{
+        put(Config.WRITE, new LiteralText("Successfully wrote config"));
+        put(Config.REVERT, new LiteralText("Successfully reverted config"));
+    }};
 
     public static void registerCommands() {
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(CommandManager.literal(ServerInitializer.MODID)
@@ -155,7 +158,10 @@ public class FPVRacing {
                     .executes(context -> getConfigValue(context, Config.CHANNEL)))
 
                 .then(CommandManager.literal(Config.WRITE)
-                    .executes(context -> writeConfig(context)))
+                    .executes(context -> config(context, Config.WRITE)))
+
+                .then(CommandManager.literal(Config.REVERT)
+                    .executes(context -> config(context, Config.REVERT)))
 
                 )
 
@@ -347,17 +353,15 @@ public class FPVRacing {
         }
     }
 
-    private static int writeConfig(CommandContext<ServerCommandSource> context) {
+    private static int config(CommandContext<ServerCommandSource> context, String key) {
         try {
             final ServerPlayerEntity player = context.getSource().getPlayer();
-            ConfigS2C.send(player, Config.WRITE);
-            player.sendMessage(SUCCESSFUL_WRITE_MESSAGE, false);
+            ConfigS2C.send(player, key);
+            player.sendMessage(SUCCESS_MESSAGES.get(key), false);
             return 1;
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
             return -1;
         }
     }
-
-    // TODO: Revert command
 }

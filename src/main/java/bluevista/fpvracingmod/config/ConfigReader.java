@@ -6,6 +6,8 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.*;
 
 public class ConfigReader {
@@ -55,10 +57,10 @@ public class ConfigReader {
                         String key = line.split("=")[0].trim();
                         String value = line.split("=")[1].trim();
 
-                        if (Config.INT_KEYS.contains(key)) {
-                            values.put(key, Integer.parseInt(value));
-                        } else if (Config.FLOAT_KEYS.contains(key)) {
-                            values.put(key, Float.parseFloat(value));
+                        try {
+                            values.put(key, NumberFormat.getInstance().parse(value));
+                        } catch (ParseException e) {
+                            values.put(key, 0); // default
                         }
                     }
                 }
@@ -129,11 +131,7 @@ public class ConfigReader {
 
     public Number getValue(String key) {
         if (values.get(key) == null) {
-            if (Config.INT_KEYS.contains(key)) {
-                return 0;
-            } else if (Config.FLOAT_KEYS.contains(key)) {
-                return 0.0F;
-            }
+            return 0;
         }
 
         return values.get(key);
