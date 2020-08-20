@@ -13,6 +13,7 @@ import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
 import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
+import net.minecraft.network.PacketByteBuf;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
@@ -53,7 +54,7 @@ public class PhysicsWorld {
         for(RigidBody body : this.rigidBodies) {
             Transform trans = new Transform();
             body.getMotionState().getWorldTransform(trans);
-//            System.out.println(trans.origin.y);
+            System.out.println(trans.origin);
         }
     }
 
@@ -65,5 +66,12 @@ public class PhysicsWorld {
     public void removeRigidBody(RigidBody body) {
         this.rigidBodies.remove(body);
         this.dynamicsWorld.removeRigidBody(body);
+    }
+
+    public static void serializeRididBodies(PhysicsWorld world, PacketByteBuf buf) {
+        for(RigidBody body : world.rigidBodies) {
+            Transform trans = new Transform();
+            body.getWorldTransform(trans);
+        }
     }
 }

@@ -4,10 +4,11 @@ import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.inject.Matrix4fInject;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
+import bluevista.fpvracingmod.network.physics.PhysicsEntityS2C;
+import bluevista.fpvracingmod.physics.PhysicsEntity;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
-import bluevista.fpvracingmod.physics.PhysicsEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
@@ -17,11 +18,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
@@ -56,39 +59,28 @@ public class DroneEntity extends Entity {
 	public void tick() {
 		super.tick();
 
+		Vec3d pos = this.physics.getPosition();
+		this.setPos(pos.x, pos.y, pos.z);
+		Vec3d v = getThrustVector().multiply(1, -1, 1).multiply(this.throttle);
+		this.physics.applyForce(new Vector3f((float) v.x, (float) v.y, (float) v.z));
+
 		if(!this.world.isClient()) {
 			DroneEntityS2C.send(this);
-
-			ServerWorld w = (ServerWorld) world;
-			int x = MathHelper.floor(this.getX() / 15.0D);
-			int z = MathHelper.floor(this.getZ() / 15.0D);
+			PhysicsEntityS2C.send(this.physics);
 
 //			if (hasInfiniteTracking()) {
 //				w.getChunkManager().threadedAnvilChunkStorage.getPlayersWatchingChunk(new ChunkPos(x, z), false).forEach(each -> {
 //					System.out.println("KILL ME");
 //				});
-
+//
 //				if(!w.getChunkManager().isChunkLoaded(x, z)) {
 //					w.getChunkManager().addTicket(ChunkTicketType.PLAYER, new ChunkPos(x, z), 16, new ChunkPos(x, z));
 //				}
-
+//
 //				w.getChunkManager().getChunk(x, z);
 //				System.out.println("IS CHUNK LOADED?" + w.getChunkManager().isChunkLoaded(chunkX, chunkZ));
 //			}
 		}
-
-		if(physics != null) {
-			Vec3d pos = this.physics.getPosition();
-			this.setPos(pos.x, pos.y, pos.z);
-
-			Vec3d v = getThrustVector().multiply(1, -1, 1).multiply(throttle * 1000);
-			this.physics.applyForce(new Vector3f((float) v.x, (float) v.y, (float) v.z));
-		}
-
-		// Update velocity
-//		Vec3d d = getThrustVector().multiply(1, -1, 1).multiply(throttle);
-//		this.addVelocity(G, d);
-//		this.move(MovementType.SELF, this.getVelocity());
 	}
 
 	@Override
@@ -246,6 +238,8 @@ public class DroneEntity extends Entity {
 			this.dropStack(itemStack);
 		}
 
+		this.physics.remove();
+
 		this.remove();
 	}
 
@@ -298,10 +292,6 @@ public class DroneEntity extends Entity {
 
 	public void setThrottle(float throttle) {
 		this.throttle = throttle;
-	}
-
-	public PhysicsEntity getPhysics() {
-		return this.physics;
 	}
 
 //	public void addVelocity(Vec3d... vecs) {

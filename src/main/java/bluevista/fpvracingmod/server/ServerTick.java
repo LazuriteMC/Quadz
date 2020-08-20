@@ -11,7 +11,8 @@ import java.util.List;
 public class ServerTick {
 
     public static void tick(MinecraftServer server) {
-        ServerInitializer.physicsWorld.stepWorld();
+        if(ServerInitializer.physicsWorld != null)
+            ServerInitializer.physicsWorld.stepWorld();
 
         List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
         for (ServerPlayerEntity player : players) {

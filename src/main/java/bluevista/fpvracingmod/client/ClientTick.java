@@ -10,11 +10,12 @@ public class ClientTick {
     public static DroneEntity boundDrone;
 
     public static void tick(MinecraftClient client) {
-        if (client.player != null) {
+        if (client.player != null && !client.isPaused()) {
             DroneEntity d = TransmitterItem.droneFromTransmitter(client.player.getMainHandStack(), client.player);
             boundDrone = d == null ? boundDrone : d;
 
-            ClientInitializer.physicsWorld.stepWorld();
+            if(ClientInitializer.physicsWorld != null)
+                ClientInitializer.physicsWorld.stepWorld();
 
             if (TransmitterItem.isHoldingTransmitter(client.player)) {
                 if (boundDrone != null) {

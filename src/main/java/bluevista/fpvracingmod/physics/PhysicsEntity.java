@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.physics;
 
+import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
@@ -8,7 +9,6 @@ import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
 import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Vec3d;
 
 import javax.vecmath.Matrix4f;
@@ -16,13 +16,15 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 public class PhysicsEntity {
-    private RigidBody body;
-    private Entity entity;
+    private final RigidBody body;
+    private final Entity entity;
+    private final boolean isClient;
     private Quat4f orientation;
     private float mass;
 
     public PhysicsEntity(Entity entity) {
         this.entity = entity;
+        this.isClient = entity.world.isClient();
         this.orientation = new Quat4f(0, 1, 0, 0);
         this.mass = 1.0F;
         this.body = createRigidBody();
@@ -31,9 +33,21 @@ public class PhysicsEntity {
 //        this.body.activate();
     }
 
+    public Entity getEntity() {
+        return this.entity;
+    }
+
     public Vec3d getPosition() {
         Vector3f v = this.body.getCenterOfMassPosition(new Vector3f());
         return new Vec3d(v.x, v.y, v.z);
+    }
+
+    public void setPosition(Vector3f v) {
+        Transform trans = new Transform();
+        trans.origin.x = v.x;
+        trans.origin.y = v.y;
+        trans.origin.z = v.z;
+        this.getRigidBody().setWorldTransform(trans);
     }
 
     public void applyForce(Vector3f v) {
@@ -64,6 +78,14 @@ public class PhysicsEntity {
         return this.body;
     }
 
+    public void remove() {
+        boolean isClient = this.entity.world.isClient();
+        if(isClient)
+            ClientInitializer.physicsWorld.removeRigidBody(this.body);
+        else
+            ServerInitializer.physicsWorld.removeRigidBody(this.body);
+    }
+
     public RigidBody createRigidBody() {
         Vector3f inertia = new Vector3f(0.0F, 0.0F, 0.0F);
         Vector3f box = new Vector3f(
@@ -80,23 +102,10 @@ public class PhysicsEntity {
         RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(this.getMass(), motionState, shape, inertia);
 
         RigidBody body = new RigidBody(ci);
-        ServerInitializer.physicsWorld.addRigidBody(body);
+        if(isClient)
+            ClientInitializer.physicsWorld.addRigidBody(body);
+        else
+            ServerInitializer.physicsWorld.addRigidBody(body);
         return body;
-    }
-
-    public static void serializeForClient(PhysicsEntity physics, PacketByteBuf buf, boolean isControlling) {
-        buf.writeBoolean(isControlling);
-        if(!isControlling) {
-            buf.writeFloat(physics.getOrientation().x);
-            buf.writeFloat(physics.getOrientation().y);
-            buf.writeFloat(physics.getOrientation().z);
-            buf.writeFloat(physics.getOrientation().w);
-        }
-
-        buf.writeFloat(physics.getMass());
-        buf.writeFloat(physics.getLinearVelocity());
-        buf.writeFloat((float) physics.getPosition().x);
-        buf.writeFloat((float) physics.getPosition().y);
-        buf.writeFloat((float) physics.getPosition().z);
     }
 }
