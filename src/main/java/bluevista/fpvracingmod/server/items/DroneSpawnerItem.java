@@ -35,19 +35,19 @@ public class DroneSpawnerItem extends Item {
 
 				if (itemStack.getSubTag("frequency") != null) {
 					drone.setBand(itemStack.getSubTag("frequency").getInt("band"));
-				} else {
+				} else if (world.isClient()){
 					drone.setBand(ClientInitializer.getConfig().getIntOption(Config.BAND));
 				}
 
 				if (itemStack.getSubTag("frequency") != null) {
 					drone.setChannel(itemStack.getSubTag("frequency").getInt("channel"));
-				} else {
+				} else if (world.isClient()){
 					drone.setChannel(ClientInitializer.getConfig().getIntOption(Config.CHANNEL));
 				}
 
 				if(itemStack.getSubTag("misc") != null) {
 					drone.setCameraAngle(itemStack.getSubTag("misc").getInt("cameraAngle"));
-				} else {
+				} else if (world.isClient()){
 					drone.setCameraAngle(ClientInitializer.getConfig().getIntOption(Config.CAMERA_ANGLE));
 				}
 
