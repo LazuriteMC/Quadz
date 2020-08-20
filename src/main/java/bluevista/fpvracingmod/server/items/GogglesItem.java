@@ -9,10 +9,7 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.NetworkSyncedItem;
+import net.minecraft.item.*;
 import net.minecraft.network.Packet;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
@@ -38,6 +35,7 @@ public class GogglesItem extends ArmorItem {
 		if (itemStack2.isEmpty()) {
 			user.equipStack(equipmentSlot, itemStack.copy());
 			itemStack.setCount(0);
+			itemStack = new ItemStack(Items.AIR);
 
 //			Packet<?> packet = ((NetworkSyncedItem)itemStack.getItem()).createSyncPacket(itemStack, world, user);
 //			ServerSidePacketRegistry.INSTANCE.sendToPlayer(user, packet);
