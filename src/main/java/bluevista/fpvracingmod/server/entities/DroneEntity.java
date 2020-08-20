@@ -61,6 +61,11 @@ public class DroneEntity extends Entity {
 		super.tick();
 
 		if(!this.world.isClient()) {
+
+			if (this.isSubmergedInWater() || this.isTouchingWaterOrRain() || this.isWet() || this.isInLava() || this.isOnFire()) {
+				this.kill();
+			}
+
 			DroneInfoS2C.send(this);
 			DroneQuaternionS2C.send(this);
 

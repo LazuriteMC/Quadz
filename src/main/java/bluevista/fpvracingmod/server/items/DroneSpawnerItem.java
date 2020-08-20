@@ -25,7 +25,7 @@ public class DroneSpawnerItem extends Item {
 	 */
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 		ItemStack itemStack = user.getStackInHand(hand);
-		HitResult hitResult = rayTrace(world, user, RayTraceContext.FluidHandling.ANY);
+		HitResult hitResult = rayTrace(world, user, RayTraceContext.FluidHandling.NONE);
 
 		if (!world.isClient()) {
 			if (hitResult.getType() == HitResult.Type.MISS)
