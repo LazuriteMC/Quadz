@@ -13,7 +13,7 @@ import net.minecraft.util.Lazy;
 import java.util.function.Supplier;
 
 public enum ArmorMaterials implements ArmorMaterial {
-    GOGGLE("goggle", 0, new int[]{0, 0, 0, 0}, 0, SoundEvents.BLOCK_BELL_USE, 0.0F, () -> {
+    GOGGLE("goggle", 0, new int[]{0, 0, 0, 0}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F, () -> {
         return Ingredient.ofItems(ServerInitializer.GOGGLES_ITEM);
     });
 
