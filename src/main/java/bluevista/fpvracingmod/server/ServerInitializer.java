@@ -4,14 +4,15 @@ import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.network.config.ConfigC2S;
 import bluevista.fpvracingmod.network.entity.DroneEntityC2S;
 import bluevista.fpvracingmod.network.keybinds.EMPC2S;
+import bluevista.fpvracingmod.network.keybinds.GodModeC2S;
 import bluevista.fpvracingmod.network.keybinds.NoClipC2S;
 import bluevista.fpvracingmod.network.keybinds.PowerGogglesC2S;
+import bluevista.fpvracingmod.physics.PhysicsWorld;
 import bluevista.fpvracingmod.server.commands.FPVRacing;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
-import bluevista.fpvracingmod.physics.PhysicsWorld;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -64,6 +65,7 @@ public class ServerInitializer implements ModInitializer {
 		DroneEntityC2S.register();
 		EMPC2S.register();
 		NoClipC2S.register();
+		GodModeC2S.register();
 		PowerGogglesC2S.register();
 		ConfigC2S.register();
 	}

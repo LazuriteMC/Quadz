@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class DroneEntity extends Entity {
+	public boolean godMode;
+
 	// Camera/VTX Information
 	private boolean infiniteTracking;
 	private int cameraAngle;
@@ -53,6 +55,7 @@ public class DroneEntity extends Entity {
 		this.refreshPositionAndAngles(pos.x, pos.y, pos.z, 0, 0);
 		this.physics = new PhysicsEntity(this);
 		this.noClip = true;
+		this.godMode = false;
 	}
 
 	@Override
@@ -65,6 +68,16 @@ public class DroneEntity extends Entity {
 		this.physics.applyForce(new Vector3f((float) v.x, (float) v.y, (float) v.z));
 
 		if(!this.world.isClient()) {
+			if (!this.godMode && (
+					this.isSubmergedInWater() ||
+							this.isTouchingWaterOrRain() ||
+							this.isWet() ||
+							this.isInsideWaterOrBubbleColumn() ||
+							this.isInLava() ||
+							this.isOnFire())) {
+				this.kill();
+			}
+
 			DroneEntityS2C.send(this);
 			PhysicsEntityS2C.send(this.physics);
 
@@ -88,6 +101,8 @@ public class DroneEntity extends Entity {
 		band = tag.getInt("band");
 		channel = tag.getInt("channel");
 		cameraAngle = tag.getInt("cameraAngle");
+		noClip = tag.getInt("noClip") == 1;
+		godMode = tag.getInt("godMode") == 1;
 	}
 
 	@Override
@@ -95,6 +110,8 @@ public class DroneEntity extends Entity {
 		tag.putInt("band", band);
 		tag.putInt("channel", channel);
 		tag.putInt("cameraAngle", cameraAngle);
+		tag.putInt("noClip", noClip ? 1 : 0);
+		tag.putInt("godMode", godMode ? 1 : 0);
 	}
 
 	public void setValue(String key, Number value) {
@@ -108,12 +125,18 @@ public class DroneEntity extends Entity {
 			case "cameraAngle":
 				setCameraAngle(value.intValue());
 				break;
+			case "noClip":
+				noClip = value.intValue() == 1;
+				break;
+			case "godMode":
+				godMode = value.intValue() == 1;
+				break;
 			default:
 				break;
 		}
 	}
 
-	public int getValue(String key) {
+	public Number getValue(String key) {
 		switch (key) {
 			case "band":
 				return getBand();
@@ -121,8 +144,12 @@ public class DroneEntity extends Entity {
 				return getChannel();
 			case "cameraAngle":
 				return getCameraAngle();
+			case "noClip":
+				return noClip ? 1 : 0;
+			case "godMode":
+				return godMode ? 1 : 0;
 			default:
-				return 0; // unknown key, default value
+				return null; // 0?
 		}
 	}
 
@@ -216,7 +243,7 @@ public class DroneEntity extends Entity {
 	 */
 	@Override
 	public boolean damage(DamageSource source, float amount) {
-		if (source instanceof ProjectileDamageSource || source.getAttacker() instanceof PlayerEntity) {
+		if (source.getAttacker() instanceof PlayerEntity || (!this.godMode && source instanceof ProjectileDamageSource)) {
 			this.kill();
 			return true;
 		}
@@ -232,8 +259,10 @@ public class DroneEntity extends Entity {
 			ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
 
 			DroneSpawnerItem.setBand(itemStack, band);
-			DroneSpawnerItem.setBand(itemStack, channel);
+			DroneSpawnerItem.setChannel(itemStack, channel);
 			DroneSpawnerItem.setCameraAngle(itemStack, cameraAngle);
+			DroneSpawnerItem.setNoClip(itemStack, noClip ? 1 : 0);
+			DroneSpawnerItem.setGodMode(itemStack, godMode ? 1 : 0);
 
 			this.dropStack(itemStack);
 		}

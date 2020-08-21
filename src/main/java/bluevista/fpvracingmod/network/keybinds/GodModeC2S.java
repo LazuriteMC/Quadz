@@ -14,8 +14,8 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
-public class NoClipC2S {
-    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "noclip_c2s");
+public class GodModeC2S {
+    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "godmode_c2s");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
         PlayerEntity player = context.getPlayer();
@@ -27,21 +27,21 @@ public class NoClipC2S {
                     DroneEntity drone = DroneEntity.getByUuid(context.getPlayer(), hand.getSubTag("bind").getUuid("bind"));
 
                     if(drone != null) {
-                        drone.noClip = !drone.noClip;
+                        drone.godMode = !drone.godMode;
 
                         String t;
-                        if(drone.noClip) t = "No Clip Enabled";
-                        else t = "No Clip Disabled";
+                        if(drone.godMode) t = "God Mode Enabled";
+                        else t = "God Mode Disabled";
 
                         player.sendMessage(new TranslatableText(t), false);
                     }
                 }
             } else if (hand.getItem() instanceof DroneSpawnerItem) {
-                DroneSpawnerItem.setNoClip(hand, DroneSpawnerItem.getNoClip(hand) == 0 ? 1 : 0);
+                DroneSpawnerItem.setGodMode(hand, DroneSpawnerItem.getGodMode(hand) == 0 ? 1 : 0);
 
                 String t;
-                if(DroneSpawnerItem.getNoClip(hand) == 1) t = "No Clip Enabled";
-                else t = "No Clip Disabled";
+                if(DroneSpawnerItem.getGodMode(hand) == 1) t = "God Mode Enabled";
+                else t = "God Mode Disabled";
 
                 player.sendMessage(new TranslatableText(t), false);
             }
@@ -53,6 +53,6 @@ public class NoClipC2S {
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, NoClipC2S::accept);
+        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, GodModeC2S::accept);
     }
 }

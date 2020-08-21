@@ -24,7 +24,7 @@ public class DroneSpawnerItem extends Item {
 	 */
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 		ItemStack itemStack = user.getStackInHand(hand);
-		HitResult hitResult = rayTrace(world, user, RayTraceContext.FluidHandling.ANY);
+		HitResult hitResult = rayTrace(world, user, RayTraceContext.FluidHandling.NONE);
 
 		if (!world.isClient()) {
 			if (hitResult.getType() == HitResult.Type.MISS)
@@ -45,10 +45,22 @@ public class DroneSpawnerItem extends Item {
 					drone.setChannel(ClientInitializer.getConfig().getIntOption(Config.CHANNEL));
 				}
 
-				if(itemStack.getSubTag("misc") != null) {
+				if (itemStack.getSubTag("misc") != null) {
 					drone.setCameraAngle(itemStack.getSubTag("misc").getInt("cameraAngle"));
 				} else if (world.isClient()){
 					drone.setCameraAngle(ClientInitializer.getConfig().getIntOption(Config.CAMERA_ANGLE));
+				}
+
+				if (itemStack.getSubTag("misc") != null) {
+					drone.noClip = itemStack.getSubTag("misc").getInt("noClip") == 1;
+				} else {
+					drone.noClip = false;
+				}
+
+				if (itemStack.getSubTag("misc") != null) {
+					drone.godMode = itemStack.getSubTag("misc").getInt("godMode") == 1;
+				} else {
+					drone.godMode = false;
 				}
 
 				itemStack.decrement(1);
@@ -70,6 +82,12 @@ public class DroneSpawnerItem extends Item {
 			case "cameraAngle":
 				setCameraAngle(itemStack, value.intValue());
 				break;
+			case "noClip":
+				setNoClip(itemStack, value.intValue());
+				break;
+			case "godMode":
+				setGodMode(itemStack, value.intValue());
+				break;
 			default:
 				break;
 		}
@@ -83,6 +101,10 @@ public class DroneSpawnerItem extends Item {
 				return getChannel(itemStack);
 			case "cameraAngle":
 				return getCameraAngle(itemStack);
+			case "noClip":
+				return getNoClip(itemStack);
+			case "godMode":
+				return getGodMode(itemStack);
 			default:
 				return 0; // unknown key, default value
 		}
@@ -93,7 +115,7 @@ public class DroneSpawnerItem extends Item {
 	}
 
 	public static int getBand(ItemStack itemStack) {
-		if (itemStack.getSubTag("frequency") != null) {
+		if (itemStack.getSubTag("frequency") != null && itemStack.getSubTag("frequency").contains("band")) {
 			return itemStack.getSubTag("frequency").getInt("band");
 		}
 		return 0;
@@ -104,7 +126,7 @@ public class DroneSpawnerItem extends Item {
 	}
 
 	public static int getChannel(ItemStack itemStack) {
-		if (itemStack.getSubTag("frequency") != null) {
+		if (itemStack.getSubTag("frequency") != null && itemStack.getSubTag("frequency").contains("channel")) {
 			return itemStack.getSubTag("frequency").getInt("channel");
 		}
 		return 0;
@@ -115,8 +137,30 @@ public class DroneSpawnerItem extends Item {
 	}
 
 	public static int getCameraAngle(ItemStack itemStack) {
-		if (itemStack.getSubTag("misc") != null) {
+		if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("cameraAngle")) {
 			return itemStack.getSubTag("misc").getInt("cameraAngle");
+		}
+		return 0;
+	}
+
+	public static void setNoClip(ItemStack itemStack, int noClip) {
+		itemStack.getOrCreateSubTag("misc").putInt("noClip", noClip);
+	}
+
+	public static int getNoClip(ItemStack itemStack) {
+		if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("noClip")) {
+			return itemStack.getSubTag("misc").getInt("noClip");
+		}
+		return 0;
+	}
+
+	public static void setGodMode(ItemStack itemStack, int godMode) {
+		itemStack.getOrCreateSubTag("misc").putInt("godMode", godMode);
+	}
+
+	public static int getGodMode(ItemStack itemStack) {
+		if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("godMode")) {
+			return itemStack.getSubTag("misc").getInt("godMode");
 		}
 		return 0;
 	}
