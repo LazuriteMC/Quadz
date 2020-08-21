@@ -18,16 +18,25 @@ public class PowerGogglesC2S {
         PlayerEntity player = context.getPlayer();
         ItemStack hat = player.inventory.armor.get(3);
         boolean on = buf.readBoolean();
+        String[] keys = new String[] {
+            buf.readString(32767),
+            buf.readString(32767)
+        };
 
         context.getTaskQueue().execute(() -> {
             if(hat.getItem() instanceof GogglesItem)
-                GogglesItem.setOn(hat, on, player);
+                GogglesItem.setOn(hat, on, player, keys);
         });
     }
 
-    public static void send(boolean on) {
+    public static void send(boolean on, String[] keys) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeBoolean(on);
+
+        for (String key : keys) {
+            buf.writeString(key);
+        }
+
         ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
     }
 

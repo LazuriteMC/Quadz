@@ -52,6 +52,7 @@ public class ServerInitializer implements ModInitializer {
 		DroneInfoC2S.register();
 		EMPC2S.register();
 		NoClipC2S.register();
+		GodModeC2S.register();
 		PowerGogglesC2S.register();
 		ConfigC2S.register();
 	}

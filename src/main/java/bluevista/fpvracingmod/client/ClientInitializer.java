@@ -1,9 +1,6 @@
 package bluevista.fpvracingmod.client;
 
-import bluevista.fpvracingmod.client.input.keybinds.EMPKeybind;
-import bluevista.fpvracingmod.client.input.keybinds.NoClipKeybind;
-import bluevista.fpvracingmod.client.input.keybinds.PowerOffGogglesKeybind;
-import bluevista.fpvracingmod.client.input.keybinds.PowerOnGogglesKeybind;
+import bluevista.fpvracingmod.client.input.keybinds.*;
 import bluevista.fpvracingmod.network.DroneInfoS2C;
 import bluevista.fpvracingmod.network.DroneQuaternionS2C;
 import bluevista.fpvracingmod.network.ConfigS2C;
@@ -14,6 +11,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
+import org.lwjgl.glfw.GLFW;
 
 @Environment(EnvType.CLIENT)
 public class ClientInitializer implements ClientModInitializer {
@@ -22,6 +20,8 @@ public class ClientInitializer implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        GLFW.glfwInit(); // forcefully initializes GLFW
+
         ClientTick.register();
 
         registerKeybinds();
@@ -36,8 +36,8 @@ public class ClientInitializer implements ClientModInitializer {
     }
 
     private void registerKeybinds() {
-        PowerOffGogglesKeybind.register();
-        PowerOnGogglesKeybind.register();
+        GogglePowerKeybind.register();
+        GodModeKeybind.register();
         NoClipKeybind.register();
         EMPKeybind.register();
     }

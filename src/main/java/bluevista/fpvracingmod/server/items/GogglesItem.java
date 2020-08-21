@@ -3,15 +3,13 @@ package bluevista.fpvracingmod.server.items;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.materials.ArmorMaterials;
 import com.google.common.collect.Multimap;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
-import net.minecraft.network.Packet;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -90,10 +88,15 @@ public class GogglesItem extends ArmorItem {
 		return 0;
 	}
 
-	public static void setOn(ItemStack itemStack, boolean on, PlayerEntity player) {
-		if(itemStack.getSubTag("misc") != null)
-			if(on && !itemStack.getSubTag("misc").getBoolean("on"))
-				player.sendMessage(new TranslatableText("Press SHIFT to power off goggles"), true);
+	public static void setOn(ItemStack itemStack, boolean on, PlayerEntity player, String[] keys) {
+		if(itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("on")) {
+			if(on && !itemStack.getSubTag("misc").getBoolean("on")) {
+
+				String subString = keys[0] + " or " + keys[1];
+
+				player.sendMessage(new LiteralText("Press " + subString + " power off goggles"), true);
+			}
+		}
 		itemStack.getOrCreateSubTag("misc").putBoolean("on", on);
 	}
 
