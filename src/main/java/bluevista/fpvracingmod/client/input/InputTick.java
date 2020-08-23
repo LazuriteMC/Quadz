@@ -73,11 +73,13 @@ public class InputTick {
             double deltaY = BetaflightHelper.calculateRates(currY, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
             double deltaZ = BetaflightHelper.calculateRates(currZ, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
 
-            Quat4f q = drone.getOrientation();
-            QuaternionHelper.rotateX(q, deltaX);
-            QuaternionHelper.rotateY(q, deltaY);
-            QuaternionHelper.rotateZ(q, deltaZ);
-            drone.setOrientation(q);
+            if(prevTime > 0) {
+                Quat4f q = drone.getOrientation();
+                QuaternionHelper.rotateX(q, deltaX);
+                QuaternionHelper.rotateY(q, deltaY);
+                QuaternionHelper.rotateZ(q, deltaZ);
+                drone.setOrientation(q);
+            }
 
             drone.setThrottle(currT);
             prevTime = System.currentTimeMillis();
