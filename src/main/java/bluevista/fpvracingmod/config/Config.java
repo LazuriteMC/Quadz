@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.config;
 
+import bluevista.fpvracingmod.network.PacketHelper;
 import net.minecraft.network.PacketByteBuf;
 
 import java.util.Arrays;
@@ -83,11 +84,6 @@ public class Config {
         configReader = new ConfigReader();
     }
 
-    public Config(PacketByteBuf buf) {
-        this();
-        this.deserializeAndSet(buf);
-    }
-
     /* SETTERS */
 
     public void setOption(String key, Number value) {
@@ -132,38 +128,4 @@ public class Config {
         configReader.writeValues();
     }
 
-    public void serialize(PacketByteBuf buf) {
-        String key = buf.readString(32767); // majik
-        buf.writeString(key); // put it back?
-        if (key.equals(ALL)) {
-            for (String option : ALL_OPTIONS) {
-                if (INT_KEYS.contains(option)) {
-                    buf.writeInt(getIntOption(option));
-                } else if (FLOAT_KEYS.contains(option)) {
-                    buf.writeFloat(getFloatOption(option));
-                }
-            }
-        } else if (INT_KEYS.contains(key)) {
-            buf.writeInt(getIntOption(key));
-        } else if (FLOAT_KEYS.contains(key)) {
-            buf.writeFloat(getFloatOption(key));
-        }
-    }
-
-    public void deserializeAndSet(PacketByteBuf buf) {
-        String key = buf.readString(32767); // majik
-        if (key.equals(ALL)) {
-            for (String option : ALL_OPTIONS) {
-                if (INT_KEYS.contains(option)) {
-                    setOption(option, buf.readInt());
-                } else if (FLOAT_KEYS.contains(option)) {
-                    setOption(option, buf.readFloat());
-                }
-            }
-        } else if (INT_KEYS.contains(key)) {
-            setOption(key, buf.readInt());
-        } else if (FLOAT_KEYS.contains(key)) {
-            setOption(key, buf.readFloat());
-        }
-    }
 }

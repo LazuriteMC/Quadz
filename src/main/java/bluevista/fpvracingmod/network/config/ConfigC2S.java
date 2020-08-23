@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.network.config;
 
 import bluevista.fpvracingmod.config.Config;
+import bluevista.fpvracingmod.network.PacketHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
@@ -18,7 +19,7 @@ public class ConfigC2S {
     public static void accept(PacketContext context, PacketByteBuf buf) {
 
         UUID uuid = context.getPlayer().getUuid();
-        Config config = new Config(buf);
+        Config config = PacketHelper.deserializeConfig(buf);
 
         context.getTaskQueue().execute(() -> {
             ServerInitializer.serverPlayerConfigs.remove(uuid);
@@ -30,7 +31,7 @@ public class ConfigC2S {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 
         buf.writeString(Config.ALL);
-        config.serialize(buf);
+        PacketHelper.serializeConfig(buf, config);
 
         ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
     }
