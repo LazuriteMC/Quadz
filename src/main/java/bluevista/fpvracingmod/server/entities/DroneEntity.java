@@ -1,11 +1,11 @@
 package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.input.InputTick;
+import bluevista.fpvracingmod.client.math.Matrix4fInject;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
-import bluevista.fpvracingmod.inject.Matrix4fInject;
+import bluevista.fpvracingmod.network.entity.DroneEntityC2S;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
-import bluevista.fpvracingmod.network.physics.PhysicsEntityS2C;
-import bluevista.fpvracingmod.physics.PhysicsEntity;
+import bluevista.fpvracingmod.client.physics.PhysicsEntity;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -23,28 +23,25 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
+import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 import java.util.List;
 import java.util.UUID;
 
 public class DroneEntity extends Entity {
+	private boolean infiniteTracking;
 	public boolean godMode;
 
-	// Camera/VTX Information
-	private boolean infiniteTracking;
 	private int cameraAngle;
 	private int band;
 	private int channel;
-
-	// Physics Information
-	public PhysicsEntity physics;
-//	private static final Vec3d G = new Vec3d(0, -0.04, 0);
 	private float throttle;
+
+	public PhysicsEntity physics;
 
 	public DroneEntity(EntityType<?> type, World world) {
 		this(world, Vec3d.ZERO);
@@ -52,7 +49,7 @@ public class DroneEntity extends Entity {
 
 	public DroneEntity(World world, Vec3d pos) {
 		super(ServerInitializer.DRONE_ENTITY, world);
-		this.refreshPositionAndAngles(pos.x, pos.y, pos.z, 0, 0);
+		this.setPos(pos.x, pos.y, pos.z);
 		this.physics = new PhysicsEntity(this);
 		this.noClip = true;
 		this.godMode = false;
@@ -62,37 +59,23 @@ public class DroneEntity extends Entity {
 	public void tick() {
 		super.tick();
 
-		Vec3d pos = this.physics.getPosition();
-		this.setPos(pos.x, pos.y, pos.z);
-		Vec3d v = getThrustVector().multiply(1, -1, 1).multiply(this.throttle);
-		this.physics.applyForce(new Vector3f((float) v.x, (float) v.y, (float) v.z));
+		if (!this.godMode && (
+				this.isSubmergedInWater() ||
+						this.isTouchingWaterOrRain() ||
+						this.isWet() ||
+						this.isInsideWaterOrBubbleColumn() ||
+						this.isInLava() ||
+						this.isOnFire())) {
+			this.kill();
+		}
 
-		if(!this.world.isClient()) {
-			if (!this.godMode && (
-					this.isSubmergedInWater() ||
-							this.isTouchingWaterOrRain() ||
-							this.isWet() ||
-							this.isInsideWaterOrBubbleColumn() ||
-							this.isInLava() ||
-							this.isOnFire())) {
-				this.kill();
-			}
-
+		if (!this.world.isClient()) {
 			DroneEntityS2C.send(this);
-			PhysicsEntityS2C.send(this.physics);
+		} else {
+			DroneEntityC2S.send(this);
 
-//			if (hasInfiniteTracking()) {
-//				w.getChunkManager().threadedAnvilChunkStorage.getPlayersWatchingChunk(new ChunkPos(x, z), false).forEach(each -> {
-//					System.out.println("KILL ME");
-//				});
-//
-//				if(!w.getChunkManager().isChunkLoaded(x, z)) {
-//					w.getChunkManager().addTicket(ChunkTicketType.PLAYER, new ChunkPos(x, z), 16, new ChunkPos(x, z));
-//				}
-//
-//				w.getChunkManager().getChunk(x, z);
-//				System.out.println("IS CHUNK LOADED?" + w.getChunkManager().isChunkLoaded(chunkX, chunkZ));
-//			}
+			Vector3f pos = this.physics.getPosition();
+			this.setPos(pos.x, pos.y, pos.z);
 		}
 	}
 
@@ -182,7 +165,7 @@ public class DroneEntity extends Entity {
 	 * of the drone is facing. Returned in vector form.
 	 */
 	public Vec3d getThrustVector() {
-		Quaternion q = new Quaternion(getOrientation());
+		Quat4f q = new Quat4f(getOrientation());
 		QuaternionHelper.rotateX(q, 90);
 
 		Matrix4f mat = new Matrix4f();
@@ -229,8 +212,8 @@ public class DroneEntity extends Entity {
 		);
 
 		if (drones.size() > 0) {
-			for(Entity e : drones) {
-				if(uuid.equals(e.getUuid()) && e instanceof DroneEntity)
+			for (Entity e : drones) {
+				if (uuid.equals(e.getUuid()) && e instanceof DroneEntity)
 					return (DroneEntity) e;
 			}
 		}
@@ -267,9 +250,13 @@ public class DroneEntity extends Entity {
 			this.dropStack(itemStack);
 		}
 
-		this.physics.remove();
-
 		this.remove();
+	}
+
+	@Override
+	public void remove() {
+		super.remove();
+		this.physics.remove();
 	}
 
 	/*
@@ -277,7 +264,7 @@ public class DroneEntity extends Entity {
 	 * on the drone, bind it using the drone's UUID.
 	 */
 	public ActionResult interact(PlayerEntity player, Hand hand) {
-		if(!player.world.isClient()) {
+		if (!player.world.isClient()) {
 			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
 				player.inventory.getMainHandStack().getOrCreateSubTag("bind").putUuid("bind", this.getUuid());
 				player.sendMessage(new TranslatableText("Transmitter bound"), false);
@@ -289,30 +276,12 @@ public class DroneEntity extends Entity {
 		return ActionResult.SUCCESS;
 	}
 
-	public Quaternion getOrientation() {
-		return QuaternionHelper.quat4fToQuaternion(this.physics.getOrientation());
+	public Quat4f getOrientation() {
+		return this.physics.getOrientation();
 	}
 
-	public void setOrientation(Quaternion orientation) {
-		this.physics.setOrientation(QuaternionHelper.quaternionToQuat4f(orientation));
-	}
-
-	public void rotateX(float deg) {
-		Quaternion q = getOrientation();
-		QuaternionHelper.rotateX(q, deg);
-		setOrientation(q);
-	}
-
-	public void rotateY(float deg) {
-		Quaternion q = getOrientation();
-		QuaternionHelper.rotateY(q, deg);
-		setOrientation(q);
-	}
-
-	public void rotateZ(float deg) {
-		Quaternion q = getOrientation();
-		QuaternionHelper.rotateZ(q, deg);
-		setOrientation(q);
+	public void setOrientation(Quat4f orientation) {
+		this.physics.setOrientation(orientation);
 	}
 
 	public float getThrottle() {
@@ -332,7 +301,7 @@ public class DroneEntity extends Entity {
 	public boolean isTransmitterBound(ItemStack transmitter) {
 		try {
 			return this.getUuid().equals(transmitter.getSubTag("bind").getUuid("bind"));
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
 	}
@@ -356,11 +325,6 @@ public class DroneEntity extends Entity {
 		return super.getBoundingBox();
 	}
 
-//	@Override
-//	public boolean isPushable() {
-//		return true;
-//	}
-
 	public void setInfiniteTracking(boolean infiniteTracking) {
 		this.infiniteTracking = infiniteTracking;
 	}
@@ -376,7 +340,11 @@ public class DroneEntity extends Entity {
 
 	public static DroneEntity create(World world, Vec3d pos, float yaw) {
 		DroneEntity d = new DroneEntity(world, pos);
-		d.rotateY(yaw);
+
+		Quat4f q = d.getOrientation();
+		QuaternionHelper.rotateY(q, yaw);
+		d.setOrientation(q);
+
 		world.spawnEntity(d);
 		return d;
 	}

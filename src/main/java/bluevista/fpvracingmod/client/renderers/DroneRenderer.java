@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.client.renderers;
 
+import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.client.models.DroneModel;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -34,7 +35,7 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
         matrixStack.scale(-1.0F, -1.0F, -1.0F);
 
         // Rotate using quat
-        Matrix4f newMat = new Matrix4f(droneEntity.getOrientation());
+        Matrix4f newMat = new Matrix4f(QuaternionHelper.quat4fToQuaternion(droneEntity.getOrientation()));
         Matrix4f screenMat = matrixStack.peek().getModel();
         newMat.transpose();
         newMat.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180F));

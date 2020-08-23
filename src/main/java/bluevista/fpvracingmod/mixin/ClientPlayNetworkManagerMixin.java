@@ -4,7 +4,8 @@ import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.network.config.ConfigC2S;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
-import bluevista.fpvracingmod.physics.PhysicsWorld;
+import bluevista.fpvracingmod.client.physics.PhysicsWorld;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -20,12 +21,13 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkManagerMixin {
-    @Shadow private ClientWorld world;
+    @Shadow MinecraftClient client;
+    @Shadow ClientWorld world;
 
     @Inject(at = @At("TAIL"), method = "onGameJoin")
     public void onGameJoin(GameJoinS2CPacket packet, CallbackInfo info) {
         ConfigC2S.send(ClientInitializer.getConfig());
-        ClientInitializer.physicsWorld = new PhysicsWorld();
+        ClientInitializer.physicsWorld = new PhysicsWorld(true);
     }
 
     @Inject(
@@ -49,29 +51,5 @@ public class ClientPlayNetworkManagerMixin {
             this.world.addEntity(i, entity);
             ci.cancel();
         }
-    }
-
-    @Inject(at = @At("HEAD"), method = "onEntityPosition", cancellable = true)
-    public void onEntityPosition(EntityPositionS2CPacket packet, CallbackInfo info) {
-//        Entity entity = this.world.getEntityById(packet.getId());
-//        if (entity instanceof DroneEntity) {
-//            info.cancel();
-//        }
-    }
-
-    @Inject(at = @At("HEAD"), method = "onVelocityUpdate", cancellable = true)
-    public void onVelocityUpdate(EntityVelocityUpdateS2CPacket packet, CallbackInfo info) {
-//        Entity entity = this.world.getEntityById(packet.getId());
-//        if (entity instanceof DroneEntity) {
-//            info.cancel();
-//        }
-    }
-
-    @Inject(at = @At("HEAD"), method = "onEntityTrackerUpdate", cancellable = true)
-    public void onEntityTrackerUpdate(EntityTrackerUpdateS2CPacket packet, CallbackInfo info) {
-//        Entity entity = this.world.getEntityById(packet.id());
-//        if (entity instanceof DroneEntity) {
-//            info.cancel();
-//        }
     }
 }

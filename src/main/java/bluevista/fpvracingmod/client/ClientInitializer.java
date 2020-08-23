@@ -1,14 +1,14 @@
 package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.input.keybinds.EMPKeybind;
+import bluevista.fpvracingmod.client.input.keybinds.GodModeKeybind;
+import bluevista.fpvracingmod.client.input.keybinds.GogglePowerKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.NoClipKeybind;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
-import bluevista.fpvracingmod.client.input.keybinds.*;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.network.config.ConfigS2C;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
-import bluevista.fpvracingmod.network.physics.PhysicsEntityS2C;
-import bluevista.fpvracingmod.physics.PhysicsWorld;
+import bluevista.fpvracingmod.client.physics.PhysicsWorld;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.ClientModInitializer;
@@ -53,7 +53,6 @@ public class ClientInitializer implements ClientModInitializer {
 
     private void registerNetwork() {
         DroneEntityS2C.register();
-        PhysicsEntityS2C.register();
         ConfigS2C.register();
     }
 

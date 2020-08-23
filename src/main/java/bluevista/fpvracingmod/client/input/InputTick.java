@@ -2,6 +2,7 @@ package bluevista.fpvracingmod.client.input;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.client.math.BetaflightHelper;
+import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -9,14 +10,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 
+import javax.vecmath.Quat4f;
+
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 
 @Environment(EnvType.CLIENT)
 public class InputTick {
     private static final MinecraftClient client = MinecraftClient.getInstance();
-
     private static long prevTime;
-    private static final int throttleScalar = 15; // find a scientific value for this, no more guessing ;)
 
     public static void tick(DroneEntity drone) {
         if(drone != null && TransmitterItem.isHoldingTransmitter(client.player) && !client.isPaused() && controllerExists()) {
@@ -68,19 +69,17 @@ public class InputTick {
                 }
             }
 
-            float deltaX = (float) BetaflightHelper.calculateRates(currX, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
-            float deltaY = (float) BetaflightHelper.calculateRates(currY, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
-            float deltaZ = (float) BetaflightHelper.calculateRates(currZ, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
+            double deltaX = BetaflightHelper.calculateRates(currX, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
+            double deltaY = BetaflightHelper.calculateRates(currY, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
+            double deltaZ = BetaflightHelper.calculateRates(currZ, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
 
-            if(prevTime != 0) {
-                drone.rotateX(deltaX);
-                drone.rotateY(deltaY);
-                drone.rotateZ(deltaZ);
-            }
+            Quat4f q = drone.getOrientation();
+            QuaternionHelper.rotateX(q, deltaX);
+            QuaternionHelper.rotateY(q, deltaY);
+            QuaternionHelper.rotateZ(q, deltaZ);
+            drone.setOrientation(q);
 
-            currT /= throttleScalar;
             drone.setThrottle(currT);
-
             prevTime = System.currentTimeMillis();
         }
     }

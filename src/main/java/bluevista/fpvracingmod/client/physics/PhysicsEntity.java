@@ -1,7 +1,8 @@
-package bluevista.fpvracingmod.physics;
+package bluevista.fpvracingmod.client.physics;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
-import bluevista.fpvracingmod.server.ServerInitializer;
+import bluevista.fpvracingmod.server.entities.DroneEntity;
+import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.dynamics.RigidBody;
@@ -16,58 +17,65 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 public class PhysicsEntity {
-    private final RigidBody body;
+    public static final float DEFAULT_MASS = 0.3f; // 300 grams
+
+    private float mass;
     private final Entity entity;
     private final boolean isClient;
-    private Quat4f orientation;
-    private float mass;
+    private RigidBody body;
 
     public PhysicsEntity(Entity entity) {
-        this.entity = entity;
         this.isClient = entity.world.isClient();
-        this.orientation = new Quat4f(0, 1, 0, 0);
-        this.mass = 1.0F;
+        this.entity = entity;
+        this.mass = DEFAULT_MASS;
         this.body = createRigidBody();
-//        this.body.setCollisionFlags(this.body.getCollisionFlags() | CollisionFlags.KINEMATIC_OBJECT);
-//        this.body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
-//        this.body.activate();
+        if(isClient) {
+            ClientInitializer.physicsWorld.add(this);
+        }
+    }
+
+    public void tick() {
+        if(entity instanceof DroneEntity) {
+            DroneEntity drone = (DroneEntity) entity;
+
+            if(drone.getThrottle() > 0.15) {
+                this.getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
+            }
+
+            Vec3d v = drone.getThrustVector().multiply(1, -1, 1).multiply(drone.getThrottle()).multiply(10);
+            this.applyForce(new Vector3f((float) v.x, (float) v.y, (float) v.z));
+        }
     }
 
     public Entity getEntity() {
         return this.entity;
     }
 
-    public Vec3d getPosition() {
-        Vector3f v = this.body.getCenterOfMassPosition(new Vector3f());
-        return new Vec3d(v.x, v.y, v.z);
+    public Vector3f getPosition() {
+        return this.body.getCenterOfMassPosition(new Vector3f());
     }
 
     public void setPosition(Vector3f v) {
         Transform trans = new Transform();
+        this.body.getWorldTransform(trans);
         trans.origin.x = v.x;
         trans.origin.y = v.y;
         trans.origin.z = v.z;
-        this.getRigidBody().setWorldTransform(trans);
+        this.body.setWorldTransform(trans);
+    }
+
+    public Quat4f getOrientation() {
+        return this.body.getWorldTransform(new Transform()).getRotation(new Quat4f());
+    }
+
+    public void setOrientation(Quat4f q) {
+        Transform trans = this.body.getWorldTransform(new Transform());
+        trans.setRotation(q);
+        this.body.setWorldTransform(trans);
     }
 
     public void applyForce(Vector3f v) {
         this.body.applyCentralForce(v);
-    }
-
-    public float getLinearVelocity() {
-        return this.body.getLinearVelocity(new Vector3f()).length();
-    }
-
-    public void setOrientation(Quat4f orientation) {
-        this.orientation = orientation;
-    }
-
-    public Quat4f getOrientation() {
-        return this.orientation;
-    }
-
-    public void setMass(float mass) {
-        this.mass = mass;
     }
 
     public float getMass() {
@@ -79,11 +87,7 @@ public class PhysicsEntity {
     }
 
     public void remove() {
-        boolean isClient = this.entity.world.isClient();
-        if(isClient)
-            ClientInitializer.physicsWorld.removeRigidBody(this.body);
-        else
-            ServerInitializer.physicsWorld.removeRigidBody(this.body);
+        if(isClient) ClientInitializer.physicsWorld.remove(this);
     }
 
     public RigidBody createRigidBody() {
@@ -98,14 +102,13 @@ public class PhysicsEntity {
         Vec3d pos = entity.getPos();
         Vector3f position = new Vector3f((float) pos.x, (float) pos.y, (float) pos.z);
 
-        DefaultMotionState motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 0, 0, 1), position, 1.0f)));
+        DefaultMotionState motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 1, 0, 0), position, 1.0f)));
         RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(this.getMass(), motionState, shape, inertia);
 
         RigidBody body = new RigidBody(ci);
-        if(isClient)
-            ClientInitializer.physicsWorld.addRigidBody(body);
-        else
-            ServerInitializer.physicsWorld.addRigidBody(body);
+        body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
+        body.setDamping(0.25f, 0.95f);
+
         return body;
     }
 }

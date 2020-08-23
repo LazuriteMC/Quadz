@@ -11,9 +11,6 @@ import java.util.List;
 public class ServerTick {
 
     public static void tick(MinecraftServer server) {
-        if(ServerInitializer.physicsWorld != null)
-            ServerInitializer.physicsWorld.stepWorld();
-
         List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
         for (ServerPlayerEntity player : players) {
 
@@ -25,15 +22,6 @@ public class ServerTick {
                     }
                 }
             }
-
-//            if (player.getCameraEntity() instanceof DroneEntity) {
-//                DroneEntity drone = (DroneEntity) player.getCameraEntity();
-//                if (isInGoggles(player) && TransmitterItem.isBoundTransmitter(player.getMainHandStack(), drone)) {
-//                    Set<PlayerPositionLookS2CPacket.Flag> set = Collections.emptySet();
-//                    Packet packet = new PlayerPositionLookS2CPacket(drone.getX(), drone.getY(), drone.getZ(), 0, 0, set, 10);
-//                    ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, packet);
-//                }
-//            }
 
             if (!GogglesItem.isWearingGoggles(player) && isInGoggles(player) || !GogglesItem.isOn(player) || player.getCameraEntity() != null && player.getCameraEntity().removed)
                 resetView(player);

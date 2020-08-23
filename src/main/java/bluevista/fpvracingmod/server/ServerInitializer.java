@@ -7,7 +7,6 @@ import bluevista.fpvracingmod.network.keybinds.EMPC2S;
 import bluevista.fpvracingmod.network.keybinds.GodModeC2S;
 import bluevista.fpvracingmod.network.keybinds.NoClipC2S;
 import bluevista.fpvracingmod.network.keybinds.PowerGogglesC2S;
-import bluevista.fpvracingmod.physics.PhysicsWorld;
 import bluevista.fpvracingmod.server.commands.FPVRacing;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
@@ -32,33 +31,24 @@ import java.util.UUID;
 public class ServerInitializer implements ModInitializer {
 	public static final String MODID = "fpvracing";
 
-	public static PhysicsWorld physicsWorld;
-
 	public static final GogglesItem GOGGLES_ITEM = new GogglesItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1));
 	public static final TransmitterItem TRANSMITTER_ITEM = new TransmitterItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1));
 	public static final DroneSpawnerItem DRONE_SPAWNER_ITEM = new DroneSpawnerItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1));
 
 	public static EntityType<Entity> DRONE_ENTITY;
 
-	public static HashMap<UUID, Config> serverPlayerConfigs; // may need to be Object if non-ints are used in the future
+	public static final HashMap<UUID, Config> serverPlayerConfigs = new HashMap<>();
 
 	@Override
 	public void onInitialize() {
-		serverPlayerConfigs = new HashMap<>();
-
 		registerEntities();
 		registerItems();
 		registerNetwork();
-		setupPhysics();
 
 		FPVRacing.registerCommands();
 		ServerTick.register();
 
 		ServerStartCallback.EVENT.register(ServerInitializer::start);
-	}
-
-	private void setupPhysics() {
-		physicsWorld = new PhysicsWorld();
 	}
 
 	private void registerNetwork() {

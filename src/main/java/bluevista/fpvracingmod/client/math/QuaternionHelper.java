@@ -1,27 +1,32 @@
 package bluevista.fpvracingmod.client.math;
 
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Quaternion;
 
 import javax.vecmath.Quat4f;
 
 public class QuaternionHelper {
-    public static void rotateX(Quaternion q, double deg) {
+    public static void rotateX(Quat4f q, double deg) {
         double radHalfAngle = Math.toRadians(deg) / 2.0;
-        Quaternion rot = new Quaternion((float) Math.sin(radHalfAngle), 0.0f, 0.0f, (float) Math.cos(radHalfAngle));
-        q.hamiltonProduct(rot);
+        Quat4f rot = new Quat4f();
+        rot.x = (float) Math.sin(radHalfAngle);
+        rot.w = (float) Math.cos(radHalfAngle);
+        q.mul(rot);
     }
 
-    public static void rotateY(Quaternion q, double deg) {
+    public static void rotateY(Quat4f q, double deg) {
         double radHalfAngle = Math.toRadians(deg) / 2.0;
-        Quaternion rot = new Quaternion(0.0f, (float) Math.sin(radHalfAngle), 0.0f, (float) Math.cos(radHalfAngle));
-        q.hamiltonProduct(rot);
+        Quat4f rot = new Quat4f();
+        rot.y = (float) Math.sin(radHalfAngle);
+        rot.w = (float) Math.cos(radHalfAngle);
+        q.mul(rot);
     }
 
-    public static void rotateZ(Quaternion q, double deg) {
+    public static void rotateZ(Quat4f q, double deg) {
         double radHalfAngle = Math.toRadians(deg) / 2.0;
-        Quaternion rot = new Quaternion(0.0f, 0.0f, (float) Math.sin(radHalfAngle), (float) Math.cos(radHalfAngle));
-        q.hamiltonProduct(rot);
+        Quat4f rot = new Quat4f();
+        rot.z = (float) Math.sin(radHalfAngle);
+        rot.w = (float) Math.cos(radHalfAngle);
+        q.mul(rot);
     }
 
     public static Quaternion quat4fToQuaternion(Quat4f quat) {
@@ -29,22 +34,11 @@ public class QuaternionHelper {
     }
 
     public static Quat4f quaternionToQuat4f(Quaternion quat) {
-        return new Quat4f(quat.getX(), quat.getY(), quat.getZ(), quat.getW());
-    }
-
-    public static void serialize(Quaternion q, PacketByteBuf buf) {
-        buf.writeFloat(q.getX());
-        buf.writeFloat(q.getY());
-        buf.writeFloat(q.getZ());
-        buf.writeFloat(q.getW());
-    }
-
-    public static Quaternion deserialize(PacketByteBuf buf) {
-        return new Quaternion(
-                buf.readFloat(),
-                buf.readFloat(),
-                buf.readFloat(),
-                buf.readFloat()
-        );
+        Quat4f q = new Quat4f();
+        q.x = quat.getX();
+        q.y = quat.getY();
+        q.z = quat.getZ();
+        q.w = quat.getW();
+        return q;
     }
 }
