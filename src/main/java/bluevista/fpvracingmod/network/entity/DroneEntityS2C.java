@@ -29,6 +29,7 @@ public class DroneEntityS2C {
         int band = buf.readInt();
         int channel = buf.readInt();
         int cameraAngle = buf.readInt();
+        int godMode = buf.readInt();
         boolean infiniteTracking = buf.readBoolean();
         Vector3f position = PacketHelper.deserializeVector3f(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
@@ -45,6 +46,7 @@ public class DroneEntityS2C {
                 drone.setBand(band);
                 drone.setChannel(channel);
                 drone.setCameraAngle(cameraAngle);
+                drone.setGodMode(godMode);
                 drone.setInfiniteTracking(infiniteTracking);
 
                 if(drone.physics == null)
@@ -67,6 +69,7 @@ public class DroneEntityS2C {
         buf.writeInt(drone.getBand());
         buf.writeInt(drone.getChannel());
         buf.writeInt(drone.getCameraAngle());
+        buf.writeInt(drone.getGodMode());
         buf.writeBoolean(drone.hasInfiniteTracking());
         PacketHelper.serializeVector3f(buf, drone.physics.getPosition());
         PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getLinearVelocity(new Vector3f()));

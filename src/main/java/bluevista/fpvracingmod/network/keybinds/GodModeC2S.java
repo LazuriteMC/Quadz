@@ -27,10 +27,10 @@ public class GodModeC2S {
                     DroneEntity drone = DroneEntity.getByUuid(context.getPlayer(), hand.getSubTag("bind").getUuid("bind"));
 
                     if(drone != null) {
-                        drone.godMode = !drone.godMode;
+                        drone.setGodMode(drone.getGodMode() == 1 ? 0 : 1);
 
                         String t;
-                        if(drone.godMode) t = "God Mode Enabled";
+                        if(drone.getGodMode() == 1) t = "God Mode Enabled";
                         else t = "God Mode Disabled";
 
                         player.sendMessage(new TranslatableText(t), false);
