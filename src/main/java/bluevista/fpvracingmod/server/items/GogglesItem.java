@@ -103,7 +103,7 @@ public class GogglesItem extends ArmorItem {
 	public static boolean isOn(PlayerEntity player) {
 		if(GogglesItem.isWearingGoggles(player)) {
 			ItemStack hat = player.inventory.armor.get(3);
-			if (hat.getSubTag("misc") != null)
+			if (hat.getSubTag("misc") != null && hat.getSubTag("misc").contains("on"))
 				return hat.getSubTag("misc").getBoolean("on");
 		}
 		return false;
