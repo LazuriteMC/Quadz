@@ -27,7 +27,7 @@ public class NoClipC2S {
                     DroneEntity drone = DroneEntity.getByUuid(context.getPlayer(), hand.getSubTag("bind").getUuid("bind"));
 
                     if(drone != null) {
-                        drone.noClip = !drone.noClip;
+                        drone.setValue("noClip", !drone.noClip ? 1 : 0);
 
                         String t;
                         if(drone.noClip) t = "No Clip Enabled";

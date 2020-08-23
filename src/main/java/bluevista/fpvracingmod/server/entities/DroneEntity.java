@@ -31,7 +31,8 @@ import java.util.UUID;
 
 public class DroneEntity extends Entity {
 	private boolean infiniteTracking;
-	public boolean godMode;
+	private boolean prevGodMode;
+	private boolean godMode;
 
 	// Camera/VTX Information
 	private int cameraAngle;
@@ -52,6 +53,7 @@ public class DroneEntity extends Entity {
 		super(ServerInitializer.DRONE_ENTITY, world);
 
 		this.godMode = false;
+		this.prevGodMode = this.godMode;
 		this.noClip = false;
 
 		this.orientation = new Quaternion(0, 1, 0, 0);
@@ -106,7 +108,6 @@ public class DroneEntity extends Entity {
 		band = tag.getInt("band");
 		channel = tag.getInt("channel");
 		cameraAngle = tag.getInt("cameraAngle");
-		noClip = tag.getInt("noClip") == 1;
 		godMode = tag.getInt("godMode") == 1;
 	}
 
@@ -115,7 +116,6 @@ public class DroneEntity extends Entity {
 		tag.putInt("band", band);
 		tag.putInt("channel", channel);
 		tag.putInt("cameraAngle", cameraAngle);
-		tag.putInt("noClip", noClip ? 1 : 0);
 		tag.putInt("godMode", godMode ? 1 : 0);
 	}
 
@@ -131,10 +131,13 @@ public class DroneEntity extends Entity {
 				setCameraAngle(value.intValue());
 				break;
 			case "noClip":
-				noClip = value.intValue() == 1;
+				setNoClip(value.intValue());
+				break;
+			case "prevGodMode":
+				setPrevGodMode(value.intValue());
 				break;
 			case "godMode":
-				godMode = value.intValue() == 1;
+				setGodMode(value.intValue());
 				break;
 			default:
 				break;
@@ -150,9 +153,11 @@ public class DroneEntity extends Entity {
 			case "cameraAngle":
 				return getCameraAngle();
 			case "noClip":
-				return noClip ? 1 : 0;
+				return getNoClip();
+			case "prevGodMode":
+				return getPrevGodMode();
 			case "godMode":
-				return godMode ? 1 : 0;
+				return getGodMode();
 			default:
 				return null; // 0?
 		}
@@ -180,6 +185,36 @@ public class DroneEntity extends Entity {
 
 	public int getCameraAngle() {
 		return cameraAngle;
+	}
+
+	public void setNoClip(int noClip) {
+		this.noClip = noClip == 1;
+		if (getNoClip() == 1) {
+			setPrevGodMode(getGodMode());
+			setGodMode(1);
+		} else {
+			setGodMode(getPrevGodMode());
+		}
+	}
+
+	public int getNoClip() {
+		return noClip ? 1 : 0;
+	}
+
+	public void setPrevGodMode(int prevGodMode) {
+		this.prevGodMode = prevGodMode == 1;
+	}
+
+	public int getPrevGodMode() {
+		return prevGodMode ? 1 : 0;
+	}
+
+	public void setGodMode(int godMode) {
+		this.godMode = godMode == 1;
+	}
+
+	public int getGodMode() {
+		return godMode ? 1 : 0;
 	}
 
 	/*
@@ -267,6 +302,7 @@ public class DroneEntity extends Entity {
 			DroneSpawnerItem.setChannel(itemStack, channel);
 			DroneSpawnerItem.setCameraAngle(itemStack, cameraAngle);
 			DroneSpawnerItem.setNoClip(itemStack, noClip ? 1 : 0);
+			DroneSpawnerItem.setPrevGodMode(itemStack, prevGodMode ? 1 : 0);
 			DroneSpawnerItem.setGodMode(itemStack, godMode ? 1 : 0);
 
 			this.dropStack(itemStack);
