@@ -25,6 +25,7 @@ public class DroneInfoS2C {
         int band = buf.readInt();
         int channel = buf.readInt();
         int cameraAngle = buf.readInt();
+        boolean godMode = buf.readInt() == 1;
         boolean infiniteTracking = buf.readBoolean();
 
         context.getTaskQueue().execute(() -> {
@@ -37,6 +38,7 @@ public class DroneInfoS2C {
                 drone.setBand(band);
                 drone.setChannel(channel);
                 drone.setCameraAngle(cameraAngle);
+                drone.godMode = godMode;
                 drone.setInfiniteTracking(infiniteTracking);
             }
         });
@@ -49,6 +51,7 @@ public class DroneInfoS2C {
         buf.writeInt(drone.getBand());
         buf.writeInt(drone.getChannel());
         buf.writeInt(drone.getCameraAngle());
+        buf.writeInt(drone.godMode ? 1 : 0);
         buf.writeBoolean(drone.hasInfiniteTracking());
 
         Stream<PlayerEntity> watchingPlayers = PlayerStream.watching(drone.getEntityWorld(), new BlockPos(drone.getPos()));
