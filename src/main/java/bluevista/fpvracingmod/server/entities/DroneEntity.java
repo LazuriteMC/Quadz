@@ -9,8 +9,10 @@ import bluevista.fpvracingmod.client.physics.PhysicsEntity;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -53,7 +55,7 @@ public class DroneEntity extends Entity {
 		this.setPos(pos.x, pos.y, pos.z);
 		this.physics = new PhysicsEntity(this);
 
-		this.noClip = true;
+		this.noClip = false;
 		this.godMode = false;
 		this.prevGodMode = this.godMode;
 	}
@@ -62,24 +64,30 @@ public class DroneEntity extends Entity {
 	public void tick() {
 		super.tick();
 
-		if (!this.godMode && (
-				this.isSubmergedInWater() ||
-						this.isTouchingWaterOrRain() ||
-						this.isWet() ||
-						this.isInsideWaterOrBubbleColumn() ||
-						this.isInLava() ||
-						this.isOnFire())) {
-			this.kill();
-		}
-
 		if (!this.world.isClient()) {
 			DroneEntityS2C.send(this);
+
+			if (!this.godMode && (
+					this.world.isRaining() ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.WATER ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.BUBBLE_COLUMN ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.LAVA ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.CAMPFIRE ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_CAMPFIRE ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_FIRE ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.FIRE)) {
+				this.setInfiniteTracking(false);
+				this.kill();
+			}
+
 		} else {
 			DroneEntityC2S.send(this);
 
 			Vector3f pos = this.physics.getPosition();
 			this.setPos(pos.x, pos.y, pos.z);
 		}
+
+		this.move(MovementType.SELF, new Vec3d(0, 0, 0));
 	}
 
 	@Override
@@ -277,12 +285,12 @@ public class DroneEntity extends Entity {
 		if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
 			ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
 
-			DroneSpawnerItem.setBand(itemStack, band);
-			DroneSpawnerItem.setChannel(itemStack, channel);
-			DroneSpawnerItem.setCameraAngle(itemStack, cameraAngle);
-			DroneSpawnerItem.setNoClip(itemStack, noClip ? 1 : 0);
-			DroneSpawnerItem.setPrevGodMode(itemStack, prevGodMode ? 1 : 0);
-			DroneSpawnerItem.setGodMode(itemStack, godMode ? 1 : 0);
+			DroneSpawnerItem.setBand(itemStack, getBand());
+			DroneSpawnerItem.setChannel(itemStack, getChannel());
+			DroneSpawnerItem.setCameraAngle(itemStack, getCameraAngle());
+			DroneSpawnerItem.setNoClip(itemStack, getNoClip());
+			DroneSpawnerItem.setPrevGodMode(itemStack, getPrevGodMode());
+			DroneSpawnerItem.setGodMode(itemStack, getGodMode());
 
 			this.dropStack(itemStack);
 		}
