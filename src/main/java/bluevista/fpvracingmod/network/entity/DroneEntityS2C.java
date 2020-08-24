@@ -1,8 +1,7 @@
 package bluevista.fpvracingmod.network.entity;
 
-import bluevista.fpvracingmod.client.ClientTick;
-import bluevista.fpvracingmod.network.PacketHelper;
 import bluevista.fpvracingmod.client.physics.PhysicsEntity;
+import bluevista.fpvracingmod.network.PacketHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import io.netty.buffer.Unpooled;
@@ -49,10 +48,8 @@ public class DroneEntityS2C {
                 drone.setGodMode(godMode);
                 drone.setInfiniteTracking(infiniteTracking);
 
-                if(drone.physics == null)
+                if(drone.physics == null) {
                     drone.physics = new PhysicsEntity(drone);
-
-                if(ClientTick.boundDrone == null || droneID != ClientTick.boundDrone.getEntityId()) {
                     drone.setOrientation(orientation);
                     drone.physics.setPosition(position);
                     drone.physics.getRigidBody().setLinearVelocity(linearVel);
