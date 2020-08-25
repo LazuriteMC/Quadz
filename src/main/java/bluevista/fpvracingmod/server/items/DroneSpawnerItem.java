@@ -31,7 +31,8 @@ public class DroneSpawnerItem extends Item {
 				return TypedActionResult.pass(itemStack);
 
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
-				DroneEntity drone = DroneEntity.create(world, hitResult.getPos(), 180f - user.yaw);
+				System.out.println(user.getUuid());
+				DroneEntity drone = DroneEntity.create(user.getUuid(), world, hitResult.getPos(), 180f - user.yaw);
 
 				if (itemStack.getSubTag("frequency") != null && itemStack.getSubTag("frequency").contains("band")) {
 					drone.setBand(itemStack.getSubTag("frequency").getInt("band"));

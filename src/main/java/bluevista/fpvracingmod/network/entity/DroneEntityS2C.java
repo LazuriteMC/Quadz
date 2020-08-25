@@ -1,6 +1,5 @@
 package bluevista.fpvracingmod.network.entity;
 
-import bluevista.fpvracingmod.client.physics.PhysicsEntity;
 import bluevista.fpvracingmod.network.PacketHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -26,6 +25,7 @@ public class DroneEntityS2C {
         PlayerEntity player = context.getPlayer();
 
         int droneID = buf.readInt();
+        UUID playerID = buf.readUuid();
 
         int band = buf.readInt();
         int channel = buf.readInt();
@@ -33,7 +33,6 @@ public class DroneEntityS2C {
 
         int godMode = buf.readInt();
         boolean infiniteTracking = buf.readBoolean();
-        UUID playerUUID = buf.readUuid();
 
         float throttle = buf.readFloat();
         Vector3f position = PacketHelper.deserializeVector3f(buf);
@@ -48,24 +47,24 @@ public class DroneEntityS2C {
                 drone = (DroneEntity) player.world.getEntityById(droneID);
 
             if(drone != null) {
-                drone.setBand(band);
-                drone.setChannel(channel);
-                drone.setCameraAngle(cameraAngle);
+                System.out.println("before: " + drone.playerID);
+                drone.playerID = playerID;
+                System.out.println("after: " + drone.playerID);
+                if(!drone.playerID.equals(player.getUuid())) { // if any player besides physics-controlling player
+                    drone.setBand(band);
+                    drone.setChannel(channel);
+                    drone.setCameraAngle(cameraAngle);
 
-                drone.setGodMode(godMode);
-                drone.setInfiniteTracking(infiniteTracking);
-                drone.acceptInputFrom(playerUUID);
+                    drone.setGodMode(godMode);
+                    drone.setInfiniteTracking(infiniteTracking);
 
-                if(!drone.shouldAcceptInputFrom(player.getUuid())) {
                     drone.setThrottle(throttle);
                     drone.setOrientation(orientation);
-                    drone.physics.setPosition(position);
-                    drone.physics.getRigidBody().setLinearVelocity(linearVel);
-                    drone.physics.getRigidBody().setAngularVelocity(angularVel);
-                }
+                    drone.getRigidBody().setLinearVelocity(linearVel);
+                    drone.getRigidBody().setAngularVelocity(angularVel);
 
-                if(drone.physics == null) {
-                    drone.physics = new PhysicsEntity(drone);
+                    drone.setPos(position.x, position.y, position.z);
+                    drone.setRigidBodyPos(position);
                 }
             }
         });
@@ -75,6 +74,7 @@ public class DroneEntityS2C {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 
         buf.writeInt(drone.getEntityId());
+        buf.writeUuid(drone.playerID);
 
         buf.writeInt(drone.getBand());
         buf.writeInt(drone.getChannel());
@@ -82,13 +82,12 @@ public class DroneEntityS2C {
 
         buf.writeInt(drone.getGodMode());
         buf.writeBoolean(drone.hasInfiniteTracking());
-        buf.writeUuid(drone.getInputPlayerUUID());
 
         buf.writeFloat(drone.getThrottle());
-        PacketHelper.serializeVector3f(buf, drone.physics.getPosition());
-        PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getLinearVelocity(new Vector3f()));
-        PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getAngularVelocity(new Vector3f()));
-        PacketHelper.serializeQuaternion(buf, drone.physics.getOrientation());
+        PacketHelper.serializeVector3f(buf, drone.getRigidBodyPos());
+        PacketHelper.serializeVector3f(buf, drone.getRigidBody().getLinearVelocity(new Vector3f()));
+        PacketHelper.serializeVector3f(buf, drone.getRigidBody().getAngularVelocity(new Vector3f()));
+        PacketHelper.serializeQuaternion(buf, drone.getOrientation());
 
         Stream<PlayerEntity> watchingPlayers = PlayerStream.watching(drone.getEntityWorld(), new BlockPos(drone.getPos()));
         watchingPlayers.forEach(player -> ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, PACKET_ID, buf));

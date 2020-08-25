@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.client.physics;
 
+import bluevista.fpvracingmod.server.entities.PhysicsEntity;
 import com.bulletphysics.collision.broadphase.BroadphaseInterface;
 import com.bulletphysics.collision.broadphase.DbvtBroadphase;
 import com.bulletphysics.collision.dispatch.CollisionConfiguration;
@@ -56,7 +57,7 @@ public class PhysicsWorld {
         clock.reset();
 
         this.dynamicsWorld.stepSimulation(d, 10);
-        this.physicsEntities.forEach(PhysicsEntity::tick);
+        this.physicsEntities.forEach(PhysicsEntity::stepPhysics);
     }
 
     public void add(PhysicsEntity physics) {

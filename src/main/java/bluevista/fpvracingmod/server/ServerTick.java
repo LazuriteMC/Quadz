@@ -10,21 +10,30 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.util.List;
 
 public class ServerTick {
-
     public static void tick(MinecraftServer server) {
         List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
-        for (ServerPlayerEntity player : players) {
-
+        for (ServerPlayerEntity player : players) { // for every player in the server
             if (GogglesItem.isWearingGoggles(player) && !isInGoggles(player)) {
                 List<DroneEntity> drones = DroneEntity.getNearbyDrones(player, 320);
-                for (DroneEntity drone : drones) {
+                for (DroneEntity drone : drones) { // for every drone in range of given player
                     if (GogglesItem.isOnRightChannel(drone, player)) {
                         setView(player, drone);
                     }
 
-                    if(TransmitterItem.isBoundTransmitter(player.getMainHandStack(), drone)) {
-                        drone.acceptInputFrom(player.getUuid());
-                    }
+                    player.inventory.main.forEach(itemStack -> {
+                        if(itemStack.getItem() instanceof TransmitterItem) {
+                            if(TransmitterItem.isBoundTransmitter(itemStack, drone)) {
+                                drone.playerID = player.getUuid();
+                            }
+                        }
+                    });
+
+                    if(drone.playerID == null)
+                        drone.kill();
+
+//                    if(TransmitterItem.isBoundTransmitter(player.getMainHandStack(), drone)) {
+//                        drone.acceptInputFrom(player.getUuid());
+//                    }
                 }
             }
 

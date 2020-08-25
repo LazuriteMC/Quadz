@@ -2,15 +2,12 @@ package bluevista.fpvracingmod.client.input;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.client.math.BetaflightHelper;
-import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-
-import javax.vecmath.Quat4f;
 
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 
@@ -73,11 +70,9 @@ public class InputTick {
             double deltaZ = BetaflightHelper.calculateRates(currZ, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
 
             if(prevTime > 0) {
-                Quat4f q = drone.getOrientation();
-                QuaternionHelper.rotateX(q, deltaX);
-                QuaternionHelper.rotateY(q, deltaY);
-                QuaternionHelper.rotateZ(q, deltaZ);
-                drone.setOrientation(q);
+                drone.rotateX((float) deltaX);
+                drone.rotateY((float) deltaY);
+                drone.rotateZ((float) deltaZ);
             }
 
             drone.setThrottle(currT);

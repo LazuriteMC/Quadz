@@ -34,15 +34,13 @@ public class DroneEntityC2S {
                 drone = (DroneEntity) player.world.getEntityById(droneID);
 
             if(drone != null) {
-                if(drone.shouldAcceptInputFrom(player.getUuid())) {
-                    drone.setThrottle(throttle);
-                    drone.setOrientation(orientation);
-                } else {
-                    drone.setPos(position.x, position.y, position.z);
-                    drone.physics.setPosition(position);
-                    drone.physics.getRigidBody().setLinearVelocity(linearVel);
-                    drone.physics.getRigidBody().setAngularVelocity(angularVel);
-                }
+                drone.setThrottle(throttle);
+                drone.setOrientation(orientation);
+                drone.getRigidBody().setAngularVelocity(angularVel);
+                drone.getRigidBody().setLinearVelocity(linearVel);
+
+                drone.setPos(position.x, position.y, position.z);
+                drone.setRigidBodyPos(position);
             }
         });
     }
@@ -53,9 +51,9 @@ public class DroneEntityC2S {
         buf.writeInt(drone.getEntityId());
         buf.writeFloat(drone.getThrottle());
         PacketHelper.serializeQuaternion(buf, drone.getOrientation());
-        PacketHelper.serializeVector3f(buf, drone.physics.getPosition());
-        PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getLinearVelocity(new Vector3f()));
-        PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getAngularVelocity(new Vector3f()));
+        PacketHelper.serializeVector3f(buf, drone.getRigidBodyPos());
+        PacketHelper.serializeVector3f(buf, drone.getRigidBody().getLinearVelocity(new Vector3f()));
+        PacketHelper.serializeVector3f(buf, drone.getRigidBody().getAngularVelocity(new Vector3f()));
 
         ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
     }

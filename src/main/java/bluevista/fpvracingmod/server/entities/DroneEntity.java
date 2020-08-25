@@ -3,8 +3,6 @@ package bluevista.fpvracingmod.server.entities;
 import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.client.math.Matrix4fInject;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
-import bluevista.fpvracingmod.client.physics.PhysicsEntity;
-import bluevista.fpvracingmod.network.entity.DroneEntityC2S;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
@@ -12,7 +10,6 @@ import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,7 +31,7 @@ import javax.vecmath.Vector3f;
 import java.util.List;
 import java.util.UUID;
 
-public class DroneEntity extends Entity {
+public class DroneEntity extends PhysicsEntity {
 	private boolean infiniteTracking;
 	private boolean prevGodMode;
 	private boolean godMode;
@@ -43,24 +40,22 @@ public class DroneEntity extends Entity {
 	private int band;
 	private int channel;
 	private float throttle;
-	private UUID inputPlayer;
-
-	public PhysicsEntity physics;
 
 	public DroneEntity(EntityType<?> type, World world) {
-		this(world, Vec3d.ZERO);
+		this(world, Vec3d.ZERO, 0);
 	}
 
-	public DroneEntity(World world, Vec3d pos) {
+	public DroneEntity(World world, Vec3d pos, float yaw) {
 		super(ServerInitializer.DRONE_ENTITY, world);
+		this.setRigidBodyPos(new Vector3f((float) pos.x, (float) pos.y, (float) pos.z));
 		this.setPos(pos.x, pos.y, pos.z);
-		this.physics = new PhysicsEntity(this);
+		this.rotateY(yaw);
 
 		this.noClip = false;
 		this.godMode = false;
 		this.prevGodMode = this.godMode;
 
-		this.inputPlayer = new UUID(0, 0);
+		this.playerID = new UUID(0, 0);
 	}
 
 	@Override
@@ -82,15 +77,16 @@ public class DroneEntity extends Entity {
 				this.setInfiniteTracking(false);
 				this.kill();
 			}
+		}
+	}
 
-		} else {
-			DroneEntityC2S.send(this);
-
-			Vector3f pos = this.physics.getPosition();
-			this.setPos(pos.x, pos.y, pos.z);
+	public void stepPhysics() {
+		if(this.getThrottle() > 0.15) {
+			this.getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
 		}
 
-		this.move(MovementType.SELF, new Vec3d(0, 0, 0));
+		Vec3d v = this.getThrustVector().multiply(1, -1, 1).multiply(this.getThrottle()).multiply(thrustNewtons);
+		this.applyForce(new Vector3f((float) v.x, (float) v.y, (float) v.z));
 	}
 
 	@Override
@@ -304,7 +300,6 @@ public class DroneEntity extends Entity {
 	@Override
 	public void remove() {
 		super.remove();
-		this.physics.remove();
 	}
 
 	/*
@@ -324,14 +319,6 @@ public class DroneEntity extends Entity {
 		return ActionResult.SUCCESS;
 	}
 
-	public Quat4f getOrientation() {
-		return this.physics.getOrientation();
-	}
-
-	public void setOrientation(Quat4f orientation) {
-		this.physics.setOrientation(orientation);
-	}
-
 	public float getThrottle() {
 		return throttle;
 	}
@@ -340,22 +327,12 @@ public class DroneEntity extends Entity {
 		this.throttle = throttle;
 	}
 
-//	public void addVelocity(Vec3d... vecs) {
-//		for(Vec3d vec : vecs) {
-//			this.addVelocity(vec.x, vec.y, vec.z);
-//		}
-//	}
-
-	public void acceptInputFrom(UUID uuid) {
-		this.inputPlayer = uuid;
+	public void setInfiniteTracking(boolean infiniteTracking) {
+		this.infiniteTracking = infiniteTracking;
 	}
 
-	public UUID getInputPlayerUUID() {
-		return this.inputPlayer;
-	}
-
-	public boolean shouldAcceptInputFrom(UUID uuid) {
-		return this.inputPlayer.equals(uuid);
+	public boolean hasInfiniteTracking() {
+		return infiniteTracking;
 	}
 
 	public boolean isTransmitterBound(ItemStack transmitter) {
@@ -385,26 +362,14 @@ public class DroneEntity extends Entity {
 		return super.getBoundingBox();
 	}
 
-	public void setInfiniteTracking(boolean infiniteTracking) {
-		this.infiniteTracking = infiniteTracking;
-	}
-
-	public boolean hasInfiniteTracking() {
-		return infiniteTracking;
-	}
-
 	@Override
 	public Packet<?> createSpawnPacket() {
 		return new EntitySpawnS2CPacket(this);
 	}
 
-	public static DroneEntity create(World world, Vec3d pos, float yaw) {
-		DroneEntity d = new DroneEntity(world, pos);
-
-		Quat4f q = d.getOrientation();
-		QuaternionHelper.rotateY(q, yaw);
-		d.setOrientation(q);
-
+	public static DroneEntity create(UUID playerID, World world, Vec3d pos, float yaw) {
+		DroneEntity d = new DroneEntity(world, pos, yaw);
+		d.playerID = playerID;
 		world.spawnEntity(d);
 		return d;
 	}
