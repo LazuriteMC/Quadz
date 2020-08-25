@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class DroneEntityS2C {
@@ -25,11 +26,16 @@ public class DroneEntityS2C {
         PlayerEntity player = context.getPlayer();
 
         int droneID = buf.readInt();
+
         int band = buf.readInt();
         int channel = buf.readInt();
         int cameraAngle = buf.readInt();
+
         int godMode = buf.readInt();
         boolean infiniteTracking = buf.readBoolean();
+        UUID playerUUID = buf.readUuid();
+
+        float throttle = buf.readFloat();
         Vector3f position = PacketHelper.deserializeVector3f(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
         Vector3f angularVel = PacketHelper.deserializeVector3f(buf);
@@ -45,15 +51,21 @@ public class DroneEntityS2C {
                 drone.setBand(band);
                 drone.setChannel(channel);
                 drone.setCameraAngle(cameraAngle);
+
                 drone.setGodMode(godMode);
                 drone.setInfiniteTracking(infiniteTracking);
+                drone.acceptInputFrom(playerUUID);
 
-                if(drone.physics == null) {
-                    drone.physics = new PhysicsEntity(drone);
+                if(!drone.shouldAcceptInputFrom(player.getUuid())) {
+                    drone.setThrottle(throttle);
                     drone.setOrientation(orientation);
                     drone.physics.setPosition(position);
                     drone.physics.getRigidBody().setLinearVelocity(linearVel);
                     drone.physics.getRigidBody().setAngularVelocity(angularVel);
+                }
+
+                if(drone.physics == null) {
+                    drone.physics = new PhysicsEntity(drone);
                 }
             }
         });
@@ -63,11 +75,16 @@ public class DroneEntityS2C {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 
         buf.writeInt(drone.getEntityId());
+
         buf.writeInt(drone.getBand());
         buf.writeInt(drone.getChannel());
         buf.writeInt(drone.getCameraAngle());
+
         buf.writeInt(drone.getGodMode());
         buf.writeBoolean(drone.hasInfiniteTracking());
+        buf.writeUuid(drone.getInputPlayerUUID());
+
+        buf.writeFloat(drone.getThrottle());
         PacketHelper.serializeVector3f(buf, drone.physics.getPosition());
         PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getLinearVelocity(new Vector3f()));
         PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getAngularVelocity(new Vector3f()));

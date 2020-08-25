@@ -14,6 +14,8 @@ import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSo
 import com.bulletphysics.linearmath.Clock;
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
@@ -21,18 +23,17 @@ import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 public class PhysicsWorld {
     public static final float DEFAULT_GRAVITY = -9.81f;
 
     private final List<PhysicsEntity> physicsEntities;
     private final DiscreteDynamicsWorld dynamicsWorld;
-    private final boolean isClient;
     private final Clock clock;
 
-    public PhysicsWorld(boolean isClient) {
+    public PhysicsWorld() {
         this.physicsEntities = new ArrayList();
         this.clock = new Clock();
-        this.isClient = isClient;
 
         // Create the world
         BroadphaseInterface broadphase = new DbvtBroadphase();

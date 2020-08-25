@@ -34,12 +34,15 @@ public class DroneEntityC2S {
                 drone = (DroneEntity) player.world.getEntityById(droneID);
 
             if(drone != null) {
-                drone.setThrottle(throttle);
-                drone.setOrientation(orientation);
-                drone.setPos(position.x, position.y, position.z);
-                drone.physics.setPosition(position);
-                drone.physics.getRigidBody().setLinearVelocity(linearVel);
-                drone.physics.getRigidBody().setAngularVelocity(angularVel);
+                if(drone.shouldAcceptInputFrom(player.getUuid())) {
+                    drone.setThrottle(throttle);
+                    drone.setOrientation(orientation);
+                } else {
+                    drone.setPos(position.x, position.y, position.z);
+                    drone.physics.setPosition(position);
+                    drone.physics.getRigidBody().setLinearVelocity(linearVel);
+                    drone.physics.getRigidBody().setAngularVelocity(angularVel);
+                }
             }
         });
     }

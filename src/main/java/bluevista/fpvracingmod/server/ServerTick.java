@@ -2,6 +2,7 @@ package bluevista.fpvracingmod.server;
 
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.GogglesItem;
+import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -19,6 +20,10 @@ public class ServerTick {
                 for (DroneEntity drone : drones) {
                     if (GogglesItem.isOnRightChannel(drone, player)) {
                         setView(player, drone);
+                    }
+
+                    if(TransmitterItem.isBoundTransmitter(player.getMainHandStack(), drone)) {
+                        drone.acceptInputFrom(player.getUuid());
                     }
                 }
             }

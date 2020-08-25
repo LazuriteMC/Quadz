@@ -3,9 +3,9 @@ package bluevista.fpvracingmod.server.entities;
 import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.client.math.Matrix4fInject;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
+import bluevista.fpvracingmod.client.physics.PhysicsEntity;
 import bluevista.fpvracingmod.network.entity.DroneEntityC2S;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
-import bluevista.fpvracingmod.client.physics.PhysicsEntity;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -43,6 +43,7 @@ public class DroneEntity extends Entity {
 	private int band;
 	private int channel;
 	private float throttle;
+	private UUID inputPlayer;
 
 	public PhysicsEntity physics;
 
@@ -58,6 +59,8 @@ public class DroneEntity extends Entity {
 		this.noClip = false;
 		this.godMode = false;
 		this.prevGodMode = this.godMode;
+
+		this.inputPlayer = new UUID(0, 0);
 	}
 
 	@Override
@@ -342,6 +345,18 @@ public class DroneEntity extends Entity {
 //			this.addVelocity(vec.x, vec.y, vec.z);
 //		}
 //	}
+
+	public void acceptInputFrom(UUID uuid) {
+		this.inputPlayer = uuid;
+	}
+
+	public UUID getInputPlayerUUID() {
+		return this.inputPlayer;
+	}
+
+	public boolean shouldAcceptInputFrom(UUID uuid) {
+		return this.inputPlayer.equals(uuid);
+	}
 
 	public boolean isTransmitterBound(ItemStack transmitter) {
 		try {

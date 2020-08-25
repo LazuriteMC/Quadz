@@ -17,17 +17,21 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 public class PhysicsEntity {
-    public static final float DEFAULT_MASS = 0.3f; // 300 grams
+    public static final float DEFAULT_MASS = 0.750f;
 
     private float mass;
+    private float linearDamping;
+
     private final Entity entity;
     private final boolean isClient;
     private RigidBody body;
 
     public PhysicsEntity(Entity entity) {
+        this.mass = 0.750f; // Get from config
+        this.linearDamping = 0.3f; // Get from config
+
         this.isClient = entity.world.isClient();
         this.entity = entity;
-        this.mass = DEFAULT_MASS;
         this.body = createRigidBody();
         if(isClient) {
             ClientInitializer.physicsWorld.add(this);
@@ -42,7 +46,7 @@ public class PhysicsEntity {
                 this.getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
             }
 
-            Vec3d v = drone.getThrustVector().multiply(1, -1, 1).multiply(drone.getThrottle()).multiply(10);
+            Vec3d v = drone.getThrustVector().multiply(1, -1, 1).multiply(drone.getThrottle()).multiply(64);
             this.applyForce(new Vector3f((float) v.x, (float) v.y, (float) v.z));
         }
     }
@@ -107,8 +111,7 @@ public class PhysicsEntity {
 
         RigidBody body = new RigidBody(ci);
         body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
-        body.setDamping(0.25f, 0.95f);
-
+        body.setDamping(linearDamping, 0.9f);
         return body;
     }
 }

@@ -21,7 +21,7 @@ public class InputTick {
 
     public static void tick(DroneEntity drone) {
         if(drone != null && TransmitterItem.isHoldingTransmitter(client.player) && !client.isPaused() && controllerExists()) {
-            float d = (System.currentTimeMillis() - prevTime) / 1000f;
+            float d = (System.currentTimeMillis() - prevTime) / 1000.0f;
 
             float currT = glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.THROTTLE));
             float currX = -glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.PITCH));
