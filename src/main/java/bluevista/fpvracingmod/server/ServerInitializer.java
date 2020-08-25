@@ -13,6 +13,7 @@ import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.Entity;
@@ -21,6 +22,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -31,13 +33,15 @@ import java.util.UUID;
 public class ServerInitializer implements ModInitializer {
 	public static final String MODID = "fpvracing";
 
-	public static final GogglesItem GOGGLES_ITEM = new GogglesItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1));
-	public static final TransmitterItem TRANSMITTER_ITEM = new TransmitterItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1));
-	public static final DroneSpawnerItem DRONE_SPAWNER_ITEM = new DroneSpawnerItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1));
+	public static ItemGroup ITEM_GROUP;
+
+	public static DroneSpawnerItem DRONE_SPAWNER_ITEM;
+	public static GogglesItem GOGGLES_ITEM;
+	public static TransmitterItem TRANSMITTER_ITEM;
 
 	public static EntityType<Entity> DRONE_ENTITY;
 
-	public static final HashMap<UUID, Config> serverPlayerConfigs = new HashMap<>();
+	public static final HashMap<UUID, Config> SERVER_PLAYER_CONFIGS = new HashMap<>();
 
 	@Override
 	public void onInitialize() {
@@ -61,9 +65,19 @@ public class ServerInitializer implements ModInitializer {
 	}
 
 	private void registerItems() {
-		Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), GOGGLES_ITEM);
-		Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), TRANSMITTER_ITEM);
-		Registry.register(Registry.ITEM, new Identifier(MODID, "drone_spawner_item"), DRONE_SPAWNER_ITEM);
+		DRONE_SPAWNER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "drone_spawner_item"), new DroneSpawnerItem(new Item.Settings().maxCount(1)));
+		GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
+		TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new TransmitterItem(new Item.Settings().maxCount(1)));
+
+		ITEM_GROUP = FabricItemGroupBuilder
+				.create(new Identifier(MODID, "items"))
+				.icon(() -> new ItemStack(GOGGLES_ITEM))
+				.appendItems(stack -> {
+					stack.add(new ItemStack(DRONE_SPAWNER_ITEM));
+					stack.add(new ItemStack(GOGGLES_ITEM));
+					stack.add(new ItemStack(TRANSMITTER_ITEM));
+				})
+				.build();
 	}
 
 	private void registerEntities() {

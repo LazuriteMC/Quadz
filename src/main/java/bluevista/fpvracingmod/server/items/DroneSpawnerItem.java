@@ -37,19 +37,19 @@ public class DroneSpawnerItem extends Item {
 				if (itemStack.getSubTag("frequency") != null && itemStack.getSubTag("frequency").contains("band")) {
 					drone.setBand(itemStack.getSubTag("frequency").getInt("band"));
 				} else {
-					drone.setBand(ServerInitializer.serverPlayerConfigs.get(user.getUuid()).getIntOption(Config.BAND));
+					drone.setBand(ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid()).getIntOption(Config.BAND));
 				}
 
 				if (itemStack.getSubTag("frequency") != null && itemStack.getSubTag("frequency").contains("channel")) {
 					drone.setChannel(itemStack.getSubTag("frequency").getInt("channel"));
 				} else {
-					drone.setChannel(ServerInitializer.serverPlayerConfigs.get(user.getUuid()).getIntOption(Config.CHANNEL));
+					drone.setChannel(ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid()).getIntOption(Config.CHANNEL));
 				}
 
 				if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("cameraAngle")) {
 					drone.setCameraAngle(itemStack.getSubTag("misc").getInt("cameraAngle"));
 				} else {
-					drone.setCameraAngle(ServerInitializer.serverPlayerConfigs.get(user.getUuid()).getIntOption(Config.CAMERA_ANGLE));
+					drone.setCameraAngle(ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid()).getIntOption(Config.CAMERA_ANGLE));
 				}
 
 				if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("noClip")) {
