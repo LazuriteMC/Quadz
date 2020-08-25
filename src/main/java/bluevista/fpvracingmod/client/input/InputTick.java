@@ -23,21 +23,21 @@ public class InputTick {
         if(drone != null && TransmitterItem.isHoldingTransmitter(client.player) && !client.isPaused() && controllerExists()) {
             float d = (System.currentTimeMillis() - prevTime) / 1000f;
 
-            float currT = glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.THROTTLE)) + 1;
+            float currT = glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.THROTTLE));
             float currX = -glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.PITCH));
             float currY = -glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.YAW));
             float currZ = -glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.ROLL));
 
             if (ClientInitializer.getConfig().getIntOption(Config.INVERT_THROTTLE) == 1) {
-                currT = Math.abs(2 - currT);
+                currT *= -1;
             }
 
             if (ClientInitializer.getConfig().getIntOption(Config.THROTTLE_CENTER_POSITION) == 1) {
-                --currT;
                 if (currT < 0) {
                     currT = 0;
                 }
-                currT *= 2;
+            } else if (ClientInitializer.getConfig().getIntOption(Config.THROTTLE_CENTER_POSITION) == 0) {
+                currT = (currT + 1) / 2.0f;
             }
 
             if (ClientInitializer.getConfig().getIntOption(Config.INVERT_PITCH) == 1) {
@@ -52,7 +52,6 @@ public class InputTick {
                 currZ *= -1;
             }
 
-            // Note: There's probably a better way of doing this, but yeah... it ignores input within the deadzone range
             if (ClientInitializer.getConfig().getFloatOption(Config.DEADZONE) != 0.0F) {
                 float halfDeadzone = ClientInitializer.getConfig().getFloatOption(Config.DEADZONE) / 2.0f;
 
