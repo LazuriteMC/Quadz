@@ -47,9 +47,7 @@ public class DroneEntityS2C {
                 drone = (DroneEntity) player.world.getEntityById(droneID);
 
             if(drone != null) {
-                System.out.println("before: " + drone.playerID);
                 drone.playerID = playerID;
-                System.out.println("after: " + drone.playerID);
                 if(!drone.playerID.equals(player.getUuid())) { // if any player besides physics-controlling player
                     drone.setBand(band);
                     drone.setChannel(channel);
