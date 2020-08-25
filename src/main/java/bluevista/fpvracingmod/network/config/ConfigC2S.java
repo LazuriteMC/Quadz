@@ -22,8 +22,8 @@ public class ConfigC2S {
         Config config = PacketHelper.deserializeConfig(buf);
 
         context.getTaskQueue().execute(() -> {
-            ServerInitializer.serverPlayerConfigs.remove(uuid);
-            ServerInitializer.serverPlayerConfigs.put(uuid, config);
+            ServerInitializer.SERVER_PLAYER_CONFIGS.remove(uuid);
+            ServerInitializer.SERVER_PLAYER_CONFIGS.put(uuid, config);
         });
     }
 

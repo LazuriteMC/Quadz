@@ -222,7 +222,7 @@ public class FPVRacing {
     private static int setConfigValue(CommandContext<ServerCommandSource> context, String key) {
         try {
             final ServerPlayerEntity player = context.getSource().getPlayer();
-            final Config config = ServerInitializer.serverPlayerConfigs.get(player.getUuid());
+            final Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(player.getUuid());
 
             Number value = NumberArgumentType.getNumber(context, key);
 
@@ -245,7 +245,7 @@ public class FPVRacing {
     private static int getConfigValue(CommandContext<ServerCommandSource> context, String key) {
         try {
             final ServerPlayerEntity player = context.getSource().getPlayer();
-            final Config config = ServerInitializer.serverPlayerConfigs.get(player.getUuid());
+            final Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(player.getUuid());
 
             player.sendMessage(new LiteralText(key + ": " + config.getOption(key)), false);
             return 1;

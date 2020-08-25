@@ -44,7 +44,7 @@ public class ConfigS2C {
 
     public static void send(PlayerEntity player, String key) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        Config serverPlayerConfig = ServerInitializer.serverPlayerConfigs.get(player.getUuid());
+        Config serverPlayerConfig = ServerInitializer.SERVER_PLAYER_CONFIGS.get(player.getUuid());
 
         buf.writeString(key);
 
