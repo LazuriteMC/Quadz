@@ -3,6 +3,7 @@ package bluevista.fpvracingmod.server.entities;
 import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.client.math.Matrix4fInject;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
+import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
@@ -92,43 +93,43 @@ public class DroneEntity extends PhysicsEntity {
 
 	@Override
 	protected void readCustomDataFromTag(CompoundTag tag) {
-		band = tag.getInt("band");
-		channel = tag.getInt("channel");
-		cameraAngle = tag.getInt("cameraAngle");
-		fieldOfView = tag.getFloat("fieldOfView");
-		godMode = tag.getInt("godMode") == 1;
+		band = tag.getInt(Config.BAND);
+		channel = tag.getInt(Config.CHANNEL);
+		cameraAngle = tag.getInt(Config.CAMERA_ANGLE);
+		fieldOfView = tag.getFloat(Config.FIELD_OF_VIEW);
+		godMode = tag.getInt(Config.GOD_MODE) == 1;
 	}
 
 	@Override
 	protected void writeCustomDataToTag(CompoundTag tag) {
-		tag.putInt("band", getBand());
-		tag.putInt("channel", getChannel());
-		tag.putInt("cameraAngle", getCameraAngle());
-		tag.putFloat("fieldOfView", getFieldOfView());
-		tag.putInt("godMode", getGodMode());
+		tag.putInt(Config.BAND, getBand());
+		tag.putInt(Config.CHANNEL, getChannel());
+		tag.putInt(Config.CAMERA_ANGLE, getCameraAngle());
+		tag.putFloat(Config.FIELD_OF_VIEW, getFieldOfView());
+		tag.putInt(Config.GOD_MODE, getGodMode());
 	}
 
 	public void setValue(String key, Number value) {
 		switch (key) {
-			case "band":
+			case Config.BAND:
 				setBand(value.intValue());
 				break;
-			case "channel":
+			case Config.CHANNEL:
 				setChannel(value.intValue());
 				break;
-			case "cameraAngle":
+			case Config.CAMERA_ANGLE:
 				setCameraAngle(value.intValue());
 				break;
-			case "fieldOfView":
+			case Config.FIELD_OF_VIEW:
 				setFieldOfView(value.floatValue());
 				break;
-			case "noClip":
+			case Config.NO_CLIP:
 				setNoClip(value.intValue());
 				break;
-			case "prevGodMode":
+			case Config.PREV_GOD_MODE:
 				setPrevGodMode(value.intValue());
 				break;
-			case "godMode":
+			case Config.GOD_MODE:
 				setGodMode(value.intValue());
 				break;
 			default:
@@ -138,19 +139,19 @@ public class DroneEntity extends PhysicsEntity {
 
 	public Number getValue(String key) {
 		switch (key) {
-			case "band":
+			case Config.BAND:
 				return getBand();
-			case "channel":
+			case Config.CHANNEL:
 				return getChannel();
-			case "cameraAngle":
+			case Config.CAMERA_ANGLE:
 				return getCameraAngle();
-			case "fieldOfView":
+			case Config.FIELD_OF_VIEW:
 				return getFieldOfView();
-			case "noClip":
+			case Config.NO_CLIP:
 				return getNoClip();
-			case "prevGodMode":
+			case Config.PREV_GOD_MODE:
 				return getPrevGodMode();
-			case "godMode":
+			case Config.GOD_MODE:
 				return getGodMode();
 			default:
 				return null; // 0?
@@ -299,14 +300,7 @@ public class DroneEntity extends PhysicsEntity {
 	public void kill() {
 		if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
 			ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
-
-			DroneSpawnerItem.setBand(itemStack, getBand());
-			DroneSpawnerItem.setChannel(itemStack, getChannel());
-			DroneSpawnerItem.setCameraAngle(itemStack, getCameraAngle());
-			DroneSpawnerItem.setFieldOfView(itemStack, getFieldOfView());
-			DroneSpawnerItem.setNoClip(itemStack, getNoClip());
-			DroneSpawnerItem.setPrevGodMode(itemStack, getPrevGodMode());
-			DroneSpawnerItem.setGodMode(itemStack, getGodMode());
+			DroneSpawnerItem.prepDestroyedDrone(this, itemStack);
 
 			this.dropStack(itemStack);
 		}
@@ -326,7 +320,7 @@ public class DroneEntity extends PhysicsEntity {
 	public ActionResult interact(PlayerEntity player, Hand hand) {
 		if (!player.world.isClient()) {
 			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
-				player.inventory.getMainHandStack().getOrCreateSubTag("bind").putUuid("bind", this.getUuid());
+				player.inventory.getMainHandStack().getOrCreateSubTag(Config.BIND).putUuid(Config.BIND, this.getUuid());
 				player.sendMessage(new TranslatableText("Transmitter bound"), false);
 			}
 		} else if (!InputTick.controllerExists()) {
@@ -354,7 +348,7 @@ public class DroneEntity extends PhysicsEntity {
 
 	public boolean isTransmitterBound(ItemStack transmitter) {
 		try {
-			return this.getUuid().equals(transmitter.getSubTag("bind").getUuid("bind"));
+			return this.getUuid().equals(transmitter.getSubTag(Config.BIND).getUuid(Config.BIND));
 		} catch (Exception e) {
 			return false;
 		}

@@ -57,9 +57,6 @@ public class FPVRacing {
         }
     }
 
-    private static final String NO_CLIP = "noClip";
-    private static final String GOD_MODE = "godMode";
-
     private static final Text DRONE_ERROR_MESSAGE = new LiteralText("Must be holding a ")
             .append(new TranslatableText("item.fpvracing.drone_spawner_item"))
             .append(" or a bound ")
@@ -200,15 +197,15 @@ public class FPVRacing {
                         .executes(context -> setDroneValue(context, Config.FIELD_OF_VIEW)))
                     .executes(context -> getDroneValue(context, Config.FIELD_OF_VIEW)))
 
-                .then(CommandManager.literal(NO_CLIP)
-                    .then(CommandManager.argument(NO_CLIP, new NumberArgumentType())
-                        .executes(context -> setDroneValue(context, NO_CLIP)))
-                    .executes(context -> getDroneValue(context, NO_CLIP)))
+                .then(CommandManager.literal(Config.NO_CLIP)
+                    .then(CommandManager.argument(Config.NO_CLIP, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.NO_CLIP)))
+                    .executes(context -> getDroneValue(context, Config.NO_CLIP)))
 
-                .then(CommandManager.literal(GOD_MODE)
-                    .then(CommandManager.argument(GOD_MODE, new NumberArgumentType())
-                        .executes(context -> setDroneValue(context, GOD_MODE)))
-                    .executes(context -> getDroneValue(context, GOD_MODE)))
+                .then(CommandManager.literal(Config.GOD_MODE)
+                    .then(CommandManager.argument(Config.GOD_MODE, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.GOD_MODE)))
+                    .executes(context -> getDroneValue(context, Config.GOD_MODE)))
 
                 )
 

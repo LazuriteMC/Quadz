@@ -36,7 +36,7 @@ public class ClientTick {
                 configFOV = ClientInitializer.getConfig().getFloatOption(Config.FIELD_OF_VIEW);
 
                 if (client.player.getMainHandStack().getItem() instanceof TransmitterItem) {
-                    if (client.player.getMainHandStack().getSubTag("bind") != null) {
+                    if (client.player.getMainHandStack().getSubTag(Config.BIND) != null) {
                         DroneEntity drone = TransmitterItem.droneFromTransmitter(client.player.getMainHandStack(), client.player);
                         if (drone != null) {
                             configFOV = drone.getFieldOfView();
