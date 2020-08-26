@@ -155,6 +155,11 @@ public class FPVRacing {
                         .executes(context -> setConfigValue(context, Config.CAMERA_ANGLE)))
                     .executes(context -> getConfigValue(context, Config.CAMERA_ANGLE)))
 
+                .then(CommandManager.literal(Config.FIELD_OF_VIEW)
+                    .then(CommandManager.argument(Config.FIELD_OF_VIEW, new NumberArgumentType())
+                        .executes(context -> setConfigValue(context, Config.FIELD_OF_VIEW)))
+                    .executes(context -> getConfigValue(context, Config.FIELD_OF_VIEW)))
+
                 .then(CommandManager.literal(Config.BAND)
                     .then(CommandManager.argument(Config.BAND, new NumberArgumentType())
                         .executes(context -> setConfigValue(context, Config.BAND)))
@@ -189,6 +194,11 @@ public class FPVRacing {
                     .then(CommandManager.argument(Config.CAMERA_ANGLE, new NumberArgumentType())
                         .executes(context -> setDroneValue(context, Config.CAMERA_ANGLE)))
                     .executes(context -> getDroneValue(context, Config.CAMERA_ANGLE)))
+
+                .then(CommandManager.literal(Config.FIELD_OF_VIEW)
+                    .then(CommandManager.argument(Config.FIELD_OF_VIEW, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.FIELD_OF_VIEW)))
+                    .executes(context -> getDroneValue(context, Config.FIELD_OF_VIEW)))
 
                 .then(CommandManager.literal(NO_CLIP)
                     .then(CommandManager.argument(NO_CLIP, new NumberArgumentType())

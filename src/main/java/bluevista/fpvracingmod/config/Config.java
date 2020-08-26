@@ -28,6 +28,7 @@ public class Config {
     public static final String INVERT_YAW = "invertYaw";
     public static final String INVERT_ROLL = "invertRoll";
     public static final String CAMERA_ANGLE = "cameraAngle";
+    public static final String FIELD_OF_VIEW = "fieldOfView";
     public static final String BAND = "band";
     public static final String CHANNEL = "channel";
 
@@ -47,6 +48,7 @@ public class Config {
             INVERT_YAW,
             INVERT_ROLL,
             CAMERA_ANGLE,
+            FIELD_OF_VIEW,
             BAND,
             CHANNEL
     );
@@ -71,7 +73,8 @@ public class Config {
             DEADZONE,
             RATE,
             SUPER_RATE,
-            EXPO
+            EXPO,
+            FIELD_OF_VIEW
     );
 
     private HashMap<String, Number> options;

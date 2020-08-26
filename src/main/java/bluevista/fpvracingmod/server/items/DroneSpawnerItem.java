@@ -31,7 +31,7 @@ public class DroneSpawnerItem extends Item {
 				return TypedActionResult.pass(itemStack);
 
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
-				System.out.println(user.getUuid());
+//				System.out.println(user.getUuid());
 				DroneEntity drone = DroneEntity.create(user.getUuid(), world, hitResult.getPos(), 180f - user.yaw);
 
 				if (itemStack.getSubTag("frequency") != null && itemStack.getSubTag("frequency").contains("band")) {
@@ -50,6 +50,12 @@ public class DroneSpawnerItem extends Item {
 					drone.setCameraAngle(itemStack.getSubTag("misc").getInt("cameraAngle"));
 				} else {
 					drone.setCameraAngle(ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid()).getIntOption(Config.CAMERA_ANGLE));
+				}
+
+				if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("fieldOfView")) {
+					drone.setFieldOfView(itemStack.getSubTag("misc").getInt("fieldOfView"));
+				} else {
+					drone.setFieldOfView(ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid()).getFloatOption(Config.FIELD_OF_VIEW));
 				}
 
 				if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("noClip")) {
@@ -89,6 +95,8 @@ public class DroneSpawnerItem extends Item {
 			case "cameraAngle":
 				setCameraAngle(itemStack, value.intValue());
 				break;
+			case "fieldOfView":
+				setFieldOfView(itemStack, value.floatValue());
 			case "noClip":
 				setNoClip(itemStack, value.intValue());
 				break;
@@ -111,6 +119,8 @@ public class DroneSpawnerItem extends Item {
 				return getChannel(itemStack);
 			case "cameraAngle":
 				return getCameraAngle(itemStack);
+			case "fieldOfView":
+				return getFieldOfView(itemStack);
 			case "noClip":
 				return getNoClip(itemStack);
 			case "prevGodMode":
@@ -151,6 +161,17 @@ public class DroneSpawnerItem extends Item {
 	public static int getCameraAngle(ItemStack itemStack) {
 		if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("cameraAngle")) {
 			return itemStack.getSubTag("misc").getInt("cameraAngle");
+		}
+		return 0;
+	}
+
+	public static void setFieldOfView(ItemStack itemStack, float fieldOfView) {
+		itemStack.getOrCreateSubTag("misc").putFloat("fieldOfView", fieldOfView);
+	}
+
+	public static float getFieldOfView(ItemStack itemStack) {
+		if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("fieldOfView")) {
+			return itemStack.getSubTag("misc").getFloat("fieldOfView");
 		}
 		return 0;
 	}

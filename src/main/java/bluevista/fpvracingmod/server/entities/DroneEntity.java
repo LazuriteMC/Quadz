@@ -37,6 +37,7 @@ public class DroneEntity extends PhysicsEntity {
 	private boolean godMode;
 
 	private int cameraAngle;
+	private float fieldOfView;
 	private int band;
 	private int channel;
 	private float throttle;
@@ -94,15 +95,17 @@ public class DroneEntity extends PhysicsEntity {
 		band = tag.getInt("band");
 		channel = tag.getInt("channel");
 		cameraAngle = tag.getInt("cameraAngle");
+		fieldOfView = tag.getFloat("fieldOfView");
 		godMode = tag.getInt("godMode") == 1;
 	}
 
 	@Override
 	protected void writeCustomDataToTag(CompoundTag tag) {
-		tag.putInt("band", band);
-		tag.putInt("channel", channel);
-		tag.putInt("cameraAngle", cameraAngle);
-		tag.putInt("godMode", godMode ? 1 : 0);
+		tag.putInt("band", getBand());
+		tag.putInt("channel", getChannel());
+		tag.putInt("cameraAngle", getCameraAngle());
+		tag.putFloat("fieldOfView", getFieldOfView());
+		tag.putInt("godMode", getGodMode());
 	}
 
 	public void setValue(String key, Number value) {
@@ -115,6 +118,9 @@ public class DroneEntity extends PhysicsEntity {
 				break;
 			case "cameraAngle":
 				setCameraAngle(value.intValue());
+				break;
+			case "fieldOfView":
+				setFieldOfView(value.floatValue());
 				break;
 			case "noClip":
 				setNoClip(value.intValue());
@@ -138,6 +144,8 @@ public class DroneEntity extends PhysicsEntity {
 				return getChannel();
 			case "cameraAngle":
 				return getCameraAngle();
+			case "fieldOfView":
+				return getFieldOfView();
 			case "noClip":
 				return getNoClip();
 			case "prevGodMode":
@@ -165,12 +173,20 @@ public class DroneEntity extends PhysicsEntity {
 		return channel;
 	}
 
-	public void setCameraAngle(int angle) {
-		cameraAngle = angle;
+	public void setCameraAngle(int cameraAngle) {
+		this.cameraAngle = cameraAngle;
 	}
 
 	public int getCameraAngle() {
 		return cameraAngle;
+	}
+
+	public void setFieldOfView(float fieldOfView) {
+		this.fieldOfView = fieldOfView;
+	}
+
+	public float getFieldOfView() {
+		return fieldOfView;
 	}
 
 	public void setNoClip(int noClip) {
@@ -287,6 +303,7 @@ public class DroneEntity extends PhysicsEntity {
 			DroneSpawnerItem.setBand(itemStack, getBand());
 			DroneSpawnerItem.setChannel(itemStack, getChannel());
 			DroneSpawnerItem.setCameraAngle(itemStack, getCameraAngle());
+			DroneSpawnerItem.setFieldOfView(itemStack, getFieldOfView());
 			DroneSpawnerItem.setNoClip(itemStack, getNoClip());
 			DroneSpawnerItem.setPrevGodMode(itemStack, getPrevGodMode());
 			DroneSpawnerItem.setGodMode(itemStack, getGodMode());
