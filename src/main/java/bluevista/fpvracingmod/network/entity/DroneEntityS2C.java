@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.network.entity;
 
+import bluevista.fpvracingmod.client.input.AxisValues;
 import bluevista.fpvracingmod.network.PacketHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -34,11 +35,11 @@ public class DroneEntityS2C {
         int godMode = buf.readInt();
         boolean infiniteTracking = buf.readBoolean();
 
-        float throttle = buf.readFloat();
         Vector3f position = PacketHelper.deserializeVector3f(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
         Vector3f angularVel = PacketHelper.deserializeVector3f(buf);
         Quat4f orientation = PacketHelper.deserializeQuaternion(buf);
+        AxisValues axisValues = AxisValues.deserialize(buf);
 
         context.getTaskQueue().execute(() -> {
             DroneEntity drone = null;
@@ -48,21 +49,26 @@ public class DroneEntityS2C {
 
             if(drone != null) {
                 drone.playerID = playerID;
-                if(!drone.playerID.equals(player.getUuid())) { // if any player besides physics-controlling player
-                    drone.setBand(band);
-                    drone.setChannel(channel);
-                    drone.setCameraAngle(cameraAngle);
 
-                    drone.setGodMode(godMode);
-                    drone.setInfiniteTracking(infiniteTracking);
+                drone.setBand(band);
+                drone.setChannel(channel);
+                drone.setCameraAngle(cameraAngle);
 
-                    drone.setThrottle(throttle);
+                drone.setGodMode(godMode);
+                drone.setInfiniteTracking(infiniteTracking);
+
+                if(drone.isFresh() || !drone.playerID.equals(player.getUuid())) { // if any player besides physics-controlling player
+                    drone.setAxisValues(axisValues);
+
+                    drone.prevOrientation = orientation;
                     drone.setOrientation(orientation);
                     drone.getRigidBody().setLinearVelocity(linearVel);
                     drone.getRigidBody().setAngularVelocity(angularVel);
 
-                    drone.setPos(position.x, position.y, position.z);
+                    drone.setPosition(position.x, position.y, position.z);
                     drone.setRigidBodyPos(position);
+
+                    drone.setNotFresh();
                 }
             }
         });
@@ -81,11 +87,11 @@ public class DroneEntityS2C {
         buf.writeInt(drone.getGodMode());
         buf.writeBoolean(drone.hasInfiniteTracking());
 
-        buf.writeFloat(drone.getThrottle());
         PacketHelper.serializeVector3f(buf, drone.getRigidBodyPos());
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getLinearVelocity(new Vector3f()));
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getAngularVelocity(new Vector3f()));
         PacketHelper.serializeQuaternion(buf, drone.getOrientation());
+        drone.getAxisValues().serialize(buf);
 
         Stream<PlayerEntity> watchingPlayers = PlayerStream.watching(drone.getEntityWorld(), new BlockPos(drone.getPos()));
         watchingPlayers.forEach(player -> ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, PACKET_ID, buf));

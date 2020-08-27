@@ -1,13 +1,15 @@
 package bluevista.fpvracingmod.client.physics;
 
+import bluevista.fpvracingmod.client.ClientInitializer;
+import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.server.entities.PhysicsEntity;
 import com.bulletphysics.collision.broadphase.BroadphaseInterface;
 import com.bulletphysics.collision.broadphase.DbvtBroadphase;
 import com.bulletphysics.collision.dispatch.CollisionConfiguration;
 import com.bulletphysics.collision.dispatch.CollisionDispatcher;
 import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
+import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
-import com.bulletphysics.collision.shapes.StaticPlaneShape;
 import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
 import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
@@ -17,23 +19,39 @@ import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.BlockView;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class PhysicsWorld {
     public static final float DEFAULT_GRAVITY = -9.81f;
+    public static final int LOAD_AREA = 2;
 
-    private final List<PhysicsEntity> physicsEntities;
+    public final List<PhysicsEntity> physicsEntities;
+    public final Map<Entity, RigidBody> collisionEntities;
+    public final Map<BlockPos, RigidBody> collisionBlocks;
+
     private final DiscreteDynamicsWorld dynamicsWorld;
     private final Clock clock;
 
     public PhysicsWorld() {
         this.physicsEntities = new ArrayList();
+        this.collisionEntities = new HashMap();
+        this.collisionBlocks = new HashMap();
         this.clock = new Clock();
 
         // Create the world
@@ -43,13 +61,6 @@ public class PhysicsWorld {
         SequentialImpulseConstraintSolver solver = new SequentialImpulseConstraintSolver();
         dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
         dynamicsWorld.setGravity(new Vector3f(0, DEFAULT_GRAVITY, 0));
-
-        // Ground
-        CollisionShape groundShape = new StaticPlaneShape(new Vector3f(0, 1, 0), 1);
-        DefaultMotionState groundMotionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 0, 0, 1), new Vector3f(0, 60, 0), 1.0f)));
-        RigidBodyConstructionInfo groundRigidBodyCI = new RigidBodyConstructionInfo(0, groundMotionState, groundShape, new Vector3f(0,0,0));
-        RigidBody groundRigidBody = new RigidBody(groundRigidBodyCI);
-        this.dynamicsWorld.addRigidBody(groundRigidBody);
     }
 
     public void stepWorld() {
@@ -57,7 +68,95 @@ public class PhysicsWorld {
         clock.reset();
 
         this.dynamicsWorld.stepSimulation(d, 10);
-        this.physicsEntities.forEach(PhysicsEntity::stepPhysics);
+        this.physicsEntities.forEach(physics -> {
+            physics.stepPhysics(d);
+            if(ClientInitializer.physicsWorld != null) {
+                ClientInitializer.physicsWorld.physicsEntities.forEach(entity -> {
+                    ClientInitializer.physicsWorld.loadEntityCollisions(entity, ClientTick.client.world);
+                    ClientInitializer.physicsWorld.loadBlockCollisions(entity, ClientTick.client.world);
+                });
+            }
+        });
+    }
+
+    public void loadBlockCollisions(PhysicsEntity physics, ClientWorld world) {
+        Box area = physics.getBoundingBox().expand(LOAD_AREA);
+        Map<BlockPos, BlockState> blockList = BlockHelper.getBlockList(world, area);
+        BlockView blockView = world.getChunkManager().getChunk(physics.chunkX, physics.chunkZ);
+        List<BlockPos> toKeep = new ArrayList();
+
+        blockList.forEach((blockPos, blockState) -> {
+            if(!blockState.getBlock().canMobSpawnInside()) {
+                if(!this.collisionBlocks.containsKey(blockPos)) {
+                    VoxelShape coll = blockState.getCollisionShape(blockView, blockPos);
+                    if (!coll.isEmpty()) {
+                        Box b = coll.getBoundingBox();
+
+                        Vector3f box = new Vector3f(
+                                ((float) (b.maxX - b.minX) / 2.0F) + 0.005f,
+                                ((float) (b.maxY - b.minY) / 2.0F) + 0.005f,
+                                ((float) (b.maxZ - b.minZ) / 2.0F) + 0.005f);
+                        CollisionShape shape = new BoxShape(box);
+
+                        Vector3f position = new Vector3f(blockPos.getX() + box.x, blockPos.getY() + box.y, blockPos.getZ() + box.z);
+                        DefaultMotionState motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(), position, 1.0f)));
+                        RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(0, motionState, shape, new Vector3f(0, 0, 0));
+                        RigidBody body = new RigidBody(ci);
+
+                        toKeep.add(blockPos);
+                        this.collisionBlocks.put(blockPos, body);
+                        this.dynamicsWorld.addRigidBody(body);
+                    }
+                } else {
+                    toKeep.add(blockPos);
+                }
+            }
+        });
+
+        List<BlockPos> toRemove = new ArrayList();
+        this.collisionBlocks.forEach((pos, body) -> {
+            if(!toKeep.contains(pos)) {
+                dynamicsWorld.removeRigidBody(collisionBlocks.get(pos));
+                toRemove.add(pos);
+            }
+        });
+        toRemove.forEach(this.collisionBlocks::remove);
+    }
+
+    public void loadEntityCollisions(PhysicsEntity physics, ClientWorld world) {
+        Box area = physics.getBoundingBox().expand(LOAD_AREA);
+        List<Entity> toKeep = new ArrayList();
+
+        world.getEntities(physics, area).forEach(entity -> {
+            if(!(entity instanceof PhysicsEntity) && !collisionEntities.containsKey(entity)) {
+                Box c = entity.getBoundingBox();
+                Vector3f box = new Vector3f(
+                        ((float) (c.maxX - c.minX) / 2.0F),
+                        ((float) (c.maxY - c.minY) / 2.0F),
+                        ((float) (c.maxZ - c.minZ) / 2.0F));
+                CollisionShape shape = new BoxShape(box);
+
+                Vec3d pos = entity.getPos();
+                Vector3f position = new Vector3f((float) pos.x, (float) pos.y, (float) pos.z);
+
+                DefaultMotionState motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 1, 0, 0), position, 1.0f)));
+                RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(0, motionState, shape, new Vector3f(0, 0, 0));
+                RigidBody body = new RigidBody(ci);
+
+                toKeep.add(entity);
+                this.collisionEntities.put(entity, body);
+                this.dynamicsWorld.addRigidBody(body);
+            }
+        });
+
+        List<Entity> toRemove = new ArrayList();
+        this.collisionEntities.forEach((entity, body) -> {
+            if(!toKeep.contains(entity)) {
+                this.dynamicsWorld.removeRigidBody(body);
+                toRemove.add(entity);
+            }
+        });
+        toRemove.forEach(collisionEntities::remove);
     }
 
     public void add(PhysicsEntity physics) {

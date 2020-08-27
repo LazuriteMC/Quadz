@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.network.entity;
 
+import bluevista.fpvracingmod.client.input.AxisValues;
 import bluevista.fpvracingmod.network.PacketHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -21,11 +22,11 @@ public class DroneEntityC2S {
         PlayerEntity player = context.getPlayer();
 
         int droneID = buf.readInt();
-        float throttle = buf.readFloat();
         Quat4f orientation = PacketHelper.deserializeQuaternion(buf);
         Vector3f position = PacketHelper.deserializeVector3f(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
         Vector3f angularVel = PacketHelper.deserializeVector3f(buf);
+        AxisValues axisValues = AxisValues.deserialize(buf);
 
         context.getTaskQueue().execute(() -> {
             DroneEntity drone = null;
@@ -34,12 +35,12 @@ public class DroneEntityC2S {
                 drone = (DroneEntity) player.world.getEntityById(droneID);
 
             if(drone != null) {
-                drone.setThrottle(throttle);
+                drone.setAxisValues(axisValues);
                 drone.setOrientation(orientation);
                 drone.getRigidBody().setAngularVelocity(angularVel);
                 drone.getRigidBody().setLinearVelocity(linearVel);
 
-                drone.setPos(position.x, position.y, position.z);
+                drone.setPosition(position.x, position.y, position.z);
                 drone.setRigidBodyPos(position);
             }
         });
@@ -49,11 +50,11 @@ public class DroneEntityC2S {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 
         buf.writeInt(drone.getEntityId());
-        buf.writeFloat(drone.getThrottle());
         PacketHelper.serializeQuaternion(buf, drone.getOrientation());
         PacketHelper.serializeVector3f(buf, drone.getRigidBodyPos());
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getLinearVelocity(new Vector3f()));
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getAngularVelocity(new Vector3f()));
+        drone.getAxisValues().serialize(buf);
 
         ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
     }

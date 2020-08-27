@@ -1,5 +1,6 @@
-package bluevista.fpvracingmod.client.math;
+package bluevista.fpvracingmod.math;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.Quaternion;
 
 import javax.vecmath.Quat4f;
@@ -27,6 +28,22 @@ public class QuaternionHelper {
         rot.z = (float) Math.sin(radHalfAngle);
         rot.w = (float) Math.cos(radHalfAngle);
         q.mul(rot);
+    }
+
+    public static void toTag(Quat4f quat, CompoundTag tag) {
+        tag.putFloat("x", quat.x);
+        tag.putFloat("y", quat.y);
+        tag.putFloat("z", quat.z);
+        tag.putFloat("w", quat.w);
+    }
+
+    public static Quat4f fromTag(CompoundTag tag) {
+        Quat4f quat = new Quat4f();
+        quat.set(tag.getFloat("x"),
+                 tag.getFloat("y"),
+                 tag.getFloat("z"),
+                 tag.getFloat("w"));
+        return quat;
     }
 
     public static Quaternion quat4fToQuaternion(Quat4f quat) {

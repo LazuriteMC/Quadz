@@ -1,13 +1,20 @@
 package bluevista.fpvracingmod.server.entities;
 
+import bluevista.fpvracingmod.client.ClientInitializer;
+import bluevista.fpvracingmod.client.input.AxisValues;
 import bluevista.fpvracingmod.client.input.InputTick;
-import bluevista.fpvracingmod.client.math.Matrix4fInject;
-import bluevista.fpvracingmod.client.math.QuaternionHelper;
+import bluevista.fpvracingmod.config.Config;
+import bluevista.fpvracingmod.math.BetaflightHelper;
+import bluevista.fpvracingmod.math.Matrix4fInject;
+import bluevista.fpvracingmod.math.QuaternionHelper;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
@@ -32,6 +39,10 @@ import java.util.List;
 import java.util.UUID;
 
 public class DroneEntity extends PhysicsEntity {
+	public static final UUID NULL_UUID = new UUID(0, 0);
+
+	private final AxisValues axisValues;
+
 	private boolean infiniteTracking;
 	private boolean prevGodMode;
 	private boolean godMode;
@@ -39,23 +50,20 @@ public class DroneEntity extends PhysicsEntity {
 	private int cameraAngle;
 	private int band;
 	private int channel;
-	private float throttle;
 
 	public DroneEntity(EntityType<?> type, World world) {
 		this(world, Vec3d.ZERO, 0);
 	}
 
 	public DroneEntity(World world, Vec3d pos, float yaw) {
-		super(ServerInitializer.DRONE_ENTITY, world);
-		this.setRigidBodyPos(new Vector3f((float) pos.x, (float) pos.y, (float) pos.z));
-		this.setPos(pos.x, pos.y, pos.z);
+		super(ServerInitializer.DRONE_ENTITY, world, pos);
 		this.rotateY(yaw);
 
+		this.axisValues = new AxisValues();
+		this.playerID = NULL_UUID;
 		this.noClip = false;
 		this.godMode = false;
 		this.prevGodMode = this.godMode;
-
-		this.playerID = new UUID(0, 0);
 	}
 
 	@Override
@@ -80,13 +88,39 @@ public class DroneEntity extends PhysicsEntity {
 		}
 	}
 
-	public void stepPhysics() {
-		if(this.getThrottle() > 0.15) {
-			this.getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
-		}
+	@Override
+	@Environment(EnvType.CLIENT)
+	public void stepPhysics(float d) {
+		super.stepPhysics(d);
 
-		Vec3d v = this.getThrustVector().multiply(1, -1, 1).multiply(this.getThrottle()).multiply(thrustNewtons);
-		this.applyForce(new Vector3f((float) v.x, (float) v.y, (float) v.z));
+		MinecraftClient client = MinecraftClient.getInstance();
+		if(TransmitterItem.isBoundTransmitter(client.player.getMainHandStack(), this))
+			axisValues.set(InputTick.axisValues);
+
+		float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
+		float deltaY = (float) BetaflightHelper.calculateRates(axisValues.currY, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
+		float deltaZ = (float) BetaflightHelper.calculateRates(axisValues.currZ, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
+
+		rotateX(deltaX);
+		rotateY(deltaY);
+		rotateZ(deltaZ);
+
+		// TODO make this a method
+		Vector3f angular = getRigidBody().getAngularVelocity(new Vector3f());
+		Vector3f sub = new Vector3f();
+		sub.x = (1-getThrottle()) * angular.x;
+		sub.y = (1-getThrottle()) * angular.y;
+		sub.z = (1-getThrottle()) * angular.z;
+		angular.sub(sub);
+		getRigidBody().setAngularVelocity(angular);
+
+		Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(thrustNewtons);
+		Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
+
+		this.applyForce(
+				new Vector3f((float) thrust.x, (float) thrust.y, (float) thrust.z),
+				new Vector3f((float) yawForce.x, (float) yawForce.y, (float) yawForce.z)
+		);
 	}
 
 	@Override
@@ -147,6 +181,14 @@ public class DroneEntity extends PhysicsEntity {
 			default:
 				return null; // 0?
 		}
+	}
+
+	public void setAxisValues(AxisValues axisValues) {
+		this.axisValues.set(axisValues);
+	}
+
+	public AxisValues getAxisValues() {
+		return this.axisValues;
 	}
 
 	public void setBand(int band) {
@@ -214,7 +256,7 @@ public class DroneEntity extends PhysicsEntity {
 		Matrix4f mat = new Matrix4f();
 		Matrix4fInject.from(mat).fromQuaternion(q);
 
-		return Matrix4fInject.from(mat).matrixToVector();
+		return Matrix4fInject.from(mat).matrixToVector().multiply(-1, -1, -1);
 	}
 
 	/*
@@ -320,11 +362,11 @@ public class DroneEntity extends PhysicsEntity {
 	}
 
 	public float getThrottle() {
-		return throttle;
+		return this.axisValues.currT;
 	}
 
 	public void setThrottle(float throttle) {
-		this.throttle = throttle;
+		this.axisValues.currT = throttle;
 	}
 
 	public void setInfiniteTracking(boolean infiniteTracking) {
@@ -365,6 +407,14 @@ public class DroneEntity extends PhysicsEntity {
 	@Override
 	public Packet<?> createSpawnPacket() {
 		return new EntitySpawnS2CPacket(this);
+	}
+
+	public boolean isFresh() {
+		return this.fresh;
+	}
+
+	public void setNotFresh() {
+		this.fresh = false;
 	}
 
 	public static DroneEntity create(UUID playerID, World world, Vec3d pos, float yaw) {

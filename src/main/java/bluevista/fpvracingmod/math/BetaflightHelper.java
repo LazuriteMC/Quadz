@@ -1,8 +1,6 @@
-package bluevista.fpvracingmod.client.math;
+package bluevista.fpvracingmod.math;
 
 public class BetaflightHelper {
-	
-	// Betaflight rate calculation
 	public static double calculateRates(double rcCommand, double rcRate, double expo, double superRate) {
 	    double absRcCommand = Math.abs(rcCommand);
 		
@@ -24,5 +22,4 @@ public class BetaflightHelper {
     private static double clamp(double n, double minn, double maxn) {
     	return Math.max(Math.min(maxn, n), minn);
     }
-	
 }
