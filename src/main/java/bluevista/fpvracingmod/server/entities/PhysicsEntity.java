@@ -1,7 +1,6 @@
 package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
-import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.math.QuaternionHelper;
 import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.shapes.BoxShape;
@@ -63,7 +62,7 @@ public abstract class PhysicsEntity extends Entity {
     @Environment(EnvType.CLIENT)
     public void stepPhysics(float d) {
         if(playerID != null) {
-            if (!ClientTick.isPlayerIDClient(playerID)) {
+            if (!ClientInitializer.isPlayerIDClient(playerID)) {
                 Vector3f vec = this.getRigidBodyPos();
                 this.resetPosition2(vec.x, vec.y, vec.z);
 
@@ -166,14 +165,14 @@ public abstract class PhysicsEntity extends Entity {
         shape.calculateLocalInertia(this.mass, inertia);
 
         Vec3d pos = this.getPos();
-        Vector3f position = new Vector3f((float) pos.x, (float) pos.y, (float) pos.z);
+        Vector3f position = new Vector3f((float) pos.x, (float) pos.y + 0.125f, (float) pos.z);
 
         DefaultMotionState motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 1, 0, 0), position, 1.0f)));
         RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(this.mass, motionState, shape, inertia);
 
         RigidBody body = new RigidBody(ci);
         body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
-        body.setDamping(linearDamping, 0.9f);
+        body.setDamping(linearDamping, 0);
         return body;
     }
 }

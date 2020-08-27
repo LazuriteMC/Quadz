@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.network;
 
+import bluevista.fpvracingmod.client.input.AxisValues;
 import bluevista.fpvracingmod.config.Config;
 import net.minecraft.network.PacketByteBuf;
 
@@ -72,5 +73,22 @@ public class PacketHelper {
             config.setOption(key, buf.readFloat());
         }
         return config;
+    }
+
+    public static void serializeAxisValues(PacketByteBuf buf, AxisValues axisValues) {
+        buf.writeFloat(axisValues.currT);
+        buf.writeFloat(axisValues.currX);
+        buf.writeFloat(axisValues.currY);
+        buf.writeFloat(axisValues.currZ);
+    }
+
+    public static AxisValues deserializeAxisValues(PacketByteBuf buf) {
+        AxisValues axisValues = new AxisValues();
+        axisValues.set(
+                buf.readFloat(),
+                buf.readFloat(),
+                buf.readFloat(),
+                buf.readFloat());
+        return axisValues;
     }
 }

@@ -39,7 +39,7 @@ public class DroneEntityS2C {
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
         Vector3f angularVel = PacketHelper.deserializeVector3f(buf);
         Quat4f orientation = PacketHelper.deserializeQuaternion(buf);
-        AxisValues axisValues = AxisValues.deserialize(buf);
+        AxisValues axisValues = PacketHelper.deserializeAxisValues(buf);
 
         context.getTaskQueue().execute(() -> {
             DroneEntity drone = null;
@@ -91,7 +91,7 @@ public class DroneEntityS2C {
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getLinearVelocity(new Vector3f()));
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getAngularVelocity(new Vector3f()));
         PacketHelper.serializeQuaternion(buf, drone.getOrientation());
-        drone.getAxisValues().serialize(buf);
+        PacketHelper.serializeAxisValues(buf, drone.getAxisValues());
 
         Stream<PlayerEntity> watchingPlayers = PlayerStream.watching(drone.getEntityWorld(), new BlockPos(drone.getPos()));
         watchingPlayers.forEach(player -> ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, PACKET_ID, buf));

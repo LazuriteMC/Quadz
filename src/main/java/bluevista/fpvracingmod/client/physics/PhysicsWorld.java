@@ -1,7 +1,6 @@
 package bluevista.fpvracingmod.client.physics;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
-import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.server.entities.PhysicsEntity;
 import com.bulletphysics.collision.broadphase.BroadphaseInterface;
 import com.bulletphysics.collision.broadphase.DbvtBroadphase;
@@ -65,17 +64,18 @@ public class PhysicsWorld {
 
     public void stepWorld() {
         float d = clock.getTimeMicroseconds() / 1000000F;
+        float maxSubSteps = 5.0f;
         clock.reset();
 
-        this.dynamicsWorld.stepSimulation(d, 10);
+        // TODO clean old physics entities
+        System.out.println(this.physicsEntities.size());
+        this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
         this.physicsEntities.forEach(physics -> {
-            physics.stepPhysics(d);
-            if(ClientInitializer.physicsWorld != null) {
-                ClientInitializer.physicsWorld.physicsEntities.forEach(entity -> {
-                    ClientInitializer.physicsWorld.loadEntityCollisions(entity, ClientTick.client.world);
-                    ClientInitializer.physicsWorld.loadBlockCollisions(entity, ClientTick.client.world);
-                });
+            if(ClientInitializer.client.world != null) {
+                loadEntityCollisions(physics, ClientInitializer.client.world);
+                loadBlockCollisions(physics, ClientInitializer.client.world);
             }
+            physics.stepPhysics(d);
         });
     }
 

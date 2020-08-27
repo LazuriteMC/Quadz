@@ -26,7 +26,7 @@ public class DroneEntityC2S {
         Vector3f position = PacketHelper.deserializeVector3f(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
         Vector3f angularVel = PacketHelper.deserializeVector3f(buf);
-        AxisValues axisValues = AxisValues.deserialize(buf);
+        AxisValues axisValues = PacketHelper.deserializeAxisValues(buf);
 
         context.getTaskQueue().execute(() -> {
             DroneEntity drone = null;
@@ -54,7 +54,7 @@ public class DroneEntityC2S {
         PacketHelper.serializeVector3f(buf, drone.getRigidBodyPos());
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getLinearVelocity(new Vector3f()));
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getAngularVelocity(new Vector3f()));
-        drone.getAxisValues().serialize(buf);
+        PacketHelper.serializeAxisValues(buf, drone.getAxisValues());
 
         ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
     }

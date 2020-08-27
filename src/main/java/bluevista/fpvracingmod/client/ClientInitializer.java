@@ -18,9 +18,12 @@ import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.UUID;
+
 @Environment(EnvType.CLIENT)
 public class ClientInitializer implements ClientModInitializer {
 
+    public static final MinecraftClient client = MinecraftClient.getInstance();
     public static PhysicsWorld physicsWorld;
     private static Config config;
 
@@ -62,5 +65,13 @@ public class ClientInitializer implements ClientModInitializer {
 
     public static boolean isInGoggles(MinecraftClient client) {
         return client.getCameraEntity() instanceof DroneEntity;
+    }
+
+    public static boolean isPlayerIDClient(UUID playerID) {
+        if(client.player != null) {
+            return playerID.equals(client.player.getUuid());
+        } else {
+            return false;
+        }
     }
 }

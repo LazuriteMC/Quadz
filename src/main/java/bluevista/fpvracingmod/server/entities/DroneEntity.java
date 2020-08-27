@@ -14,7 +14,6 @@ import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
@@ -93,8 +92,7 @@ public class DroneEntity extends PhysicsEntity {
 	public void stepPhysics(float d) {
 		super.stepPhysics(d);
 
-		MinecraftClient client = MinecraftClient.getInstance();
-		if(TransmitterItem.isBoundTransmitter(client.player.getMainHandStack(), this))
+		if(TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this))
 			axisValues.set(InputTick.axisValues);
 
 		float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
@@ -105,18 +103,10 @@ public class DroneEntity extends PhysicsEntity {
 		rotateY(deltaY);
 		rotateZ(deltaZ);
 
-		// TODO make this a method
-		Vector3f angular = getRigidBody().getAngularVelocity(new Vector3f());
-		Vector3f sub = new Vector3f();
-		sub.x = (1-getThrottle()) * angular.x;
-		sub.y = (1-getThrottle()) * angular.y;
-		sub.z = (1-getThrottle()) * angular.z;
-		angular.sub(sub);
-		getRigidBody().setAngularVelocity(angular);
-
 		Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(thrustNewtons);
 		Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
 
+		this.decreaseAngularVelocity();
 		this.applyForce(
 				new Vector3f((float) thrust.x, (float) thrust.y, (float) thrust.z),
 				new Vector3f((float) yawForce.x, (float) yawForce.y, (float) yawForce.z)
@@ -243,6 +233,16 @@ public class DroneEntity extends PhysicsEntity {
 
 	public int getGodMode() {
 		return godMode ? 1 : 0;
+	}
+
+	public void decreaseAngularVelocity() {
+		Vector3f angular = getRigidBody().getAngularVelocity(new Vector3f());
+		Vector3f sub = new Vector3f();
+		sub.x = (1-getThrottle()) * angular.x;
+		sub.y = (1-getThrottle()) * angular.y;
+		sub.z = (1-getThrottle()) * angular.z;
+		angular.sub(sub);
+		getRigidBody().setAngularVelocity(angular);
 	}
 
 	/*
