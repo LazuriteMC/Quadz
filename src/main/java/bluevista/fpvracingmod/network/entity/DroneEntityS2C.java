@@ -31,6 +31,7 @@ public class DroneEntityS2C {
         int band = buf.readInt();
         int channel = buf.readInt();
         int cameraAngle = buf.readInt();
+        float fieldOfView = buf.readFloat();
 
         int godMode = buf.readInt();
         boolean infiniteTracking = buf.readBoolean();
@@ -53,14 +54,13 @@ public class DroneEntityS2C {
                 drone.setBand(band);
                 drone.setChannel(channel);
                 drone.setCameraAngle(cameraAngle);
+                drone.setFieldOfView(fieldOfView);
 
                 drone.setGodMode(godMode);
                 drone.setInfiniteTracking(infiniteTracking);
 
                 if(drone.isFresh() || !drone.playerID.equals(player.getUuid())) { // if any player besides physics-controlling player
                     drone.setAxisValues(axisValues);
-
-                    drone.prevOrientation = orientation;
                     drone.setOrientation(orientation);
                     drone.getRigidBody().setLinearVelocity(linearVel);
                     drone.getRigidBody().setAngularVelocity(angularVel);
@@ -83,6 +83,7 @@ public class DroneEntityS2C {
         buf.writeInt(drone.getBand());
         buf.writeInt(drone.getChannel());
         buf.writeInt(drone.getCameraAngle());
+        buf.writeFloat(drone.getFieldOfView());
 
         buf.writeInt(drone.getGodMode());
         buf.writeBoolean(drone.hasInfiniteTracking());

@@ -32,42 +32,7 @@ public class DroneSpawnerItem extends Item {
 
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
 				DroneEntity drone = DroneEntity.create(user.getUuid(), world, hitResult.getPos(), 180f - user.yaw);
-
-				if (itemStack.getSubTag("frequency") != null && itemStack.getSubTag("frequency").contains("band")) {
-					drone.setBand(itemStack.getSubTag("frequency").getInt("band"));
-				} else {
-					drone.setBand(ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid()).getIntOption(Config.BAND));
-				}
-
-				if (itemStack.getSubTag("frequency") != null && itemStack.getSubTag("frequency").contains("channel")) {
-					drone.setChannel(itemStack.getSubTag("frequency").getInt("channel"));
-				} else {
-					drone.setChannel(ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid()).getIntOption(Config.CHANNEL));
-				}
-
-				if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("cameraAngle")) {
-					drone.setCameraAngle(itemStack.getSubTag("misc").getInt("cameraAngle"));
-				} else {
-					drone.setCameraAngle(ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid()).getIntOption(Config.CAMERA_ANGLE));
-				}
-
-				if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("noClip")) {
-					drone.setNoClip(itemStack.getSubTag("misc").getInt("noClip"));
-				} else {
-					drone.setNoClip(0);
-				}
-
-				if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("prevGodMode")) {
-					drone.setPrevGodMode(itemStack.getSubTag("misc").getInt("prevGodMode"));
-				} else {
-					drone.setPrevGodMode(0);
-				}
-
-				if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("godMode")) {
-					drone.setGodMode(itemStack.getSubTag("misc").getInt("godMode"));
-				} else {
-					drone.setGodMode(0);
-				}
+				prepSpawnedDrone(user, drone);
 
 				itemStack.decrement(1);
 				itemStack = new ItemStack(Items.AIR);
@@ -79,22 +44,24 @@ public class DroneSpawnerItem extends Item {
 
 	public static void setValue(ItemStack itemStack, String key, Number value) {
 		switch (key) {
-			case "band":
+			case Config.BAND:
 				setBand(itemStack, value.intValue());
 				break;
-			case "channel":
+			case Config.CHANNEL:
 				setChannel(itemStack, value.intValue());
 				break;
-			case "cameraAngle":
+			case Config.CAMERA_ANGLE:
 				setCameraAngle(itemStack, value.intValue());
 				break;
-			case "noClip":
+			case Config.FIELD_OF_VIEW:
+				setFieldOfView(itemStack, value.floatValue());
+			case Config.NO_CLIP:
 				setNoClip(itemStack, value.intValue());
 				break;
-			case "prevGodMode":
+			case Config.PREV_GOD_MODE:
 				setPrevGodMode(itemStack, value.intValue());
 				break;
-			case "godMode":
+			case Config.GOD_MODE:
 				setGodMode(itemStack, value.intValue());
 				break;
 			default:
@@ -104,17 +71,19 @@ public class DroneSpawnerItem extends Item {
 
 	public static Number getValue(ItemStack itemStack, String key) {
 		switch (key) {
-			case "band":
+			case Config.BAND:
 				return getBand(itemStack);
-			case "channel":
+			case Config.CHANNEL:
 				return getChannel(itemStack);
-			case "cameraAngle":
+			case Config.CAMERA_ANGLE:
 				return getCameraAngle(itemStack);
-			case "noClip":
+			case Config.FIELD_OF_VIEW:
+				return getFieldOfView(itemStack);
+			case Config.NO_CLIP:
 				return getNoClip(itemStack);
-			case "prevGodMode":
+			case Config.PREV_GOD_MODE:
 				return getPrevGodMode(itemStack);
-			case "godMode":
+			case Config.GOD_MODE:
 				return getGodMode(itemStack);
 			default:
 				return null; // 0?
@@ -122,40 +91,51 @@ public class DroneSpawnerItem extends Item {
 	}
 
 	public static void setBand(ItemStack itemStack, int band) {
-		itemStack.getOrCreateSubTag("frequency").putInt("band", band);
+		itemStack.getOrCreateSubTag(Config.FREQUENCY).putInt(Config.BAND, band);
 	}
 
 	public static int getBand(ItemStack itemStack) {
-		if (itemStack.getSubTag("frequency") != null && itemStack.getSubTag("frequency").contains("band")) {
-			return itemStack.getSubTag("frequency").getInt("band");
+		if (itemStack.getSubTag(Config.FREQUENCY) != null && itemStack.getSubTag(Config.FREQUENCY).contains(Config.BAND)) {
+			return itemStack.getSubTag(Config.FREQUENCY).getInt(Config.BAND);
 		}
 		return 0;
 	}
 
 	public static void setChannel(ItemStack itemStack, int channel) {
-		itemStack.getOrCreateSubTag("frequency").putInt("channel", channel);
+		itemStack.getOrCreateSubTag(Config.FREQUENCY).putInt(Config.CHANNEL, channel);
 	}
 
 	public static int getChannel(ItemStack itemStack) {
-		if (itemStack.getSubTag("frequency") != null && itemStack.getSubTag("frequency").contains("channel")) {
-			return itemStack.getSubTag("frequency").getInt("channel");
+		if (itemStack.getSubTag(Config.FREQUENCY) != null && itemStack.getSubTag(Config.FREQUENCY).contains(Config.CHANNEL)) {
+			return itemStack.getSubTag(Config.FREQUENCY).getInt(Config.CHANNEL);
 		}
 		return 0;
 	}
 
 	public static void setCameraAngle(ItemStack itemStack, int angle) {
-		itemStack.getOrCreateSubTag("misc").putInt("cameraAngle", angle);
+		itemStack.getOrCreateSubTag(Config.MISC).putInt(Config.CAMERA_ANGLE, angle);
 	}
 
 	public static int getCameraAngle(ItemStack itemStack) {
-		if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("cameraAngle")) {
-			return itemStack.getSubTag("misc").getInt("cameraAngle");
+		if (itemStack.getSubTag(Config.MISC) != null && itemStack.getSubTag(Config.MISC).contains(Config.CAMERA_ANGLE)) {
+			return itemStack.getSubTag(Config.MISC).getInt(Config.CAMERA_ANGLE);
+		}
+		return 0;
+	}
+
+	public static void setFieldOfView(ItemStack itemStack, float fieldOfView) {
+		itemStack.getOrCreateSubTag(Config.MISC).putFloat(Config.FIELD_OF_VIEW, fieldOfView);
+	}
+
+	public static float getFieldOfView(ItemStack itemStack) {
+		if (itemStack.getSubTag(Config.MISC) != null && itemStack.getSubTag(Config.MISC).contains(Config.FIELD_OF_VIEW)) {
+			return itemStack.getSubTag(Config.MISC).getFloat(Config.FIELD_OF_VIEW);
 		}
 		return 0;
 	}
 
 	public static void setNoClip(ItemStack itemStack, int noClip) {
-		itemStack.getOrCreateSubTag("misc").putInt("noClip", noClip);
+		itemStack.getOrCreateSubTag(Config.MISC).putInt(Config.NO_CLIP, noClip);
 		if (getNoClip(itemStack) == 1) {
 			setPrevGodMode(itemStack, getGodMode(itemStack));
 			setGodMode(itemStack, getNoClip(itemStack));
@@ -165,32 +145,83 @@ public class DroneSpawnerItem extends Item {
 	}
 
 	public static int getNoClip(ItemStack itemStack) {
-		if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("noClip")) {
-			return itemStack.getSubTag("misc").getInt("noClip");
+		if (itemStack.getSubTag(Config.MISC) != null && itemStack.getSubTag(Config.MISC).contains(Config.NO_CLIP)) {
+			return itemStack.getSubTag(Config.MISC).getInt(Config.NO_CLIP);
 		}
 		return 0;
 	}
 
 	public static void setPrevGodMode(ItemStack itemStack, int godMode) {
-		itemStack.getOrCreateSubTag("misc").putInt("prevGodMode", godMode);
+		itemStack.getOrCreateSubTag(Config.MISC).putInt(Config.PREV_GOD_MODE, godMode);
 	}
 
 	public static int getPrevGodMode(ItemStack itemStack) {
-		if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("prevGodMode")) {
-			return itemStack.getSubTag("misc").getInt("prevGodMode");
+		if (itemStack.getSubTag(Config.MISC) != null && itemStack.getSubTag(Config.MISC).contains(Config.PREV_GOD_MODE)) {
+			return itemStack.getSubTag(Config.MISC).getInt(Config.PREV_GOD_MODE);
 		}
 		return 0;
 	}
 
 	public static void setGodMode(ItemStack itemStack, int godMode) {
-		itemStack.getOrCreateSubTag("misc").putInt("godMode", godMode);
+		itemStack.getOrCreateSubTag(Config.MISC).putInt(Config.GOD_MODE, godMode);
 	}
 
 	public static int getGodMode(ItemStack itemStack) {
-		if (itemStack.getSubTag("misc") != null && itemStack.getSubTag("misc").contains("godMode")) {
-			return itemStack.getSubTag("misc").getInt("godMode");
+		if (itemStack.getSubTag(Config.MISC) != null && itemStack.getSubTag(Config.MISC).contains(Config.GOD_MODE)) {
+			return itemStack.getSubTag(Config.MISC).getInt(Config.GOD_MODE);
 		}
 		return 0;
+	}
+
+	private void prepSpawnedDrone(PlayerEntity user, DroneEntity drone) {
+		ItemStack itemStack = user.getMainHandStack();
+		Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid());
+
+		if (itemStack.getSubTag(Config.FREQUENCY) != null && itemStack.getSubTag(Config.FREQUENCY).contains(Config.BAND)) {
+			drone.setBand(itemStack.getSubTag(Config.FREQUENCY).getInt(Config.BAND));
+		} else {
+			drone.setBand(config.getIntOption(Config.BAND));
+		}
+
+		if (itemStack.getSubTag(Config.FREQUENCY) != null && itemStack.getSubTag(Config.FREQUENCY).contains(Config.CHANNEL)) {
+			drone.setChannel(itemStack.getSubTag(Config.FREQUENCY).getInt(Config.CHANNEL));
+		} else {
+			drone.setChannel(config.getIntOption(Config.CHANNEL));
+		}
+
+		if (itemStack.getSubTag(Config.MISC) != null && itemStack.getSubTag(Config.MISC).contains(Config.CAMERA_ANGLE)) {
+			drone.setCameraAngle(itemStack.getSubTag(Config.MISC).getInt(Config.CAMERA_ANGLE));
+		} else {
+			drone.setCameraAngle(config.getIntOption(Config.CAMERA_ANGLE));
+		}
+
+		if (itemStack.getSubTag(Config.MISC) != null && itemStack.getSubTag(Config.MISC).contains(Config.FIELD_OF_VIEW)) {
+			drone.setFieldOfView(itemStack.getSubTag(Config.MISC).getInt(Config.FIELD_OF_VIEW));
+		} else {
+			drone.setFieldOfView(config.getFloatOption(Config.FIELD_OF_VIEW));
+		}
+
+		if (itemStack.getSubTag(Config.MISC) != null && itemStack.getSubTag(Config.MISC).contains(Config.NO_CLIP)) {
+			drone.setNoClip(itemStack.getSubTag(Config.MISC).getInt(Config.NO_CLIP));
+		}
+
+		if (itemStack.getSubTag(Config.MISC) != null && itemStack.getSubTag(Config.MISC).contains(Config.PREV_GOD_MODE)) {
+			drone.setPrevGodMode(itemStack.getSubTag(Config.MISC).getInt(Config.PREV_GOD_MODE));
+		}
+
+		if (itemStack.getSubTag(Config.MISC) != null && itemStack.getSubTag(Config.MISC).contains(Config.GOD_MODE)) {
+			drone.setGodMode(itemStack.getSubTag(Config.MISC).getInt(Config.GOD_MODE));
+		}
+	}
+
+	public static void prepDestroyedDrone(DroneEntity drone, ItemStack itemStack) {
+		DroneSpawnerItem.setBand(itemStack, drone.getBand());
+		DroneSpawnerItem.setChannel(itemStack, drone.getChannel());
+		DroneSpawnerItem.setCameraAngle(itemStack, drone.getCameraAngle());
+		DroneSpawnerItem.setFieldOfView(itemStack, drone.getFieldOfView());
+		DroneSpawnerItem.setNoClip(itemStack, drone.getNoClip());
+		DroneSpawnerItem.setPrevGodMode(itemStack, drone.getPrevGodMode());
+		DroneSpawnerItem.setGodMode(itemStack, drone.getGodMode());
 	}
 }
 

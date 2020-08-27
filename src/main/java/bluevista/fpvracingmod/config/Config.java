@@ -1,17 +1,25 @@
 package bluevista.fpvracingmod.config;
 
-import bluevista.fpvracingmod.network.PacketHelper;
-import net.minecraft.network.PacketByteBuf;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 public class Config {
 
-    public static final String ALL = "all"; // used to represent all config options
+    // For dealing with item tags for item specific configuration
+    public static final String FREQUENCY = "frequency";
+    public static final String MISC = "misc";
+    public static final String ON = "on";
+    public static final String BIND = "bind";
+    public static final String NO_CLIP = "noClip";
+    public static final String PREV_GOD_MODE = "prevGodMode" ;
+    public static final String GOD_MODE = "godMode";
+
+    // For dealing with the config file items
     public static final String WRITE = "write"; // used to write config options to local config file
     public static final String REVERT = "revert"; // used to revert the config to its initial state
+
+    public static final String ALL = "all"; // used to represent all config options
 
     public static final String CONTROLLER_ID = "controllerID";
     public static final String THROTTLE = "throttle";
@@ -28,6 +36,7 @@ public class Config {
     public static final String INVERT_YAW = "invertYaw";
     public static final String INVERT_ROLL = "invertRoll";
     public static final String CAMERA_ANGLE = "cameraAngle";
+    public static final String FIELD_OF_VIEW = "fieldOfView";
     public static final String BAND = "band";
     public static final String CHANNEL = "channel";
 
@@ -47,6 +56,7 @@ public class Config {
             INVERT_YAW,
             INVERT_ROLL,
             CAMERA_ANGLE,
+            FIELD_OF_VIEW,
             BAND,
             CHANNEL
     );
@@ -71,7 +81,8 @@ public class Config {
             DEADZONE,
             RATE,
             SUPER_RATE,
-            EXPO
+            EXPO,
+            FIELD_OF_VIEW
     );
 
     private HashMap<String, Number> options;

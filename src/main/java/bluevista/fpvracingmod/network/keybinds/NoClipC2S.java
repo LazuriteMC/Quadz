@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.network.keybinds;
 
+import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
@@ -23,8 +24,8 @@ public class NoClipC2S {
 
         context.getTaskQueue().execute(() -> {
             if(hand.getItem() instanceof TransmitterItem) {
-                if(hand.getSubTag("bind") != null) {
-                    DroneEntity drone = DroneEntity.getByUuid(context.getPlayer(), hand.getSubTag("bind").getUuid("bind"));
+                if(hand.getSubTag(Config.BIND) != null) {
+                    DroneEntity drone = DroneEntity.getByUuid(context.getPlayer(), hand.getSubTag(Config.BIND).getUuid(Config.BIND));
 
                     if(drone != null) {
                         drone.setNoClip(drone.getNoClip() == 1 ? 0 : 1);
