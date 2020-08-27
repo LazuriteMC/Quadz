@@ -64,11 +64,10 @@ public class PhysicsWorld {
 
     public void stepWorld() {
         float d = clock.getTimeMicroseconds() / 1000000F;
-        float maxSubSteps = 5.0f;
+        float maxSubSteps = 10.0f;
         clock.reset();
 
         // TODO clean old physics entities
-        System.out.println(this.physicsEntities.size());
         this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
         this.physicsEntities.forEach(physics -> {
             if(ClientInitializer.client.world != null) {

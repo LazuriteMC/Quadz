@@ -266,8 +266,17 @@ public class DroneEntity extends PhysicsEntity {
 	 * of the drone is facing. Returned in vector form.
 	 */
 	public Vec3d getThrustVector() {
-		Quat4f q = new Quat4f(getOrientation());
+		Quat4f q = getOrientation();
 		QuaternionHelper.rotateX(q, 90);
+
+		Matrix4f mat = new Matrix4f();
+		Matrix4fInject.from(mat).fromQuaternion(q);
+
+		return Matrix4fInject.from(mat).matrixToVector().multiply(-1, -1, -1);
+	}
+
+	public Vec3d getHeading() {
+		Quat4f q = getOrientation();
 
 		Matrix4f mat = new Matrix4f();
 		Matrix4fInject.from(mat).fromQuaternion(q);
