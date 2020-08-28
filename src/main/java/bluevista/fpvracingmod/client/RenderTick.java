@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.client;
 
-import bluevista.fpvracingmod.client.math.QuaternionHelper;
+import bluevista.fpvracingmod.math.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -14,21 +14,23 @@ import javax.vecmath.Quat4f;
 @Environment(EnvType.CLIENT)
 public class RenderTick {
     public static void tick(MinecraftClient client, MatrixStack stack) {
-        Entity entity = client.getCameraEntity();
+        if (!client.isPaused()) {
+            Entity entity = client.getCameraEntity();
 
-        if(ClientInitializer.physicsWorld != null && !client.isPaused())
-            ClientInitializer.physicsWorld.stepWorld();
+            if (ClientInitializer.physicsWorld != null)
+                ClientInitializer.physicsWorld.stepWorld();
 
-        if(entity instanceof DroneEntity) {
-            DroneEntity drone = (DroneEntity) entity;
+            if (entity instanceof DroneEntity) {
+                DroneEntity drone = (DroneEntity) entity;
 
-            Quat4f q = drone.getOrientation();
-            QuaternionHelper.rotateX(q, drone.getCameraAngle());
+                Quat4f q = drone.getOrientation();
+                Quat4f newQ = new Quat4f();
+                newQ.set(q.x, -q.y, q.z, -q.w);
 
-            Matrix4f newMat = new Matrix4f(QuaternionHelper.quat4fToQuaternion(q));
-            Matrix4f screenMat = stack.peek().getModel();
-            newMat.transpose();
-            screenMat.multiply(newMat);
+                Matrix4f newMat = new Matrix4f(QuaternionHelper.quat4fToQuaternion(newQ));
+                newMat.transpose();
+                stack.peek().getModel().multiply(newMat);
+            }
         }
     }
 }

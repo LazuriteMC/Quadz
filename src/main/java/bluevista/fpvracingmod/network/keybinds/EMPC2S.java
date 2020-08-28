@@ -22,7 +22,7 @@ public class EMPC2S {
         int r = buf.readInt();
 
         context.getTaskQueue().execute(() -> {
-            List<Entity> entities = p.getEntityWorld().getEntities(p, p.getBoundingBox().expand(r, r, r));
+            List<Entity> entities = p.getEntityWorld().getEntities(p, p.getBoundingBox().expand(r));
             int kill = 0;
 
             for (Entity e : entities) {

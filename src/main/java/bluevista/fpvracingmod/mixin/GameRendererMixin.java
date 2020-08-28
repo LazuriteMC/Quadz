@@ -1,7 +1,6 @@
 package bluevista.fpvracingmod.mixin;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
-import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.client.RenderTick;
 import bluevista.fpvracingmod.client.input.InputTick;
 import net.minecraft.client.MinecraftClient;
@@ -24,8 +23,8 @@ public class GameRendererMixin {
 	 */
 	@Inject(at = @At("HEAD"), method = "renderWorld")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
+		InputTick.tick();
 		RenderTick.tick(client, matrix);
-		InputTick.tick(ClientTick.boundDrone);
 	}
 
 	/*
