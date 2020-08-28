@@ -7,15 +7,34 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.math.Quaternion;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 	@Shadow MinecraftClient client;
+
+	@Redirect(
+			method = "renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lnet/minecraft/util/math/Quaternion;)V",
+					ordinal = 3
+			)
+	)
+	public void multiply(MatrixStack stack, Quaternion quat) {
+		if(ClientInitializer.isInGoggles(client)) {
+			stack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180));
+		} else {
+			stack.multiply(quat);
+		}
+	}
 
 	/*
 	 * Call the RenderTick#tick and InputTick#tick methods within renderWorld.

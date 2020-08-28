@@ -39,7 +39,7 @@ public abstract class PhysicsEntity extends Entity {
 
         this.mass = 0.750f; // Get from config
         this.linearDamping = 0.3f; // Get from config
-        this.thrustNewtons = 50.0f; // Get from config
+        this.thrustNewtons = 45.0f; // Get from config
 
         this.setPosition(pos.x, pos.y, pos.z);
 
