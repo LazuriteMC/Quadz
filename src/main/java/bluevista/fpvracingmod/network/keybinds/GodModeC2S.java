@@ -23,6 +23,8 @@ public class GodModeC2S {
         ItemStack hand = player.getMainHandStack();
 
         context.getTaskQueue().execute(() -> {
+            String t;
+
             if(hand.getItem() instanceof TransmitterItem) {
                 if(hand.getSubTag(Config.BIND) != null) {
                     DroneEntity drone = DroneEntity.getByUuid(context.getPlayer(), hand.getSubTag(Config.BIND).getUuid(Config.BIND));
@@ -30,19 +32,23 @@ public class GodModeC2S {
                     if(drone != null) {
                         drone.setGodMode(drone.getGodMode() == 1 ? 0 : 1);
 
-                        String t;
-                        if(drone.getGodMode() == 1) t = "God Mode Enabled";
-                        else t = "God Mode Disabled";
+                        if (drone.getGodMode() == 1) {
+                            t = "God Mode Enabled";
+                        } else {
+                            t = "God Mode Disabled";
+                        }
 
                         player.sendMessage(new TranslatableText(t), false);
                     }
                 }
             } else if (hand.getItem() instanceof DroneSpawnerItem) {
-                DroneSpawnerItem.setGodMode(hand, DroneSpawnerItem.getGodMode(hand) == 0 ? 1 : 0);
+                DroneSpawnerItem.setValue(hand, Config.GOD_MODE, DroneSpawnerItem.getValue(hand, Config.GOD_MODE) != null && DroneSpawnerItem.getValue(hand, Config.GOD_MODE).intValue() == 0 ? 1 : 0);
 
-                String t;
-                if(DroneSpawnerItem.getGodMode(hand) == 1) t = "God Mode Enabled";
-                else t = "God Mode Disabled";
+                if (DroneSpawnerItem.getValue(hand, Config.GOD_MODE) != null && DroneSpawnerItem.getValue(hand, Config.GOD_MODE).intValue() == 1) {
+                    t = "God Mode Enabled";
+                } else {
+                    t = "God Mode Disabled";
+                }
 
                 player.sendMessage(new TranslatableText(t), false);
             }
