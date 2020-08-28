@@ -116,11 +116,13 @@ public class DroneEntity extends PhysicsEntity {
 
 	@Override
 	protected void readCustomDataFromTag(CompoundTag tag) {
-		band = tag.getInt(Config.BAND);
-		channel = tag.getInt(Config.CHANNEL);
-		cameraAngle = tag.getInt(Config.CAMERA_ANGLE);
-		fieldOfView = tag.getFloat(Config.FIELD_OF_VIEW);
-		godMode = tag.getInt(Config.GOD_MODE) == 1;
+		setBand(tag.getInt(Config.BAND));
+		setChannel(tag.getInt(Config.CHANNEL));
+		setCameraAngle(tag.getInt(Config.CAMERA_ANGLE));
+		setFieldOfView(tag.getInt(Config.FIELD_OF_VIEW));
+
+		// don't retrieve noCLip or prevGodMode because they weren't written (reason in writeCustomDataToTag)
+		setGodMode(tag.getInt(Config.GOD_MODE));
 	}
 
 	@Override
@@ -129,6 +131,10 @@ public class DroneEntity extends PhysicsEntity {
 		tag.putInt(Config.CHANNEL, getChannel());
 		tag.putInt(Config.CAMERA_ANGLE, getCameraAngle());
 		tag.putFloat(Config.FIELD_OF_VIEW, getFieldOfView());
+
+		// don't write noClip or prevGodMode because...
+		// noClip shouldn't be preserved after a restart (your drone may fall through the world) and ...
+		// prevGodMode is only used when noClip is set, keeping this value between restarts isn't required
 		tag.putInt(Config.GOD_MODE, getGodMode());
 	}
 

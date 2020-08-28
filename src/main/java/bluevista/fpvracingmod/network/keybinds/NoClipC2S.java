@@ -23,6 +23,8 @@ public class NoClipC2S {
         ItemStack hand = player.getMainHandStack();
 
         context.getTaskQueue().execute(() -> {
+            String t;
+
             if(hand.getItem() instanceof TransmitterItem) {
                 if(hand.getSubTag(Config.BIND) != null) {
                     DroneEntity drone = DroneEntity.getByUuid(context.getPlayer(), hand.getSubTag(Config.BIND).getUuid(Config.BIND));
@@ -30,19 +32,23 @@ public class NoClipC2S {
                     if(drone != null) {
                         drone.setNoClip(drone.getNoClip() == 1 ? 0 : 1);
 
-                        String t;
-                        if(drone.getNoClip() == 1) t = "No Clip Enabled";
-                        else t = "No Clip Disabled";
+                        if (drone.getNoClip() == 1) {
+                            t = "No Clip Enabled";
+                        } else {
+                            t = "No Clip Disabled";
+                        }
 
                         player.sendMessage(new TranslatableText(t), false);
                     }
                 }
             } else if (hand.getItem() instanceof DroneSpawnerItem) {
-                DroneSpawnerItem.setNoClip(hand, DroneSpawnerItem.getNoClip(hand) == 0 ? 1 : 0);
+                DroneSpawnerItem.setValue(hand, Config.NO_CLIP, DroneSpawnerItem.getValue(hand, Config.NO_CLIP) != null && DroneSpawnerItem.getValue(hand, Config.NO_CLIP).intValue() == 0 ? 1 : 0);
 
-                String t;
-                if(DroneSpawnerItem.getNoClip(hand) == 1) t = "No Clip Enabled";
-                else t = "No Clip Disabled";
+                if (DroneSpawnerItem.getValue(hand, Config.NO_CLIP) != null && DroneSpawnerItem.getValue(hand, Config.NO_CLIP).intValue() == 1) {
+                    t = "No Clip Enabled";
+                } else {
+                    t = "No Clip Disabled";
+                }
 
                 player.sendMessage(new TranslatableText(t), false);
             }
