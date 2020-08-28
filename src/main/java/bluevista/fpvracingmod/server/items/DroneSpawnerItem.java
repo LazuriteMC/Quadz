@@ -43,7 +43,7 @@ public class DroneSpawnerItem extends Item {
 		return TypedActionResult.success(itemStack);
 	}
 
-	public static void setValue(ItemStack itemStack, String key, Number value) {
+	public static void setTagValue(ItemStack itemStack, String key, Number value) {
 		if (value != null) {
 			switch (key) {
 				case Config.BAND:
@@ -57,14 +57,15 @@ public class DroneSpawnerItem extends Item {
 					break;
 				case Config.FIELD_OF_VIEW:
 					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putFloat(Config.FIELD_OF_VIEW, value.floatValue());
+					break;
 				case Config.NO_CLIP:
 					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putInt(Config.NO_CLIP, value.intValue());
 
-					if (getValue(itemStack, Config.NO_CLIP).intValue() == 1) {
-						setValue(itemStack, Config.PREV_GOD_MODE, getValue(itemStack, Config.GOD_MODE));
-						setValue(itemStack, Config.GOD_MODE, 1);
+					if (getTagValue(itemStack, Config.NO_CLIP).intValue() == 1) {
+						setTagValue(itemStack, Config.PREV_GOD_MODE, getTagValue(itemStack, Config.GOD_MODE));
+						setTagValue(itemStack, Config.GOD_MODE, 1);
 					} else {
-						setValue(itemStack, Config.GOD_MODE, getValue(itemStack, Config.PREV_GOD_MODE));
+						setTagValue(itemStack, Config.GOD_MODE, getTagValue(itemStack, Config.PREV_GOD_MODE));
 					}
 					break;
 				case Config.PREV_GOD_MODE:
@@ -78,11 +79,11 @@ public class DroneSpawnerItem extends Item {
 			}
 
 		} else {
-			setValue(itemStack, key, 0);
+			setTagValue(itemStack, key, 0);
 		}
 	}
 
-	public static Number getValue(ItemStack itemStack, String key) {
+	public static Number getTagValue(ItemStack itemStack, String key) {
 		if (itemStack.getSubTag(ServerInitializer.MODID) != null && itemStack.getSubTag(ServerInitializer.MODID).contains(key)) {
 			CompoundTag tag = itemStack.getSubTag(ServerInitializer.MODID);
 			switch (key) {
@@ -112,38 +113,45 @@ public class DroneSpawnerItem extends Item {
 		ItemStack itemStack = user.getMainHandStack();
 		Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid());
 
-		drone.setBand(			DroneSpawnerItem.getValue(itemStack, Config.BAND)			!= null ? DroneSpawnerItem.getValue(itemStack, Config.BAND).intValue()				: config.getIntOption(Config.BAND));
-		drone.setChannel(		DroneSpawnerItem.getValue(itemStack, Config.CHANNEL)		!= null ? DroneSpawnerItem.getValue(itemStack, Config.CHANNEL).intValue()			: config.getIntOption(Config.CHANNEL));
-		drone.setCameraAngle(	DroneSpawnerItem.getValue(itemStack, Config.CAMERA_ANGLE)	!= null ? DroneSpawnerItem.getValue(itemStack, Config.CAMERA_ANGLE).intValue()		: config.getIntOption(Config.CAMERA_ANGLE));
-		drone.setFieldOfView(	DroneSpawnerItem.getValue(itemStack, Config.FIELD_OF_VIEW)	!= null ? DroneSpawnerItem.getValue(itemStack, Config.FIELD_OF_VIEW).floatValue()	: config.getFloatOption(Config.FIELD_OF_VIEW));
+		drone.setBand(			DroneSpawnerItem.getTagValue(itemStack, Config.BAND)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.BAND).intValue()				: config.getIntOption(Config.BAND));
+		drone.setChannel(		DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL).intValue()			: config.getIntOption(Config.CHANNEL));
+		drone.setCameraAngle(	DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE).intValue()		: config.getIntOption(Config.CAMERA_ANGLE));
+		drone.setFieldOfView(	DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW).floatValue()	: config.getFloatOption(Config.FIELD_OF_VIEW));
 
 		// config doesn't contain values for these, setting to default values if itemStack doesn't contain the value
-		drone.setNoClip(		DroneSpawnerItem.getValue(itemStack, Config.NO_CLIP)		!= null ? DroneSpawnerItem.getValue(itemStack, Config.NO_CLIP).intValue()			: 0);
-		drone.setPrevGodMode(	DroneSpawnerItem.getValue(itemStack, Config.PREV_GOD_MODE)	!= null ? DroneSpawnerItem.getValue(itemStack, Config.PREV_GOD_MODE).intValue()		: 0);
-		drone.setGodMode(		DroneSpawnerItem.getValue(itemStack, Config.GOD_MODE)		!= null ? DroneSpawnerItem.getValue(itemStack, Config.GOD_MODE).intValue()			: 0);
+		drone.setNoClip(		DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP).intValue()			: 0);
+		drone.setPrevGodMode(	DroneSpawnerItem.getTagValue(itemStack, Config.PREV_GOD_MODE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.PREV_GOD_MODE).intValue()		: 0);
+		drone.setGodMode(		DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE).intValue()			: 0);
 	}
 
 	public static void prepDestroyedDrone(DroneEntity drone, ItemStack itemStack) {
-		DroneSpawnerItem.setValue(itemStack, Config.BAND,			drone.getBand());
-		DroneSpawnerItem.setValue(itemStack, Config.CHANNEL,		drone.getChannel());
-		DroneSpawnerItem.setValue(itemStack, Config.CAMERA_ANGLE,	drone.getCameraAngle());
-		DroneSpawnerItem.setValue(itemStack, Config.FIELD_OF_VIEW,	drone.getFieldOfView());
-		DroneSpawnerItem.setValue(itemStack, Config.NO_CLIP,		drone.getNoClip());
-		DroneSpawnerItem.setValue(itemStack, Config.PREV_GOD_MODE,	drone.getPrevGodMode());
-		DroneSpawnerItem.setValue(itemStack, Config.GOD_MODE,		drone.getGodMode());
+		DroneSpawnerItem.setTagValue(itemStack, Config.BAND,			drone.getBand());
+		DroneSpawnerItem.setTagValue(itemStack, Config.CHANNEL,		drone.getChannel());
+		DroneSpawnerItem.setTagValue(itemStack, Config.CAMERA_ANGLE,	drone.getCameraAngle());
+		DroneSpawnerItem.setTagValue(itemStack, Config.FIELD_OF_VIEW,	drone.getFieldOfView());
+		DroneSpawnerItem.setTagValue(itemStack, Config.NO_CLIP,		drone.getNoClip());
+		DroneSpawnerItem.setTagValue(itemStack, Config.PREV_GOD_MODE,	drone.getPrevGodMode());
+		DroneSpawnerItem.setTagValue(itemStack, Config.GOD_MODE,		drone.getGodMode());
 	}
 
 	public static void prepDroneSpawnerItem(PlayerEntity user, ItemStack itemStack) {
 		Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid());
 
-		DroneSpawnerItem.setValue(itemStack, Config.BAND,			config.getIntOption(Config.BAND));
-		DroneSpawnerItem.setValue(itemStack, Config.CHANNEL,		config.getIntOption(Config.CHANNEL));
-		DroneSpawnerItem.setValue(itemStack, Config.CAMERA_ANGLE,	config.getIntOption(Config.CAMERA_ANGLE));
-		DroneSpawnerItem.setValue(itemStack, Config.FIELD_OF_VIEW,	config.getFloatOption(Config.FIELD_OF_VIEW));
+		String[] keys = {Config.BAND, Config.CHANNEL, Config.CAMERA_ANGLE, Config.FIELD_OF_VIEW};
+
+		for (String key : keys) {
+			if (DroneSpawnerItem.getTagValue(itemStack, key) == null) {
+				DroneSpawnerItem.setTagValue(itemStack, key, config.getOption(key));
+			}
+		}
 
 		// config doesn't contain values for these, setting to default values
-		DroneSpawnerItem.setValue(itemStack, Config.NO_CLIP, 0);
-		DroneSpawnerItem.setValue(itemStack, Config.PREV_GOD_MODE, 0);
-		DroneSpawnerItem.setValue(itemStack, Config.GOD_MODE, 0);
+		keys = new String[] {Config.NO_CLIP, Config.PREV_GOD_MODE, Config.GOD_MODE};
+
+		for (String key : keys) {
+			if (DroneSpawnerItem.getTagValue(itemStack, key) == null) {
+				DroneSpawnerItem.setTagValue(itemStack, key, 0);
+			}
+		}
 	}
 }

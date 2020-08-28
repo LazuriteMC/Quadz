@@ -1,9 +1,8 @@
-package bluevista.fpvracingmod.server.commands;
+package bluevista.fpvracingmod.server;
 
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.network.config.ConfigS2C;
 import bluevista.fpvracingmod.config.Config;
-import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -26,7 +25,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
 
-public class FPVRacing {
+public class Commands {
 
     private static class NumberArgumentType implements ArgumentType<Number> {
 
@@ -269,11 +268,11 @@ public class FPVRacing {
             final ItemStack stack = player.getMainHandStack();
 
             if (stack.getItem() instanceof DroneSpawnerItem) {
-                if (value.equals(DroneSpawnerItem.getValue(stack, key))) {
+                if (value.equals(DroneSpawnerItem.getTagValue(stack, key))) {
                     getDroneValue(context, key);
                     return 0;
                 } else {
-                    DroneSpawnerItem.setValue(stack, key, value);
+                    DroneSpawnerItem.setTagValue(stack, key, value);
                     getDroneValue(context, key);
                     return 1;
                 }
@@ -303,7 +302,7 @@ public class FPVRacing {
             final ItemStack stack = player.getMainHandStack();
 
             if (stack.getItem() instanceof DroneSpawnerItem) {
-                player.sendMessage(new LiteralText(key + ": " + DroneSpawnerItem.getValue(stack, key)), false);
+                player.sendMessage(new LiteralText(key + ": " + DroneSpawnerItem.getTagValue(stack, key)), false);
                 return 1;
             } else if (stack.getItem() instanceof TransmitterItem) {
                 DroneEntity drone = TransmitterItem.droneFromTransmitter(stack, player);
@@ -329,20 +328,20 @@ public class FPVRacing {
             final ItemStack helmet = player.inventory.armor.get(3);
 
             if (stack.getItem() instanceof GogglesItem) {
-                if (value.equals(GogglesItem.getValue(stack, key))) {
+                if (value.equals(GogglesItem.getTagValue(stack, key))) {
                     getGogglesValue(context, key);
                     return 0;
                 } else {
-                    GogglesItem.setValue(stack, key, value);
+                    GogglesItem.setTagValue(stack, key, value);
                     getGogglesValue(context, key);
                     return 1;
                 }
             } else if (helmet.getItem() instanceof GogglesItem) {
-                if (value.equals(GogglesItem.getValue(helmet, key))) {
+                if (value.equals(GogglesItem.getTagValue(helmet, key))) {
                     getGogglesValue(context, key);
                     return 0;
                 } else {
-                    GogglesItem.setValue(stack, key, value);
+                    GogglesItem.setTagValue(stack, key, value);
                     getGogglesValue(context, key);
                     return 1;
                 }
@@ -363,10 +362,10 @@ public class FPVRacing {
             final ItemStack helmet = player.inventory.armor.get(3);
 
             if (stack.getItem() instanceof GogglesItem) {
-                player.sendMessage(new LiteralText(key + ": " + GogglesItem.getValue(stack, key)), false);
+                player.sendMessage(new LiteralText(key + ": " + GogglesItem.getTagValue(stack, key)), false);
                 return 1;
             } else if (helmet.getItem() instanceof GogglesItem) {
-                player.sendMessage(new LiteralText(key + ": " + GogglesItem.getValue(stack, key)), false);
+                player.sendMessage(new LiteralText(key + ": " + GogglesItem.getTagValue(stack, key)), false);
                 return 1;
             }
             player.sendMessage(GOGGLES_ERROR_MESSAGE, false);

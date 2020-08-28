@@ -7,8 +7,6 @@ import java.util.List;
 public class Config {
 
     // For dealing with item tags for item specific configuration
-    public static final String FREQUENCY = "frequency";
-    public static final String MISC = "misc";
     public static final String ON = "on";
     public static final String BIND = "bind";
     public static final String NO_CLIP = "noClip";

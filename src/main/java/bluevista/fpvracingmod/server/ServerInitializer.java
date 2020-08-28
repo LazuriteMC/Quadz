@@ -7,7 +7,6 @@ import bluevista.fpvracingmod.network.keybinds.EMPC2S;
 import bluevista.fpvracingmod.network.keybinds.GodModeC2S;
 import bluevista.fpvracingmod.network.keybinds.NoClipC2S;
 import bluevista.fpvracingmod.network.keybinds.PowerGogglesC2S;
-import bluevista.fpvracingmod.server.commands.FPVRacing;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.GogglesItem;
@@ -49,7 +48,7 @@ public class ServerInitializer implements ModInitializer {
 		registerItems();
 		registerNetwork();
 
-		FPVRacing.registerCommands();
+		Commands.registerCommands();
 		ServerTick.register();
 
 		ServerStartCallback.EVENT.register(ServerInitializer::start);

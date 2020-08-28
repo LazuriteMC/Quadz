@@ -367,7 +367,7 @@ public class DroneEntity extends PhysicsEntity {
 	public ActionResult interact(PlayerEntity player, Hand hand) {
 		if (!player.world.isClient()) {
 			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
-				player.inventory.getMainHandStack().getOrCreateSubTag(Config.BIND).putUuid(Config.BIND, this.getUuid());
+				player.inventory.getMainHandStack().getOrCreateSubTag(ServerInitializer.MODID).putUuid(Config.BIND, this.getUuid());
 				player.sendMessage(new TranslatableText("Transmitter bound"), false);
 			}
 		} else if (!InputTick.controllerExists()) {

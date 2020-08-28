@@ -42,9 +42,9 @@ public class GodModeC2S {
                     }
                 }
             } else if (hand.getItem() instanceof DroneSpawnerItem) {
-                DroneSpawnerItem.setValue(hand, Config.GOD_MODE, DroneSpawnerItem.getValue(hand, Config.GOD_MODE) != null && DroneSpawnerItem.getValue(hand, Config.GOD_MODE).intValue() == 0 ? 1 : 0);
+                DroneSpawnerItem.setTagValue(hand, Config.GOD_MODE, DroneSpawnerItem.getTagValue(hand, Config.GOD_MODE) != null && DroneSpawnerItem.getTagValue(hand, Config.GOD_MODE).intValue() == 0 ? 1 : 0);
 
-                if (DroneSpawnerItem.getValue(hand, Config.GOD_MODE) != null && DroneSpawnerItem.getValue(hand, Config.GOD_MODE).intValue() == 1) {
+                if (DroneSpawnerItem.getTagValue(hand, Config.GOD_MODE) != null && DroneSpawnerItem.getTagValue(hand, Config.GOD_MODE).intValue() == 1) {
                     t = "God Mode Enabled";
                 } else {
                     t = "God Mode Disabled";

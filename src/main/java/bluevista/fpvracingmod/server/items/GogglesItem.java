@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.server.items;
 
 import bluevista.fpvracingmod.config.Config;
+import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.materials.ArmorMaterials;
 import com.google.common.collect.Multimap;
@@ -10,6 +11,7 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -36,76 +38,63 @@ public class GogglesItem extends ArmorItem {
 			itemStack.setCount(0);
 			itemStack = new ItemStack(Items.AIR);
 
-//			Packet<?> packet = ((NetworkSyncedItem)itemStack.getItem()).createSyncPacket(itemStack, world, user);
-//			ServerSidePacketRegistry.INSTANCE.sendToPlayer(user, packet);
-
 			return TypedActionResult.method_29237(itemStack, world.isClient());
 		} else {
 			return TypedActionResult.fail(itemStack);
 		}
 	}
 
-	public static void setValue(ItemStack stack, String key, Number value) {
-		switch (key) {
-			case Config.BAND:
-				setBand(stack, value.intValue());
-				break;
-			case Config.CHANNEL:
-				setChannel(stack, value.intValue());
-				break;
-			default:
-				break;
+	public static void setTagValue(ItemStack itemStack, String key, Number value) {
+		if (value != null) {
+			switch (key) {
+				case Config.BAND:
+					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putInt(Config.BAND, value.intValue());
+					break;
+				case Config.CHANNEL:
+					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putInt(Config.CHANNEL, value.intValue());
+					break;
+				default:
+					break;
+			}
+
+		} else {
+			setTagValue(itemStack, key, 0);
 		}
 	}
 
-	public static int getValue(ItemStack stack, String key) {
-		switch (key) {
-			case Config.BAND:
-				return getBand(stack);
-			case Config.CHANNEL:
-				return getChannel(stack);
-			default:
-				return 0; // unknown key, default value
+	public static Number getTagValue(ItemStack itemStack, String key) {
+		if (itemStack.getSubTag(ServerInitializer.MODID) != null && itemStack.getSubTag(ServerInitializer.MODID).contains(key)) {
+			CompoundTag tag = itemStack.getSubTag(ServerInitializer.MODID);
+			switch (key) {
+				case Config.BAND:
+					return tag.getInt(Config.BAND);
+				case Config.CHANNEL:
+					return tag.getInt(Config.CHANNEL);
+				default:
+					return null;
+			}
 		}
-	}
 
-	public static void setBand(ItemStack itemStack, int band) {
-		itemStack.getOrCreateSubTag(Config.FREQUENCY).putInt(Config.BAND, band);
-	}
-
-	public static int getBand(ItemStack itemStack) {
-		if(itemStack.getSubTag(Config.FREQUENCY) != null)
-			return itemStack.getSubTag(Config.FREQUENCY).getInt(Config.BAND);
-		return 0;
-	}
-
-	public static void setChannel(ItemStack itemStack, int channel) {
-		itemStack.getOrCreateSubTag(Config.FREQUENCY).putInt(Config.CHANNEL, channel);
-	}
-
-	public static int getChannel(ItemStack itemStack) {
-		if(itemStack.getSubTag(Config.FREQUENCY) != null)
-			return itemStack.getSubTag(Config.FREQUENCY).getInt(Config.CHANNEL);
-		return 0;
+		return null;
 	}
 
 	public static void setOn(ItemStack itemStack, boolean on, PlayerEntity player, String[] keys) {
-		if(itemStack.getSubTag(Config.MISC) != null && itemStack.getSubTag(Config.MISC).contains(Config.ON)) {
-			if(on && !itemStack.getSubTag(Config.MISC).getBoolean(Config.ON)) {
+		if(itemStack.getSubTag(ServerInitializer.MODID) != null && itemStack.getSubTag(ServerInitializer.MODID).contains(Config.ON)) {
+			if(on && !itemStack.getSubTag(ServerInitializer.MODID).getBoolean(Config.ON)) {
 
 				String subString = keys[0] + " or " + keys[1];
 
 				player.sendMessage(new LiteralText("Press " + subString + " power off goggles"), true);
 			}
 		}
-		itemStack.getOrCreateSubTag(Config.MISC).putBoolean(Config.ON, on);
+		itemStack.getOrCreateSubTag(ServerInitializer.MODID).putBoolean(Config.ON, on);
 	}
 
 	public static boolean isOn(PlayerEntity player) {
 		if(GogglesItem.isWearingGoggles(player)) {
 			ItemStack hat = player.inventory.armor.get(3);
-			if (hat.getSubTag(Config.MISC) != null && hat.getSubTag(Config.MISC).contains(Config.ON))
-				return hat.getSubTag(Config.MISC).getBoolean(Config.ON);
+			if (hat.getSubTag(ServerInitializer.MODID) != null && hat.getSubTag(ServerInitializer.MODID).contains(Config.ON))
+				return hat.getSubTag(ServerInitializer.MODID).getBoolean(Config.ON);
 		}
 		return false;
 	}
@@ -117,10 +106,24 @@ public class GogglesItem extends ArmorItem {
 	public static boolean isOnRightChannel(DroneEntity drone, PlayerEntity player) {
 		if (GogglesItem.isWearingGoggles(player)) {
 			ItemStack hat = player.inventory.armor.get(3);
-			if(GogglesItem.isOn(player)) {
-				return drone.getBand() == GogglesItem.getBand(hat) && drone.getChannel() == GogglesItem.getChannel(hat);
+			if (GogglesItem.isOn(player)) {
+				if (GogglesItem.getTagValue(hat, Config.BAND) != null && GogglesItem.getTagValue(hat, Config.CHANNEL) != null) {
+					return drone.getBand() == GogglesItem.getTagValue(hat, Config.BAND).intValue() && drone.getChannel() == GogglesItem.getTagValue(hat, Config.CHANNEL).intValue();
+				}
 			}
 		}
 		return false;
+	}
+
+	public static void prepGogglesItem(PlayerEntity user, ItemStack itemStack) {
+		Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid());
+
+		String[] keys = {Config.BAND, Config.CHANNEL};
+
+		for (String key : keys) {
+			if (GogglesItem.getTagValue(itemStack, key) == null) {
+				GogglesItem.setTagValue(itemStack, key, config.getOption(key));
+			}
+		}
 	}
 }

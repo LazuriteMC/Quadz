@@ -42,9 +42,9 @@ public class NoClipC2S {
                     }
                 }
             } else if (hand.getItem() instanceof DroneSpawnerItem) {
-                DroneSpawnerItem.setValue(hand, Config.NO_CLIP, DroneSpawnerItem.getValue(hand, Config.NO_CLIP) != null && DroneSpawnerItem.getValue(hand, Config.NO_CLIP).intValue() == 0 ? 1 : 0);
+                DroneSpawnerItem.setTagValue(hand, Config.NO_CLIP, DroneSpawnerItem.getTagValue(hand, Config.NO_CLIP) != null && DroneSpawnerItem.getTagValue(hand, Config.NO_CLIP).intValue() == 0 ? 1 : 0);
 
-                if (DroneSpawnerItem.getValue(hand, Config.NO_CLIP) != null && DroneSpawnerItem.getValue(hand, Config.NO_CLIP).intValue() == 1) {
+                if (DroneSpawnerItem.getTagValue(hand, Config.NO_CLIP) != null && DroneSpawnerItem.getTagValue(hand, Config.NO_CLIP).intValue() == 1) {
                     t = "No Clip Enabled";
                 } else {
                     t = "No Clip Disabled";
