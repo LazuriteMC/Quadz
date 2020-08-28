@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "Matrix4fMixin",
+    "PlayerInventoryMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkManagerMixin",
     "ServerChunkManagerMixin",
