@@ -53,7 +53,7 @@ public class PhysicsWorld {
         this.collisionBlocks = new HashMap();
         this.clock = new Clock();
 
-        LOAD_AREA = 2; // Get from config
+        LOAD_AREA = 3; // Get from config
         GRAVITY = -9.81f; // Get from config
 
         // Create the world
@@ -72,7 +72,6 @@ public class PhysicsWorld {
 
         // TODO clean old physics entities
         // TODO YEETING OUTTA DA WORLD
-        this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
         this.physicsEntities.forEach(physics -> {
             if(ClientInitializer.client.world != null) {
                 loadEntityCollisions(physics, ClientInitializer.client.world);
@@ -80,6 +79,7 @@ public class PhysicsWorld {
             }
             physics.stepPhysics(d);
         });
+        this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
     }
 
     public void loadBlockCollisions(PhysicsEntity physics, ClientWorld world) {
@@ -116,14 +116,14 @@ public class PhysicsWorld {
             }
         });
 
-        List<BlockPos> toRemove = new ArrayList();
-        this.collisionBlocks.forEach((pos, body) -> {
-            if(!toKeep.contains(pos)) {
-                dynamicsWorld.removeRigidBody(collisionBlocks.get(pos));
-                toRemove.add(pos);
-            }
-        });
-        toRemove.forEach(this.collisionBlocks::remove);
+//        List<BlockPos> toRemove = new ArrayList();
+//        this.collisionBlocks.forEach((pos, body) -> {
+//            if(!toKeep.contains(pos)) {
+//                dynamicsWorld.removeRigidBody(collisionBlocks.get(pos));
+//                toRemove.add(pos);
+//            }
+//        });
+//        toRemove.forEach(this.collisionBlocks::remove);
     }
 
     public void loadEntityCollisions(PhysicsEntity physics, ClientWorld world) {
