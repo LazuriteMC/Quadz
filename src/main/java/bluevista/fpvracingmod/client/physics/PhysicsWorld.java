@@ -37,8 +37,8 @@ import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class PhysicsWorld {
-    public static final float DEFAULT_GRAVITY = -9.81f;
-    public static final int LOAD_AREA = 2;
+    public final float GRAVITY;
+    public final int LOAD_AREA;
 
     public final List<PhysicsEntity> physicsEntities;
     public final Map<Entity, RigidBody> collisionEntities;
@@ -53,21 +53,25 @@ public class PhysicsWorld {
         this.collisionBlocks = new HashMap();
         this.clock = new Clock();
 
+        LOAD_AREA = 2; // Get from config
+        GRAVITY = -9.81f; // Get from config
+
         // Create the world
         BroadphaseInterface broadphase = new DbvtBroadphase();
         CollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
         CollisionDispatcher dispatcher = new CollisionDispatcher(collisionConfiguration);
         SequentialImpulseConstraintSolver solver = new SequentialImpulseConstraintSolver();
         dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-        dynamicsWorld.setGravity(new Vector3f(0, DEFAULT_GRAVITY, 0));
+        dynamicsWorld.setGravity(new Vector3f(0, GRAVITY, 0));
     }
 
     public void stepWorld() {
-        float d = clock.getTimeMicroseconds() / 1000000F;
-        float maxSubSteps = 10.0f;
+        float d = clock.getTimeMilliseconds() / 1000F;
+        float maxSubSteps = 5.0f;
         clock.reset();
 
         // TODO clean old physics entities
+        // TODO YEETING OUTTA DA WORLD
         this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
         this.physicsEntities.forEach(physics -> {
             if(ClientInitializer.client.world != null) {

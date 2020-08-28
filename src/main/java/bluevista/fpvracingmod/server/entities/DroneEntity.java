@@ -32,6 +32,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
+import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 import java.util.List;
@@ -106,6 +107,9 @@ public class DroneEntity extends PhysicsEntity {
 
 		Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(thrustNewtons);
 		Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
+
+		System.out.println(this.getHeading());
+		this.yaw = this.getHeading();
 
 		this.decreaseAngularVelocity();
 		this.applyForce(
@@ -281,13 +285,13 @@ public class DroneEntity extends PhysicsEntity {
 		return Matrix4fInject.from(mat).matrixToVector().multiply(-1, -1, -1);
 	}
 
-	public Vec3d getHeading() {
+	public float getHeading() {
 		Quat4f q = getOrientation();
 
-		Matrix4f mat = new Matrix4f();
-		Matrix4fInject.from(mat).fromQuaternion(q);
+		AxisAngle4f axis = new AxisAngle4f();
+		axis.set(q);
 
-		return Matrix4fInject.from(mat).matrixToVector().multiply(-1, -1, -1);
+		return (float) Math.toDegrees(axis.angle);
 	}
 
 	/*

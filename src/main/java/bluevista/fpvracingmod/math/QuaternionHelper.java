@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.Quaternion;
 
 import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
 
 public class QuaternionHelper {
     public static void rotateX(Quat4f q, double deg) {
@@ -28,6 +29,29 @@ public class QuaternionHelper {
         rot.z = (float) Math.sin(radHalfAngle);
         rot.w = (float) Math.cos(radHalfAngle);
         q.mul(rot);
+    }
+
+    public static Vector3f getEulerAngles(Quat4f q) {
+        Vector3f angles = new Vector3f();
+
+        // roll (x-axis rotation)
+        float sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+        float cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+        angles.x = (float) Math.atan2(sinr_cosp, cosr_cosp);
+
+        // pitch (y-axis rotation)
+        float sinp = 2 * (q.w * q.y - q.z * q.x);
+        if (Math.abs(sinp) >= 1)
+            angles.y = (float) Math.copySign(Math.PI / 2, sinp); // use 90 degrees if out of range
+        else
+            angles.y = (float) Math.asin(sinp);
+
+        // yaw (z-axis rotation)
+        float siny_cosp = 2 * (q.w * q.z + q.x * q.y);
+        float cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
+        angles.z = (float) Math.atan2(siny_cosp, cosy_cosp);
+
+        return angles;
     }
 
     public static void toTag(Quat4f quat, CompoundTag tag) {
