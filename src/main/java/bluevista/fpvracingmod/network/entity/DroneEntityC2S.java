@@ -40,7 +40,7 @@ public class DroneEntityC2S {
                 drone.getRigidBody().setAngularVelocity(angularVel);
                 drone.getRigidBody().setLinearVelocity(linearVel);
 
-                drone.setPosition(position.x, position.y, position.z);
+                drone.setPos(position.x, position.y, position.z);
                 drone.setRigidBodyPos(position);
             }
         });

@@ -14,6 +14,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -25,24 +26,24 @@ import javax.vecmath.Vector3f;
 import java.util.UUID;
 
 public abstract class PhysicsEntity extends Entity {
-    private final RigidBody body;
-    public float linearDamping;
-    public float thrustNewtons;
-    public UUID playerID;
-    public float mass;
+    public final float LINEAR_DAMPING;
+    public final float THRUST_NEWTONS;
+    public final float MASS;
 
+    private final RigidBody body;
+
+    public UUID playerID;
     public Quat4f prevOrientation;
     public boolean fresh = true;
 
     public PhysicsEntity(EntityType type, World world, Vec3d pos) {
         super(type, world);
 
-        this.mass = 0.750f; // Get from config
-        this.linearDamping = 0.3f; // Get from config
-        this.thrustNewtons = 45.0f; // Get from config
+        this.MASS = 0.750f; // Get from config
+        this.LINEAR_DAMPING = 0.3f; // Get from config
+        this.THRUST_NEWTONS = 45.0f; // Get from config
 
-        this.setPosition(pos.x, pos.y, pos.z);
-
+        this.setPos(pos.x, pos.y, pos.z);
         this.body = createRigidBody(getBoundingBox());
         if(this.world.isClient())
             ClientInitializer.physicsWorld.add(this);
@@ -53,7 +54,7 @@ public abstract class PhysicsEntity extends Entity {
         super.tick();
         if(this.world.isClient()) {
             Vector3f pos = this.getRigidBodyPos();
-            this.setPosition(pos.x, pos.y, pos.z);
+            this.setPos(pos.x, pos.y, pos.z);
 
             this.prevOrientation = this.getOrientation();
         }
@@ -64,7 +65,7 @@ public abstract class PhysicsEntity extends Entity {
         if(playerID != null) {
             if (!ClientInitializer.isPlayerIDClient(playerID)) {
                 Vector3f vec = this.getRigidBodyPos();
-                this.resetPosition2(vec.x, vec.y, vec.z);
+                this.resetPosition(vec.x, vec.y, vec.z);
 
                 if (prevOrientation != null) {
                     Quat4f curOrientation = this.getOrientation();
@@ -79,16 +80,13 @@ public abstract class PhysicsEntity extends Entity {
         }
     }
 
-    public void setPosition(double x, double y, double z) {
-        this.setPos(x, y, z);
-    }
-
-    public void resetPosition2(double x, double y, double z) {
-        this.resetPosition(x, y, z);
-    }
-
     public Vector3f getRigidBodyPos() {
         return this.body.getCenterOfMassPosition(new Vector3f());
+    }
+
+    public BlockPos getRigidBodyBlockPos() {
+        Vector3f vec = this.body.getCenterOfMassPosition(new Vector3f());
+        return new BlockPos(vec.x, vec.y, vec.z);
     }
 
     public void setRigidBodyPos(Vector3f vec) {
@@ -162,17 +160,17 @@ public abstract class PhysicsEntity extends Entity {
                 ((float) (cBox.maxY - cBox.minY) / 2.0F) + 0.005f,
                 ((float) (cBox.maxZ - cBox.minZ) / 2.0F) + 0.005f);
         CollisionShape shape = new BoxShape(box);
-        shape.calculateLocalInertia(this.mass, inertia);
+        shape.calculateLocalInertia(this.MASS, inertia);
 
         Vec3d pos = this.getPos();
         Vector3f position = new Vector3f((float) pos.x, (float) pos.y + 0.125f, (float) pos.z);
 
         DefaultMotionState motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 1, 0, 0), position, 1.0f)));
-        RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(this.mass, motionState, shape, inertia);
+        RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(this.MASS, motionState, shape, inertia);
 
         RigidBody body = new RigidBody(ci);
         body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
-        body.setDamping(linearDamping, 0);
+        body.setDamping(LINEAR_DAMPING, 0);
         return body;
     }
 }

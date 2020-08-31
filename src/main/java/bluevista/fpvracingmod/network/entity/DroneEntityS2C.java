@@ -65,7 +65,7 @@ public class DroneEntityS2C {
                     drone.getRigidBody().setLinearVelocity(linearVel);
                     drone.getRigidBody().setAngularVelocity(angularVel);
 
-                    drone.setPosition(position.x, position.y, position.z);
+                    drone.setPos(position.x, position.y, position.z);
                     drone.setRigidBodyPos(position);
 
                     drone.setNotFresh();

@@ -16,6 +16,15 @@ public class ClientTick {
 
     public static void tick(MinecraftClient client) {
         if (client.player != null && !client.isPaused()) {
+
+//            if(ClientInitializer.physicsWorld != null) {
+//                ClientWorld world = client.world;
+//                for (PhysicsEntity physics : ClientInitializer.physicsWorld.physicsEntities) {
+//                    ClientInitializer.physicsWorld.loadEntityCollisions(physics, world);
+//                    ClientInitializer.physicsWorld.loadBlockCollisions(physics, world);
+//                }
+//            }
+
             client.world.getEntities().forEach((entity) -> {
                 if(entity instanceof DroneEntity) {
                     DroneEntity drone = (DroneEntity) entity;

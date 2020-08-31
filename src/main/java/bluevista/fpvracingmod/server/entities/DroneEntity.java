@@ -105,12 +105,10 @@ public class DroneEntity extends PhysicsEntity {
 		rotateY(deltaY);
 		rotateZ(deltaZ);
 
-		Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(thrustNewtons);
+		Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(THRUST_NEWTONS);
 		Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
 
-		System.out.println(this.getHeading());
-		this.yaw = this.getHeading();
-
+//		this.yaw = this.getHeading();
 		this.decreaseAngularVelocity();
 		this.applyForce(
 				new Vector3f((float) thrust.x, (float) thrust.y, (float) thrust.z),
