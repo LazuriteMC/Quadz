@@ -43,7 +43,7 @@ public class ClientTick {
                     if (client.player.getMainHandStack().getSubTag(Config.BIND) != null) {
                         DroneEntity drone = TransmitterItem.droneFromTransmitter(client.player.getMainHandStack(), client.player);
                         if (drone != null) {
-                            configFOV = drone.getFieldOfView();
+                            configFOV = drone.getConfigValues(Config.FIELD_OF_VIEW).floatValue();
                         }
                     }
                 }

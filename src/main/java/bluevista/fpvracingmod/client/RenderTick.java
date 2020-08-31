@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.physics.PhysicsWorld;
+import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.math.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;
@@ -30,7 +31,7 @@ public class RenderTick {
             Quat4f q = drone.getOrientation();
             Quat4f newQ = new Quat4f();
             newQ.set(q.x, -q.y, q.z, -q.w);
-            QuaternionHelper.rotateX(newQ, drone.getCameraAngle());
+            QuaternionHelper.rotateX(newQ, drone.getConfigValues(Config.CAMERA_ANGLE).intValue());
 
             Matrix4f newMat = new Matrix4f(QuaternionHelper.quat4fToQuaternion(newQ));
             newMat.transpose();

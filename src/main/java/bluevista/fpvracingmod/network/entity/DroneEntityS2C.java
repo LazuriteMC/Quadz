@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.network.entity;
 
 import bluevista.fpvracingmod.client.input.AxisValues;
+import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.network.PacketHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -51,12 +52,12 @@ public class DroneEntityS2C {
             if(drone != null) {
                 drone.playerID = playerID;
 
-                drone.setBand(band);
-                drone.setChannel(channel);
-                drone.setCameraAngle(cameraAngle);
-                drone.setFieldOfView(fieldOfView);
+                drone.setConfigValues(Config.BAND, band);
+                drone.setConfigValues(Config.CHANNEL, channel);
+                drone.setConfigValues(Config.CAMERA_ANGLE, cameraAngle);
+                drone.setConfigValues(Config.FIELD_OF_VIEW, fieldOfView);
 
-                drone.setGodMode(godMode);
+                drone.setConfigValues(Config.GOD_MODE, godMode);
                 drone.setInfiniteTracking(infiniteTracking);
 
                 if(drone.isFresh() || !drone.playerID.equals(player.getUuid())) { // if any player besides physics-controlling player
@@ -80,12 +81,12 @@ public class DroneEntityS2C {
         buf.writeInt(drone.getEntityId());
         buf.writeUuid(drone.playerID);
 
-        buf.writeInt(drone.getBand());
-        buf.writeInt(drone.getChannel());
-        buf.writeInt(drone.getCameraAngle());
-        buf.writeFloat(drone.getFieldOfView());
+        buf.writeInt(drone.getConfigValues(Config.BAND).intValue());
+        buf.writeInt(drone.getConfigValues(Config.CHANNEL).intValue());
+        buf.writeInt(drone.getConfigValues(Config.CAMERA_ANGLE).intValue());
+        buf.writeFloat(drone.getConfigValues(Config.FIELD_OF_VIEW).intValue());
 
-        buf.writeInt(drone.getGodMode());
+        buf.writeInt(drone.getConfigValues(Config.GOD_MODE).intValue());
         buf.writeBoolean(drone.hasInfiniteTracking());
 
         PacketHelper.serializeVector3f(buf, drone.getRigidBodyPos());

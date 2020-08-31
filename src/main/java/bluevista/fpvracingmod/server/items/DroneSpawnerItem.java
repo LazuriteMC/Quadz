@@ -113,25 +113,25 @@ public class DroneSpawnerItem extends Item {
 		ItemStack itemStack = user.getMainHandStack();
 		Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid());
 
-		drone.setBand(			DroneSpawnerItem.getTagValue(itemStack, Config.BAND)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.BAND).intValue()				: config.getIntOption(Config.BAND));
-		drone.setChannel(		DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL).intValue()			: config.getIntOption(Config.CHANNEL));
-		drone.setCameraAngle(	DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE).intValue()		: config.getIntOption(Config.CAMERA_ANGLE));
-		drone.setFieldOfView(	DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW).floatValue()	: config.getFloatOption(Config.FIELD_OF_VIEW));
+		drone.setConfigValues(Config.BAND,			DroneSpawnerItem.getTagValue(itemStack, Config.BAND)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.BAND)			: config.getOption(Config.BAND));
+		drone.setConfigValues(Config.CHANNEL,		DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL)		: config.getOption(Config.CHANNEL));
+		drone.setConfigValues(Config.CAMERA_ANGLE,	DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE)	: config.getOption(Config.CAMERA_ANGLE));
+		drone.setConfigValues(Config.FIELD_OF_VIEW,	DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW)	: config.getOption(Config.FIELD_OF_VIEW));
 
 		// config doesn't contain values for these, setting to default values if itemStack doesn't contain the value
-		drone.setNoClip(		DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP).intValue()			: 0);
-		drone.setPrevGodMode(	DroneSpawnerItem.getTagValue(itemStack, Config.PREV_GOD_MODE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.PREV_GOD_MODE).intValue()		: 0);
-		drone.setGodMode(		DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE).intValue()			: 0);
+		drone.setConfigValues(Config.NO_CLIP,		DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)		: 0);
+		drone.setConfigValues(Config.PREV_GOD_MODE,	DroneSpawnerItem.getTagValue(itemStack, Config.PREV_GOD_MODE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.PREV_GOD_MODE)	: 0);
+		drone.setConfigValues(Config.GOD_MODE,		DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)		: 0);
 	}
 
 	public static void prepDestroyedDrone(DroneEntity drone, ItemStack itemStack) {
-		DroneSpawnerItem.setTagValue(itemStack, Config.BAND,			drone.getBand());
-		DroneSpawnerItem.setTagValue(itemStack, Config.CHANNEL,		drone.getChannel());
-		DroneSpawnerItem.setTagValue(itemStack, Config.CAMERA_ANGLE,	drone.getCameraAngle());
-		DroneSpawnerItem.setTagValue(itemStack, Config.FIELD_OF_VIEW,	drone.getFieldOfView());
-		DroneSpawnerItem.setTagValue(itemStack, Config.NO_CLIP,		drone.getNoClip());
-		DroneSpawnerItem.setTagValue(itemStack, Config.PREV_GOD_MODE,	drone.getPrevGodMode());
-		DroneSpawnerItem.setTagValue(itemStack, Config.GOD_MODE,		drone.getGodMode());
+		DroneSpawnerItem.setTagValue(itemStack, Config.BAND,			drone.getConfigValues(Config.BAND));
+		DroneSpawnerItem.setTagValue(itemStack, Config.CHANNEL,			drone.getConfigValues(Config.CHANNEL));
+		DroneSpawnerItem.setTagValue(itemStack, Config.CAMERA_ANGLE,	drone.getConfigValues(Config.CAMERA_ANGLE));
+		DroneSpawnerItem.setTagValue(itemStack, Config.FIELD_OF_VIEW,	drone.getConfigValues(Config.FIELD_OF_VIEW));
+		DroneSpawnerItem.setTagValue(itemStack, Config.NO_CLIP,			drone.getConfigValues(Config.NO_CLIP));
+		DroneSpawnerItem.setTagValue(itemStack, Config.PREV_GOD_MODE,	drone.getConfigValues(Config.PREV_GOD_MODE));
+		DroneSpawnerItem.setTagValue(itemStack, Config.GOD_MODE,		drone.getConfigValues(Config.GOD_MODE));
 	}
 
 	public static void prepDroneSpawnerItem(PlayerEntity user, ItemStack itemStack) {

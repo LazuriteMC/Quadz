@@ -94,7 +94,7 @@ public class DroneEntity extends PhysicsEntity {
 	public void stepPhysics(float d) {
 		super.stepPhysics(d);
 
-		if(TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this))
+		if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this))
 			axisValues.set(InputTick.axisValues);
 
 		float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
@@ -118,72 +118,78 @@ public class DroneEntity extends PhysicsEntity {
 
 	@Override
 	protected void readCustomDataFromTag(CompoundTag tag) {
-		setBand(tag.getInt(Config.BAND));
-		setChannel(tag.getInt(Config.CHANNEL));
-		setCameraAngle(tag.getInt(Config.CAMERA_ANGLE));
-		setFieldOfView(tag.getInt(Config.FIELD_OF_VIEW));
+		setConfigValues(Config.BAND, tag.getInt(Config.BAND));
+		setConfigValues(Config.CHANNEL, tag.getInt(Config.CHANNEL));
+		setConfigValues(Config.CAMERA_ANGLE, tag.getInt(Config.CAMERA_ANGLE));
+		setConfigValues(Config.FIELD_OF_VIEW, tag.getFloat(Config.FIELD_OF_VIEW));
 
 		// don't retrieve noClip or prevGodMode because they weren't written (reason in writeCustomDataToTag)
-		setGodMode(tag.getInt(Config.GOD_MODE));
+		setConfigValues(Config.GOD_MODE, tag.getInt(Config.GOD_MODE));
 	}
 
 	@Override
 	protected void writeCustomDataToTag(CompoundTag tag) {
-		tag.putInt(Config.BAND, getBand());
-		tag.putInt(Config.CHANNEL, getChannel());
-		tag.putInt(Config.CAMERA_ANGLE, getCameraAngle());
-		tag.putFloat(Config.FIELD_OF_VIEW, getFieldOfView());
+		tag.putInt(Config.BAND, getConfigValues(Config.BAND).intValue());
+		tag.putInt(Config.CHANNEL, getConfigValues(Config.CHANNEL).intValue());
+		tag.putInt(Config.CAMERA_ANGLE, getConfigValues(Config.CAMERA_ANGLE).intValue());
+		tag.putFloat(Config.FIELD_OF_VIEW, getConfigValues(Config.FIELD_OF_VIEW).floatValue());
 
 		// don't write noClip or prevGodMode because...
 		// noClip shouldn't be preserved after a restart (your drone may fall through the world) and ...
 		// prevGodMode is only used when noClip is set, keeping this value between restarts isn't required
-		tag.putInt(Config.GOD_MODE, getGodMode());
+		tag.putInt(Config.GOD_MODE, getConfigValues(Config.GOD_MODE).intValue());
 	}
 
-	public void setValue(String key, Number value) {
+	public void setConfigValues(String key, Number value) {
 		switch (key) {
 			case Config.BAND:
-				setBand(value.intValue());
+				this.band = value.intValue();
 				break;
 			case Config.CHANNEL:
-				setChannel(value.intValue());
+				this.channel = value.intValue();
 				break;
 			case Config.CAMERA_ANGLE:
-				setCameraAngle(value.intValue());
+				this.cameraAngle = value.intValue();
 				break;
 			case Config.FIELD_OF_VIEW:
-				setFieldOfView(value.floatValue());
+				this.fieldOfView = value.floatValue();
 				break;
 			case Config.NO_CLIP:
-				setNoClip(value.intValue());
+				this.noClip = value.intValue() == 1;
+				if (this.noClip) {
+					setConfigValues(Config.PREV_GOD_MODE, getConfigValues(Config.GOD_MODE));
+					setConfigValues(Config.GOD_MODE, 1);
+				} else {
+					setConfigValues(Config.GOD_MODE, getConfigValues(Config.PREV_GOD_MODE));
+				}
 				break;
 			case Config.PREV_GOD_MODE:
-				setPrevGodMode(value.intValue());
+				this.prevGodMode = value.intValue() == 1;
 				break;
 			case Config.GOD_MODE:
-				setGodMode(value.intValue());
+				this.godMode = value.intValue() == 1;
 				break;
 			default:
 				break;
 		}
 	}
 
-	public Number getValue(String key) {
+	public Number getConfigValues(String key) {
 		switch (key) {
 			case Config.BAND:
-				return getBand();
+				return this.band;
 			case Config.CHANNEL:
-				return getChannel();
+				return this.channel;
 			case Config.CAMERA_ANGLE:
-				return getCameraAngle();
+				return this.cameraAngle;
 			case Config.FIELD_OF_VIEW:
-				return getFieldOfView();
+				return this.fieldOfView;
 			case Config.NO_CLIP:
-				return getNoClip();
+				return this.noClip ? 1 : 0;
 			case Config.PREV_GOD_MODE:
-				return getPrevGodMode();
+				return this.prevGodMode ? 1 : 0;
 			case Config.GOD_MODE:
-				return getGodMode();
+				return this.godMode ? 1 : 0;
 			default:
 				return null; // 0?
 		}
@@ -195,68 +201,6 @@ public class DroneEntity extends PhysicsEntity {
 
 	public AxisValues getAxisValues() {
 		return this.axisValues;
-	}
-
-	public void setBand(int band) {
-		this.band = band;
-	}
-
-	public int getBand() {
-		return band;
-	}
-
-	public void setChannel(int channel) {
-		this.channel = channel;
-	}
-
-	public int getChannel() {
-		return channel;
-	}
-
-	public void setCameraAngle(int cameraAngle) {
-		this.cameraAngle = cameraAngle;
-	}
-
-	public int getCameraAngle() {
-		return cameraAngle;
-	}
-
-	public void setFieldOfView(float fieldOfView) {
-		this.fieldOfView = fieldOfView;
-	}
-
-	public float getFieldOfView() {
-		return fieldOfView;
-	}
-
-	public void setNoClip(int noClip) {
-		this.noClip = noClip == 1;
-		if (getNoClip() == 1) {
-			setPrevGodMode(getGodMode());
-			setGodMode(1);
-		} else {
-			setGodMode(getPrevGodMode());
-		}
-	}
-
-	public int getNoClip() {
-		return noClip ? 1 : 0;
-	}
-
-	public void setPrevGodMode(int prevGodMode) {
-		this.prevGodMode = prevGodMode == 1;
-	}
-
-	public int getPrevGodMode() {
-		return prevGodMode ? 1 : 0;
-	}
-
-	public void setGodMode(int godMode) {
-		this.godMode = godMode == 1;
-	}
-
-	public int getGodMode() {
-		return godMode ? 1 : 0;
 	}
 
 	public void decreaseAngularVelocity() {
@@ -377,11 +321,6 @@ public class DroneEntity extends PhysicsEntity {
 		}
 
 		this.remove();
-	}
-
-	@Override
-	public void remove() {
-		super.remove();
 	}
 
 	/*

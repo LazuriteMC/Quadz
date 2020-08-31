@@ -18,7 +18,7 @@ public class ServerTick {
                 List<DroneEntity> drones = DroneEntity.getNearbyDrones(player, 320);
 
                 for (DroneEntity drone : drones) { // for every drone in range of given player
-                    if (GogglesItem.isOnRightChannel(drone, player)) {
+                    if (GogglesItem.isOnSameChannel(drone, player)) {
                         setView(player, drone);
                     }
 

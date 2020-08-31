@@ -91,10 +91,12 @@ public class GogglesItem extends ArmorItem {
 	}
 
 	public static boolean isOn(PlayerEntity player) {
-		if(GogglesItem.isWearingGoggles(player)) {
+		if (GogglesItem.isWearingGoggles(player)) {
 			ItemStack hat = player.inventory.armor.get(3);
-			if (hat.getSubTag(ServerInitializer.MODID) != null && hat.getSubTag(ServerInitializer.MODID).contains(Config.ON))
+
+			if (hat.getSubTag(ServerInitializer.MODID) != null && hat.getSubTag(ServerInitializer.MODID).contains(Config.ON)) {
 				return hat.getSubTag(ServerInitializer.MODID).getBoolean(Config.ON);
+			}
 		}
 		return false;
 	}
@@ -103,12 +105,14 @@ public class GogglesItem extends ArmorItem {
 		return player.inventory.armor.get(3).getItem() instanceof GogglesItem;
 	}
 
-	public static boolean isOnRightChannel(DroneEntity drone, PlayerEntity player) {
+	public static boolean isOnSameChannel(DroneEntity drone, PlayerEntity player) {
 		if (GogglesItem.isWearingGoggles(player)) {
 			ItemStack hat = player.inventory.armor.get(3);
+
 			if (GogglesItem.isOn(player)) {
 				if (GogglesItem.getTagValue(hat, Config.BAND) != null && GogglesItem.getTagValue(hat, Config.CHANNEL) != null) {
-					return drone.getBand() == GogglesItem.getTagValue(hat, Config.BAND).intValue() && drone.getChannel() == GogglesItem.getTagValue(hat, Config.CHANNEL).intValue();
+					return drone.getConfigValues(Config.BAND).equals(GogglesItem.getTagValue(hat, Config.BAND)) &&
+							drone.getConfigValues(Config.CHANNEL).equals(GogglesItem.getTagValue(hat, Config.CHANNEL));
 				}
 			}
 		}

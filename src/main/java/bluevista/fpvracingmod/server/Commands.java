@@ -278,11 +278,11 @@ public class Commands {
                 }
             } else if (stack.getItem() instanceof TransmitterItem) {
                 DroneEntity drone = TransmitterItem.droneFromTransmitter(stack, player);
-                if (drone == null || value.equals(drone.getValue(key))) {
+                if (drone == null || value.equals(drone.getConfigValues(key))) {
                     getDroneValue(context, key);
                     return 0;
                 } else {
-                    drone.setValue(key, value);
+                    drone.setConfigValues(key, value);
                     getDroneValue(context, key);
                     return 1;
                 }
@@ -307,7 +307,7 @@ public class Commands {
             } else if (stack.getItem() instanceof TransmitterItem) {
                 DroneEntity drone = TransmitterItem.droneFromTransmitter(stack, player);
                 if (drone != null) {
-                    player.sendMessage(new LiteralText(key + ": " + drone.getValue(key)), false);
+                    player.sendMessage(new LiteralText(key + ": " + drone.getConfigValues(key)), false);
                     return 1;
                 }
             }
