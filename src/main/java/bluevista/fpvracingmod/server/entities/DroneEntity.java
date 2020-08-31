@@ -123,7 +123,7 @@ public class DroneEntity extends PhysicsEntity {
 		setCameraAngle(tag.getInt(Config.CAMERA_ANGLE));
 		setFieldOfView(tag.getInt(Config.FIELD_OF_VIEW));
 
-		// don't retrieve noCLip or prevGodMode because they weren't written (reason in writeCustomDataToTag)
+		// don't retrieve noClip or prevGodMode because they weren't written (reason in writeCustomDataToTag)
 		setGodMode(tag.getInt(Config.GOD_MODE));
 	}
 
@@ -260,13 +260,26 @@ public class DroneEntity extends PhysicsEntity {
 	}
 
 	public void decreaseAngularVelocity() {
-		Vector3f angular = getRigidBody().getAngularVelocity(new Vector3f());
-		Vector3f sub = new Vector3f();
-		sub.x = (1-getThrottle()) * angular.x;
-		sub.y = (1-getThrottle()) * angular.y;
-		sub.z = (1-getThrottle()) * angular.z;
-		angular.sub(sub);
-		getRigidBody().setAngularVelocity(angular);
+		float t = 0.1f;
+
+		if(getThrottle() > t ||
+				Math.abs(axisValues.currX) > t ||
+				Math.abs(axisValues.currY) > t ||
+				Math.abs(axisValues.currZ) > t) {
+				getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
+		}
+
+//		Vector3f ang = getRigidBody().getAngularVelocity(new Vector3f());
+//		if(ang.length() > 2) {
+//			Vector3f vec = new Vector3f();
+//			vec.x = axisValues.currX * ang.x;
+//			vec.y = axisValues.currY * ang.y;
+//			vec.z = axisValues.currZ * ang.z;
+//			ang.sub(vec);
+//			getRigidBody().setAngularVelocity(ang);
+//		} else {
+//			getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
+//		}
 	}
 
 	/*

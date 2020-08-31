@@ -72,7 +72,6 @@ public class PhysicsWorld {
         float maxSubSteps = 5.0f;
         clock.reset();
 
-        System.out.println("Physics Entities: " + physicsEntities.size());
         this.physicsEntities.forEach(physics -> {
             if(world != null) {
                 loadEntityCollisions(physics, world);

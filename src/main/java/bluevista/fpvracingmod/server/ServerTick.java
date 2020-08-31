@@ -12,9 +12,11 @@ import java.util.List;
 public class ServerTick {
     public static void tick(MinecraftServer server) {
         List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
+
         for (ServerPlayerEntity player : players) { // for every player in the server
             if (GogglesItem.isWearingGoggles(player) && !isInGoggles(player)) {
                 List<DroneEntity> drones = DroneEntity.getNearbyDrones(player, 320);
+
                 for (DroneEntity drone : drones) { // for every drone in range of given player
                     if (GogglesItem.isOnRightChannel(drone, player)) {
                         setView(player, drone);
@@ -30,14 +32,13 @@ public class ServerTick {
 
                     if(drone.playerID == null)
                         drone.kill();
-
-//                    if(TransmitterItem.isBoundTransmitter(player.getMainHandStack(), drone)) {
-//                        drone.acceptInputFrom(player.getUuid());
-//                    }
                 }
             }
 
-            if (!GogglesItem.isWearingGoggles(player) && isInGoggles(player) || !GogglesItem.isOn(player) || player.getCameraEntity() != null && player.getCameraEntity().removed)
+            if (!GogglesItem.isWearingGoggles(player) && isInGoggles(player) ||
+                    !GogglesItem.isOn(player) ||
+                    player.getCameraEntity() != null && player.getCameraEntity().removed &&
+                    player.getCameraEntity() != player)
                 resetView(player);
         }
     }
