@@ -52,6 +52,8 @@ public class DroneEntity extends PhysicsEntity {
 	private int band;
 	private int channel;
 
+	/* CONSTRUCTORS */
+
 	public DroneEntity(EntityType<?> type, World world) {
 		this(world, Vec3d.ZERO, 0);
 	}
@@ -66,6 +68,15 @@ public class DroneEntity extends PhysicsEntity {
 		this.godMode = false;
 		this.prevGodMode = this.godMode;
 	}
+
+	public static DroneEntity create(UUID playerID, World world, Vec3d pos, float yaw) {
+		DroneEntity d = new DroneEntity(world, pos, yaw);
+		d.playerID = playerID;
+		world.spawnEntity(d);
+		return d;
+	}
+
+	/* TICKS */
 
 	@Override
 	public void tick() {
@@ -116,29 +127,7 @@ public class DroneEntity extends PhysicsEntity {
 		);
 	}
 
-	@Override
-	protected void readCustomDataFromTag(CompoundTag tag) {
-		setConfigValues(Config.BAND, tag.getInt(Config.BAND));
-		setConfigValues(Config.CHANNEL, tag.getInt(Config.CHANNEL));
-		setConfigValues(Config.CAMERA_ANGLE, tag.getInt(Config.CAMERA_ANGLE));
-		setConfigValues(Config.FIELD_OF_VIEW, tag.getFloat(Config.FIELD_OF_VIEW));
-
-		// don't retrieve noClip or prevGodMode because they weren't written (reason in writeCustomDataToTag)
-		setConfigValues(Config.GOD_MODE, tag.getInt(Config.GOD_MODE));
-	}
-
-	@Override
-	protected void writeCustomDataToTag(CompoundTag tag) {
-		tag.putInt(Config.BAND, getConfigValues(Config.BAND).intValue());
-		tag.putInt(Config.CHANNEL, getConfigValues(Config.CHANNEL).intValue());
-		tag.putInt(Config.CAMERA_ANGLE, getConfigValues(Config.CAMERA_ANGLE).intValue());
-		tag.putFloat(Config.FIELD_OF_VIEW, getConfigValues(Config.FIELD_OF_VIEW).floatValue());
-
-		// don't write noClip or prevGodMode because...
-		// noClip shouldn't be preserved after a restart (your drone may fall through the world) and ...
-		// prevGodMode is only used when noClip is set, keeping this value between restarts isn't required
-		tag.putInt(Config.GOD_MODE, getConfigValues(Config.GOD_MODE).intValue());
-	}
+	/* SETTERS */
 
 	public void setConfigValues(String key, Number value) {
 		switch (key) {
@@ -174,6 +163,37 @@ public class DroneEntity extends PhysicsEntity {
 		}
 	}
 
+	public void setAxisValues(AxisValues axisValues) {
+		this.axisValues.set(axisValues);
+	}
+
+	public void setThrottle(float throttle) {
+		this.axisValues.currT = throttle;
+	}
+
+	public void setInfiniteTracking(boolean infiniteTracking) {
+		this.infiniteTracking = infiniteTracking;
+	}
+
+	public void setNotFresh() {
+		this.fresh = false;
+	}
+
+	@Override
+	protected void writeCustomDataToTag(CompoundTag tag) {
+		tag.putInt(Config.BAND, getConfigValues(Config.BAND).intValue());
+		tag.putInt(Config.CHANNEL, getConfigValues(Config.CHANNEL).intValue());
+		tag.putInt(Config.CAMERA_ANGLE, getConfigValues(Config.CAMERA_ANGLE).intValue());
+		tag.putFloat(Config.FIELD_OF_VIEW, getConfigValues(Config.FIELD_OF_VIEW).floatValue());
+
+		// don't write noClip or prevGodMode because...
+		// noClip shouldn't be preserved after a restart (your drone may fall through the world) and ...
+		// prevGodMode is only used when noClip is set, keeping this value between restarts isn't required
+		tag.putInt(Config.GOD_MODE, getConfigValues(Config.GOD_MODE).intValue());
+	}
+
+	/* GETTERS */
+
 	public Number getConfigValues(String key) {
 		switch (key) {
 			case Config.BAND:
@@ -195,35 +215,43 @@ public class DroneEntity extends PhysicsEntity {
 		}
 	}
 
-	public void setAxisValues(AxisValues axisValues) {
-		this.axisValues.set(axisValues);
-	}
-
 	public AxisValues getAxisValues() {
 		return this.axisValues;
 	}
 
-	public void decreaseAngularVelocity() {
-		float t = 0.1f;
+	public float getThrottle() {
+		return this.axisValues.currT;
+	}
 
-		if(getThrottle() > t ||
-				Math.abs(axisValues.currX) > t ||
-				Math.abs(axisValues.currY) > t ||
-				Math.abs(axisValues.currZ) > t) {
-				getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
+	public boolean hasInfiniteTracking() {
+		return infiniteTracking;
+	}
+
+	public boolean isFresh() {
+		return this.fresh;
+	}
+
+	@Override
+	public boolean isGlowing() {
+		return false;
+	}
+
+	@Override
+	public boolean collides() {
+		return true;
+	}
+
+	@Override
+	public Box getCollisionBox() {
+		return super.getBoundingBox();
+	}
+
+	public boolean isTransmitterBound(ItemStack transmitter) {
+		try {
+			return this.getUuid().equals(transmitter.getSubTag(Config.BIND).getUuid(Config.BIND));
+		} catch (Exception e) {
+			return false;
 		}
-
-//		Vector3f ang = getRigidBody().getAngularVelocity(new Vector3f());
-//		if(ang.length() > 2) {
-//			Vector3f vec = new Vector3f();
-//			vec.x = axisValues.currX * ang.x;
-//			vec.y = axisValues.currY * ang.y;
-//			vec.z = axisValues.currZ * ang.z;
-//			ang.sub(vec);
-//			getRigidBody().setAngularVelocity(ang);
-//		} else {
-//			getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
-//		}
 	}
 
 	/*
@@ -296,6 +324,42 @@ public class DroneEntity extends PhysicsEntity {
 		return null;
 	}
 
+	@Override
+	protected void readCustomDataFromTag(CompoundTag tag) {
+		setConfigValues(Config.BAND, tag.getInt(Config.BAND));
+		setConfigValues(Config.CHANNEL, tag.getInt(Config.CHANNEL));
+		setConfigValues(Config.CAMERA_ANGLE, tag.getInt(Config.CAMERA_ANGLE));
+		setConfigValues(Config.FIELD_OF_VIEW, tag.getFloat(Config.FIELD_OF_VIEW));
+
+		// don't retrieve noClip or prevGodMode because they weren't written (reason in writeCustomDataToTag)
+		setConfigValues(Config.GOD_MODE, tag.getInt(Config.GOD_MODE));
+	}
+
+	/* DOERS */
+
+	public void decreaseAngularVelocity() {
+		float t = 0.1f;
+
+		if(getThrottle() > t ||
+				Math.abs(axisValues.currX) > t ||
+				Math.abs(axisValues.currY) > t ||
+				Math.abs(axisValues.currZ) > t) {
+				getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
+		}
+
+//		Vector3f ang = getRigidBody().getAngularVelocity(new Vector3f());
+//		if(ang.length() > 2) {
+//			Vector3f vec = new Vector3f();
+//			vec.x = axisValues.currX * ang.x;
+//			vec.y = axisValues.currY * ang.y;
+//			vec.z = axisValues.currZ * ang.z;
+//			ang.sub(vec);
+//			getRigidBody().setAngularVelocity(ang);
+//		} else {
+//			getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
+//		}
+	}
+
 	/*
 	 * Break the drone when it's shot or hit by the player.
 	 */
@@ -340,66 +404,12 @@ public class DroneEntity extends PhysicsEntity {
 		return ActionResult.SUCCESS;
 	}
 
-	public float getThrottle() {
-		return this.axisValues.currT;
-	}
-
-	public void setThrottle(float throttle) {
-		this.axisValues.currT = throttle;
-	}
-
-	public void setInfiniteTracking(boolean infiniteTracking) {
-		this.infiniteTracking = infiniteTracking;
-	}
-
-	public boolean hasInfiniteTracking() {
-		return infiniteTracking;
-	}
-
-	public boolean isTransmitterBound(ItemStack transmitter) {
-		try {
-			return this.getUuid().equals(transmitter.getSubTag(Config.BIND).getUuid(Config.BIND));
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	@Override
-	protected void initDataTracker() {
-	}
-
-	@Override
-	public boolean isGlowing() {
-		return false;
-	}
-
-	@Override
-	public boolean collides() {
-		return true;
-	}
-
-	@Override
-	public Box getCollisionBox() {
-		return super.getBoundingBox();
-	}
-
 	@Override
 	public Packet<?> createSpawnPacket() {
 		return new EntitySpawnS2CPacket(this);
 	}
 
-	public boolean isFresh() {
-		return this.fresh;
-	}
-
-	public void setNotFresh() {
-		this.fresh = false;
-	}
-
-	public static DroneEntity create(UUID playerID, World world, Vec3d pos, float yaw) {
-		DroneEntity d = new DroneEntity(world, pos, yaw);
-		d.playerID = playerID;
-		world.spawnEntity(d);
-		return d;
+	@Override
+	protected void initDataTracker() {
 	}
 }
