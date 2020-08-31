@@ -341,7 +341,7 @@ public class Commands {
                     getGogglesValue(context, key);
                     return 0;
                 } else {
-                    GogglesItem.setTagValue(stack, key, value);
+                    GogglesItem.setTagValue(helmet, key, value);
                     getGogglesValue(context, key);
                     return 1;
                 }
@@ -365,7 +365,7 @@ public class Commands {
                 player.sendMessage(new LiteralText(key + ": " + GogglesItem.getTagValue(stack, key)), false);
                 return 1;
             } else if (helmet.getItem() instanceof GogglesItem) {
-                player.sendMessage(new LiteralText(key + ": " + GogglesItem.getTagValue(stack, key)), false);
+                player.sendMessage(new LiteralText(key + ": " + GogglesItem.getTagValue(helmet, key)), false);
                 return 1;
             }
             player.sendMessage(GOGGLES_ERROR_MESSAGE, false);
