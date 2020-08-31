@@ -40,12 +40,12 @@ public class PhysicsWorld {
     public final float GRAVITY;
     public final int LOAD_AREA;
 
+    public final Clock clock;
     public final List<PhysicsEntity> physicsEntities;
     public final Map<Entity, RigidBody> collisionEntities;
     public final Map<BlockPos, RigidBody> collisionBlocks;
 
     private final DiscreteDynamicsWorld dynamicsWorld;
-    private final Clock clock;
 
     public PhysicsWorld() {
         this.physicsEntities = new ArrayList();

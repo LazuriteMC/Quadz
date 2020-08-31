@@ -4,21 +4,21 @@
   "package": "bluevista.fpvracingmod.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "BuiltChunkStorageMixin",
+    "ChunkSectionPosMixin",
     "Matrix4fMixin",
     "PlayerInventoryMixin",
+    "ServerChunkManagerMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkManagerMixin",
-    "ServerChunkManagerMixin",
-    "BuiltChunkStorageMixin",
-    "ThreadedAnvilChunkStorageMixin",
-    "ChunkSectionPosMixin"
+    "ThreadedAnvilChunkStorageMixin"
   ],
   "client": [
-    "GameRendererMixin",
-    "WorldRendererMixin",
-    "ClientPlayNetworkManagerMixin",
     "ClientChunkManagerMixin",
-    "ClientWorldMixin"
+    "ClientPlayNetworkManagerMixin",
+    "ClientWorldMixin",
+    "GameRendererMixin",
+    "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -35,11 +35,19 @@ public class ServerTick {
                 }
             }
 
-            if (!GogglesItem.isWearingGoggles(player) && isInGoggles(player) ||
+//            if (isInGoggles(player)) {
+//                DroneEntity drone = (DroneEntity) player.getCameraEntity();
+//                player.teleport(drone.getX(), drone.getY(), drone.getZ());
+//            }
+
+            if(!GogglesItem.isWearingGoggles(player) &&
+                    isInGoggles(player) ||
                     !GogglesItem.isOn(player) ||
-                    player.getCameraEntity() != null && player.getCameraEntity().removed &&
-                    player.getCameraEntity() != player)
+                    player.getCameraEntity() != null &&
+                    player.getCameraEntity().removed &&
+                    player.getCameraEntity() != player) {
                 resetView(player);
+            }
         }
     }
 
