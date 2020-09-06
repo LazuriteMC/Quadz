@@ -4,8 +4,10 @@ import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
@@ -14,10 +16,12 @@ public class ServerTick {
         List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
 
         for (ServerPlayerEntity player : players) { // for every player in the server
-            if (GogglesItem.isWearingGoggles(player) && !isInGoggles(player)) {
-                List<DroneEntity> drones = DroneEntity.getNearbyDrones(player, 320);
+            if (GogglesItem.isWearingGoggles(player) && !ServerHelper.isInGoggles(player)) {
+                List<Entity> drones = DroneEntity.getNearbyDrones(player, DroneEntity.TRACKING_RANGE);
 
-                for (DroneEntity drone : drones) { // for every drone in range of given player
+                for (Entity entity : drones) { // for every drone in range of given player
+                    DroneEntity drone = (DroneEntity) entity;
+
                     if (GogglesItem.isOnSameChannel(drone, player)) {
                         setView(player, drone);
                     }
@@ -35,39 +39,49 @@ public class ServerTick {
                 }
             }
 
-//            if (isInGoggles(player)) {
-//                DroneEntity drone = (DroneEntity) player.getCameraEntity();
-//                player.teleport(drone.getX(), drone.getY(), drone.getZ());
-//            }
+            if (ServerHelper.isInGoggles(player)) {
+                DroneEntity drone = (DroneEntity) player.getCameraEntity();
+                player.getServerWorld().getChunkManager().updateCameraPosition(player);
 
-            if(!GogglesItem.isWearingGoggles(player) &&
-                    isInGoggles(player) ||
-                    !GogglesItem.isOn(player) ||
-                    player.getCameraEntity() != null &&
-                    player.getCameraEntity().removed &&
-                    player.getCameraEntity() != player) {
-                resetView(player);
+                if (Math.sqrt(drone.squaredDistanceTo(drone.getPlayerStartPos())) < DroneEntity.NEAR_TRACKING_RANGE && !player.getPos().equals(drone.getPlayerStartPos())) {
+                    /* If the drone is in range of where the player started, teleport the player there. */
+                    Vec3d pos = drone.getPlayerStartPos();
+                    player.requestTeleport(pos.x, pos.y, pos.z);
+
+                } else if (player.distanceTo(drone) > DroneEntity.NEAR_TRACKING_RANGE) {
+                    /* Else, teleport the player to the drone if it's nearing the end of it's tracking range. */
+                    player.requestTeleport(drone.getX(), DroneEntity.PLAYER_HEIGHT, drone.getZ());
+
+                }
+            }
+
+            if (player.getCameraEntity() instanceof DroneEntity && (  // currently viewing through the goggles AND one of the following:
+                !GogglesItem.isWearingGoggles(player) || // not wearing goggles on head
+                !GogglesItem.isOn(player) ||             // goggles are powered off on head
+                player.getCameraEntity().removed))       // camera entity is dead
+            {
+                    resetView(player);
             }
         }
     }
 
     public static void setView(ServerPlayerEntity player, DroneEntity drone) {
         if(!(player.getCameraEntity() instanceof DroneEntity)) {
-            drone.setInfiniteTracking(true);
+            player.setNoGravity(true);
             player.setCameraEntity(drone);
+            drone.setPlayerStartPos(player.getPos());
         }
     }
 
     public static void resetView(ServerPlayerEntity player) {
         if(player.getCameraEntity() instanceof DroneEntity) {
             DroneEntity drone = (DroneEntity) player.getCameraEntity();
-            drone.setInfiniteTracking(false);
+            Vec3d pos = drone.getPlayerStartPos();
+
+            ServerHelper.movePlayer(pos.x, pos.y, pos.z, player);
+            player.setNoGravity(false);
             player.setCameraEntity(player);
         }
-    }
-
-    public static boolean isInGoggles(ServerPlayerEntity player) {
-        return player.getCameraEntity() instanceof DroneEntity;
     }
 
     public static void register() {

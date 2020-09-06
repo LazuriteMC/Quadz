@@ -28,7 +28,6 @@ public class EMPC2S {
             for (Entity e : entities) {
                 if (e instanceof DroneEntity) {
                     DroneEntity drone = (DroneEntity) e;
-                    drone.setInfiniteTracking(false);
                     drone.kill();
                     kill++;
                 }

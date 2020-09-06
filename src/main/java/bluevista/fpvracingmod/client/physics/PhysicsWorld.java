@@ -171,4 +171,14 @@ public class PhysicsWorld {
         this.dynamicsWorld.removeRigidBody(physics.getRigidBody());
         this.physicsEntities.remove(physics);
     }
+
+    public List<RigidBody> getRigidBodies() {
+        List<RigidBody> bodies = new ArrayList();
+
+        physicsEntities.forEach(physics -> bodies.add(physics.getRigidBody()));
+        bodies.addAll(collisionEntities.values());
+        bodies.addAll(collisionBlocks.values());
+
+        return bodies;
+    }
 }

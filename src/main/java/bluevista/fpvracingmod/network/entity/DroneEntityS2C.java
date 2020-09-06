@@ -35,7 +35,6 @@ public class DroneEntityS2C {
         float fieldOfView = buf.readFloat();
 
         int godMode = buf.readInt();
-        boolean infiniteTracking = buf.readBoolean();
 
         Vector3f position = PacketHelper.deserializeVector3f(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
@@ -58,7 +57,6 @@ public class DroneEntityS2C {
                 drone.setConfigValues(Config.FIELD_OF_VIEW, fieldOfView);
 
                 drone.setConfigValues(Config.GOD_MODE, godMode);
-                drone.setInfiniteTracking(infiniteTracking);
 
                 if(drone.isFresh() || !drone.playerID.equals(player.getUuid())) { // if any player besides physics-controlling player
                     drone.setAxisValues(axisValues);
@@ -87,7 +85,6 @@ public class DroneEntityS2C {
         buf.writeFloat(drone.getConfigValues(Config.FIELD_OF_VIEW).intValue());
 
         buf.writeInt(drone.getConfigValues(Config.GOD_MODE).intValue());
-        buf.writeBoolean(drone.hasInfiniteTracking());
 
         PacketHelper.serializeVector3f(buf, drone.getRigidBodyPos());
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getLinearVelocity(new Vector3f()));

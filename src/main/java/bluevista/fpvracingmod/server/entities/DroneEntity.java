@@ -11,6 +11,7 @@ import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
+import com.bulletphysics.dynamics.RigidBody;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Blocks;
@@ -23,6 +24,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -40,13 +43,19 @@ import java.util.UUID;
 
 public class DroneEntity extends PhysicsEntity {
 	public static final UUID NULL_UUID = new UUID(0, 0);
+	public static final int TRACKING_RANGE = 80;
+	public static final int NEAR_TRACKING_RANGE = TRACKING_RANGE - 5;
+	public static final int PLAYER_HEIGHT = 200;
 
+	/* Misc */
 	private final AxisValues axisValues;
+	private Vec3d playerStartPos;
 
-	private boolean infiniteTracking;
+	/* God Mode */
 	private boolean prevGodMode;
 	private boolean godMode;
 
+	/* Video Settings */
 	private int cameraAngle;
 	private float fieldOfView;
 	private int band;
@@ -64,6 +73,7 @@ public class DroneEntity extends PhysicsEntity {
 
 		this.axisValues = new AxisValues();
 		this.playerID = NULL_UUID;
+
 		this.noClip = false;
 		this.godMode = false;
 		this.prevGodMode = this.godMode;
@@ -94,7 +104,6 @@ public class DroneEntity extends PhysicsEntity {
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_CAMPFIRE ||
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_FIRE ||
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.FIRE)) {
-				this.setInfiniteTracking(false);
 				this.kill();
 			}
 		}
@@ -171,12 +180,12 @@ public class DroneEntity extends PhysicsEntity {
 		this.axisValues.currT = throttle;
 	}
 
-	public void setInfiniteTracking(boolean infiniteTracking) {
-		this.infiniteTracking = infiniteTracking;
-	}
-
 	public void setNotFresh() {
 		this.fresh = false;
+	}
+
+	public void setPlayerStartPos(Vec3d pos) {
+		this.playerStartPos = pos;
 	}
 
 	@Override
@@ -223,12 +232,12 @@ public class DroneEntity extends PhysicsEntity {
 		return this.axisValues.currT;
 	}
 
-	public boolean hasInfiniteTracking() {
-		return infiniteTracking;
-	}
-
 	public boolean isFresh() {
 		return this.fresh;
+	}
+
+	public Vec3d getPlayerStartPos() {
+		return this.playerStartPos;
 	}
 
 	@Override
@@ -282,18 +291,19 @@ public class DroneEntity extends PhysicsEntity {
 	 * the provided entity. The provided entity is
 	 * typically just the player.
 	 */
-	public static List<DroneEntity> getNearbyDrones(Entity entity, int x) {
-		World world = entity.getEntityWorld();
-		List<DroneEntity> drones = world.getEntities(
-				DroneEntity.class,
-				new Box(entity.getPos().getX() - x,
-						entity.getPos().getY() - x,
-						entity.getPos().getZ() - x,
-						entity.getPos().getX() + x,
-						entity.getPos().getY() + x,
-						entity.getPos().getZ() + x),
-				null
-		);
+	public static List<Entity> getNearbyDrones(Entity entity, int x) {
+		ServerWorld world = (ServerWorld) entity.getEntityWorld();
+
+		List<Entity> drones = world.getEntities(ServerInitializer.DRONE_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
+//				DroneEntity.class,
+//				new Box(entity.getPos().getX() - x,
+//						entity.getPos().getY() - x,
+//						entity.getPos().getZ() - x,
+//						entity.getPos().getX() + x,
+//						entity.getPos().getY() + x,
+//						entity.getPos().getZ() + x)
+//		);
+
 		return drones;
 	}
 
@@ -305,12 +315,12 @@ public class DroneEntity extends PhysicsEntity {
 		World world = entity.getEntityWorld();
 		List<DroneEntity> drones = world.getEntities(
 				DroneEntity.class,
-				new Box(entity.getPos().getX() - 100,
-						entity.getPos().getY() - 100,
-						entity.getPos().getZ() - 100,
-						entity.getPos().getX() + 100,
-						entity.getPos().getY() + 100,
-						entity.getPos().getZ() + 100),
+				new Box(entity.getPos().getX() - TRACKING_RANGE,
+						entity.getPos().getY() - TRACKING_RANGE,
+						entity.getPos().getZ() - TRACKING_RANGE,
+						entity.getPos().getX() + TRACKING_RANGE,
+						entity.getPos().getY() + TRACKING_RANGE,
+						entity.getPos().getZ() + TRACKING_RANGE),
 				null
 		);
 
@@ -338,26 +348,33 @@ public class DroneEntity extends PhysicsEntity {
 	/* DOERS */
 
 	public void decreaseAngularVelocity() {
-		float t = 0.1f;
+		List<RigidBody> bodies = ClientInitializer.physicsWorld.getRigidBodies();
+		boolean mightCollide = false;
+		float t = 0.25f;
 
-		if(getThrottle() > t ||
-				Math.abs(axisValues.currX) > t ||
-				Math.abs(axisValues.currY) > t ||
-				Math.abs(axisValues.currZ) > t) {
-				getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
+		for(RigidBody body : bodies) {
+			if(body != getRigidBody()) {
+				Vector3f dist = body.getCenterOfMassPosition(new Vector3f());
+				dist.sub(getRigidBodyPos());
+
+				if(dist.length() < 1.0f) {
+					mightCollide = true;
+					break;
+				}
+			}
 		}
 
-//		Vector3f ang = getRigidBody().getAngularVelocity(new Vector3f());
-//		if(ang.length() > 2) {
-//			Vector3f vec = new Vector3f();
-//			vec.x = axisValues.currX * ang.x;
-//			vec.y = axisValues.currY * ang.y;
-//			vec.z = axisValues.currZ * ang.z;
-//			ang.sub(vec);
-//			getRigidBody().setAngularVelocity(ang);
-//		} else {
-//			getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
-//		}
+		if(!mightCollide) {
+			getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
+		} else {
+			float it = 1 - getThrottle();
+
+			if(Math.abs(axisValues.currX) * it > t ||
+					Math.abs(axisValues.currY) * it > t ||
+					Math.abs(axisValues.currZ) * it > t) {
+				getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
+			}
+		}
 	}
 
 	/*
@@ -394,7 +411,7 @@ public class DroneEntity extends PhysicsEntity {
 	public ActionResult interact(PlayerEntity player, Hand hand) {
 		if (!player.world.isClient()) {
 			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
-				player.inventory.getMainHandStack().getOrCreateSubTag(ServerInitializer.MODID).putUuid(Config.BIND, this.getUuid());
+				TransmitterItem.setTagValue(player.getMainHandStack(), Config.BIND, this.getUuid());
 				player.sendMessage(new TranslatableText("Transmitter bound"), false);
 			}
 		} else if (!InputTick.controllerExists()) {
