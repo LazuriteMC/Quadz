@@ -30,6 +30,7 @@ public class EMPC2S {
             ServerPlayerEntity sp = (ServerPlayerEntity) p;
             if(ServerHelper.isInGoggles(sp)) {
                 sp.getCameraEntity().kill();
+                sp.getServerWorld().removeEntity(sp.getCameraEntity());
                 ServerTick.resetView(sp);
                 kill++;
             }

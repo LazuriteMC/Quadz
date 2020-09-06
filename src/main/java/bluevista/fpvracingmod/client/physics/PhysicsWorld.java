@@ -47,10 +47,15 @@ public class PhysicsWorld {
 
     private final DiscreteDynamicsWorld dynamicsWorld;
 
+    private List<BlockPos> toKeepBlocks;
+    private List<Entity> toKeepEntities;
+
     public PhysicsWorld() {
-        this.physicsEntities = new ArrayList();
         this.collisionEntities = new HashMap();
         this.collisionBlocks = new HashMap();
+        this.physicsEntities = new ArrayList();
+        this.toKeepBlocks = new ArrayList();
+        this.toKeepEntities = new ArrayList();
         this.clock = new Clock();
 
         LOAD_AREA = 3; // Get from config
@@ -79,6 +84,10 @@ public class PhysicsWorld {
                 physics.stepPhysics(d);
             }
         });
+
+        unloadEntityCollisions();
+        unloadBlockCollisions();
+
         this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
     }
 
@@ -86,12 +95,12 @@ public class PhysicsWorld {
         Box area = new Box(physics.getRigidBodyBlockPos()).expand(LOAD_AREA);
         Map<BlockPos, BlockState> blockList = BlockHelper.getBlockList(world, area);
         BlockView blockView = world.getChunkManager().getChunk(physics.chunkX, physics.chunkZ);
-        List<BlockPos> toKeep = new ArrayList();
 
         blockList.forEach((blockPos, blockState) -> {
             if(!blockState.getBlock().canMobSpawnInside()) {
                 if(!this.collisionBlocks.containsKey(blockPos)) {
                     VoxelShape coll = blockState.getCollisionShape(blockView, blockPos);
+
                     if (!coll.isEmpty()) {
                         Box b = coll.getBoundingBox();
 
@@ -111,23 +120,27 @@ public class PhysicsWorld {
                     }
                 }
 
-                toKeep.add(blockPos);
+                this.toKeepBlocks.add(blockPos);
             }
         });
+    }
 
+    public void unloadBlockCollisions() {
         List<BlockPos> toRemove = new ArrayList();
+
         this.collisionBlocks.forEach((pos, body) -> {
-            if(!toKeep.contains(pos)) {
+            if(!toKeepBlocks.contains(pos)) {
                 dynamicsWorld.removeRigidBody(collisionBlocks.get(pos));
                 toRemove.add(pos);
             }
         });
+
         toRemove.forEach(this.collisionBlocks::remove);
+        toKeepBlocks.clear();
     }
 
     public void loadEntityCollisions(PhysicsEntity physics, ClientWorld world) {
         Box area = new Box(physics.getRigidBodyBlockPos()).expand(LOAD_AREA);
-        List<Entity> toKeep = new ArrayList();
 
         world.getEntities(physics, area).forEach(entity -> {
             if(!(entity instanceof PhysicsEntity) && !collisionEntities.containsKey(entity)) {
@@ -149,17 +162,22 @@ public class PhysicsWorld {
                 this.dynamicsWorld.addRigidBody(body);
             }
 
-            toKeep.add(entity);
+            toKeepEntities.add(entity);
         });
+    }
 
-        List<Entity> toRemove = new ArrayList();
-        this.collisionEntities.forEach((entity, body) -> {
-            if(!toKeep.contains(entity)) {
-                this.dynamicsWorld.removeRigidBody(body);
-                toRemove.add(entity);
+    public void unloadEntityCollisions() {
+        List<BlockPos> toRemove = new ArrayList();
+
+        this.collisionBlocks.forEach((pos, body) -> {
+            if(!toKeepBlocks.contains(pos)) {
+                dynamicsWorld.removeRigidBody(collisionBlocks.get(pos));
+                toRemove.add(pos);
             }
         });
-        toRemove.forEach(collisionEntities::remove);
+
+        toRemove.forEach(this.collisionBlocks::remove);
+        toKeepEntities.clear();
     }
 
     public void add(PhysicsEntity physics) {

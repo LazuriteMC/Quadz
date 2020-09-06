@@ -44,8 +44,9 @@ import java.util.UUID;
 public class DroneEntity extends PhysicsEntity {
 	public static final UUID NULL_UUID = new UUID(0, 0);
 	public static final int TRACKING_RANGE = 80;
-	public static final int NEAR_TRACKING_RANGE = TRACKING_RANGE - 5;
 	public static final int PLAYER_HEIGHT = 200;
+
+	public static int NEAR_TRACKING_RANGE = TRACKING_RANGE - 5;
 
 	/* Misc */
 	private final AxisValues axisValues;

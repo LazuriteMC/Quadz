@@ -8,6 +8,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
 public class ClientTick {
@@ -15,16 +16,9 @@ public class ClientTick {
     private static double prevFOV;
 
     public static void tick(MinecraftClient client) {
+        DroneEntity.NEAR_TRACKING_RANGE = MathHelper.floor(DroneEntity.TRACKING_RANGE / 16.0D) < client.options.viewDistance ? DroneEntity.TRACKING_RANGE - 5 : client.options.viewDistance * 16;
+
         if (client.player != null && !client.isPaused()) {
-
-//            if(ClientInitializer.physicsWorld != null) {
-//                ClientWorld world = client.world;
-//                for (PhysicsEntity physics : ClientInitializer.physicsWorld.physicsEntities) {
-//                    ClientInitializer.physicsWorld.loadEntityCollisions(physics, world);
-//                    ClientInitializer.physicsWorld.loadBlockCollisions(physics, world);
-//                }
-//            }
-
             client.world.getEntities().forEach((entity) -> {
                 if(entity instanceof DroneEntity) {
                     DroneEntity drone = (DroneEntity) entity;
