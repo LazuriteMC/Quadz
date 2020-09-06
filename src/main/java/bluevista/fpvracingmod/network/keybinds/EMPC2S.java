@@ -1,6 +1,8 @@
 package bluevista.fpvracingmod.network.keybinds;
 
+import bluevista.fpvracingmod.server.ServerHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
+import bluevista.fpvracingmod.server.ServerTick;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
@@ -9,6 +11,7 @@ import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
@@ -22,9 +25,16 @@ public class EMPC2S {
         int r = buf.readInt();
 
         context.getTaskQueue().execute(() -> {
-            List<Entity> entities = p.getEntityWorld().getEntities(p, p.getBoundingBox().expand(r));
             int kill = 0;
 
+            ServerPlayerEntity sp = (ServerPlayerEntity) p;
+            if(ServerHelper.isInGoggles(sp)) {
+                sp.getCameraEntity().kill();
+                ServerTick.resetView(sp);
+                kill++;
+            }
+
+            List<Entity> entities = p.getEntityWorld().getEntities(p, p.getBoundingBox().expand(r));
             for (Entity e : entities) {
                 if (e instanceof DroneEntity) {
                     DroneEntity drone = (DroneEntity) e;
@@ -34,8 +44,8 @@ public class EMPC2S {
             }
 
             String t;
-            if (kill == 1) t = "Rekt 1 drone";
-            else t = "Rekt " + kill + " drones";
+            if (kill == 1) t = "Destroyed 1 drone";
+            else t = "Destroyed " + kill + " drones";
 
             List<? extends PlayerEntity> players = context.getPlayer().getEntityWorld().getPlayers();
             for (PlayerEntity player : players)
