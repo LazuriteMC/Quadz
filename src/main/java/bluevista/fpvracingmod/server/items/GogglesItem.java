@@ -78,15 +78,7 @@ public class GogglesItem extends ArmorItem {
 		return null;
 	}
 
-	public static void setOn(ItemStack itemStack, boolean on, PlayerEntity player, String[] keys) {
-		if(itemStack.getSubTag(ServerInitializer.MODID) != null && itemStack.getSubTag(ServerInitializer.MODID).contains(Config.ON)) {
-			if(on && !itemStack.getSubTag(ServerInitializer.MODID).getBoolean(Config.ON)) {
-
-				String subString = keys[0] + " or " + keys[1];
-
-				player.sendMessage(new LiteralText("Press " + subString + " power off goggles"), true);
-			}
-		}
+	public static void setOn(ItemStack itemStack, boolean on) {
 		itemStack.getOrCreateSubTag(ServerInitializer.MODID).putBoolean(Config.ON, on);
 	}
 

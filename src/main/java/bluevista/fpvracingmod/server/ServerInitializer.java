@@ -41,6 +41,7 @@ public class ServerInitializer implements ModInitializer {
 	public static EntityType<Entity> DRONE_ENTITY;
 
 	public static final HashMap<UUID, Config> SERVER_PLAYER_CONFIGS = new HashMap<>();
+	public static final HashMap<UUID, String[]> SERVER_PLAYER_KEYS = new HashMap<>();
 
 	@Override
 	public void onInitialize() {

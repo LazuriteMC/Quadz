@@ -117,26 +117,26 @@ public class DroneEntity extends PhysicsEntity {
 	public void stepPhysics(float d) {
 		super.stepPhysics(d);
 
-		if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this))
+		if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
 			axisValues.set(InputTick.axisValues);
 
-		float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
-		float deltaY = (float) BetaflightHelper.calculateRates(axisValues.currY, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
-		float deltaZ = (float) BetaflightHelper.calculateRates(axisValues.currZ, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
+			float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
+			float deltaY = (float) BetaflightHelper.calculateRates(axisValues.currY, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
+			float deltaZ = (float) BetaflightHelper.calculateRates(axisValues.currZ, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
 
-		rotateX(deltaX);
-		rotateY(deltaY);
-		rotateZ(deltaZ);
+			rotateX(deltaX);
+			rotateY(deltaY);
+			rotateZ(deltaZ);
 
-		Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(THRUST_NEWTONS);
-		Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
+			Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(THRUST_NEWTONS);
+			Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
 
-//		this.yaw = this.getHeading();
-		this.decreaseAngularVelocity();
-		this.applyForce(
-				new Vector3f((float) thrust.x, (float) thrust.y, (float) thrust.z),
-				new Vector3f((float) yawForce.x, (float) yawForce.y, (float) yawForce.z)
-		);
+			this.decreaseAngularVelocity();
+			this.applyForce(
+					new Vector3f((float) thrust.x, (float) thrust.y, (float) thrust.z),
+					new Vector3f((float) yawForce.x, (float) yawForce.y, (float) yawForce.z)
+			);
+		}
 	}
 
 	/* SETTERS */

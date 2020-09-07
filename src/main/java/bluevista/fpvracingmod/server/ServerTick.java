@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
@@ -70,6 +71,12 @@ public class ServerTick {
             drone.addPlayerStartPos(player);
             player.setNoGravity(true);
             player.setCameraEntity(drone);
+
+            String[] keys = ServerInitializer.SERVER_PLAYER_KEYS.get(player.getUuid());
+            if(keys != null) {
+                String subString = keys[0] + " or " + keys[1];
+                player.sendMessage(new LiteralText("Press " + subString + " power off goggles"), true);
+            }
         }
     }
 
