@@ -38,6 +38,7 @@ import net.minecraft.world.World;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,7 +51,7 @@ public class DroneEntity extends PhysicsEntity {
 
 	/* Misc */
 	private final AxisValues axisValues;
-	private Vec3d playerStartPos;
+	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
 
 	/* God Mode */
 	private boolean prevGodMode;
@@ -74,6 +75,7 @@ public class DroneEntity extends PhysicsEntity {
 
 		this.axisValues = new AxisValues();
 		this.playerID = NULL_UUID;
+		this.playerStartPos = new HashMap();
 
 		this.noClip = false;
 		this.godMode = false;
@@ -185,8 +187,12 @@ public class DroneEntity extends PhysicsEntity {
 		this.fresh = false;
 	}
 
-	public void setPlayerStartPos(Vec3d pos) {
-		this.playerStartPos = pos;
+	public void addPlayerStartPos(PlayerEntity player) {
+		this.playerStartPos.put(player, player.getPos());
+	}
+
+	public void removePlayerStartPos(PlayerEntity player) {
+		this.playerStartPos.remove(player);
 	}
 
 	@Override
@@ -237,7 +243,7 @@ public class DroneEntity extends PhysicsEntity {
 		return this.fresh;
 	}
 
-	public Vec3d getPlayerStartPos() {
+	public HashMap<PlayerEntity, Vec3d> getPlayerStartPos() {
 		return this.playerStartPos;
 	}
 

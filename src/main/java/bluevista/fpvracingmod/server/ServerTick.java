@@ -41,11 +41,11 @@ public class ServerTick {
 
             if (ServerHelper.isInGoggles(player)) {
                 DroneEntity drone = (DroneEntity) player.getCameraEntity();
-                player.getServerWorld().getChunkManager().updateCameraPosition(player);
+                Vec3d pos = drone.getPlayerStartPos().get(player);
+//                player.getServerWorld().getChunkManager().updateCameraPosition(player);
 
-                if (Math.sqrt(drone.squaredDistanceTo(drone.getPlayerStartPos())) < DroneEntity.NEAR_TRACKING_RANGE && !player.getPos().equals(drone.getPlayerStartPos())) {
+                if (Math.sqrt(drone.squaredDistanceTo(pos)) < DroneEntity.NEAR_TRACKING_RANGE && !player.getPos().equals(pos)) {
                     /* If the drone is in range of where the player started, teleport the player there. */
-                    Vec3d pos = drone.getPlayerStartPos();
                     player.requestTeleport(pos.x, pos.y, pos.z);
 
                 } else if (player.distanceTo(drone) > DroneEntity.NEAR_TRACKING_RANGE) {
@@ -67,18 +67,20 @@ public class ServerTick {
 
     public static void setView(ServerPlayerEntity player, DroneEntity drone) {
         if(!(player.getCameraEntity() instanceof DroneEntity)) {
+            drone.addPlayerStartPos(player);
             player.setNoGravity(true);
             player.setCameraEntity(drone);
-            drone.setPlayerStartPos(player.getPos());
         }
     }
 
     public static void resetView(ServerPlayerEntity player) {
         if(player.getCameraEntity() instanceof DroneEntity) {
             DroneEntity drone = (DroneEntity) player.getCameraEntity();
-            Vec3d pos = drone.getPlayerStartPos();
 
+            Vec3d pos = drone.getPlayerStartPos().get(player);
             ServerHelper.movePlayer(pos.x, pos.y, pos.z, player);
+            drone.removePlayerStartPos(player);
+
             player.setNoGravity(false);
             player.setCameraEntity(player);
         }
