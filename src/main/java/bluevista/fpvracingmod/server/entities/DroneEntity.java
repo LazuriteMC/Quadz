@@ -262,14 +262,6 @@ public class DroneEntity extends PhysicsEntity {
 		return super.getBoundingBox();
 	}
 
-	public boolean isTransmitterBound(ItemStack transmitter) {
-		try {
-			return this.getUuid().equals(transmitter.getSubTag(Config.BIND).getUuid(Config.BIND));
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
 	/*
 	 * Essentially get the direction the bottom
 	 * of the drone is facing. Returned in vector form.
@@ -314,30 +306,10 @@ public class DroneEntity extends PhysicsEntity {
 		return drones;
 	}
 
-	/*
-	 * Get a drone by it's UUID given it is nearby the
-	 * provided entity.
-	 */
-	public static DroneEntity getByUuid(Entity entity, UUID uuid) {
-		World world = entity.getEntityWorld();
-		List<DroneEntity> drones = world.getEntities(
-				DroneEntity.class,
-				new Box(entity.getPos().getX() - TRACKING_RANGE,
-						entity.getPos().getY() - TRACKING_RANGE,
-						entity.getPos().getZ() - TRACKING_RANGE,
-						entity.getPos().getX() + TRACKING_RANGE,
-						entity.getPos().getY() + TRACKING_RANGE,
-						entity.getPos().getZ() + TRACKING_RANGE),
-				null
-		);
-
-		if (drones.size() > 0) {
-			for (Entity e : drones) {
-				if (uuid.equals(e.getUuid()) && e instanceof DroneEntity)
-					return (DroneEntity) e;
-			}
+	public static DroneEntity getByEntityID(Entity entity, Number entityID) {
+		if (entityID != null) {
+			return (DroneEntity) entity.getEntityWorld().getEntityById(entityID.intValue());
 		}
-
 		return null;
 	}
 
@@ -418,7 +390,7 @@ public class DroneEntity extends PhysicsEntity {
 	public ActionResult interact(PlayerEntity player, Hand hand) {
 		if (!player.world.isClient()) {
 			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
-				TransmitterItem.setTagValue(player.getMainHandStack(), Config.BIND, this.getUuid());
+				TransmitterItem.setTagValue(player.getMainHandStack(), Config.BIND, this.getEntityId());
 				player.sendMessage(new TranslatableText("Transmitter bound"), false);
 			}
 		} else if (!InputTick.controllerExists()) {

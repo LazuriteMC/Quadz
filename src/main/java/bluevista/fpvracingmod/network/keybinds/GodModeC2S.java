@@ -25,11 +25,11 @@ public class GodModeC2S {
         context.getTaskQueue().execute(() -> {
             String t;
 
-            if(hand.getItem() instanceof TransmitterItem) {
-                if(hand.getSubTag(Config.BIND) != null) {
-                    DroneEntity drone = DroneEntity.getByUuid(context.getPlayer(), hand.getSubTag(Config.BIND).getUuid(Config.BIND));
+            if (hand.getItem() instanceof TransmitterItem) {
+                if (TransmitterItem.getTagValue(hand, Config.BIND) != null) {
+                    DroneEntity drone = DroneEntity.getByEntityID(context.getPlayer(), TransmitterItem.getTagValue(hand, Config.BIND));
 
-                    if(drone != null) {
+                    if (drone != null) {
                         drone.setConfigValues(Config.GOD_MODE, drone.getConfigValues(Config.GOD_MODE).intValue() == 1 ? 0 : 1);
 
                         if (drone.getConfigValues(Config.GOD_MODE).intValue() == 1) {

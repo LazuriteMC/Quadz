@@ -3,7 +3,6 @@ package bluevista.fpvracingmod.client;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.network.entity.DroneEntityC2S;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
-import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
@@ -12,7 +11,7 @@ import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
 public class ClientTick {
-    private static float configFOV;
+    private static float droneFOV;
     private static double prevFOV;
 
     public static void tick(MinecraftClient client) {
@@ -31,23 +30,20 @@ public class ClientTick {
             });
 
             if (client.cameraEntity instanceof DroneEntity) {
-                configFOV = ClientInitializer.getConfig().getFloatOption(Config.FIELD_OF_VIEW);
+                droneFOV = ((DroneEntity)client.cameraEntity).getConfigValues(Config.FIELD_OF_VIEW).floatValue();
 
-                if (client.player.getMainHandStack().getItem() instanceof TransmitterItem) {
-                    if (client.player.getMainHandStack().getSubTag(Config.BIND) != null) {
-                        DroneEntity drone = TransmitterItem.droneFromTransmitter(client.player.getMainHandStack(), client.player);
-                        if (drone != null) {
-                            configFOV = drone.getConfigValues(Config.FIELD_OF_VIEW).floatValue();
-                        }
-                    }
-                }
-
-                if (client.options.fov != configFOV && configFOV != 0.0f) {
+                if (droneFOV != 0.0f && client.options.fov != droneFOV) {
                     prevFOV = client.options.fov;
-                    client.options.fov = configFOV;
+                    client.options.fov = droneFOV;
                 }
-            } else if (client.options.fov == configFOV) {
+
+                if (droneFOV == 0.0f && prevFOV != 0.0f) {
+                    client.options.fov = prevFOV;
+                    prevFOV = 0.0f;
+                }
+            } else if (prevFOV != 0.0f) {
                 client.options.fov = prevFOV;
+                prevFOV = 0.0f;
             }
         }
     }

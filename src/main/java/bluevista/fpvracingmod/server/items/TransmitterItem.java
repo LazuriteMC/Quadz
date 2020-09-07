@@ -8,19 +8,17 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 
-import java.util.UUID;
-
 public class TransmitterItem extends Item {
 
     public TransmitterItem(Settings settings) {
         super(settings);
     }
 
-    public static void setTagValue(ItemStack itemStack, String key, UUID value) {
+    public static void setTagValue(ItemStack itemStack, String key, Number value) {
         if (value != null) {
             switch (key) {
                 case Config.BIND:
-                    itemStack.getOrCreateSubTag(ServerInitializer.MODID).putUuid(Config.BIND, value);
+                    itemStack.getOrCreateSubTag(ServerInitializer.MODID).putInt(Config.BIND, value.intValue());
                     break;
                 default:
                     break;
@@ -28,12 +26,12 @@ public class TransmitterItem extends Item {
         }
     }
 
-    public static UUID getTagValue(ItemStack itemStack, String key) {
+    public static Number getTagValue(ItemStack itemStack, String key) {
         if (itemStack.getSubTag(ServerInitializer.MODID) != null && itemStack.getSubTag(ServerInitializer.MODID).contains(key)) {
             CompoundTag tag = itemStack.getSubTag(ServerInitializer.MODID);
             switch (key) {
                 case Config.BIND:
-                    return tag.getUuid(Config.BIND);
+                    return tag.getInt(Config.BIND);
                 default:
                     return null;
             }
@@ -47,7 +45,7 @@ public class TransmitterItem extends Item {
 
         if (itemStack.getItem() instanceof TransmitterItem) {
             if (TransmitterItem.getTagValue(itemStack, Config.BIND) != null) {
-                drone = DroneEntity.getByUuid(player, TransmitterItem.getTagValue(itemStack, Config.BIND));
+                drone = DroneEntity.getByEntityID(player, TransmitterItem.getTagValue(itemStack, Config.BIND));
             }
         }
 
@@ -56,13 +54,9 @@ public class TransmitterItem extends Item {
 
     public static boolean isBoundTransmitter(ItemStack itemStack, DroneEntity drone) {
         if (TransmitterItem.getTagValue(itemStack, Config.BIND) != null) {
-            return drone.getUuid().equals(TransmitterItem.getTagValue(itemStack, Config.BIND));
+            return drone.getEntityId() == TransmitterItem.getTagValue(itemStack, Config.BIND).intValue();
         }
         return false;
-    }
-
-    public static boolean isHoldingTransmitter(PlayerEntity player) {
-        return player.inventory.getMainHandStack().getItem() instanceof TransmitterItem;
     }
 }
 
