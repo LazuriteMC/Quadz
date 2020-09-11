@@ -9,6 +9,7 @@ import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.network.config.ConfigS2C;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
 import bluevista.fpvracingmod.client.physics.PhysicsWorld;
+import bluevista.fpvracingmod.network.entity.PhysicsEntityS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.ClientModInitializer;
@@ -55,6 +56,7 @@ public class ClientInitializer implements ClientModInitializer {
     }
 
     private void registerNetwork() {
+        PhysicsEntityS2C.register();
         DroneEntityS2C.register();
         ConfigS2C.register();
     }

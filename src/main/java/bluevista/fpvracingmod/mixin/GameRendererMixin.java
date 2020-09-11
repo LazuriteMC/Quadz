@@ -42,7 +42,6 @@ public class GameRendererMixin {
 	 */
 	@Inject(at = @At("HEAD"), method = "renderWorld")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
-		InputTick.tick();
 		RenderTick.tick(client, matrix);
 	}
 

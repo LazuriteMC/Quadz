@@ -1,7 +1,11 @@
 package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
+import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.math.QuaternionHelper;
+import bluevista.fpvracingmod.network.GenericBuffer;
+import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
+import bluevista.fpvracingmod.network.entity.PhysicsEntityS2C;
 import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
@@ -16,7 +20,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -31,10 +34,12 @@ public abstract class PhysicsEntity extends Entity {
     public final float MASS;
 
     private final RigidBody body;
+    private GenericBuffer<Quat4f> quatBuf;
+    private GenericBuffer<Vector3f> posBuf;
+    private Quat4f prevQuat;
 
     public UUID playerID;
-    public Quat4f prevOrientation;
-    public boolean fresh = true;
+    private boolean active;
 
     public PhysicsEntity(EntityType type, World world, Vec3d pos) {
         super(type, world);
@@ -44,44 +49,93 @@ public abstract class PhysicsEntity extends Entity {
         this.THRUST_NEWTONS = 45.0f; // Get from config
 
         this.setPos(pos.x, pos.y, pos.z);
+
+        this.quatBuf = new GenericBuffer<Quat4f>();
+        this.posBuf = new GenericBuffer<Vector3f>();
         this.body = createRigidBody(getBoundingBox());
-        if(this.world.isClient())
+
+        if(this.world.isClient()) {
             ClientInitializer.physicsWorld.add(this);
+            PhysicsEntityC2S.send(this);
+        }
     }
 
     @Override
     public void tick() {
         super.tick();
-        if(this.world.isClient()) {
-            Vector3f pos = this.getRigidBodyPos();
-            this.setPos(pos.x, pos.y, pos.z);
 
-            this.prevOrientation = this.getOrientation();
+        if(this.world.isClient()) {
+            active = ClientTick.isPlayerIDClient(playerID);
+
+            if(active) {
+                PhysicsEntityC2S.send(this);
+            }
+
+        } else {
+            PhysicsEntityS2C.send(this);
+
+            if(this.world.getPlayerByUuid(playerID) == null) {
+                this.kill();
+            }
         }
+
+        Vector3f pos = this.getRigidBody().getCenterOfMassPosition(new Vector3f());
+        this.updatePosition(pos.x, pos.y, pos.z);
     }
 
     @Environment(EnvType.CLIENT)
     public void stepPhysics(float d) {
         if(playerID != null) {
-            if (!ClientInitializer.isPlayerIDClient(playerID)) {
-                Vector3f vec = this.getRigidBodyPos();
-                this.resetPosition(vec.x, vec.y, vec.z);
+            if (ClientInitializer.isPlayerIDClient(playerID)) {
+                this.quatBuf.setCaptureRate(d);
+                this.quatBuf.add(this.getOrientation());
 
-                if (prevOrientation != null) {
-                    Quat4f curOrientation = this.getOrientation();
-//                    prevOrientation.set(curOrientation);
-                    curOrientation.x = MathHelper.lerp(d, prevOrientation.x, curOrientation.x);
-                    curOrientation.y = MathHelper.lerp(d, prevOrientation.y, curOrientation.y);
-                    curOrientation.z = MathHelper.lerp(d, prevOrientation.z, curOrientation.z);
-                    curOrientation.w = MathHelper.lerp(d, prevOrientation.w, curOrientation.w);
-                    this.setOrientation(curOrientation);
+                this.posBuf.setCaptureRate(d);
+                this.posBuf.add(this.getRigidBody().getCenterOfMassPosition(new Vector3f()));
+            } else {
+                if (quatBuf != null) {
+                    if (quatBuf.size() > 0) {
+                        prevQuat = quatBuf.getLast();
+
+                        Quat4f quat = quatBuf.poll(d);
+                        if(quat != null) {
+                            this.setOrientation(quat);
+                        }
+                    }
+                }
+
+                if (posBuf != null) {
+                    if (posBuf.size() > 0) {
+                        Vector3f pos = posBuf.poll(d);
+                        if(pos != null) {
+                            this.setRigidBodyPos(pos);
+                        }
+                    }
                 }
             }
         }
     }
 
-    public Vector3f getRigidBodyPos() {
-        return this.body.getCenterOfMassPosition(new Vector3f());
+    public void lerpOrientation(float tickDelta) {
+        if(prevQuat != null) {
+            this.setOrientation(QuaternionHelper.lerp(tickDelta, prevQuat, getOrientation()));
+        }
+    }
+
+    public GenericBuffer<Quat4f> getQuaternionBuffer() {
+        return this.quatBuf;
+    }
+
+    public void setQuaternionBuffer(GenericBuffer<Quat4f> quatBuf) {
+        this.quatBuf.set(quatBuf);
+    }
+
+    public GenericBuffer<Vector3f> getPositionBuffer() {
+        return this.posBuf;
+    }
+
+    public void setPositionBuffer(GenericBuffer<Vector3f> posBuf) {
+        this.posBuf.set(posBuf);
     }
 
     public BlockPos getRigidBodyBlockPos() {
@@ -116,8 +170,14 @@ public abstract class PhysicsEntity extends Entity {
     }
 
     @Override
+    public void addVelocity(double x, double y, double z) {
+        this.getRigidBody().applyCentralForce(new Vector3f((float) x, (float) y, (float) z));
+    }
+
+    @Override
     public void remove() {
         super.remove();
+
         if(this.world.isClient()) {
             ClientInitializer.physicsWorld.remove(this);
         }
@@ -151,6 +211,15 @@ public abstract class PhysicsEntity extends Entity {
     protected void writeCustomDataToTag(CompoundTag tag) {
         QuaternionHelper.toTag(getOrientation(), tag);
         tag.putUuid("playerID", this.playerID);
+    }
+
+    @Override
+    public void updateTrackedPositionAndAngles(double x, double y, double z, float yaw, float pitch, int interpolationSteps, boolean interpolate) {
+
+    }
+
+    public boolean isActive() {
+        return this.active;
     }
 
     public RigidBody createRigidBody(Box cBox) {

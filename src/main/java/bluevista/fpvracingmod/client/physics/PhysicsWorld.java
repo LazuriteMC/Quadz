@@ -46,14 +46,13 @@ public class PhysicsWorld {
     public final Map<BlockPos, RigidBody> collisionBlocks;
 
     private final DiscreteDynamicsWorld dynamicsWorld;
-
-    private List<BlockPos> toKeepBlocks;
-    private List<Entity> toKeepEntities;
+    private final List<BlockPos> toKeepBlocks;
+    private final List<Entity> toKeepEntities;
 
     public PhysicsWorld() {
+        this.physicsEntities = new ArrayList();
         this.collisionEntities = new HashMap();
         this.collisionBlocks = new HashMap();
-        this.physicsEntities = new ArrayList();
         this.toKeepBlocks = new ArrayList();
         this.toKeepEntities = new ArrayList();
         this.clock = new Clock();
@@ -77,10 +76,14 @@ public class PhysicsWorld {
         float maxSubSteps = 5.0f;
         clock.reset();
 
+        loadActivePhysicsEntities();
         this.physicsEntities.forEach(physics -> {
             if(world != null) {
-                loadEntityCollisions(physics, world);
-                loadBlockCollisions(physics, world);
+                if(physics.isActive()) {
+                    loadEntityCollisions(physics, world);
+                    loadBlockCollisions(physics, world);
+                }
+
                 physics.stepPhysics(d);
             }
         });
@@ -89,6 +92,20 @@ public class PhysicsWorld {
         unloadBlockCollisions();
 
         this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
+    }
+
+    public void loadActivePhysicsEntities() {
+        this.physicsEntities.forEach(physics -> {
+            if(physics.isActive()) {
+                if(!physics.getRigidBody().isInWorld()) {
+                    this.dynamicsWorld.addRigidBody(physics.getRigidBody());
+                }
+            } else {
+                if(physics.getRigidBody().isInWorld()) {
+                    this.dynamicsWorld.removeRigidBody(physics.getRigidBody());
+                }
+            }
+        });
     }
 
     public void loadBlockCollisions(PhysicsEntity physics, ClientWorld world) {
@@ -167,21 +184,20 @@ public class PhysicsWorld {
     }
 
     public void unloadEntityCollisions() {
-        List<BlockPos> toRemove = new ArrayList();
+        List<Entity> toRemove = new ArrayList();
 
-        this.collisionBlocks.forEach((pos, body) -> {
-            if(!toKeepBlocks.contains(pos)) {
-                dynamicsWorld.removeRigidBody(collisionBlocks.get(pos));
-                toRemove.add(pos);
+        this.collisionEntities.forEach((entity, body) -> {
+            if(!toKeepEntities.contains(entity)) {
+                dynamicsWorld.removeRigidBody(collisionEntities.get(entity));
+                toRemove.add(entity);
             }
         });
 
-        toRemove.forEach(this.collisionBlocks::remove);
+        toRemove.forEach(this.collisionEntities::remove);
         toKeepEntities.clear();
     }
 
     public void add(PhysicsEntity physics) {
-        this.dynamicsWorld.addRigidBody(physics.getRigidBody());
         this.physicsEntities.add(physics);
     }
 

@@ -7,7 +7,11 @@ import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ChunkTicketType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
@@ -17,8 +21,8 @@ public class ServerTick {
         List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
 
         for (ServerPlayerEntity player : players) { // for every player in the server
-            if (GogglesItem.isWearingGoggles(player) && !ServerHelper.isInGoggles(player)) {
-                List<Entity> drones = DroneEntity.getNearbyDrones(player, DroneEntity.TRACKING_RANGE);
+            if (GogglesItem.isWearingGoggles(player) && !isInGoggles(player)) {
+                List<Entity> drones = DroneEntity.getNearbyDrones(player);
 
                 for (Entity entity : drones) { // for every drone in range of given player
                     DroneEntity drone = (DroneEntity) entity;
@@ -26,24 +30,12 @@ public class ServerTick {
                     if (GogglesItem.isOnSameChannel(drone, player)) {
                         setView(player, drone);
                     }
-
-                    player.inventory.main.forEach(itemStack -> {
-                        if(itemStack.getItem() instanceof TransmitterItem) {
-                            if(TransmitterItem.isBoundTransmitter(itemStack, drone)) {
-                                drone.playerID = player.getUuid();
-                            }
-                        }
-                    });
-
-                    if(drone.playerID == null)
-                        drone.kill();
                 }
             }
 
-            if (ServerHelper.isInGoggles(player)) {
+            if (isInGoggles(player)) {
                 DroneEntity drone = (DroneEntity) player.getCameraEntity();
                 Vec3d pos = drone.getPlayerStartPos().get(player);
-//                player.getServerWorld().getChunkManager().updateCameraPosition(player);
 
                 if (Math.sqrt(drone.squaredDistanceTo(pos)) < DroneEntity.NEAR_TRACKING_RANGE && !player.getPos().equals(pos)) {
                     /* If the drone is in range of where the player started, teleport the player there. */
@@ -85,12 +77,23 @@ public class ServerTick {
             DroneEntity drone = (DroneEntity) player.getCameraEntity();
 
             Vec3d pos = drone.getPlayerStartPos().get(player);
-            ServerHelper.movePlayer(pos.x, pos.y, pos.z, player);
+            movePlayer(pos.x, pos.y, pos.z, player);
             drone.removePlayerStartPos(player);
 
             player.setNoGravity(false);
             player.setCameraEntity(player);
         }
+    }
+
+    public static boolean isInGoggles(ServerPlayerEntity player) {
+        return player.getCameraEntity() instanceof DroneEntity;
+    }
+
+    public static void movePlayer(double x, double y, double z, ServerPlayerEntity player) {
+        ServerWorld world = player.getServerWorld();
+        ChunkPos chunkPos = new ChunkPos(new BlockPos(x, y, z));
+        world.getChunkManager().addTicket(ChunkTicketType.field_19347, chunkPos, 1, player.getEntityId());
+        player.networkHandler.requestTeleport(x, y, z, player.yaw, player.pitch);
     }
 
     public static void register() {

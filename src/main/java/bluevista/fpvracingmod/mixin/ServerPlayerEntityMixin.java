@@ -1,9 +1,7 @@
 package bluevista.fpvracingmod.mixin;
 
-import bluevista.fpvracingmod.server.ServerHelper;
 import bluevista.fpvracingmod.server.ServerTick;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
-import bluevista.fpvracingmod.server.items.GogglesItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.SetCameraEntityS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -36,7 +34,7 @@ public class ServerPlayerEntityMixin {
     public void onDisconnect(CallbackInfo info) {
         ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
 
-        if(ServerHelper.isInGoggles(player)) {
+        if(ServerTick.isInGoggles(player)) {
             ServerTick.resetView(player);
         }
     }
@@ -46,7 +44,7 @@ public class ServerPlayerEntityMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;shouldDismount()Z")
     )
     public boolean shouldDismount(ServerPlayerEntity player) {
-        if(ServerHelper.isInGoggles(player)) {
+        if(ServerTick.isInGoggles(player)) {
             return false;
         } else {
             return player.isSneaking();
@@ -55,9 +53,25 @@ public class ServerPlayerEntityMixin {
 
     @Redirect(
             method = "tick",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;updatePositionAndAngles(DDDFF)V", ordinal = 0)
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;updatePositionAndAngles(DDDFF)V",
+                    ordinal = 0
+            )
     )
     public void updatePositionAndAngles(ServerPlayerEntity entity, double x, double y, double z, float yaw, float pitch) {
 //         Just DONT move the player anymore plz
+    }
+
+    @Inject(
+            method = "tick",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;setCameraEntity(Lnet/minecraft/entity/Entity;)V",
+                    ordinal = 1
+            )
+    )
+    public void tick(CallbackInfo info) {
+        ServerTick.resetView((ServerPlayerEntity) (Object) this);
     }
 }

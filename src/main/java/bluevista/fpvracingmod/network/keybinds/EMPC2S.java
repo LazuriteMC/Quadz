@@ -1,6 +1,5 @@
 package bluevista.fpvracingmod.network.keybinds;
 
-import bluevista.fpvracingmod.server.ServerHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.ServerTick;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -28,7 +27,7 @@ public class EMPC2S {
             int kill = 0;
 
             ServerPlayerEntity sp = (ServerPlayerEntity) p;
-            if(ServerHelper.isInGoggles(sp)) {
+            if(ServerTick.isInGoggles(sp)) {
                 sp.getCameraEntity().kill();
                 sp.getServerWorld().removeEntity(sp.getCameraEntity());
                 ServerTick.resetView(sp);

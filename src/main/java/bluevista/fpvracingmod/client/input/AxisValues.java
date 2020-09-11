@@ -1,10 +1,19 @@
 package bluevista.fpvracingmod.client.input;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.util.math.MathHelper;
+
 public class AxisValues {
     public float currT;
     public float currX;
     public float currY;
     public float currZ;
+
+    public float prevT;
+    public float prevX;
+    public float prevY;
+    public float prevZ;
 
     public AxisValues() {
 
@@ -23,5 +32,17 @@ public class AxisValues {
         this.currX = currX;
         this.currY = currY;
         this.currZ = currZ;
+    }
+
+    public String toString() {
+        return "[CurrT: " + currT + " CurrX: " + currX + " CurrY: " + currY + " CurrZ: " + currZ + "]";
+    }
+
+    @Environment(EnvType.CLIENT)
+    public void lerp(float delta) {
+        currT = MathHelper.lerp(prevT, currT, delta);
+        currX = MathHelper.lerp(prevX, currX, delta);
+        currY = MathHelper.lerp(prevY, currY, delta);
+        currZ = MathHelper.lerp(prevZ, currZ, delta);
     }
 }

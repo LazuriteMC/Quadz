@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.math;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
 
 import javax.vecmath.Quat4f;
@@ -81,5 +82,16 @@ public class QuaternionHelper {
         q.z = quat.getZ();
         q.w = quat.getW();
         return q;
+    }
+
+    public static Quat4f lerp(float d, Quat4f start, Quat4f end) {
+        Quat4f out = new Quat4f();
+
+        out.x = MathHelper.lerp(d, start.x, end.x);
+        out.y = MathHelper.lerp(d, start.y, end.y);
+        out.z = MathHelper.lerp(d, start.z, end.z);
+        out.w = MathHelper.lerp(d, start.w, end.w);
+
+        return out;
     }
 }

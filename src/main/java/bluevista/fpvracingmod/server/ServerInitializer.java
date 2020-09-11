@@ -2,7 +2,7 @@ package bluevista.fpvracingmod.server;
 
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.network.config.ConfigC2S;
-import bluevista.fpvracingmod.network.entity.DroneEntityC2S;
+import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
 import bluevista.fpvracingmod.network.keybinds.EMPC2S;
 import bluevista.fpvracingmod.network.keybinds.GodModeC2S;
 import bluevista.fpvracingmod.network.keybinds.NoClipC2S;
@@ -56,12 +56,13 @@ public class ServerInitializer implements ModInitializer {
 	}
 
 	private void registerNetwork() {
-		DroneEntityC2S.register();
+		PhysicsEntityC2S.register();
+		ConfigC2S.register();
+
 		EMPC2S.register();
 		NoClipC2S.register();
 		GodModeC2S.register();
 		PowerGogglesC2S.register();
-		ConfigC2S.register();
 	}
 
 	private void registerItems() {

@@ -1,7 +1,8 @@
 package bluevista.fpvracingmod.client;
 
+import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.config.Config;
-import bluevista.fpvracingmod.network.entity.DroneEntityC2S;
+import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -9,25 +10,18 @@ import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.UUID;
+
 @Environment(EnvType.CLIENT)
 public class ClientTick {
     private static float droneFOV;
     private static double prevFOV;
 
     public static void tick(MinecraftClient client) {
-        DroneEntity.NEAR_TRACKING_RANGE = MathHelper.floor(DroneEntity.TRACKING_RANGE / 16.0D) < client.options.viewDistance ? DroneEntity.TRACKING_RANGE - 5 : client.options.viewDistance * 16;
+        InputTick.tick();
 
         if (client.player != null && !client.isPaused()) {
-            client.world.getEntities().forEach((entity) -> {
-                if(entity instanceof DroneEntity) {
-                    DroneEntity drone = (DroneEntity) entity;
-                    if(drone.playerID != null) {
-                        if (drone.playerID.equals(client.player.getUuid())) {
-                            DroneEntityC2S.send(drone);
-                        }
-                    }
-                }
-            });
+            DroneEntity.NEAR_TRACKING_RANGE = MathHelper.floor(DroneEntity.TRACKING_RANGE / 16.0D) < client.options.viewDistance ? DroneEntity.TRACKING_RANGE - 5 : client.options.viewDistance * 16;
 
             if (client.cameraEntity instanceof DroneEntity) {
                 droneFOV = ((DroneEntity)client.cameraEntity).getConfigValues(Config.FIELD_OF_VIEW).floatValue();
@@ -45,6 +39,14 @@ public class ClientTick {
                 client.options.fov = prevFOV;
                 prevFOV = 0.0f;
             }
+        }
+    }
+
+    public static boolean isPlayerIDClient(UUID playerID) {
+        if(ClientInitializer.client.player != null && playerID != null) {
+            return playerID.equals(ClientInitializer.client.player.getUuid());
+        } else {
+            return false;
         }
     }
 

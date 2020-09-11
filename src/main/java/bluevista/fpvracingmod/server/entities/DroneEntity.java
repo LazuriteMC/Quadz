@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
+import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.client.input.AxisValues;
 import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.config.Config;
@@ -38,9 +39,7 @@ import net.minecraft.world.World;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class DroneEntity extends PhysicsEntity {
 	public static final UUID NULL_UUID = new UUID(0, 0);
@@ -50,7 +49,6 @@ public class DroneEntity extends PhysicsEntity {
 	public static int NEAR_TRACKING_RANGE = TRACKING_RANGE - 5;
 
 	/* Misc */
-	private final AxisValues axisValues;
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
 
 	/* God Mode */
@@ -62,6 +60,12 @@ public class DroneEntity extends PhysicsEntity {
 	private float fieldOfView;
 	private int band;
 	private int channel;
+
+	/* Controller Settings */
+	private final AxisValues axisValues;
+	private float rate;
+	private float superRate;
+	private float expo;
 
 	/* CONSTRUCTORS */
 
@@ -117,12 +121,14 @@ public class DroneEntity extends PhysicsEntity {
 	public void stepPhysics(float d) {
 		super.stepPhysics(d);
 
-		if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
-			axisValues.set(InputTick.axisValues);
+		if(ClientTick.isPlayerIDClient(playerID)) {
+			if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
+				axisValues.set(InputTick.axisValues);
+			}
 
-			float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
-			float deltaY = (float) BetaflightHelper.calculateRates(axisValues.currY, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
-			float deltaZ = (float) BetaflightHelper.calculateRates(axisValues.currZ, ClientInitializer.getConfig().getFloatOption(Config.RATE), ClientInitializer.getConfig().getFloatOption(Config.EXPO), ClientInitializer.getConfig().getFloatOption(Config.SUPER_RATE)) * d;
+			float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, rate, expo, superRate) * d;
+			float deltaY = (float) BetaflightHelper.calculateRates(axisValues.currY, rate, expo, superRate) * d;
+			float deltaZ = (float) BetaflightHelper.calculateRates(axisValues.currZ, rate, expo, superRate) * d;
 
 			rotateX(deltaX);
 			rotateY(deltaY);
@@ -170,6 +176,15 @@ public class DroneEntity extends PhysicsEntity {
 			case Config.GOD_MODE:
 				this.godMode = value.intValue() == 1;
 				break;
+			case Config.RATE:
+				this.rate = value.floatValue();
+				break;
+			case Config.SUPER_RATE:
+				this.superRate = value.floatValue();
+				break;
+			case Config.EXPO:
+				this.expo = value.floatValue();
+				break;
 			default:
 				break;
 		}
@@ -177,14 +192,6 @@ public class DroneEntity extends PhysicsEntity {
 
 	public void setAxisValues(AxisValues axisValues) {
 		this.axisValues.set(axisValues);
-	}
-
-	public void setThrottle(float throttle) {
-		this.axisValues.currT = throttle;
-	}
-
-	public void setNotFresh() {
-		this.fresh = false;
 	}
 
 	public void addPlayerStartPos(PlayerEntity player) {
@@ -201,6 +208,9 @@ public class DroneEntity extends PhysicsEntity {
 		tag.putInt(Config.CHANNEL, getConfigValues(Config.CHANNEL).intValue());
 		tag.putInt(Config.CAMERA_ANGLE, getConfigValues(Config.CAMERA_ANGLE).intValue());
 		tag.putFloat(Config.FIELD_OF_VIEW, getConfigValues(Config.FIELD_OF_VIEW).floatValue());
+		tag.putFloat(Config.RATE, getConfigValues(Config.RATE).floatValue());
+		tag.putFloat(Config.SUPER_RATE, getConfigValues(Config.SUPER_RATE).floatValue());
+		tag.putFloat(Config.EXPO, getConfigValues(Config.EXPO).floatValue());
 
 		// don't write noClip or prevGodMode because...
 		// noClip shouldn't be preserved after a restart (your drone may fall through the world) and ...
@@ -226,6 +236,12 @@ public class DroneEntity extends PhysicsEntity {
 				return this.prevGodMode ? 1 : 0;
 			case Config.GOD_MODE:
 				return this.godMode ? 1 : 0;
+			case Config.RATE:
+				return this.rate;
+			case Config.SUPER_RATE:
+				return this.superRate;
+			case Config.EXPO:
+				return this.expo;
 			default:
 				return null; // 0?
 		}
@@ -237,10 +253,6 @@ public class DroneEntity extends PhysicsEntity {
 
 	public float getThrottle() {
 		return this.axisValues.currT;
-	}
-
-	public boolean isFresh() {
-		return this.fresh;
 	}
 
 	public HashMap<PlayerEntity, Vec3d> getPlayerStartPos() {
@@ -286,23 +298,12 @@ public class DroneEntity extends PhysicsEntity {
 	}
 
 	/*
-	 * Returns the drone that is nearest to
-	 * the provided entity. The provided entity is
-	 * typically just the player.
+	 * Returns all drones within the entity's world.
+	 * The provided entity is typically just the player.
 	 */
-	public static List<Entity> getNearbyDrones(Entity entity, int x) {
+	public static List<Entity> getNearbyDrones(Entity entity) {
 		ServerWorld world = (ServerWorld) entity.getEntityWorld();
-
 		List<Entity> drones = world.getEntities(ServerInitializer.DRONE_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
-//				DroneEntity.class,
-//				new Box(entity.getPos().getX() - x,
-//						entity.getPos().getY() - x,
-//						entity.getPos().getZ() - x,
-//						entity.getPos().getX() + x,
-//						entity.getPos().getY() + x,
-//						entity.getPos().getZ() + x)
-//		);
-
 		return drones;
 	}
 
@@ -319,6 +320,9 @@ public class DroneEntity extends PhysicsEntity {
 		setConfigValues(Config.CHANNEL, tag.getInt(Config.CHANNEL));
 		setConfigValues(Config.CAMERA_ANGLE, tag.getInt(Config.CAMERA_ANGLE));
 		setConfigValues(Config.FIELD_OF_VIEW, tag.getFloat(Config.FIELD_OF_VIEW));
+		setConfigValues(Config.RATE, tag.getFloat(Config.RATE));
+		setConfigValues(Config.SUPER_RATE, tag.getFloat(Config.SUPER_RATE));
+		setConfigValues(Config.EXPO, tag.getFloat(Config.EXPO));
 
 		// don't retrieve noClip or prevGodMode because they weren't written (reason in writeCustomDataToTag)
 		setConfigValues(Config.GOD_MODE, tag.getInt(Config.GOD_MODE));
@@ -334,7 +338,7 @@ public class DroneEntity extends PhysicsEntity {
 		for(RigidBody body : bodies) {
 			if(body != getRigidBody()) {
 				Vector3f dist = body.getCenterOfMassPosition(new Vector3f());
-				dist.sub(getRigidBodyPos());
+				dist.sub(this.getRigidBody().getCenterOfMassPosition(new Vector3f()));
 
 				if(dist.length() < 1.0f) {
 					mightCollide = true;
@@ -392,6 +396,7 @@ public class DroneEntity extends PhysicsEntity {
 			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
 				TransmitterItem.setTagValue(player.getMainHandStack(), Config.BIND, this.getEntityId());
 				player.sendMessage(new TranslatableText("Transmitter bound"), false);
+				this.playerID = player.getUuid();
 			}
 		} else if (!InputTick.controllerExists()) {
 			player.sendMessage(new TranslatableText("Controller not found"), false);
