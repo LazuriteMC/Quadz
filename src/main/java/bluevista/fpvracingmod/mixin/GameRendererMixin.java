@@ -28,9 +28,25 @@ public class GameRendererMixin {
 					ordinal = 3
 			)
 	)
-	public void multiply(MatrixStack stack, Quaternion quat) {
+	public void yaw(MatrixStack stack, Quaternion quat) {
 		if(ClientInitializer.isInGoggles(client)) {
 			stack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180));
+		} else {
+			stack.multiply(quat);
+		}
+	}
+
+	@Redirect(
+			method = "renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lnet/minecraft/util/math/Quaternion;)V",
+					ordinal = 2
+			)
+	)
+	public void pitch(MatrixStack stack, Quaternion quat) {
+		if(ClientInitializer.isInGoggles(client)) {
+			stack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(0));
 		} else {
 			stack.multiply(quat);
 		}
