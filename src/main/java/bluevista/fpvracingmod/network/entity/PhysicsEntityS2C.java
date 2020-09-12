@@ -28,6 +28,10 @@ public class PhysicsEntityS2C {
         int droneID = buf.readInt();
         UUID playerID = buf.readUuid();
 
+        float mass = buf.readFloat();
+        float linearDamping = buf.readFloat();
+        float thrust = buf.readFloat();
+
         GenericBuffer<Quat4f> quatBuf = PacketHelper.deserializeQuaternionBuffer(buf);
         GenericBuffer<Vector3f> posBuf = PacketHelper.deserializePositionBuffer(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
@@ -41,6 +45,10 @@ public class PhysicsEntityS2C {
 
             if(physics != null) {
                 physics.playerID = playerID;
+
+                physics.mass = mass;
+                physics.linearDamping = linearDamping;
+                physics.thrust = thrust;
 
                 if(!physics.playerID.equals(player.getUuid())) { // if any player besides physics-controlling player
                     physics.setQuaternionBuffer(quatBuf);
@@ -57,6 +65,10 @@ public class PhysicsEntityS2C {
 
         buf.writeInt(physics.getEntityId());
         buf.writeUuid(physics.playerID);
+
+        buf.writeFloat(physics.mass);
+        buf.writeFloat(physics.linearDamping);
+        buf.writeFloat(physics.thrust);
 
         PacketHelper.serializeQuaternionBuffer(buf, physics.getQuaternionBuffer());
         PacketHelper.serializePositionBuffer(buf, physics.getPositionBuffer());

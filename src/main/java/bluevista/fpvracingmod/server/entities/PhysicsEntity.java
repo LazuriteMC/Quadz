@@ -2,6 +2,7 @@ package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.client.ClientTick;
+import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.math.QuaternionHelper;
 import bluevista.fpvracingmod.network.GenericBuffer;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
@@ -29,11 +30,11 @@ import javax.vecmath.Vector3f;
 import java.util.UUID;
 
 public abstract class PhysicsEntity extends Entity {
-    public final float LINEAR_DAMPING;
-    public final float THRUST_NEWTONS;
-    public final float MASS;
+    public float mass;
+    public float linearDamping;
+    public float thrust;
 
-    private final RigidBody body;
+    private RigidBody body;
     private GenericBuffer<Quat4f> quatBuf;
     private GenericBuffer<Vector3f> posBuf;
     private Quat4f prevQuat;
@@ -41,40 +42,35 @@ public abstract class PhysicsEntity extends Entity {
     public UUID playerID;
     private boolean active;
 
-    public PhysicsEntity(EntityType type, World world, Vec3d pos) {
+    public PhysicsEntity(EntityType type, World world, UUID playerID, Vec3d pos) {
         super(type, world);
 
-        this.MASS = 0.750f; // Get from config
-        this.LINEAR_DAMPING = 0.3f; // Get from config
-        this.THRUST_NEWTONS = 45.0f; // Get from config
-
+        this.playerID = playerID;
         this.setPos(pos.x, pos.y, pos.z);
 
         this.quatBuf = new GenericBuffer<Quat4f>();
         this.posBuf = new GenericBuffer<Vector3f>();
-        this.body = createRigidBody(getBoundingBox());
 
-        if(this.world.isClient()) {
-            ClientInitializer.physicsWorld.add(this);
-            PhysicsEntityC2S.send(this);
-        }
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        if(this.world.isClient()) {
+        if (this.world.isClient()) {
             active = ClientTick.isPlayerIDClient(playerID);
 
-            if(active) {
+            if (active && this.body != null) {
                 PhysicsEntityC2S.send(this);
             }
 
         } else {
+            if (this.body == null) {
+                this.createRigidBody();
+            }
             PhysicsEntityS2C.send(this);
 
-            if(this.world.getPlayerByUuid(playerID) == null) {
+            if (this.world.getPlayerByUuid(playerID) == null) {
                 this.kill();
             }
         }
@@ -113,6 +109,35 @@ public abstract class PhysicsEntity extends Entity {
                     }
                 }
             }
+        }
+    }
+
+    public void setConfigValues(String key, Number value) {
+        switch (key) {
+            case Config.MASS:
+                this.mass = value.floatValue();
+                break;
+            case Config.LINEAR_DAMPING:
+                this.linearDamping = value.floatValue();
+                break;
+            case Config.THRUST:
+                this.thrust = value.floatValue();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public Number getConfigValues(String key) {
+        switch (key) {
+            case Config.MASS:
+                return this.mass;
+            case Config.LINEAR_DAMPING:
+                return this.linearDamping;
+            case Config.THRUST:
+                return this.thrust;
+            default:
+                return null;
         }
     }
 
@@ -163,6 +188,10 @@ public abstract class PhysicsEntity extends Entity {
         return this.body;
     }
 
+    public void setRigidBody(RigidBody body) {
+        this.body = body;
+    }
+
     public void applyForce(Vector3f... forces) {
         for(Vector3f force : forces) {
             this.body.applyCentralForce(force);
@@ -204,13 +233,21 @@ public abstract class PhysicsEntity extends Entity {
     @Override
     protected void readCustomDataFromTag(CompoundTag tag) {
         setOrientation(QuaternionHelper.fromTag(tag));
-        this.playerID = tag.getUuid("playerID");
+        this.playerID = tag.getUuid(Config.PLAYER_ID);
+
+        setConfigValues(Config.MASS, tag.getFloat(Config.MASS));
+        setConfigValues(Config.LINEAR_DAMPING, tag.getFloat(Config.LINEAR_DAMPING));
+        setConfigValues(Config.THRUST, tag.getFloat(Config.THRUST));
     }
 
     @Override
     protected void writeCustomDataToTag(CompoundTag tag) {
         QuaternionHelper.toTag(getOrientation(), tag);
-        tag.putUuid("playerID", this.playerID);
+        tag.putUuid(Config.PLAYER_ID, this.playerID);
+
+        tag.putFloat(Config.MASS, getConfigValues(Config.MASS).floatValue());
+        tag.putFloat(Config.LINEAR_DAMPING, getConfigValues(Config.LINEAR_DAMPING).floatValue());
+        tag.putFloat(Config.THRUST, getConfigValues(Config.THRUST).floatValue());
     }
 
     @Override
@@ -222,24 +259,25 @@ public abstract class PhysicsEntity extends Entity {
         return this.active;
     }
 
-    public RigidBody createRigidBody(Box cBox) {
+    public void createRigidBody() {
+        Box cBox = getBoundingBox();
         Vector3f inertia = new Vector3f(0.0F, 0.0F, 0.0F);
         Vector3f box = new Vector3f(
                 ((float) (cBox.maxX - cBox.minX) / 2.0F) + 0.005f,
                 ((float) (cBox.maxY - cBox.minY) / 2.0F) + 0.005f,
                 ((float) (cBox.maxZ - cBox.minZ) / 2.0F) + 0.005f);
         CollisionShape shape = new BoxShape(box);
-        shape.calculateLocalInertia(this.MASS, inertia);
+        shape.calculateLocalInertia(this.mass, inertia);
 
         Vec3d pos = this.getPos();
         Vector3f position = new Vector3f((float) pos.x, (float) pos.y + 0.125f, (float) pos.z);
 
         DefaultMotionState motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 1, 0, 0), position, 1.0f)));
-        RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(this.MASS, motionState, shape, inertia);
+        RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(this.mass, motionState, shape, inertia);
 
         RigidBody body = new RigidBody(ci);
         body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
-        body.setDamping(LINEAR_DAMPING, 0);
-        return body;
+        body.setDamping(linearDamping, 0);
+        setRigidBody(body);
     }
 }

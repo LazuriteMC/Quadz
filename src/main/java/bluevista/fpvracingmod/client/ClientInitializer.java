@@ -7,6 +7,7 @@ import bluevista.fpvracingmod.client.input.keybinds.NoClipKeybind;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.network.config.ConfigS2C;
+import bluevista.fpvracingmod.network.entity.CreateRigidBodyS2C;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
 import bluevista.fpvracingmod.client.physics.PhysicsWorld;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityS2C;
@@ -59,6 +60,7 @@ public class ClientInitializer implements ClientModInitializer {
         PhysicsEntityS2C.register();
         DroneEntityS2C.register();
         ConfigS2C.register();
+        CreateRigidBodyS2C.register();
     }
 
     public static Config getConfig() {

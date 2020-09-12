@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ public class Config {
     // For dealing with item tags for item specific configuration
     public static final String ON = "on";
     public static final String BIND = "bind";
+    public static final String PLAYER_ID = "playerID";
     public static final String NO_CLIP = "noClip";
     public static final String PREV_GOD_MODE = "prevGodMode" ;
     public static final String GOD_MODE = "godMode";
@@ -37,27 +39,33 @@ public class Config {
     public static final String FIELD_OF_VIEW = "fieldOfView";
     public static final String BAND = "band";
     public static final String CHANNEL = "channel";
+    public static final String MASS = "mass";
+    public static final String LINEAR_DAMPING = "linearDamping";
+    public static final String THRUST = "thrust";
 
-    public static final List<String> ALL_OPTIONS = Arrays.asList(
-            CONTROLLER_ID,
-            THROTTLE,
-            PITCH,
-            YAW,
-            ROLL,
-            DEADZONE,
-            THROTTLE_CENTER_POSITION,
-            RATE,
-            SUPER_RATE,
-            EXPO,
-            INVERT_THROTTLE,
-            INVERT_PITCH,
-            INVERT_YAW,
-            INVERT_ROLL,
-            CAMERA_ANGLE,
-            FIELD_OF_VIEW,
-            BAND,
-            CHANNEL
-    );
+//    public static final List<String> ALL_OPTIONS = Arrays.asList(
+//            CONTROLLER_ID,
+//            THROTTLE,
+//            PITCH,
+//            YAW,
+//            ROLL,
+//            DEADZONE,
+//            THROTTLE_CENTER_POSITION,
+//            RATE,
+//            SUPER_RATE,
+//            EXPO,
+//            INVERT_THROTTLE,
+//            INVERT_PITCH,
+//            INVERT_YAW,
+//            INVERT_ROLL,
+//            CAMERA_ANGLE,
+//            FIELD_OF_VIEW,
+//            BAND,
+//            CHANNEL,
+//            MASS,
+//            LINEAR_DAMPING,
+//            THRUST
+//    );
 
     public static final List<String> INT_KEYS = Arrays.asList(
             CONTROLLER_ID,
@@ -80,8 +88,16 @@ public class Config {
             RATE,
             SUPER_RATE,
             EXPO,
-            FIELD_OF_VIEW
+            FIELD_OF_VIEW,
+            MASS,
+            LINEAR_DAMPING,
+            THRUST
     );
+
+    public static final List<String> ALL_OPTIONS = new ArrayList<String>() {{
+        addAll(INT_KEYS);
+        addAll(FLOAT_KEYS);
+    }};
 
     private HashMap<String, Number> options;
     private ConfigReader configReader;

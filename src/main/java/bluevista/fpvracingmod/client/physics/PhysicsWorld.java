@@ -96,12 +96,12 @@ public class PhysicsWorld {
 
     public void loadActivePhysicsEntities() {
         this.physicsEntities.forEach(physics -> {
-            if(physics.isActive()) {
-                if(!physics.getRigidBody().isInWorld()) {
+            if (physics.isActive()) {
+                if (!physics.getRigidBody().isInWorld()) {
                     this.dynamicsWorld.addRigidBody(physics.getRigidBody());
                 }
             } else {
-                if(physics.getRigidBody().isInWorld()) {
+                if (physics.getRigidBody().isInWorld()) {
                     this.dynamicsWorld.removeRigidBody(physics.getRigidBody());
                 }
             }

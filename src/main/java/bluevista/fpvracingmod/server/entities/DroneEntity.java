@@ -8,7 +8,10 @@ import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.math.BetaflightHelper;
 import bluevista.fpvracingmod.math.Matrix4fInject;
 import bluevista.fpvracingmod.math.QuaternionHelper;
+import bluevista.fpvracingmod.network.entity.CreateRigidBodyS2C;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
+import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
+import bluevista.fpvracingmod.network.entity.PhysicsEntityS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -30,7 +33,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
@@ -70,25 +72,32 @@ public class DroneEntity extends PhysicsEntity {
 	/* CONSTRUCTORS */
 
 	public DroneEntity(EntityType<?> type, World world) {
-		this(world, Vec3d.ZERO, 0);
+		this(world, NULL_UUID, Vec3d.ZERO);
 	}
 
-	public DroneEntity(World world, Vec3d pos, float yaw) {
-		super(ServerInitializer.DRONE_ENTITY, world, pos);
-		this.rotateY(yaw);
+	public DroneEntity(World world, UUID playerID, Vec3d pos) {
+		super(ServerInitializer.DRONE_ENTITY, world, playerID, pos);
 
 		this.axisValues = new AxisValues();
-		this.playerID = NULL_UUID;
 		this.playerStartPos = new HashMap();
 
-		this.noClip = false;
 		this.godMode = false;
 		this.prevGodMode = this.godMode;
 	}
 
-	public static DroneEntity create(UUID playerID, World world, Vec3d pos, float yaw) {
-		DroneEntity d = new DroneEntity(world, pos, yaw);
-		d.playerID = playerID;
+	public static DroneEntity create(PlayerEntity player, World world, Vec3d pos, float yaw) {
+		DroneEntity d = new DroneEntity(world, player != null ? player.getUuid() : NULL_UUID, pos);
+
+		if (world.isClient()) {
+			ClientInitializer.physicsWorld.add(d);
+			PhysicsEntityC2S.send(d);
+		} else {
+			DroneSpawnerItem.prepSpawnedDrone(player, d);
+			CreateRigidBodyS2C.send(d);
+			d.createRigidBody();
+			d.rotateY(yaw);
+		}
+
 		world.spawnEntity(d);
 		return d;
 	}
@@ -134,7 +143,7 @@ public class DroneEntity extends PhysicsEntity {
 			rotateY(deltaY);
 			rotateZ(deltaZ);
 
-			Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(THRUST_NEWTONS);
+			Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(this.thrust);
 			Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
 
 			this.decreaseAngularVelocity();
@@ -147,6 +156,7 @@ public class DroneEntity extends PhysicsEntity {
 
 	/* SETTERS */
 
+	@Override
 	public void setConfigValues(String key, Number value) {
 		switch (key) {
 			case Config.BAND:
@@ -186,6 +196,7 @@ public class DroneEntity extends PhysicsEntity {
 				this.expo = value.floatValue();
 				break;
 			default:
+				super.setConfigValues(key, value);
 				break;
 		}
 	}
@@ -220,6 +231,7 @@ public class DroneEntity extends PhysicsEntity {
 
 	/* GETTERS */
 
+	@Override
 	public Number getConfigValues(String key) {
 		switch (key) {
 			case Config.BAND:
@@ -243,7 +255,8 @@ public class DroneEntity extends PhysicsEntity {
 			case Config.EXPO:
 				return this.expo;
 			default:
-				return null; // 0?
+				return super.getConfigValues(key);
+//				return null; // 0?
 		}
 	}
 
