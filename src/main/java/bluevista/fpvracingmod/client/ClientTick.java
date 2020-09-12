@@ -18,8 +18,6 @@ public class ClientTick {
     private static double prevFOV;
 
     public static void tick(MinecraftClient client) {
-        InputTick.tick();
-
         if (client.player != null && !client.isPaused()) {
             DroneEntity.NEAR_TRACKING_RANGE = MathHelper.floor(DroneEntity.TRACKING_RANGE / 16.0D) < client.options.viewDistance ? DroneEntity.TRACKING_RANGE - 5 : client.options.viewDistance * 16;
 

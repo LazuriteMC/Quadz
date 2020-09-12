@@ -11,7 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.world.RayTraceContext;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 
 public class DroneSpawnerItem extends Item {
@@ -25,7 +25,7 @@ public class DroneSpawnerItem extends Item {
 	 */
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 		ItemStack itemStack = user.getStackInHand(hand);
-		HitResult hitResult = rayTrace(world, user, RayTraceContext.FluidHandling.NONE);
+		HitResult hitResult = raycast(world, user, RaycastContext.FluidHandling.NONE);
 
 		if (!world.isClient()) {
 			if (hitResult.getType() == HitResult.Type.MISS)

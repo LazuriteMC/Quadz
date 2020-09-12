@@ -159,7 +159,7 @@ public class PhysicsWorld {
     public void loadEntityCollisions(PhysicsEntity physics, ClientWorld world) {
         Box area = new Box(physics.getRigidBodyBlockPos()).expand(LOAD_AREA);
 
-        world.getEntities(physics, area).forEach(entity -> {
+        world.getOtherEntities(physics, area).forEach(entity -> {
             if(!(entity instanceof PhysicsEntity) && !collisionEntities.containsKey(entity)) {
                 Box c = entity.getBoundingBox();
                 Vector3f box = new Vector3f(

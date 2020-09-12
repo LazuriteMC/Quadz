@@ -92,7 +92,7 @@ public class ServerTick {
     public static void movePlayer(double x, double y, double z, ServerPlayerEntity player) {
         ServerWorld world = player.getServerWorld();
         ChunkPos chunkPos = new ChunkPos(new BlockPos(x, y, z));
-        world.getChunkManager().addTicket(ChunkTicketType.field_19347, chunkPos, 1, player.getEntityId());
+        world.getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getEntityId());
         player.networkHandler.requestTeleport(x, y, z, player.yaw, player.pitch);
     }
 

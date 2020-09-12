@@ -34,7 +34,7 @@ public class EMPC2S {
                 kill++;
             }
 
-            List<Entity> entities = p.getEntityWorld().getEntities(p, p.getBoundingBox().expand(r));
+            List<Entity> entities = p.getEntityWorld().getOtherEntities(p, p.getBoundingBox().expand(r));
             for (Entity e : entities) {
                 if (e instanceof DroneEntity) {
                     DroneEntity drone = (DroneEntity) e;

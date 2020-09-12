@@ -269,11 +269,6 @@ public class DroneEntity extends PhysicsEntity {
 		return true;
 	}
 
-	@Override
-	public Box getCollisionBox() {
-		return super.getBoundingBox();
-	}
-
 	/*
 	 * Essentially get the direction the bottom
 	 * of the drone is facing. Returned in vector form.
@@ -303,7 +298,7 @@ public class DroneEntity extends PhysicsEntity {
 	 */
 	public static List<Entity> getNearbyDrones(Entity entity) {
 		ServerWorld world = (ServerWorld) entity.getEntityWorld();
-		List<Entity> drones = world.getEntities(ServerInitializer.DRONE_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
+		List<Entity> drones = world.getEntitiesByType(ServerInitializer.DRONE_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
 		return drones;
 	}
 
