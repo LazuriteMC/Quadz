@@ -146,6 +146,11 @@ public class DroneEntity extends PhysicsEntity {
 			Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(this.thrust);
 			Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
 
+			this.prevYaw = this.yaw;
+			this.prevPitch = this.pitch;
+			this.yaw = this.getQuatYaw();
+			this.pitch = this.getQuatPitch();
+
 			this.decreaseAngularVelocity();
 			this.applyForce(
 					new Vector3f((float) thrust.x, (float) thrust.y, (float) thrust.z),
@@ -296,13 +301,12 @@ public class DroneEntity extends PhysicsEntity {
 		return Matrix4fInject.from(mat).matrixToVector().multiply(-1, -1, -1);
 	}
 
-	public float getHeading() {
-		Quat4f q = getOrientation();
+	public float getQuatYaw() {
+		return -1 * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(this.getOrientation()).z);
+	}
 
-		AxisAngle4f axis = new AxisAngle4f();
-		axis.set(q);
-
-		return (float) Math.toDegrees(axis.angle);
+	public float getQuatPitch() {
+		return (float) Math.toDegrees(QuaternionHelper.toEulerAngles(this.getOrientation()).y);
 	}
 
 	/*

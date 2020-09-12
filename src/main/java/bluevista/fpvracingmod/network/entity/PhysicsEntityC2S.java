@@ -35,7 +35,10 @@ public class PhysicsEntityC2S {
                 physics = (PhysicsEntity) player.world.getEntityById(droneID);
 
             if(physics != null) {
-                physics.setRigidBodyPos(posBuf.getHead());
+                if(posBuf.getHead() != null) {
+                    physics.setRigidBodyPos(posBuf.getHead());
+                }
+
                 physics.setQuaternionBuffer(quatBuf);
                 physics.setPositionBuffer(posBuf);
                 physics.getRigidBody().setLinearVelocity(linearVel);
