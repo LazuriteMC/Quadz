@@ -22,7 +22,11 @@ public class GenericBuffer<T> {
     }
 
     public T getHead() {
-        return this.buffer.element();
+        if(this.buffer.size() > 0) {
+            return this.buffer.element();
+        }
+
+        return null;
     }
 
     public void add(T value) {

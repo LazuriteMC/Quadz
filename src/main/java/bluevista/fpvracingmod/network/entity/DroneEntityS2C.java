@@ -28,6 +28,7 @@ public class DroneEntityS2C {
         int channel = buf.readInt();
         int cameraAngle = buf.readInt();
         float fieldOfView = buf.readFloat();
+        float thrust = buf.readFloat();
 
         float rate = buf.readFloat();
         float superRate = buf.readFloat();
@@ -46,6 +47,7 @@ public class DroneEntityS2C {
                 drone.setConfigValues(Config.CHANNEL, channel);
                 drone.setConfigValues(Config.CAMERA_ANGLE, cameraAngle);
                 drone.setConfigValues(Config.FIELD_OF_VIEW, fieldOfView);
+                drone.setConfigValues(Config.THRUST, thrust);
 
                 drone.setConfigValues(Config.RATE, rate);
                 drone.setConfigValues(Config.SUPER_RATE, superRate);
@@ -63,7 +65,8 @@ public class DroneEntityS2C {
         buf.writeInt(drone.getConfigValues(Config.BAND).intValue());
         buf.writeInt(drone.getConfigValues(Config.CHANNEL).intValue());
         buf.writeInt(drone.getConfigValues(Config.CAMERA_ANGLE).intValue());
-        buf.writeFloat(drone.getConfigValues(Config.FIELD_OF_VIEW).intValue());
+        buf.writeFloat(drone.getConfigValues(Config.FIELD_OF_VIEW).floatValue());
+        buf.writeFloat(drone.getConfigValues(Config.THRUST).floatValue());
 
         buf.writeFloat(drone.getConfigValues(Config.RATE).floatValue());
         buf.writeFloat(drone.getConfigValues(Config.SUPER_RATE).floatValue());

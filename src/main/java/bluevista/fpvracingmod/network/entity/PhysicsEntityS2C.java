@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.network.entity;
 
+import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.network.GenericBuffer;
 import bluevista.fpvracingmod.network.PacketHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
@@ -30,7 +31,6 @@ public class PhysicsEntityS2C {
 
         float mass = buf.readFloat();
         float linearDamping = buf.readFloat();
-        float thrust = buf.readFloat();
 
         GenericBuffer<Quat4f> quatBuf = PacketHelper.deserializeQuaternionBuffer(buf);
         GenericBuffer<Vector3f> posBuf = PacketHelper.deserializePositionBuffer(buf);
@@ -46,9 +46,8 @@ public class PhysicsEntityS2C {
             if(physics != null) {
                 physics.playerID = playerID;
 
-                physics.mass = mass;
-                physics.linearDamping = linearDamping;
-                physics.thrust = thrust;
+                physics.setConfigValues(Config.MASS, mass);
+                physics.setConfigValues(Config.LINEAR_DAMPING, linearDamping);
 
                 if(!physics.playerID.equals(player.getUuid())) { // if any player besides physics-controlling player
                     physics.setQuaternionBuffer(quatBuf);
@@ -66,9 +65,8 @@ public class PhysicsEntityS2C {
         buf.writeInt(physics.getEntityId());
         buf.writeUuid(physics.playerID);
 
-        buf.writeFloat(physics.mass);
-        buf.writeFloat(physics.linearDamping);
-        buf.writeFloat(physics.thrust);
+        buf.writeFloat(physics.getMass());
+        buf.writeFloat(physics.getLinearDamping());
 
         PacketHelper.serializeQuaternionBuffer(buf, physics.getQuaternionBuffer());
         PacketHelper.serializePositionBuffer(buf, physics.getPositionBuffer());

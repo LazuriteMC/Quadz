@@ -8,10 +8,7 @@ import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.math.BetaflightHelper;
 import bluevista.fpvracingmod.math.Matrix4fInject;
 import bluevista.fpvracingmod.math.QuaternionHelper;
-import bluevista.fpvracingmod.network.entity.CreateRigidBodyS2C;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
-import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
-import bluevista.fpvracingmod.network.entity.PhysicsEntityS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -38,7 +35,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
-import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 import java.util.*;
@@ -52,6 +48,7 @@ public class DroneEntity extends PhysicsEntity {
 
 	/* Misc */
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
+	private float thrust;
 
 	/* God Mode */
 	private boolean prevGodMode;
@@ -72,32 +69,24 @@ public class DroneEntity extends PhysicsEntity {
 	/* CONSTRUCTORS */
 
 	public DroneEntity(EntityType<?> type, World world) {
-		this(world, NULL_UUID, Vec3d.ZERO);
+		this(world, null, Vec3d.ZERO, 0);
 	}
 
-	public DroneEntity(World world, UUID playerID, Vec3d pos) {
-		super(ServerInitializer.DRONE_ENTITY, world, playerID, pos);
+	public DroneEntity(World world, PlayerEntity player, Vec3d pos, float yaw) {
+		super(ServerInitializer.DRONE_ENTITY, world, player != null ? player.getUuid() : NULL_UUID, pos);
 
 		this.axisValues = new AxisValues();
 		this.playerStartPos = new HashMap();
 
 		this.godMode = false;
 		this.prevGodMode = this.godMode;
+
+		this.createRigidBody();
+		this.rotateY(yaw);
 	}
 
 	public static DroneEntity create(PlayerEntity player, World world, Vec3d pos, float yaw) {
-		DroneEntity d = new DroneEntity(world, player != null ? player.getUuid() : NULL_UUID, pos);
-
-		if (world.isClient()) {
-			ClientInitializer.physicsWorld.add(d);
-			PhysicsEntityC2S.send(d);
-		} else {
-			DroneSpawnerItem.prepSpawnedDrone(player, d);
-			CreateRigidBodyS2C.send(d);
-			d.createRigidBody();
-			d.rotateY(yaw);
-		}
-
+		DroneEntity d = new DroneEntity(world, player, pos, yaw);
 		world.spawnEntity(d);
 		return d;
 	}
@@ -200,6 +189,8 @@ public class DroneEntity extends PhysicsEntity {
 			case Config.EXPO:
 				this.expo = value.floatValue();
 				break;
+			case Config.THRUST:
+				this.thrust = value.floatValue();
 			default:
 				super.setConfigValues(key, value);
 				break;
@@ -227,6 +218,7 @@ public class DroneEntity extends PhysicsEntity {
 		tag.putFloat(Config.RATE, getConfigValues(Config.RATE).floatValue());
 		tag.putFloat(Config.SUPER_RATE, getConfigValues(Config.SUPER_RATE).floatValue());
 		tag.putFloat(Config.EXPO, getConfigValues(Config.EXPO).floatValue());
+		tag.putFloat(Config.THRUST, getConfigValues(Config.THRUST).floatValue());
 
 		// don't write noClip or prevGodMode because...
 		// noClip shouldn't be preserved after a restart (your drone may fall through the world) and ...
@@ -259,6 +251,8 @@ public class DroneEntity extends PhysicsEntity {
 				return this.superRate;
 			case Config.EXPO:
 				return this.expo;
+			case Config.THRUST:
+				return this.thrust;
 			default:
 				return super.getConfigValues(key);
 //				return null; // 0?
@@ -335,6 +329,7 @@ public class DroneEntity extends PhysicsEntity {
 		setConfigValues(Config.RATE, tag.getFloat(Config.RATE));
 		setConfigValues(Config.SUPER_RATE, tag.getFloat(Config.SUPER_RATE));
 		setConfigValues(Config.EXPO, tag.getFloat(Config.EXPO));
+		setConfigValues(Config.THRUST, tag.getFloat(Config.THRUST));
 
 		// don't retrieve noClip or prevGodMode because they weren't written (reason in writeCustomDataToTag)
 		setConfigValues(Config.GOD_MODE, tag.getInt(Config.GOD_MODE));

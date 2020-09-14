@@ -202,8 +202,16 @@ public class PhysicsWorld {
     }
 
     public void remove(PhysicsEntity physics) {
-        this.dynamicsWorld.removeRigidBody(physics.getRigidBody());
+        this.removeRigidBody(physics.getRigidBody());
         this.physicsEntities.remove(physics);
+    }
+
+    public void addRigidBody(RigidBody body) {
+        this.dynamicsWorld.addRigidBody(body);
+    }
+
+    public void removeRigidBody(RigidBody body) {
+        this.dynamicsWorld.removeRigidBody(body);
     }
 
     public List<RigidBody> getRigidBodies() {

@@ -30,14 +30,13 @@ import javax.vecmath.Vector3f;
 import java.util.UUID;
 
 public abstract class PhysicsEntity extends Entity {
-    public float mass;
-    public float linearDamping;
-    public float thrust;
-
     private RigidBody body;
     private GenericBuffer<Quat4f> quatBuf;
     private GenericBuffer<Vector3f> posBuf;
     private Quat4f prevQuat;
+
+    private float linearDamping;
+    private float mass;
 
     public UUID playerID;
     private boolean active;
@@ -46,11 +45,15 @@ public abstract class PhysicsEntity extends Entity {
         super(type, world);
 
         this.playerID = playerID;
-        this.setPos(pos.x, pos.y, pos.z);
+        this.createRigidBody();
 
+        this.setPos(pos.x, pos.y, pos.z);
         this.quatBuf = new GenericBuffer<Quat4f>();
         this.posBuf = new GenericBuffer<Vector3f>();
 
+        if(world.isClient()) {
+            ClientInitializer.physicsWorld.add(this);
+        }
     }
 
     @Override
@@ -60,14 +63,10 @@ public abstract class PhysicsEntity extends Entity {
         if (this.world.isClient()) {
             active = ClientTick.isPlayerIDClient(playerID);
 
-            if (active && this.body != null) {
+            if (active) {
                 PhysicsEntityC2S.send(this);
             }
-
         } else {
-            if (this.body == null) {
-                this.createRigidBody();
-            }
             PhysicsEntityS2C.send(this);
 
             if (this.world.getPlayerByUuid(playerID) == null) {
@@ -115,13 +114,10 @@ public abstract class PhysicsEntity extends Entity {
     public void setConfigValues(String key, Number value) {
         switch (key) {
             case Config.MASS:
-                this.mass = value.floatValue();
+                this.setMass(value.floatValue());
                 break;
             case Config.LINEAR_DAMPING:
-                this.linearDamping = value.floatValue();
-                break;
-            case Config.THRUST:
-                this.thrust = value.floatValue();
+                this.setLinearDamping(value.floatValue());
                 break;
             default:
                 break;
@@ -134,11 +130,35 @@ public abstract class PhysicsEntity extends Entity {
                 return this.mass;
             case Config.LINEAR_DAMPING:
                 return this.linearDamping;
-            case Config.THRUST:
-                return this.thrust;
             default:
                 return null;
         }
+    }
+
+    public void setMass(float mass) {
+        float old = this.mass;
+        this.mass = mass;
+
+        if(old != mass) {
+            this.refreshRigidBody();
+        }
+    }
+
+    public float getMass() {
+        return this.mass;
+    }
+
+    public void setLinearDamping(float linearDamping) {
+        float old = this.linearDamping;
+        this.linearDamping = linearDamping;
+
+        if(old != linearDamping) {
+            this.refreshRigidBody();
+        }
+    }
+
+    public float getLinearDamping() {
+        return this.linearDamping;
     }
 
     public void lerpOrientation(float tickDelta) {
@@ -237,7 +257,6 @@ public abstract class PhysicsEntity extends Entity {
 
         setConfigValues(Config.MASS, tag.getFloat(Config.MASS));
         setConfigValues(Config.LINEAR_DAMPING, tag.getFloat(Config.LINEAR_DAMPING));
-        setConfigValues(Config.THRUST, tag.getFloat(Config.THRUST));
     }
 
     @Override
@@ -247,7 +266,6 @@ public abstract class PhysicsEntity extends Entity {
 
         tag.putFloat(Config.MASS, getConfigValues(Config.MASS).floatValue());
         tag.putFloat(Config.LINEAR_DAMPING, getConfigValues(Config.LINEAR_DAMPING).floatValue());
-        tag.putFloat(Config.THRUST, getConfigValues(Config.THRUST).floatValue());
     }
 
     @Override
@@ -257,6 +275,21 @@ public abstract class PhysicsEntity extends Entity {
 
     public boolean isActive() {
         return this.active;
+    }
+
+    public void refreshRigidBody() {
+        RigidBody old = this.getRigidBody();
+        this.createRigidBody();
+
+        this.getRigidBody().setLinearVelocity(old.getLinearVelocity(new Vector3f()));
+        this.getRigidBody().setAngularVelocity(old.getAngularVelocity(new Vector3f()));
+        this.setRigidBodyPos(old.getCenterOfMassPosition(new Vector3f()));
+        this.setOrientation(old.getOrientation(new Quat4f()));
+
+        if(this.world.isClient() && old.isInWorld()) {
+            ClientInitializer.physicsWorld.removeRigidBody(old);
+            ClientInitializer.physicsWorld.addRigidBody(this.getRigidBody());
+        }
     }
 
     public void createRigidBody() {
