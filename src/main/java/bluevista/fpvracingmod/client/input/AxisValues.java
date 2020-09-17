@@ -10,17 +10,20 @@ public class AxisValues {
     public float currY;
     public float currZ;
 
-    public float prevT;
-    public float prevX;
-    public float prevY;
-    public float prevZ;
-
     public AxisValues() {
 
     }
 
+    public AxisValues(AxisValues axisValues) {
+        this.set(axisValues.currT, axisValues.currX, axisValues.currY, axisValues.currZ);
+    }
+
     public AxisValues(float currT, float currX, float currY, float currZ) {
         this.set(currT, currX, currY, currZ);
+    }
+
+    public AxisValues(AxisValues start, AxisValues end, float delta) {
+        this.set(lerp(start, end, delta));
     }
 
     public void set(AxisValues axisValues) {
@@ -39,10 +42,12 @@ public class AxisValues {
     }
 
     @Environment(EnvType.CLIENT)
-    public void lerp(float delta) {
-        currT = MathHelper.lerp(prevT, currT, delta);
-        currX = MathHelper.lerp(prevX, currX, delta);
-        currY = MathHelper.lerp(prevY, currY, delta);
-        currZ = MathHelper.lerp(prevZ, currZ, delta);
+    public static AxisValues lerp(AxisValues start, AxisValues end, float delta) {
+        AxisValues av = new AxisValues();
+        av.currT = MathHelper.lerp(start.currT, end.currT, delta);
+        av.currX = MathHelper.lerp(start.currX, end.currX, delta);
+        av.currY = MathHelper.lerp(start.currY, end.currY, delta);
+        av.currZ = MathHelper.lerp(start.currZ, end.currZ, delta);
+        return av;
     }
 }

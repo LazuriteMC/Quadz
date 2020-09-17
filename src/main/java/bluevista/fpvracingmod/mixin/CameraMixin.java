@@ -10,6 +10,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.vecmath.Quat4f;
+
 @Mixin(Camera.class)
 public class CameraMixin {
 
@@ -18,8 +20,10 @@ public class CameraMixin {
         if(focusedEntity instanceof PhysicsEntity) {
             PhysicsEntity physics = (PhysicsEntity) focusedEntity;
 
-            if(ClientTick.isPlayerIDClient(physics.playerID)) {
-                physics.lerpOrientation(tickDelta);
+            if(!physics.isActive()) {
+                Quat4f slerp = new Quat4f();
+                slerp.interpolate(physics.prevQuat, physics.remoteQuat, tickDelta);
+                physics.setOrientation(slerp);
             }
         }
     }

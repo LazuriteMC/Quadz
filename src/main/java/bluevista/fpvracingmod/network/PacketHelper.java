@@ -6,6 +6,10 @@ import net.minecraft.network.PacketByteBuf;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 
 public class PacketHelper {
     public static void serializeVector3f(PacketByteBuf buf, Vector3f vec) {
@@ -90,47 +94,5 @@ public class PacketHelper {
                 buf.readFloat(),
                 buf.readFloat());
         return axisValues;
-    }
-
-    public static void serializeQuaternionBuffer(PacketByteBuf buf, GenericBuffer<Quat4f> buffer) {
-        buf.writeInt(buffer.getMaxLength());
-        buf.writeFloat(buffer.getCaptureRate());
-        buf.writeInt(buffer.size());
-        buffer.getQueue().forEach(quat -> serializeQuaternion(buf, quat));
-    }
-
-    public static GenericBuffer<Quat4f> deserializeQuaternionBuffer(PacketByteBuf buf) {
-        GenericBuffer<Quat4f> buffer = new GenericBuffer();
-
-        buffer.setMaxLength(buf.readInt());
-        buffer.setCaptureRate(buf.readFloat());
-
-        int size = buf.readInt();
-        for(int i = 0; i < size; i++) {
-            buffer.add(PacketHelper.deserializeQuaternion(buf));
-        }
-
-        return buffer;
-    }
-
-    public static void serializePositionBuffer(PacketByteBuf buf, GenericBuffer<Vector3f> buffer) {
-        buf.writeInt(buffer.getMaxLength());
-        buf.writeFloat(buffer.getCaptureRate());
-        buf.writeInt(buffer.size());
-        buffer.getQueue().forEach(pos -> serializeVector3f(buf, pos));
-    }
-
-    public static GenericBuffer<Vector3f> deserializePositionBuffer(PacketByteBuf buf) {
-        GenericBuffer<Vector3f> buffer = new GenericBuffer();
-
-        buffer.setMaxLength(buf.readInt());
-        buffer.setCaptureRate(buf.readFloat());
-
-        int size = buf.readInt();
-        for(int i = 0; i < size; i++) {
-            buffer.add(PacketHelper.deserializeVector3f(buf));
-        }
-
-        return buffer;
     }
 }

@@ -1,6 +1,5 @@
 package bluevista.fpvracingmod.network.entity;
 
-import bluevista.fpvracingmod.network.GenericBuffer;
 import bluevista.fpvracingmod.network.PacketHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.PhysicsEntity;
@@ -21,10 +20,9 @@ public class PhysicsEntityC2S {
     public static void accept(PacketContext context, PacketByteBuf buf) {
         PlayerEntity player = context.getPlayer();
 
-        int droneID = buf.readInt();
-
-        GenericBuffer<Quat4f> quatBuf = PacketHelper.deserializeQuaternionBuffer(buf);
-        GenericBuffer<Vector3f> posBuf = PacketHelper.deserializePositionBuffer(buf);
+        int id = buf.readInt();
+        Quat4f orientation = PacketHelper.deserializeQuaternion(buf);
+        Vector3f position = PacketHelper.deserializeVector3f(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
         Vector3f angularVel = PacketHelper.deserializeVector3f(buf);
 
@@ -32,15 +30,11 @@ public class PhysicsEntityC2S {
             PhysicsEntity physics = null;
 
             if(player != null)
-                physics = (PhysicsEntity) player.world.getEntityById(droneID);
+                physics = (PhysicsEntity) player.world.getEntityById(id);
 
             if(physics != null) {
-                if(posBuf.getHead() != null) {
-                    physics.setRigidBodyPos(posBuf.getHead());
-                }
-
-                physics.setQuaternionBuffer(quatBuf);
-                physics.setPositionBuffer(posBuf);
+                physics.setOrientation(orientation);
+                physics.setRigidBodyPos(position);
                 physics.getRigidBody().setLinearVelocity(linearVel);
                 physics.getRigidBody().setAngularVelocity(angularVel);
             }
@@ -51,9 +45,8 @@ public class PhysicsEntityC2S {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 
         buf.writeInt(physics.getEntityId());
-
-        PacketHelper.serializeQuaternionBuffer(buf, physics.getQuaternionBuffer());
-        PacketHelper.serializePositionBuffer(buf, physics.getPositionBuffer());
+        PacketHelper.serializeQuaternion(buf, physics.getOrientation());
+        PacketHelper.serializeVector3f(buf, physics.getRigidBody().getCenterOfMassPosition(new Vector3f()));
         PacketHelper.serializeVector3f(buf, physics.getRigidBody().getLinearVelocity(new Vector3f()));
         PacketHelper.serializeVector3f(buf, physics.getRigidBody().getAngularVelocity(new Vector3f()));
 

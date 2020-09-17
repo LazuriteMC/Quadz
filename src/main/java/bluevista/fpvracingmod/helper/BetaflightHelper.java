@@ -1,7 +1,7 @@
-package bluevista.fpvracingmod.math;
+package bluevista.fpvracingmod.helper;
 
 public class BetaflightHelper {
-	public static double calculateRates(double rcCommand, double rcRate, double expo, double superRate) {
+	public static double calculateRates(double rcCommand, double rcRate, double expo, double superRate, double delta) {
 	    double absRcCommand = Math.abs(rcCommand);
 		
 	    if(rcRate > 2.0)
@@ -16,7 +16,7 @@ public class BetaflightHelper {
 	        angleRate *= rcSuperFactor;
 	    }
 
-	    return angleRate;
+	    return angleRate * delta;
 	}
 	
     private static double clamp(double n, double minn, double maxn) {

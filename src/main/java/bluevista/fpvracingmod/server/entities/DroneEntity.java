@@ -5,9 +5,9 @@ import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.client.input.AxisValues;
 import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.config.Config;
-import bluevista.fpvracingmod.math.BetaflightHelper;
-import bluevista.fpvracingmod.math.Matrix4fInject;
-import bluevista.fpvracingmod.math.QuaternionHelper;
+import bluevista.fpvracingmod.helper.BetaflightHelper;
+import bluevista.fpvracingmod.helper.Matrix4fInject;
+import bluevista.fpvracingmod.helper.QuaternionHelper;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
@@ -79,7 +79,7 @@ public class DroneEntity extends PhysicsEntity {
 		this.playerStartPos = new HashMap();
 
 		this.godMode = false;
-		this.prevGodMode = this.godMode;
+		this.prevGodMode = false;
 
 		this.createRigidBody();
 		this.rotateY(yaw);
@@ -97,7 +97,7 @@ public class DroneEntity extends PhysicsEntity {
 	public void tick() {
 		super.tick();
 
-		if (!this.world.isClient()) {
+		if(!this.world.isClient()) {
 			DroneEntityS2C.send(this);
 
 			if (!this.godMode && (
@@ -119,14 +119,12 @@ public class DroneEntity extends PhysicsEntity {
 	public void stepPhysics(float d) {
 		super.stepPhysics(d);
 
-		if(ClientTick.isPlayerIDClient(playerID)) {
-			if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
-				axisValues.set(InputTick.axisValues);
-			}
+		if(isActive()) {
+			this.axisValues.set(InputTick.axisValues);
 
-			float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, rate, expo, superRate) * d;
-			float deltaY = (float) BetaflightHelper.calculateRates(axisValues.currY, rate, expo, superRate) * d;
-			float deltaZ = (float) BetaflightHelper.calculateRates(axisValues.currZ, rate, expo, superRate) * d;
+			float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, rate, expo, superRate, d);
+			float deltaY = (float) BetaflightHelper.calculateRates(axisValues.currY, rate, expo, superRate, d);
+			float deltaZ = (float) BetaflightHelper.calculateRates(axisValues.currZ, rate, expo, superRate, d);
 
 			rotateX(deltaX);
 			rotateY(deltaY);
@@ -137,8 +135,8 @@ public class DroneEntity extends PhysicsEntity {
 
 			this.prevYaw = this.yaw;
 			this.prevPitch = this.pitch;
-			this.yaw = this.getQuatYaw();
-			this.pitch = this.getQuatPitch();
+			this.yaw = QuaternionHelper.getYaw(this.getOrientation());
+			this.pitch = QuaternionHelper.getPitch(this.getOrientation());
 
 			this.decreaseAngularVelocity();
 			this.applyForce(
@@ -211,6 +209,7 @@ public class DroneEntity extends PhysicsEntity {
 
 	@Override
 	protected void writeCustomDataToTag(CompoundTag tag) {
+		super.writeCustomDataToTag(tag);
 		tag.putInt(Config.BAND, getConfigValues(Config.BAND).intValue());
 		tag.putInt(Config.CHANNEL, getConfigValues(Config.CHANNEL).intValue());
 		tag.putInt(Config.CAMERA_ANGLE, getConfigValues(Config.CAMERA_ANGLE).intValue());
@@ -295,14 +294,6 @@ public class DroneEntity extends PhysicsEntity {
 		return Matrix4fInject.from(mat).matrixToVector().multiply(-1, -1, -1);
 	}
 
-	public float getQuatYaw() {
-		return -1 * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(this.getOrientation()).z);
-	}
-
-	public float getQuatPitch() {
-		return (float) Math.toDegrees(QuaternionHelper.toEulerAngles(this.getOrientation()).y);
-	}
-
 	/*
 	 * Returns all drones within the entity's world.
 	 * The provided entity is typically just the player.
@@ -322,6 +313,7 @@ public class DroneEntity extends PhysicsEntity {
 
 	@Override
 	protected void readCustomDataFromTag(CompoundTag tag) {
+		super.readCustomDataFromTag(tag);
 		setConfigValues(Config.BAND, tag.getInt(Config.BAND));
 		setConfigValues(Config.CHANNEL, tag.getInt(Config.CHANNEL));
 		setConfigValues(Config.CAMERA_ANGLE, tag.getInt(Config.CAMERA_ANGLE));

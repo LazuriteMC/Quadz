@@ -76,36 +76,27 @@ public class PhysicsWorld {
         float maxSubSteps = 5.0f;
         clock.reset();
 
-        loadActivePhysicsEntities();
         this.physicsEntities.forEach(physics -> {
             if(world != null) {
-                if(physics.isActive()) {
-                    loadEntityCollisions(physics, world);
+                if (physics.isActive()) {
+//                    loadEntityCollisions(physics, world);
                     loadBlockCollisions(physics, world);
-                }
 
-                physics.stepPhysics(d);
-            }
-        });
-
-        unloadEntityCollisions();
-        unloadBlockCollisions();
-
-        this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
-    }
-
-    public void loadActivePhysicsEntities() {
-        this.physicsEntities.forEach(physics -> {
-            if (physics.isActive()) {
-                if (!physics.getRigidBody().isInWorld()) {
-                    this.dynamicsWorld.addRigidBody(physics.getRigidBody());
-                }
-            } else {
-                if (physics.getRigidBody().isInWorld()) {
+                    if(!physics.getRigidBody().isInWorld()) {
+                        this.dynamicsWorld.addRigidBody(physics.getRigidBody());
+                    }
+                } else if(physics.getRigidBody().isInWorld()) {
                     this.dynamicsWorld.removeRigidBody(physics.getRigidBody());
                 }
             }
+
+            physics.stepPhysics(d);
         });
+
+//        unloadEntityCollisions();
+        unloadBlockCollisions();
+
+        this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
     }
 
     public void loadBlockCollisions(PhysicsEntity physics, ClientWorld world) {
@@ -202,7 +193,7 @@ public class PhysicsWorld {
     }
 
     public void remove(PhysicsEntity physics) {
-        this.removeRigidBody(physics.getRigidBody());
+        this.dynamicsWorld.removeRigidBody(physics.getRigidBody());
         this.physicsEntities.remove(physics);
     }
 

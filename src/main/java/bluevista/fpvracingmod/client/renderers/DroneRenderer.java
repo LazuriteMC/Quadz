@@ -1,7 +1,7 @@
 package bluevista.fpvracingmod.client.renderers;
 
 import bluevista.fpvracingmod.client.models.DroneModel;
-import bluevista.fpvracingmod.math.QuaternionHelper;
+import bluevista.fpvracingmod.helper.QuaternionHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;

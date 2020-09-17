@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.math;
+package bluevista.fpvracingmod.helper;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.MathHelper;
@@ -88,14 +88,11 @@ public class QuaternionHelper {
         return q;
     }
 
-    public static Quat4f lerp(float d, Quat4f start, Quat4f end) {
-        Quat4f out = new Quat4f();
+    public static float getYaw(Quat4f quat) {
+        return -1 * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(quat).z);
+    }
 
-        out.x = MathHelper.lerp(d, start.x, end.x);
-        out.y = MathHelper.lerp(d, start.y, end.y);
-        out.z = MathHelper.lerp(d, start.z, end.z);
-        out.w = MathHelper.lerp(d, start.w, end.w);
-
-        return out;
+    public static float getPitch(Quat4f quat) {
+        return (float) Math.toDegrees(QuaternionHelper.toEulerAngles(quat).y);
     }
 }

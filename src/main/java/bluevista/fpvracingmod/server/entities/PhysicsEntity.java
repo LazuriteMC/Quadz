@@ -3,8 +3,7 @@ package bluevista.fpvracingmod.server.entities;
 import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.config.Config;
-import bluevista.fpvracingmod.math.QuaternionHelper;
-import bluevista.fpvracingmod.network.GenericBuffer;
+import bluevista.fpvracingmod.helper.QuaternionHelper;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityS2C;
 import com.bulletphysics.collision.dispatch.CollisionObject;
@@ -30,26 +29,30 @@ import javax.vecmath.Vector3f;
 import java.util.UUID;
 
 public abstract class PhysicsEntity extends Entity {
-    private RigidBody body;
-    private GenericBuffer<Quat4f> quatBuf;
-    private GenericBuffer<Vector3f> posBuf;
-    private Quat4f prevQuat;
-
+    public UUID playerID;
     private float linearDamping;
     private float mass;
-
-    public UUID playerID;
     private boolean active;
+    private RigidBody body;
+
+    public Quat4f remoteQuat;
+    public Quat4f prevQuat;
+    public Vector3f remotePosition;
+    public Vector3f remoteLinVel;
+    public Vector3f remoteAngVel;
 
     public PhysicsEntity(EntityType type, World world, UUID playerID, Vec3d pos) {
         super(type, world);
 
         this.playerID = playerID;
-        this.createRigidBody();
+        this.remoteQuat = new Quat4f(0, 1, 0, 0);
+        this.prevQuat = new Quat4f(0, 1, 0, 0);
+        this.remotePosition = new Vector3f();
+        this.remoteLinVel = new Vector3f();
+        this.remoteAngVel = new Vector3f();
 
         this.setPos(pos.x, pos.y, pos.z);
-        this.quatBuf = new GenericBuffer<Quat4f>();
-        this.posBuf = new GenericBuffer<Vector3f>();
+        this.createRigidBody();
 
         if(world.isClient()) {
             ClientInitializer.physicsWorld.add(this);
@@ -61,10 +64,12 @@ public abstract class PhysicsEntity extends Entity {
         super.tick();
 
         if (this.world.isClient()) {
-            active = ClientTick.isPlayerIDClient(playerID);
+            this.active = ClientTick.isPlayerIDClient(playerID);
 
-            if (active) {
+            if(active) {
                 PhysicsEntityC2S.send(this);
+            } else {
+                this.prevQuat.set(this.getOrientation());
             }
         } else {
             PhysicsEntityS2C.send(this);
@@ -80,35 +85,7 @@ public abstract class PhysicsEntity extends Entity {
 
     @Environment(EnvType.CLIENT)
     public void stepPhysics(float d) {
-        if(playerID != null) {
-            if (ClientInitializer.isPlayerIDClient(playerID)) {
-                this.quatBuf.setCaptureRate(d);
-                this.quatBuf.add(this.getOrientation());
 
-                this.posBuf.setCaptureRate(d);
-                this.posBuf.add(this.getRigidBody().getCenterOfMassPosition(new Vector3f()));
-            } else {
-                if (quatBuf != null) {
-                    if (quatBuf.size() > 0) {
-                        prevQuat = quatBuf.getLast();
-
-                        Quat4f quat = quatBuf.poll(d);
-                        if(quat != null) {
-                            this.setOrientation(quat);
-                        }
-                    }
-                }
-
-                if (posBuf != null) {
-                    if (posBuf.size() > 0) {
-                        Vector3f pos = posBuf.poll(d);
-                        if(pos != null) {
-                            this.setRigidBodyPos(pos);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     public void setConfigValues(String key, Number value) {
@@ -140,7 +117,7 @@ public abstract class PhysicsEntity extends Entity {
         this.mass = mass;
 
         if(old != mass) {
-            this.refreshRigidBody();
+            refreshRigidBody();
         }
     }
 
@@ -149,38 +126,12 @@ public abstract class PhysicsEntity extends Entity {
     }
 
     public void setLinearDamping(float linearDamping) {
-        float old = this.linearDamping;
         this.linearDamping = linearDamping;
-
-        if(old != linearDamping) {
-            this.refreshRigidBody();
-        }
+        this.body.setDamping(linearDamping, this.body.getAngularDamping());
     }
 
     public float getLinearDamping() {
         return this.linearDamping;
-    }
-
-    public void lerpOrientation(float tickDelta) {
-        if(prevQuat != null) {
-            this.setOrientation(QuaternionHelper.lerp(tickDelta, prevQuat, getOrientation()));
-        }
-    }
-
-    public GenericBuffer<Quat4f> getQuaternionBuffer() {
-        return this.quatBuf;
-    }
-
-    public void setQuaternionBuffer(GenericBuffer<Quat4f> quatBuf) {
-        this.quatBuf.set(quatBuf);
-    }
-
-    public GenericBuffer<Vector3f> getPositionBuffer() {
-        return this.posBuf;
-    }
-
-    public void setPositionBuffer(GenericBuffer<Vector3f> posBuf) {
-        this.posBuf.set(posBuf);
     }
 
     public BlockPos getRigidBodyBlockPos() {
@@ -206,10 +157,6 @@ public abstract class PhysicsEntity extends Entity {
 
     public RigidBody getRigidBody() {
         return this.body;
-    }
-
-    public void setRigidBody(RigidBody body) {
-        this.body = body;
     }
 
     public void applyForce(Vector3f... forces) {
@@ -286,7 +233,7 @@ public abstract class PhysicsEntity extends Entity {
         this.setRigidBodyPos(old.getCenterOfMassPosition(new Vector3f()));
         this.setOrientation(old.getOrientation(new Quat4f()));
 
-        if(this.world.isClient() && old.isInWorld()) {
+        if(this.world.isClient()) {
             ClientInitializer.physicsWorld.removeRigidBody(old);
             ClientInitializer.physicsWorld.addRigidBody(this.getRigidBody());
         }
@@ -311,6 +258,6 @@ public abstract class PhysicsEntity extends Entity {
         RigidBody body = new RigidBody(ci);
         body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
         body.setDamping(linearDamping, 0);
-        setRigidBody(body);
+        this.body = body;
     }
 }

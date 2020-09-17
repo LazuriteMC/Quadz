@@ -1,4 +1,4 @@
-package bluevista.fpvracingmod.math;
+package bluevista.fpvracingmod.helper;
 
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;

@@ -1,10 +1,11 @@
 package bluevista.fpvracingmod.network.entity;
 
 import bluevista.fpvracingmod.config.Config;
-import bluevista.fpvracingmod.network.GenericBuffer;
+import bluevista.fpvracingmod.helper.QuaternionHelper;
 import bluevista.fpvracingmod.network.PacketHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.PhysicsEntity;
+import com.google.gson.internal.$Gson$Preconditions;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
@@ -14,6 +15,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Quaternion;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
@@ -26,14 +28,14 @@ public class PhysicsEntityS2C {
     public static void accept(PacketContext context, PacketByteBuf buf) {
         PlayerEntity player = context.getPlayer();
 
-        int droneID = buf.readInt();
+        int id = buf.readInt();
         UUID playerID = buf.readUuid();
 
         float mass = buf.readFloat();
         float linearDamping = buf.readFloat();
 
-        GenericBuffer<Quat4f> quatBuf = PacketHelper.deserializeQuaternionBuffer(buf);
-        GenericBuffer<Vector3f> posBuf = PacketHelper.deserializePositionBuffer(buf);
+        Quat4f orientation = PacketHelper.deserializeQuaternion(buf);
+        Vector3f position = PacketHelper.deserializeVector3f(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
         Vector3f angularVel = PacketHelper.deserializeVector3f(buf);
 
@@ -41,7 +43,7 @@ public class PhysicsEntityS2C {
             PhysicsEntity physics = null;
 
             if(player != null)
-                physics = (PhysicsEntity) player.world.getEntityById(droneID);
+                physics = (PhysicsEntity) player.world.getEntityById(id);
 
             if(physics != null) {
                 physics.playerID = playerID;
@@ -49,9 +51,10 @@ public class PhysicsEntityS2C {
                 physics.setConfigValues(Config.MASS, mass);
                 physics.setConfigValues(Config.LINEAR_DAMPING, linearDamping);
 
-                if(!physics.playerID.equals(player.getUuid())) { // if any player besides physics-controlling player
-                    physics.setQuaternionBuffer(quatBuf);
-                    physics.setPositionBuffer(posBuf);
+                if(!physics.isActive()) { // if any player besides physics-controlling player
+                    physics.remoteQuat.set(orientation);
+                    physics.updatePosition(position.x, position.y, position.z);
+                    physics.setRigidBodyPos(position);
                     physics.getRigidBody().setLinearVelocity(linearVel);
                     physics.getRigidBody().setAngularVelocity(angularVel);
                 }
@@ -68,8 +71,8 @@ public class PhysicsEntityS2C {
         buf.writeFloat(physics.getMass());
         buf.writeFloat(physics.getLinearDamping());
 
-        PacketHelper.serializeQuaternionBuffer(buf, physics.getQuaternionBuffer());
-        PacketHelper.serializePositionBuffer(buf, physics.getPositionBuffer());
+        PacketHelper.serializeQuaternion(buf, physics.getOrientation());
+        PacketHelper.serializeVector3f(buf, physics.getRigidBody().getCenterOfMassPosition(new Vector3f()));
         PacketHelper.serializeVector3f(buf, physics.getRigidBody().getLinearVelocity(new Vector3f()));
         PacketHelper.serializeVector3f(buf, physics.getRigidBody().getAngularVelocity(new Vector3f()));
 
