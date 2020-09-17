@@ -38,8 +38,8 @@ import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class PhysicsWorld {
-    public final float GRAVITY;
-    public final int BLOCK_RADIUS;
+    public float GRAVITY;
+    public int BLOCK_RADIUS;
 
     public final Clock clock;
     public final List<PhysicsEntity> physicsEntities;
@@ -184,6 +184,11 @@ public class PhysicsWorld {
 
         toRemove.forEach(this.collisionEntities::remove);
         toKeepEntities.clear();
+    }
+
+    public void setGravity(float gravity) {
+        GRAVITY = gravity;
+        this.dynamicsWorld.setGravity(new Vector3f(0, GRAVITY, 0));
     }
 
     public void add(PhysicsEntity physics) {

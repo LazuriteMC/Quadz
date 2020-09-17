@@ -166,6 +166,16 @@ public class Commands {
                         .executes(context -> setConfigValue(context, Config.CHANNEL)))
                     .executes(context -> getConfigValue(context, Config.CHANNEL)))
 
+                .then(CommandManager.literal(Config.GRAVITY)
+                    .then(CommandManager.argument(Config.GRAVITY, new NumberArgumentType())
+                        .executes(context -> setConfigValue(context, Config.GRAVITY)))
+                    .executes(context -> getConfigValue(context, Config.GRAVITY)))
+
+                .then(CommandManager.literal(Config.BLOCK_RADIUS)
+                    .then(CommandManager.argument(Config.BLOCK_RADIUS, new NumberArgumentType())
+                        .executes(context -> setConfigValue(context, Config.BLOCK_RADIUS)))
+                    .executes(context -> getConfigValue(context, Config.BLOCK_RADIUS)))
+
                 .then(CommandManager.literal(Config.WRITE)
                     .executes(context -> config(context, Config.WRITE)))
 

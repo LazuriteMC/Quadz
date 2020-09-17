@@ -31,10 +31,17 @@ public class ConfigS2C {
 
             if (finalValue != null) {
                 ClientInitializer.getConfig().setOption(key, finalValue);
+                if (key.equals(Config.GRAVITY)) {
+                    ClientInitializer.physicsWorld.setGravity(finalValue.floatValue());
+                } else if (key.equals(Config.BLOCK_RADIUS)) {
+                    ClientInitializer.physicsWorld.BLOCK_RADIUS = finalValue.intValue();
+                }
             } else if (key.equals(Config.WRITE)) {
                 ClientInitializer.getConfig().writeConfig();
             } else if (key.equals(Config.REVERT)) {
                 ClientInitializer.registerConfig();
+                ClientInitializer.physicsWorld.setGravity(ClientInitializer.getConfig().getFloatOption(Config.GRAVITY));
+                ClientInitializer.physicsWorld.BLOCK_RADIUS = ClientInitializer.getConfig().getIntOption(Config.BLOCK_RADIUS);
                 ConfigC2S.send(ClientInitializer.getConfig());
             }
 
