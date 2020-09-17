@@ -206,6 +206,21 @@ public class Commands {
                         .executes(context -> setDroneValue(context, Config.FIELD_OF_VIEW)))
                     .executes(context -> getDroneValue(context, Config.FIELD_OF_VIEW)))
 
+                .then(CommandManager.literal(Config.MASS)
+                    .then(CommandManager.argument(Config.MASS, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.MASS)))
+                    .executes(context -> getDroneValue(context, Config.MASS)))
+
+                .then(CommandManager.literal(Config.LINEAR_DAMPING)
+                    .then(CommandManager.argument(Config.LINEAR_DAMPING, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.LINEAR_DAMPING)))
+                    .executes(context -> getDroneValue(context, Config.LINEAR_DAMPING)))
+
+                .then(CommandManager.literal(Config.THRUST)
+                    .then(CommandManager.argument(Config.THRUST, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.THRUST)))
+                    .executes(context -> getDroneValue(context, Config.THRUST)))
+
                 .then(CommandManager.literal(Config.RATE)
                     .then(CommandManager.argument(Config.RATE, new NumberArgumentType())
                         .executes(context -> setDroneValue(context, Config.RATE)))
