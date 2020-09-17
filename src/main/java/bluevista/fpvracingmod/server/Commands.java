@@ -196,6 +196,21 @@ public class Commands {
                         .executes(context -> setDroneValue(context, Config.FIELD_OF_VIEW)))
                     .executes(context -> getDroneValue(context, Config.FIELD_OF_VIEW)))
 
+                .then(CommandManager.literal(Config.RATE)
+                    .then(CommandManager.argument(Config.RATE, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.RATE)))
+                    .executes(context -> getDroneValue(context, Config.RATE)))
+
+                .then(CommandManager.literal(Config.SUPER_RATE)
+                    .then(CommandManager.argument(Config.SUPER_RATE, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.SUPER_RATE)))
+                    .executes(context -> getDroneValue(context, Config.SUPER_RATE)))
+
+                .then(CommandManager.literal(Config.EXPO)
+                    .then(CommandManager.argument(Config.EXPO, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.EXPO)))
+                    .executes(context -> getDroneValue(context, Config.EXPO)))
+
                 .then(CommandManager.literal(Config.NO_CLIP)
                     .then(CommandManager.argument(Config.NO_CLIP, new NumberArgumentType())
                         .executes(context -> setDroneValue(context, Config.NO_CLIP)))
