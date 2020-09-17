@@ -58,7 +58,7 @@ public class PhysicsWorld {
         this.toKeepEntities = new ArrayList();
         this.clock = new Clock();
 
-        BLOCK_RADIUS = ClientInitializer.getConfig().getIntOption(Config.GRAVITY);
+        BLOCK_RADIUS = ClientInitializer.getConfig().getIntOption(Config.BLOCK_RADIUS);
         GRAVITY = ClientInitializer.getConfig().getFloatOption(Config.GRAVITY);
 
         BroadphaseInterface broadphase = new DbvtBroadphase();
