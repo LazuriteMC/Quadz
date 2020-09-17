@@ -84,8 +84,12 @@ public abstract class PhysicsEntity extends Entity {
     }
 
     @Environment(EnvType.CLIENT)
-    public void stepPhysics(float d) {
-
+    public void stepPhysics(float d, float tickDelta) {
+        if(!this.isActive()) {
+            Quat4f slerp = new Quat4f();
+            slerp.interpolate(this.prevQuat, this.remoteQuat, tickDelta);
+            this.setOrientation(slerp);
+        }
     }
 
     public void setConfigValues(String key, Number value) {

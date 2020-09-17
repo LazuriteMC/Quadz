@@ -42,30 +42,8 @@ public class Config {
     public static final String MASS = "mass";
     public static final String LINEAR_DAMPING = "linearDamping";
     public static final String THRUST = "thrust";
-
-//    public static final List<String> ALL_OPTIONS = Arrays.asList(
-//            CONTROLLER_ID,
-//            THROTTLE,
-//            PITCH,
-//            YAW,
-//            ROLL,
-//            DEADZONE,
-//            THROTTLE_CENTER_POSITION,
-//            RATE,
-//            SUPER_RATE,
-//            EXPO,
-//            INVERT_THROTTLE,
-//            INVERT_PITCH,
-//            INVERT_YAW,
-//            INVERT_ROLL,
-//            CAMERA_ANGLE,
-//            FIELD_OF_VIEW,
-//            BAND,
-//            CHANNEL,
-//            MASS,
-//            LINEAR_DAMPING,
-//            THRUST
-//    );
+    public static final String GRAVITY = "gravity";
+    public static final String BLOCK_RADIUS = "blockRadius";
 
     public static final List<String> INT_KEYS = Arrays.asList(
             CONTROLLER_ID,
@@ -80,7 +58,8 @@ public class Config {
             INVERT_ROLL,
             CAMERA_ANGLE,
             BAND,
-            CHANNEL
+            CHANNEL,
+            BLOCK_RADIUS
     );
 
     public static final List<String> FLOAT_KEYS = Arrays.asList(
@@ -91,7 +70,8 @@ public class Config {
             FIELD_OF_VIEW,
             MASS,
             LINEAR_DAMPING,
-            THRUST
+            THRUST,
+            GRAVITY
     );
 
     public static final List<String> ALL_OPTIONS = new ArrayList<String>() {{

@@ -1,6 +1,7 @@
 package bluevista.fpvracingmod.client.physics;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
+import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.entities.PhysicsEntity;
 import com.bulletphysics.collision.broadphase.BroadphaseInterface;
 import com.bulletphysics.collision.broadphase.DbvtBroadphase;
@@ -38,7 +39,7 @@ import java.util.Map;
 @Environment(EnvType.CLIENT)
 public class PhysicsWorld {
     public final float GRAVITY;
-    public final int LOAD_AREA;
+    public final int BLOCK_RADIUS;
 
     public final Clock clock;
     public final List<PhysicsEntity> physicsEntities;
@@ -57,10 +58,9 @@ public class PhysicsWorld {
         this.toKeepEntities = new ArrayList();
         this.clock = new Clock();
 
-        LOAD_AREA = 3; // Get from config
-        GRAVITY = -9.81f; // Get from config
+        BLOCK_RADIUS = ClientInitializer.getConfig().getIntOption(Config.GRAVITY);
+        GRAVITY = ClientInitializer.getConfig().getFloatOption(Config.GRAVITY);
 
-        // Create the world
         BroadphaseInterface broadphase = new DbvtBroadphase();
         CollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
         CollisionDispatcher dispatcher = new CollisionDispatcher(collisionConfiguration);
@@ -69,7 +69,7 @@ public class PhysicsWorld {
         dynamicsWorld.setGravity(new Vector3f(0, GRAVITY, 0));
     }
 
-    public void stepWorld() {
+    public void stepWorld(float tickDelta) {
         ClientWorld world = ClientInitializer.client.world;
 
         float d = clock.getTimeMicroseconds() / 1000000F;
@@ -79,7 +79,6 @@ public class PhysicsWorld {
         this.physicsEntities.forEach(physics -> {
             if(world != null) {
                 if (physics.isActive()) {
-//                    loadEntityCollisions(physics, world);
                     loadBlockCollisions(physics, world);
 
                     if(!physics.getRigidBody().isInWorld()) {
@@ -90,17 +89,16 @@ public class PhysicsWorld {
                 }
             }
 
-            physics.stepPhysics(d);
+            physics.stepPhysics(d, tickDelta);
         });
 
-//        unloadEntityCollisions();
         unloadBlockCollisions();
 
         this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
     }
 
     public void loadBlockCollisions(PhysicsEntity physics, ClientWorld world) {
-        Box area = new Box(physics.getRigidBodyBlockPos()).expand(LOAD_AREA);
+        Box area = new Box(physics.getRigidBodyBlockPos()).expand(BLOCK_RADIUS);
         Map<BlockPos, BlockState> blockList = BlockHelper.getBlockList(world, area);
         BlockView blockView = world.getChunkManager().getChunk(physics.chunkX, physics.chunkZ);
 
@@ -148,7 +146,7 @@ public class PhysicsWorld {
     }
 
     public void loadEntityCollisions(PhysicsEntity physics, ClientWorld world) {
-        Box area = new Box(physics.getRigidBodyBlockPos()).expand(LOAD_AREA);
+        Box area = new Box(physics.getRigidBodyBlockPos()).expand(BLOCK_RADIUS);
 
         world.getOtherEntities(physics, area).forEach(entity -> {
             if(!(entity instanceof PhysicsEntity) && !collisionEntities.containsKey(entity)) {

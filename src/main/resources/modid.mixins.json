@@ -9,7 +9,6 @@
     "ServerPlayerEntityMixin"
   ],
   "client": [
-    "CameraMixin",
     "ClientPlayNetworkManagerMixin",
     "ClientWorldMixin",
     "GameRendererMixin"

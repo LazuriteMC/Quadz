@@ -116,8 +116,8 @@ public class DroneEntity extends PhysicsEntity {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void stepPhysics(float d) {
-		super.stepPhysics(d);
+	public void stepPhysics(float d, float tickDelta) {
+		super.stepPhysics(d, tickDelta);
 
 		if(isActive()) {
 			this.axisValues.set(InputTick.axisValues);

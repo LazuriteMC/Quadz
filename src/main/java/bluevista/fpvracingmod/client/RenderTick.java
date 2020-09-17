@@ -15,13 +15,13 @@ import javax.vecmath.Quat4f;
 
 @Environment(EnvType.CLIENT)
 public class RenderTick {
-    public static void tick(MinecraftClient client, MatrixStack stack) {
+    public static void tick(MinecraftClient client, MatrixStack stack, float tickDelta) {
         Entity entity = client.getCameraEntity();
 
         PhysicsWorld w = ClientInitializer.physicsWorld;
         if(w != null) {
             if (!client.isPaused())
-                w.stepWorld();
+                w.stepWorld(tickDelta);
             else w.clock.reset();
         }
 
