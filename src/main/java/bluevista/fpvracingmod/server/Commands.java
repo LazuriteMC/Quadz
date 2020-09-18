@@ -166,6 +166,21 @@ public class Commands {
                         .executes(context -> setConfigValue(context, Config.CHANNEL)))
                     .executes(context -> getConfigValue(context, Config.CHANNEL)))
 
+                .then(CommandManager.literal(Config.MASS)
+                    .then(CommandManager.argument(Config.MASS, new NumberArgumentType())
+                        .executes(context -> setConfigValue(context, Config.MASS)))
+                    .executes(context -> getConfigValue(context, Config.MASS)))
+
+                .then(CommandManager.literal(Config.LINEAR_DAMPING)
+                    .then(CommandManager.argument(Config.LINEAR_DAMPING, new NumberArgumentType())
+                        .executes(context -> setConfigValue(context, Config.LINEAR_DAMPING)))
+                    .executes(context -> getConfigValue(context, Config.LINEAR_DAMPING)))
+
+                .then(CommandManager.literal(Config.THRUST)
+                    .then(CommandManager.argument(Config.THRUST, new NumberArgumentType())
+                        .executes(context -> setConfigValue(context, Config.THRUST)))
+                    .executes(context -> getConfigValue(context, Config.THRUST)))
+
                 .then(CommandManager.literal(Config.GRAVITY)
                     .then(CommandManager.argument(Config.GRAVITY, new NumberArgumentType())
                         .executes(context -> setConfigValue(context, Config.GRAVITY)))
