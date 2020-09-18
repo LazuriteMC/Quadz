@@ -1,8 +1,6 @@
 package bluevista.fpvracingmod.network.entity;
 
-import bluevista.fpvracingmod.client.input.AxisValues;
 import bluevista.fpvracingmod.config.Config;
-import bluevista.fpvracingmod.network.PacketHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import io.netty.buffer.Unpooled;
@@ -24,6 +22,7 @@ public class DroneEntityS2C {
         PlayerEntity player = context.getPlayer();
 
         int droneID = buf.readInt();
+        int noClip = buf.readInt();
         int godMode = buf.readInt();
 
         int band = buf.readInt();
@@ -43,6 +42,7 @@ public class DroneEntityS2C {
                 drone = (DroneEntity) player.world.getEntityById(droneID);
 
             if(drone != null) {
+                drone.setConfigValues(Config.NO_CLIP, noClip);
                 drone.setConfigValues(Config.GOD_MODE, godMode);
 
                 drone.setConfigValues(Config.BAND, band);
@@ -62,6 +62,7 @@ public class DroneEntityS2C {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 
         buf.writeInt(drone.getEntityId());
+        buf.writeInt(drone.getConfigValues(Config.NO_CLIP).intValue());
         buf.writeInt(drone.getConfigValues(Config.GOD_MODE).intValue());
 
         buf.writeInt(drone.getConfigValues(Config.BAND).intValue());

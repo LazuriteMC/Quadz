@@ -12,7 +12,6 @@ public class Config {
     public static final String BIND = "bind";
     public static final String PLAYER_ID = "playerID";
     public static final String NO_CLIP = "noClip";
-    public static final String PREV_GOD_MODE = "prevGodMode" ;
     public static final String GOD_MODE = "godMode";
 
     // For dealing with the config file items

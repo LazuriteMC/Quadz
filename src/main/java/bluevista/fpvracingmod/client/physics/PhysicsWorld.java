@@ -2,6 +2,7 @@ package bluevista.fpvracingmod.client.physics;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.config.Config;
+import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.entities.PhysicsEntity;
 import com.bulletphysics.collision.broadphase.BroadphaseInterface;
 import com.bulletphysics.collision.broadphase.DbvtBroadphase;
@@ -79,7 +80,9 @@ public class PhysicsWorld {
         this.physicsEntities.forEach(physics -> {
             if(world != null) {
                 if (physics.isActive()) {
-                    loadBlockCollisions(physics, world);
+                    if (!(physics instanceof DroneEntity) || ((DroneEntity) physics).getConfigValues(Config.NO_CLIP).equals(0)) {
+                        loadBlockCollisions(physics, world);
+                    }
 
                     if(!physics.getRigidBody().isInWorld()) {
                         this.dynamicsWorld.addRigidBody(physics.getRigidBody());

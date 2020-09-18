@@ -100,7 +100,7 @@ public class DroneEntity extends PhysicsEntity {
 		if(!this.world.isClient()) {
 			DroneEntityS2C.send(this);
 
-			if (!this.godMode && (
+			if (!(this.godMode || this.noClip) && (
 					this.world.isRaining() ||
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.WATER ||
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.BUBBLE_COLUMN ||
@@ -165,15 +165,6 @@ public class DroneEntity extends PhysicsEntity {
 				break;
 			case Config.NO_CLIP:
 				this.noClip = value.intValue() == 1;
-				if (this.noClip) {
-					setConfigValues(Config.PREV_GOD_MODE, getConfigValues(Config.GOD_MODE));
-					setConfigValues(Config.GOD_MODE, 1);
-				} else {
-					setConfigValues(Config.GOD_MODE, getConfigValues(Config.PREV_GOD_MODE));
-				}
-				break;
-			case Config.PREV_GOD_MODE:
-				this.prevGodMode = value.intValue() == 1;
 				break;
 			case Config.GOD_MODE:
 				this.godMode = value.intValue() == 1;
@@ -240,8 +231,6 @@ public class DroneEntity extends PhysicsEntity {
 				return this.fieldOfView;
 			case Config.NO_CLIP:
 				return this.noClip ? 1 : 0;
-			case Config.PREV_GOD_MODE:
-				return this.prevGodMode ? 1 : 0;
 			case Config.GOD_MODE:
 				return this.godMode ? 1 : 0;
 			case Config.RATE:
@@ -364,7 +353,7 @@ public class DroneEntity extends PhysicsEntity {
 	 */
 	@Override
 	public boolean damage(DamageSource source, float amount) {
-		if (source.getAttacker() instanceof PlayerEntity || (!this.godMode && source instanceof ProjectileDamageSource)) {
+		if (source.getAttacker() instanceof PlayerEntity || ((!this.godMode || !this.noClip) && source instanceof ProjectileDamageSource)) {
 			this.kill();
 			return true;
 		}

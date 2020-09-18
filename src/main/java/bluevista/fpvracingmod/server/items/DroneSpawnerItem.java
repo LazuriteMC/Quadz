@@ -1,6 +1,5 @@
 package bluevista.fpvracingmod.server.items;
 
-import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -61,16 +60,6 @@ public class DroneSpawnerItem extends Item {
 					break;
 				case Config.NO_CLIP:
 					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putInt(Config.NO_CLIP, value.intValue());
-
-					if (getTagValue(itemStack, Config.NO_CLIP).intValue() == 1) {
-						setTagValue(itemStack, Config.PREV_GOD_MODE, getTagValue(itemStack, Config.GOD_MODE));
-						setTagValue(itemStack, Config.GOD_MODE, 1);
-					} else {
-						setTagValue(itemStack, Config.GOD_MODE, getTagValue(itemStack, Config.PREV_GOD_MODE));
-					}
-					break;
-				case Config.PREV_GOD_MODE:
-					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putInt(Config.PREV_GOD_MODE, value.intValue());
 					break;
 				case Config.GOD_MODE:
 					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putInt(Config.GOD_MODE, value.intValue());
@@ -116,8 +105,6 @@ public class DroneSpawnerItem extends Item {
 					return tag.getFloat(Config.FIELD_OF_VIEW);
 				case Config.NO_CLIP:
 					return tag.getInt(Config.NO_CLIP);
-				case Config.PREV_GOD_MODE:
-					return tag.getInt(Config.PREV_GOD_MODE);
 				case Config.GOD_MODE:
 					return tag.getInt(Config.GOD_MODE);
 				case Config.RATE:
@@ -158,7 +145,6 @@ public class DroneSpawnerItem extends Item {
 
 		// config doesn't contain values for these, setting to default values if itemStack doesn't contain the value
 		drone.setConfigValues(Config.NO_CLIP,		DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)		: 0);
-		drone.setConfigValues(Config.PREV_GOD_MODE,	DroneSpawnerItem.getTagValue(itemStack, Config.PREV_GOD_MODE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.PREV_GOD_MODE)	: 0);
 		drone.setConfigValues(Config.GOD_MODE,		DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)		: 0);
 	}
 
@@ -168,7 +154,6 @@ public class DroneSpawnerItem extends Item {
 		DroneSpawnerItem.setTagValue(itemStack, Config.CAMERA_ANGLE,	drone.getConfigValues(Config.CAMERA_ANGLE));
 		DroneSpawnerItem.setTagValue(itemStack, Config.FIELD_OF_VIEW,	drone.getConfigValues(Config.FIELD_OF_VIEW));
 		DroneSpawnerItem.setTagValue(itemStack, Config.NO_CLIP,			drone.getConfigValues(Config.NO_CLIP));
-		DroneSpawnerItem.setTagValue(itemStack, Config.PREV_GOD_MODE,	drone.getConfigValues(Config.PREV_GOD_MODE));
 		DroneSpawnerItem.setTagValue(itemStack, Config.GOD_MODE,		drone.getConfigValues(Config.GOD_MODE));
 		DroneSpawnerItem.setTagValue(itemStack, Config.RATE,			drone.getConfigValues(Config.RATE));
 		DroneSpawnerItem.setTagValue(itemStack, Config.SUPER_RATE,		drone.getConfigValues(Config.SUPER_RATE));
@@ -196,7 +181,6 @@ public class DroneSpawnerItem extends Item {
 
 		// config doesn't contain values for these, setting to default values if itemStack doesn't contain the value
 		DroneSpawnerItem.setTagValue(itemStack, Config.NO_CLIP,			DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)		: 0);
-		DroneSpawnerItem.setTagValue(itemStack, Config.PREV_GOD_MODE,	DroneSpawnerItem.getTagValue(itemStack, Config.PREV_GOD_MODE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.PREV_GOD_MODE)	: 0);
 		DroneSpawnerItem.setTagValue(itemStack, Config.GOD_MODE,		DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)		: 0);
 	}
 }
