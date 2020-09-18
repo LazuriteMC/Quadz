@@ -1,12 +1,13 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "fpvracing",
   "version": "${version}",
 
   "name": "FPV Racing Mod",
   "description": "This mod adds FPV racing drones to Minecraft.",
   "authors": [
-    "Ethan Johnson"
+    "Ethan Johnson",
+    "Patrick Hofmann"
   ],
   "contact": {
     "homepage": "",

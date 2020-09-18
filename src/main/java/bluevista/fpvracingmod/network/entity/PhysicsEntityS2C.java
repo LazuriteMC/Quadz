@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.network.entity;
 
+import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.helper.QuaternionHelper;
 import bluevista.fpvracingmod.network.PacketHelper;
@@ -51,8 +52,8 @@ public class PhysicsEntityS2C {
                 physics.setConfigValues(Config.MASS, mass);
                 physics.setConfigValues(Config.LINEAR_DAMPING, linearDamping);
 
-                if(!physics.isActive()) { // if any player besides physics-controlling player
-                    physics.remoteQuat.set(orientation);
+                if(!ClientTick.isPlayerIDClient(playerID)) { // if any player besides physics-controlling player
+                    physics.netQuat.set(orientation);
                     physics.updatePosition(position.x, position.y, position.z);
                     physics.setRigidBodyPos(position);
                     physics.getRigidBody().setLinearVelocity(linearVel);

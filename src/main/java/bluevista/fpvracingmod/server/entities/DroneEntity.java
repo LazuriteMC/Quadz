@@ -278,7 +278,7 @@ public class DroneEntity extends PhysicsEntity {
 		QuaternionHelper.rotateX(q, 90);
 
 		Matrix4f mat = new Matrix4f();
-		Matrix4fInject.from(mat).fromQuaternion(q);
+		Matrix4fInject.from(mat).fromQuaternion(QuaternionHelper.quat4fToQuaternion(q));
 
 		return Matrix4fInject.from(mat).matrixToVector().multiply(-1, -1, -1);
 	}

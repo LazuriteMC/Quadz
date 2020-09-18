@@ -4,6 +4,7 @@ import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.helper.QuaternionHelper;
+import bluevista.fpvracingmod.network.NetQuat4f;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityS2C;
 import com.bulletphysics.collision.dispatch.CollisionObject;
@@ -35,26 +36,18 @@ public abstract class PhysicsEntity extends Entity {
     private boolean active;
     private RigidBody body;
 
-    public Quat4f remoteQuat;
-    public Quat4f prevQuat;
-    public Vector3f remotePosition;
-    public Vector3f remoteLinVel;
-    public Vector3f remoteAngVel;
+    public NetQuat4f netQuat;
 
     public PhysicsEntity(EntityType type, World world, UUID playerID, Vec3d pos) {
         super(type, world);
 
-        this.playerID = playerID;
-        this.remoteQuat = new Quat4f(0, 1, 0, 0);
-        this.prevQuat = new Quat4f(0, 1, 0, 0);
-        this.remotePosition = new Vector3f();
-        this.remoteLinVel = new Vector3f();
-        this.remoteAngVel = new Vector3f();
-
         this.setPos(pos.x, pos.y, pos.z);
         this.createRigidBody();
 
-        if(world.isClient()) {
+        this.playerID = playerID;
+        this.netQuat = new NetQuat4f(this.getOrientation());
+
+        if (world.isClient()) {
             ClientInitializer.physicsWorld.add(this);
         }
     }
@@ -69,7 +62,7 @@ public abstract class PhysicsEntity extends Entity {
             if(active) {
                 PhysicsEntityC2S.send(this);
             } else {
-                this.prevQuat.set(this.getOrientation());
+                this.netQuat.setPrev(this.getOrientation());
             }
         } else {
             PhysicsEntityS2C.send(this);
@@ -86,9 +79,7 @@ public abstract class PhysicsEntity extends Entity {
     @Environment(EnvType.CLIENT)
     public void stepPhysics(float d, float tickDelta) {
         if(!this.isActive()) {
-            Quat4f slerp = new Quat4f();
-            slerp.interpolate(this.prevQuat, this.remoteQuat, tickDelta);
-            this.setOrientation(slerp);
+            this.setOrientation(this.netQuat.slerp(tickDelta));
         }
     }
 

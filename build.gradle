@@ -1,6 +1,9 @@
 plugins {
-	id 'fabric-loom' version '0.2.7-SNAPSHOT'
+	id 'java'
+	id 'application'
 	id 'maven-publish'
+	id 'fabric-loom' version '0.2.7-SNAPSHOT'
+	id 'com.github.johnrengelman.shadow' version "6.0.0"
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -22,7 +25,9 @@ dependencies {
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
 
-	compile group: 'cz.advel.jbullet', name: 'jbullet', version: '20101010'
+//	implementation "com.github.jengelman.gradle.plugins:shadow:${project.shadow_version}"
+	implementation "cz.advel.jbullet:jbullet:${project.jbullet_version}"
+	shadow "cz.advel.jbullet:jbullet:${project.jbullet_version}"
 }
 
 processResources {
@@ -37,6 +42,10 @@ processResources {
 		exclude "fabric.mod.json"
 	}
 }
+
+//remapJar {
+//	shadowJar{}
+//}
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
 // this fixes some edge cases with special characters not displaying correctly
@@ -55,6 +64,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
 	from "LICENSE"
+	manifest {
+		attributes 'Main-Class': 'net.minecraft.client.main.Main'
+	}
 }
 
 // configure the maven publication
