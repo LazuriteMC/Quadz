@@ -169,7 +169,7 @@ public abstract class PhysicsEntity extends Entity {
     public void remove() {
         super.remove();
 
-        if(this.world.isClient()) {
+        if (this.world.isClient()) {
             ClientInitializer.physicsWorld.remove(this);
         }
     }
