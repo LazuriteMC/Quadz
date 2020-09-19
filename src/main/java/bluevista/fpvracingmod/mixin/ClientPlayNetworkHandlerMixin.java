@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ClientPlayNetworkHandler.class)
-public class ClientPlayNetworkManagerMixin {
+public class ClientPlayNetworkHandlerMixin {
     @Shadow MinecraftClient client;
     @Shadow ClientWorld world;
 

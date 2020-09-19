@@ -11,10 +11,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(EntityS2CPacket.MoveRelative.class)
-public class MoveRelativeMixin extends EntityS2CPacket {
-    @Inject(method = "<init>(ISSSZ)V", at = @At("RETURN"))
-    public void init(int entityId, short deltaX, short deltaY, short deltaZ, boolean onGround, CallbackInfo info) {
+@Mixin(EntityS2CPacket.RotateAndMoveRelative.class)
+public class RotateAndMoveRelativeMixin extends EntityS2CPacket {
+    @Inject(method = "<init>(ISSSBBZ)V", at = @At("RETURN"))
+    public void init(int entityId, short deltaX, short deltaY, short deltaZ, byte yaw, byte pitch, boolean onGround, CallbackInfo info) {
         MinecraftServer server = ServerInitializer.server;
         Entity entity = server.getOverworld().getEntityById(entityId);
 

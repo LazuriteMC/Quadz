@@ -18,6 +18,17 @@ public class ServerPlayerEntityMixin {
     @Shadow Entity cameraEntity;
     @Shadow ServerPlayNetworkHandler networkHandler;
 
+    @Inject(at = @At("HEAD"), method = "onStoppedTracking", cancellable = true)
+    public void onStoppedTracking(Entity entity, CallbackInfo info) {
+        if (entity instanceof ServerPlayerEntity) {
+            ServerPlayerEntity player = (ServerPlayerEntity) entity;
+
+            if(ServerTick.isInGoggles(player)) {
+                info.cancel();
+            }
+        }
+    }
+
     @Inject(at = @At("HEAD"), method = "setCameraEntity", cancellable = true)
     public void setCameraEntity(Entity entity, CallbackInfo info) {
         Entity prevEntity = cameraEntity;

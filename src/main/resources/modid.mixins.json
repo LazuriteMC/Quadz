@@ -4,12 +4,15 @@
   "package": "bluevista.fpvracingmod.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "EntityPositionS2CPacketMixin",
     "Matrix4fMixin",
+    "MoveRelativeMixin",
     "PlayerInventoryMixin",
+    "RotateAndMoveRelativeMixin",
     "ServerPlayerEntityMixin"
   ],
   "client": [
-    "ClientPlayNetworkManagerMixin",
+    "ClientPlayNetworkHandlerMixin",
     "ClientWorldMixin",
     "GameRendererMixin"
   ],

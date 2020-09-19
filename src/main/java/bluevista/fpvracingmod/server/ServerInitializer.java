@@ -33,11 +33,12 @@ import java.util.UUID;
 public class ServerInitializer implements ModInitializer {
 	public static final String MODID = "fpvracing";
 
-	public static ItemGroup ITEM_GROUP;
+	public static MinecraftServer server;
 
 	public static DroneSpawnerItem DRONE_SPAWNER_ITEM;
 	public static GogglesItem GOGGLES_ITEM;
 	public static TransmitterItem TRANSMITTER_ITEM;
+	public static ItemGroup ITEM_GROUP;
 
 	public static EntityType<Entity> DRONE_ENTITY;
 
@@ -92,6 +93,6 @@ public class ServerInitializer implements ModInitializer {
 	}
 
 	public static void start(MinecraftServer server) {
-
+		ServerInitializer.server = server;
 	}
 }

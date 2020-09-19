@@ -1,8 +1,6 @@
 package bluevista.fpvracingmod.client;
 
-import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.config.Config;
-import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
