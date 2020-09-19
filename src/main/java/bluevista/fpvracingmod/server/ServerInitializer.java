@@ -2,6 +2,7 @@ package bluevista.fpvracingmod.server;
 
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.network.config.ConfigC2S;
+import bluevista.fpvracingmod.network.entity.KillDroneC2S;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
 import bluevista.fpvracingmod.network.keybinds.EMPC2S;
 import bluevista.fpvracingmod.network.keybinds.GodModeC2S;
@@ -56,6 +57,7 @@ public class ServerInitializer implements ModInitializer {
 	}
 
 	private void registerNetwork() {
+		KillDroneC2S.register();
 		PhysicsEntityC2S.register();
 		ConfigC2S.register();
 

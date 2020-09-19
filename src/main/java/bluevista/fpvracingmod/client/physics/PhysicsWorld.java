@@ -220,4 +220,8 @@ public class PhysicsWorld {
 
         return bodies;
     }
+
+    public DiscreteDynamicsWorld getDynamicsWorld() {
+        return this.dynamicsWorld;
+    }
 }

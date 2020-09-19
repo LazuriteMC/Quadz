@@ -1,7 +1,6 @@
 package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
-import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.client.input.AxisValues;
 import bluevista.fpvracingmod.client.input.InputTick;
 import bluevista.fpvracingmod.config.Config;
@@ -9,9 +8,12 @@ import bluevista.fpvracingmod.helper.BetaflightHelper;
 import bluevista.fpvracingmod.helper.Matrix4fInject;
 import bluevista.fpvracingmod.helper.QuaternionHelper;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
+import bluevista.fpvracingmod.network.entity.KillDroneC2S;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
+import com.bulletphysics.collision.broadphase.Dispatcher;
+import com.bulletphysics.collision.narrowphase.PersistentManifold;
 import com.bulletphysics.dynamics.RigidBody;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -30,7 +32,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
@@ -51,6 +52,7 @@ public class DroneEntity extends PhysicsEntity {
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
 	private float thrust;
 	private float damageCoefficient;
+	private boolean shouldKill;
 
 	/* God Mode */
 	private boolean godMode;
@@ -79,6 +81,7 @@ public class DroneEntity extends PhysicsEntity {
 		this.axisValues = new AxisValues();
 		this.playerStartPos = new HashMap();
 
+		this.shouldKill = false;
 		this.godMode = false;
 
 		this.createRigidBody();
@@ -97,29 +100,32 @@ public class DroneEntity extends PhysicsEntity {
 	public void tick() {
 		super.tick();
 
-		if (!this.world.isClient()) {
-			DroneEntityS2C.send(this);
-
-			if (!(this.godMode || this.noClip) && (
-					this.world.isRaining() ||
-					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.WATER ||
-					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.BUBBLE_COLUMN ||
-					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.LAVA ||
-					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.CAMPFIRE ||
-					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_CAMPFIRE ||
-					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_FIRE ||
-					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.FIRE)) {
-				this.kill();
+		if (this.world.isClient()) {
+			if (shouldKill) {
+				KillDroneC2S.send(this);
 			}
+
+		} else {
+			DroneEntityS2C.send(this);
 
 			this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {
 				Vector3f vec = this.getRigidBody().getLinearVelocity(new Vector3f());
 				vec.scale(this.getMass());
 
 				entity.damage(DamageSource.GENERIC, vec.length() * damageCoefficient);
-				System.out.println(vec.length() * damageCoefficient);
 			}));
 
+			if (!(this.godMode || this.noClip) && (
+					this.world.isRaining() ||
+							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.WATER ||
+							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.BUBBLE_COLUMN ||
+							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.LAVA ||
+							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.CAMPFIRE ||
+							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_CAMPFIRE ||
+							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_FIRE ||
+							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.FIRE)) {
+				this.kill();
+			}
 		}
 	}
 
@@ -152,6 +158,62 @@ public class DroneEntity extends PhysicsEntity {
 					new Vector3f((float) thrust.x, (float) thrust.y, (float) thrust.z),
 					new Vector3f((float) yawForce.x, (float) yawForce.y, (float) yawForce.z)
 			);
+
+			// drone crash stuff
+			Dispatcher dispatcher = ClientInitializer.physicsWorld.getDynamicsWorld().getDispatcher();
+
+			// manifold is a potential collision between rigid bodies
+			// run through every manifold (every loaded rigid body)
+			for (int manifoldNum = 0; manifoldNum < dispatcher.getNumManifolds(); ++manifoldNum) {
+
+				// stops block-to-block collisions from continuing
+				if (ClientInitializer.physicsWorld.collisionBlocks.containsValue((RigidBody) dispatcher.getManifoldByIndexInternal(manifoldNum).getBody0()) &&
+					ClientInitializer.physicsWorld.collisionBlocks.containsValue((RigidBody) dispatcher.getManifoldByIndexInternal(manifoldNum).getBody1())) {
+					continue;
+				}
+
+				// current manifold
+				PersistentManifold manifold = dispatcher.getManifoldByIndexInternal(manifoldNum);
+
+				// for every contact within this manifold
+				for (int contactNum = 0; contactNum < manifold.getNumContacts(); ++contactNum) {
+
+					// if the two rigid bodies are touching on this contact
+					if (manifold.getContactPoint(contactNum).getDistance() <= 0.0f) {
+
+						// if one or both of the touching rigid bodies is this drone
+						if (this.getRigidBody().equals(manifold.getBody0()) || this.getRigidBody().equals(manifold.getBody1())) {
+
+							// get the velocity of the first rigid body
+							Vector3f vec0 = ((RigidBody)manifold.getBody0()).getLinearVelocity(new Vector3f());
+							vec0.scale(1.0f / ((RigidBody) manifold.getBody0()).getInvMass());
+
+							// get the velocity of the second rigid body
+							Vector3f vec1 = ((RigidBody)manifold.getBody1()).getLinearVelocity(new Vector3f());
+							vec1.scale(1.0f / ((RigidBody) manifold.getBody1()).getInvMass());
+
+							Vector3f vec = new Vector3f(0, 0, 0);
+
+							// if both of the rigid bodies have momentum
+							if (!Float.isNaN(vec0.length()) && !Float.isNaN(vec1.length())) {
+
+								// add their momentums together
+								vec.add(vec0, vec1);
+
+							// if only one of the rigid bodies has momentum (the drone)
+							} else if (!Float.isNaN(vec0.length()) || !Float.isNaN(vec1.length())) {
+
+								// use the momentum from that rigid body
+								vec.set(!Float.isNaN(vec0.length()) ? vec0 : vec1);
+							}
+
+							// setup the drone to die
+							this.shouldKill = vec.length() > 10; // TODO crash momentum threshold
+						}
+						break;
+					}
+				}
+			}
 		}
 	}
 
