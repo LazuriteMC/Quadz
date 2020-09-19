@@ -82,6 +82,9 @@ public class DroneSpawnerItem extends Item {
 				case Config.THRUST:
 					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putFloat(Config.THRUST, value.floatValue());
 					break;
+				case Config.DAMAGE_COEFFICIENT:
+					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putFloat(Config.DAMAGE_COEFFICIENT, value.floatValue());
+					break;
 				default:
 					break;
 			}
@@ -119,6 +122,8 @@ public class DroneSpawnerItem extends Item {
 					return tag.getFloat(Config.LINEAR_DAMPING);
 				case Config.THRUST:
 					return tag.getFloat(Config.THRUST);
+				case Config.DAMAGE_COEFFICIENT:
+					return tag.getFloat(Config.DAMAGE_COEFFICIENT);
 				default:
 					return null;
 			}
@@ -131,34 +136,36 @@ public class DroneSpawnerItem extends Item {
 		Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid());
 		ItemStack itemStack = user.getMainHandStack();
 
-		drone.setConfigValues(Config.BAND,				DroneSpawnerItem.getTagValue(itemStack, Config.BAND)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.BAND)				: config.getOption(Config.BAND));
-		drone.setConfigValues(Config.CHANNEL,			DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL)			: config.getOption(Config.CHANNEL));
-		drone.setConfigValues(Config.CAMERA_ANGLE,		DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE)		: config.getOption(Config.CAMERA_ANGLE));
-		drone.setConfigValues(Config.FIELD_OF_VIEW,		DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW)		: config.getOption(Config.FIELD_OF_VIEW));
-		drone.setConfigValues(Config.RATE,				DroneSpawnerItem.getTagValue(itemStack, Config.RATE)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.RATE)				: config.getOption(Config.RATE));
-		drone.setConfigValues(Config.SUPER_RATE,		DroneSpawnerItem.getTagValue(itemStack, Config.SUPER_RATE)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.SUPER_RATE)		: config.getOption(Config.SUPER_RATE));
-		drone.setConfigValues(Config.EXPO,				DroneSpawnerItem.getTagValue(itemStack, Config.EXPO)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.EXPO)				: config.getOption(Config.EXPO));
-		drone.setConfigValues(Config.THRUST,			DroneSpawnerItem.getTagValue(itemStack, Config.THRUST)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.THRUST)			: config.getOption(Config.THRUST));
+		drone.setConfigValues(Config.BAND,					DroneSpawnerItem.getTagValue(itemStack, Config.BAND)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.BAND)					: config.getOption(Config.BAND));
+		drone.setConfigValues(Config.CHANNEL,				DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL)				: config.getOption(Config.CHANNEL));
+		drone.setConfigValues(Config.CAMERA_ANGLE,			DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE)			: config.getOption(Config.CAMERA_ANGLE));
+		drone.setConfigValues(Config.FIELD_OF_VIEW,			DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW)			: config.getOption(Config.FIELD_OF_VIEW));
+		drone.setConfigValues(Config.RATE,					DroneSpawnerItem.getTagValue(itemStack, Config.RATE)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.RATE)					: config.getOption(Config.RATE));
+		drone.setConfigValues(Config.SUPER_RATE,			DroneSpawnerItem.getTagValue(itemStack, Config.SUPER_RATE)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.SUPER_RATE)			: config.getOption(Config.SUPER_RATE));
+		drone.setConfigValues(Config.EXPO,					DroneSpawnerItem.getTagValue(itemStack, Config.EXPO)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.EXPO)					: config.getOption(Config.EXPO));
+		drone.setConfigValues(Config.THRUST,				DroneSpawnerItem.getTagValue(itemStack, Config.THRUST)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.THRUST)				: config.getOption(Config.THRUST));
+		drone.setConfigValues(Config.DAMAGE_COEFFICIENT,	DroneSpawnerItem.getTagValue(itemStack, Config.DAMAGE_COEFFICIENT)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.DAMAGE_COEFFICIENT)	: config.getOption(Config.DAMAGE_COEFFICIENT));
 
 		drone.setConfigValues(Config.MASS,				DroneSpawnerItem.getTagValue(itemStack, Config.MASS)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.MASS)				: config.getOption(Config.MASS));
 		drone.setConfigValues(Config.LINEAR_DAMPING,	DroneSpawnerItem.getTagValue(itemStack, Config.LINEAR_DAMPING)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.LINEAR_DAMPING)	: config.getOption(Config.LINEAR_DAMPING));
 
 		// config doesn't contain values for these, setting to default values if itemStack doesn't contain the value
-		drone.setConfigValues(Config.NO_CLIP,		DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)		: 0);
-		drone.setConfigValues(Config.GOD_MODE,		DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)		: 0);
+		drone.setConfigValues(Config.NO_CLIP,	DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)	: 0);
+		drone.setConfigValues(Config.GOD_MODE,	DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)	: 0);
 	}
 
 	public static void prepDestroyedDrone(DroneEntity drone, ItemStack itemStack) {
-		DroneSpawnerItem.setTagValue(itemStack, Config.BAND,			drone.getConfigValues(Config.BAND));
-		DroneSpawnerItem.setTagValue(itemStack, Config.CHANNEL,			drone.getConfigValues(Config.CHANNEL));
-		DroneSpawnerItem.setTagValue(itemStack, Config.CAMERA_ANGLE,	drone.getConfigValues(Config.CAMERA_ANGLE));
-		DroneSpawnerItem.setTagValue(itemStack, Config.FIELD_OF_VIEW,	drone.getConfigValues(Config.FIELD_OF_VIEW));
-		DroneSpawnerItem.setTagValue(itemStack, Config.NO_CLIP,			drone.getConfigValues(Config.NO_CLIP));
-		DroneSpawnerItem.setTagValue(itemStack, Config.GOD_MODE,		drone.getConfigValues(Config.GOD_MODE));
-		DroneSpawnerItem.setTagValue(itemStack, Config.RATE,			drone.getConfigValues(Config.RATE));
-		DroneSpawnerItem.setTagValue(itemStack, Config.SUPER_RATE,		drone.getConfigValues(Config.SUPER_RATE));
-		DroneSpawnerItem.setTagValue(itemStack, Config.EXPO,			drone.getConfigValues(Config.EXPO));
-		DroneSpawnerItem.setTagValue(itemStack, Config.THRUST,			drone.getConfigValues(Config.THRUST));
+		DroneSpawnerItem.setTagValue(itemStack, Config.BAND,				drone.getConfigValues(Config.BAND));
+		DroneSpawnerItem.setTagValue(itemStack, Config.CHANNEL,				drone.getConfigValues(Config.CHANNEL));
+		DroneSpawnerItem.setTagValue(itemStack, Config.CAMERA_ANGLE,		drone.getConfigValues(Config.CAMERA_ANGLE));
+		DroneSpawnerItem.setTagValue(itemStack, Config.FIELD_OF_VIEW,		drone.getConfigValues(Config.FIELD_OF_VIEW));
+		DroneSpawnerItem.setTagValue(itemStack, Config.NO_CLIP,				drone.getConfigValues(Config.NO_CLIP));
+		DroneSpawnerItem.setTagValue(itemStack, Config.GOD_MODE,			drone.getConfigValues(Config.GOD_MODE));
+		DroneSpawnerItem.setTagValue(itemStack, Config.RATE,				drone.getConfigValues(Config.RATE));
+		DroneSpawnerItem.setTagValue(itemStack, Config.SUPER_RATE,			drone.getConfigValues(Config.SUPER_RATE));
+		DroneSpawnerItem.setTagValue(itemStack, Config.EXPO,				drone.getConfigValues(Config.EXPO));
+		DroneSpawnerItem.setTagValue(itemStack, Config.THRUST,				drone.getConfigValues(Config.THRUST));
+		DroneSpawnerItem.setTagValue(itemStack, Config.DAMAGE_COEFFICIENT,	drone.getConfigValues(Config.DAMAGE_COEFFICIENT));
 
 		DroneSpawnerItem.setTagValue(itemStack, Config.MASS,			drone.getConfigValues(Config.MASS));
 		DroneSpawnerItem.setTagValue(itemStack, Config.LINEAR_DAMPING,	drone.getConfigValues(Config.LINEAR_DAMPING));
@@ -167,20 +174,21 @@ public class DroneSpawnerItem extends Item {
 	public static void prepDroneSpawnerItem(PlayerEntity user, ItemStack itemStack) {
 		Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid());
 
-		DroneSpawnerItem.setTagValue(itemStack, Config.BAND,			DroneSpawnerItem.getTagValue(itemStack, Config.BAND)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.BAND)				: config.getOption(Config.BAND));
-		DroneSpawnerItem.setTagValue(itemStack, Config.CHANNEL,			DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL)			: config.getOption(Config.CHANNEL));
-		DroneSpawnerItem.setTagValue(itemStack, Config.CAMERA_ANGLE,	DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE)		: config.getOption(Config.CAMERA_ANGLE));
-		DroneSpawnerItem.setTagValue(itemStack, Config.FIELD_OF_VIEW,	DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW)		: config.getOption(Config.FIELD_OF_VIEW));
-		DroneSpawnerItem.setTagValue(itemStack, Config.RATE,			DroneSpawnerItem.getTagValue(itemStack, Config.RATE)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.RATE)				: config.getOption(Config.RATE));
-		DroneSpawnerItem.setTagValue(itemStack, Config.SUPER_RATE,		DroneSpawnerItem.getTagValue(itemStack, Config.SUPER_RATE)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.SUPER_RATE)		: config.getOption(Config.SUPER_RATE));
-		DroneSpawnerItem.setTagValue(itemStack, Config.EXPO,			DroneSpawnerItem.getTagValue(itemStack, Config.EXPO)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.EXPO)				: config.getOption(Config.EXPO));
-		DroneSpawnerItem.setTagValue(itemStack, Config.THRUST,			DroneSpawnerItem.getTagValue(itemStack, Config.THRUST)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.THRUST)			: config.getOption(Config.THRUST));
+		DroneSpawnerItem.setTagValue(itemStack, Config.BAND,				DroneSpawnerItem.getTagValue(itemStack, Config.BAND)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.BAND)					: config.getOption(Config.BAND));
+		DroneSpawnerItem.setTagValue(itemStack, Config.CHANNEL,				DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CHANNEL)				: config.getOption(Config.CHANNEL));
+		DroneSpawnerItem.setTagValue(itemStack, Config.CAMERA_ANGLE,		DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CAMERA_ANGLE)			: config.getOption(Config.CAMERA_ANGLE));
+		DroneSpawnerItem.setTagValue(itemStack, Config.FIELD_OF_VIEW,		DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.FIELD_OF_VIEW)			: config.getOption(Config.FIELD_OF_VIEW));
+		DroneSpawnerItem.setTagValue(itemStack, Config.RATE,				DroneSpawnerItem.getTagValue(itemStack, Config.RATE)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.RATE)					: config.getOption(Config.RATE));
+		DroneSpawnerItem.setTagValue(itemStack, Config.SUPER_RATE,			DroneSpawnerItem.getTagValue(itemStack, Config.SUPER_RATE)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.SUPER_RATE)			: config.getOption(Config.SUPER_RATE));
+		DroneSpawnerItem.setTagValue(itemStack, Config.EXPO,				DroneSpawnerItem.getTagValue(itemStack, Config.EXPO)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.EXPO)					: config.getOption(Config.EXPO));
+		DroneSpawnerItem.setTagValue(itemStack, Config.THRUST,				DroneSpawnerItem.getTagValue(itemStack, Config.THRUST)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.THRUST)				: config.getOption(Config.THRUST));
+		DroneSpawnerItem.setTagValue(itemStack, Config.DAMAGE_COEFFICIENT,	DroneSpawnerItem.getTagValue(itemStack, Config.DAMAGE_COEFFICIENT)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.DAMAGE_COEFFICIENT)	: config.getOption(Config.DAMAGE_COEFFICIENT));
 
 		DroneSpawnerItem.setTagValue(itemStack, Config.MASS,			DroneSpawnerItem.getTagValue(itemStack, Config.MASS)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.MASS)				: config.getOption(Config.MASS));
 		DroneSpawnerItem.setTagValue(itemStack, Config.LINEAR_DAMPING,	DroneSpawnerItem.getTagValue(itemStack, Config.LINEAR_DAMPING)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.LINEAR_DAMPING)	: config.getOption(Config.LINEAR_DAMPING));
 
 		// config doesn't contain values for these, setting to default values if itemStack doesn't contain the value
-		DroneSpawnerItem.setTagValue(itemStack, Config.NO_CLIP,			DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)		: 0);
-		DroneSpawnerItem.setTagValue(itemStack, Config.GOD_MODE,		DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)		: 0);
+		DroneSpawnerItem.setTagValue(itemStack, Config.NO_CLIP,		DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)	: 0);
+		DroneSpawnerItem.setTagValue(itemStack, Config.GOD_MODE,	DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)	: 0);
 	}
 }

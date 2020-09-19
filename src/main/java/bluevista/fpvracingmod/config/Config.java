@@ -43,6 +43,7 @@ public class Config {
     public static final String THRUST = "thrust";
     public static final String GRAVITY = "gravity";
     public static final String BLOCK_RADIUS = "blockRadius";
+    public static final String DAMAGE_COEFFICIENT = "damageCoefficient";
 
     public static final List<String> INT_KEYS = Arrays.asList(
             CONTROLLER_ID,
@@ -70,7 +71,8 @@ public class Config {
             MASS,
             LINEAR_DAMPING,
             THRUST,
-            GRAVITY
+            GRAVITY,
+            DAMAGE_COEFFICIENT
     );
 
     public static final List<String> ALL_OPTIONS = new ArrayList<String>() {{

@@ -30,6 +30,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
@@ -49,9 +50,9 @@ public class DroneEntity extends PhysicsEntity {
 	/* Misc */
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
 	private float thrust;
+	private float damageCoefficient;
 
 	/* God Mode */
-	private boolean prevGodMode;
 	private boolean godMode;
 
 	/* Video Settings */
@@ -79,7 +80,6 @@ public class DroneEntity extends PhysicsEntity {
 		this.playerStartPos = new HashMap();
 
 		this.godMode = false;
-		this.prevGodMode = false;
 
 		this.createRigidBody();
 		this.rotateY(yaw);
@@ -97,7 +97,7 @@ public class DroneEntity extends PhysicsEntity {
 	public void tick() {
 		super.tick();
 
-		if(!this.world.isClient()) {
+		if (!this.world.isClient()) {
 			DroneEntityS2C.send(this);
 
 			if (!(this.godMode || this.noClip) && (
@@ -111,6 +111,15 @@ public class DroneEntity extends PhysicsEntity {
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.FIRE)) {
 				this.kill();
 			}
+
+			this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {
+				Vector3f vec = this.getRigidBody().getLinearVelocity(new Vector3f());
+				vec.scale(this.getMass());
+
+				entity.damage(DamageSource.GENERIC, vec.length() * damageCoefficient);
+				System.out.println(vec.length() * damageCoefficient);
+			}));
+
 		}
 	}
 
@@ -180,6 +189,8 @@ public class DroneEntity extends PhysicsEntity {
 				break;
 			case Config.THRUST:
 				this.thrust = value.floatValue();
+			case Config.DAMAGE_COEFFICIENT:
+				this.damageCoefficient = value.floatValue();
 			default:
 				super.setConfigValues(key, value);
 				break;
@@ -209,6 +220,7 @@ public class DroneEntity extends PhysicsEntity {
 		tag.putFloat(Config.SUPER_RATE, getConfigValues(Config.SUPER_RATE).floatValue());
 		tag.putFloat(Config.EXPO, getConfigValues(Config.EXPO).floatValue());
 		tag.putFloat(Config.THRUST, getConfigValues(Config.THRUST).floatValue());
+		tag.putFloat(Config.DAMAGE_COEFFICIENT, getConfigValues(Config.DAMAGE_COEFFICIENT).floatValue());
 
 		// don't write noClip or prevGodMode because...
 		// noClip shouldn't be preserved after a restart (your drone may fall through the world) and ...
@@ -241,6 +253,8 @@ public class DroneEntity extends PhysicsEntity {
 				return this.expo;
 			case Config.THRUST:
 				return this.thrust;
+			case Config.DAMAGE_COEFFICIENT:
+				return this.damageCoefficient;
 			default:
 				return super.getConfigValues(key);
 //				return null; // 0?
@@ -311,6 +325,7 @@ public class DroneEntity extends PhysicsEntity {
 		setConfigValues(Config.SUPER_RATE, tag.getFloat(Config.SUPER_RATE));
 		setConfigValues(Config.EXPO, tag.getFloat(Config.EXPO));
 		setConfigValues(Config.THRUST, tag.getFloat(Config.THRUST));
+		setConfigValues(Config.DAMAGE_COEFFICIENT, tag.getFloat(Config.DAMAGE_COEFFICIENT));
 
 		// don't retrieve noClip or prevGodMode because they weren't written (reason in writeCustomDataToTag)
 		setConfigValues(Config.GOD_MODE, tag.getInt(Config.GOD_MODE));
