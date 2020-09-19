@@ -120,7 +120,9 @@ public class DroneEntity extends PhysicsEntity {
 		super.stepPhysics(d, tickDelta);
 
 		if(isActive()) {
-			this.axisValues.set(InputTick.axisValues);
+			if(TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
+				this.axisValues.set(InputTick.axisValues);
+			}
 
 			float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, rate, expo, superRate, d);
 			float deltaY = (float) BetaflightHelper.calculateRates(axisValues.currY, rate, expo, superRate, d);

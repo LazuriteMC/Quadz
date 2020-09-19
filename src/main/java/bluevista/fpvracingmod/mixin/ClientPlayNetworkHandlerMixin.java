@@ -36,7 +36,7 @@ public class ClientPlayNetworkManagerMixin {
             cancellable = true,
             locals = LocalCapture.CAPTURE_FAILHARD
     )
-    private void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo ci, double x, double y, double z, EntityType<?> type) {
+    private void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo info, double x, double y, double z, EntityType<?> type) {
         Entity entity = null;
         if (type == ServerInitializer.DRONE_ENTITY)
             entity = DroneEntity.create(null, world, new Vec3d(x, y, z), packet.getYaw());
@@ -49,7 +49,7 @@ public class ClientPlayNetworkManagerMixin {
             entity.setEntityId(i);
             entity.setUuid(packet.getUuid());
             this.world.addEntity(i, entity);
-            ci.cancel();
+            info.cancel();
         }
     }
 }
