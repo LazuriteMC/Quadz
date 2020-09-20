@@ -10,7 +10,6 @@ import bluevista.fpvracingmod.network.config.ConfigS2C;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
 import bluevista.fpvracingmod.client.physics.PhysicsWorld;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityS2C;
-import bluevista.fpvracingmod.network.entity.RigidBodyS2C;
 import bluevista.fpvracingmod.network.entity.ShouldRenderPlayerS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -25,7 +24,6 @@ import java.util.UUID;
 
 @Environment(EnvType.CLIENT)
 public class ClientInitializer implements ClientModInitializer {
-
     public static final MinecraftClient client = MinecraftClient.getInstance();
     public static PhysicsWorld physicsWorld;
     private static Config config;
@@ -60,7 +58,6 @@ public class ClientInitializer implements ClientModInitializer {
     private void registerNetwork() {
         DroneEntityS2C.register();
         PhysicsEntityS2C.register();
-        RigidBodyS2C.register();
         ShouldRenderPlayerS2C.register();
         ConfigS2C.register();
     }

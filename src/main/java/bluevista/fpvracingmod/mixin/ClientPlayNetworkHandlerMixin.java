@@ -5,7 +5,6 @@ import bluevista.fpvracingmod.network.config.ConfigC2S;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.client.physics.PhysicsWorld;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -21,7 +20,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
-    @Shadow MinecraftClient client;
     @Shadow ClientWorld world;
 
     @Inject(at = @At("TAIL"), method = "onGameJoin")
@@ -39,7 +37,7 @@ public class ClientPlayNetworkHandlerMixin {
     private void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo info, double x, double y, double z, EntityType<?> type) {
         Entity entity = null;
         if (type == ServerInitializer.DRONE_ENTITY)
-            entity = DroneEntity.create(world, DroneEntity.NULL_UUID, new Vec3d(x, y, z), 180f - packet.getYaw());
+            entity = DroneEntity.create(world, DroneEntity.NULL_UUID, new Vec3d(x, y, z), packet.getYaw());
 
         if (entity != null) {
             int i = packet.getId();

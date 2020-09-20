@@ -21,6 +21,8 @@ public class ServerTick {
         List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
 
         for (ServerPlayerEntity player : players) { // for every player in the server
+            boolean shouldRenderPlayer = false;
+
             if (GogglesItem.isWearingGoggles(player) && !isInGoggles(player)) {
                 List<Entity> drones = DroneEntity.getNearbyDrones(player);
 
@@ -36,8 +38,7 @@ public class ServerTick {
             if (isInGoggles(player)) {
                 DroneEntity drone = (DroneEntity) player.getCameraEntity();
                 Vec3d pos = drone.getPlayerStartPos().get(player);
-
-                ShouldRenderPlayerS2C.send(player, player.getPos().equals(drone.getPlayerStartPos().get(player)));
+                shouldRenderPlayer = player.getPos().equals(drone.getPlayerStartPos().get(player));
 
                 if (Math.sqrt(drone.squaredDistanceTo(pos)) < DroneEntity.NEAR_TRACKING_RANGE && !player.getPos().equals(pos)) {
                     /* If the drone is in range of where the player started, teleport the player there. */
@@ -49,7 +50,11 @@ public class ServerTick {
                     player.requestTeleport(drone.getX(), drone.getPlayerHeight(), drone.getZ());
 
                 }
+            } else {
+                shouldRenderPlayer = false;
             }
+
+            ShouldRenderPlayerS2C.send(player, shouldRenderPlayer);
 
             if (player.getCameraEntity() instanceof DroneEntity && (                            // currently viewing through the goggles AND one of the following:
                 !GogglesItem.isWearingGoggles(player) ||                                        // not wearing goggles on head

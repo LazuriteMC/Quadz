@@ -7,7 +7,6 @@ import bluevista.fpvracingmod.helper.QuaternionHelper;
 import bluevista.fpvracingmod.network.NetQuat4f;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityS2C;
-import bluevista.fpvracingmod.network.entity.RigidBodyS2C;
 import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
@@ -40,7 +39,6 @@ public abstract class PhysicsEntity extends Entity {
     private float mass;
     private RigidBody body;
     private boolean active;
-    private boolean justSpawned;
 
     public PhysicsEntity(EntityType type, World world, UUID playerID, Vec3d pos) {
         super(type, world);
@@ -50,7 +48,6 @@ public abstract class PhysicsEntity extends Entity {
 
         this.playerID = playerID;
         this.netQuat = new NetQuat4f(this.getOrientation());
-        this.justSpawned = true;
 
         if (world.isClient()) {
             ClientInitializer.physicsWorld.add(this);
@@ -71,7 +68,6 @@ public abstract class PhysicsEntity extends Entity {
             }
         } else {
             PhysicsEntityS2C.send(this);
-            RigidBodyS2C.send(this, justSpawned);
 
             if (this.world.getPlayerByUuid(playerID) == null) {
                 this.kill();
@@ -80,8 +76,6 @@ public abstract class PhysicsEntity extends Entity {
 
         Vector3f pos = this.getRigidBody().getCenterOfMassPosition(new Vector3f());
         this.updatePosition(pos.x, pos.y, pos.z);
-
-        justSpawned = false;
     }
 
     @Environment(EnvType.CLIENT)
@@ -89,6 +83,11 @@ public abstract class PhysicsEntity extends Entity {
         if (!this.isActive()) {
             this.setOrientation(this.netQuat.slerp(tickDelta));
         }
+
+        this.prevYaw = this.yaw;
+        this.prevPitch = this.pitch;
+        this.yaw = QuaternionHelper.getYaw(this.getOrientation());
+        this.pitch = QuaternionHelper.getPitch(this.getOrientation());
     }
 
     public void setConfigValues(String key, Number value) {

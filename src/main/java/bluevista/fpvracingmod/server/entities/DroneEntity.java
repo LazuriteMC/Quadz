@@ -84,7 +84,8 @@ public class DroneEntity extends PhysicsEntity {
 	public static DroneEntity create(World world, UUID playerID, Vec3d pos, float yaw) {
 		DroneEntity drone = new DroneEntity(world, playerID, pos);
 
-		if (!world.isClient()) {
+		if (world.isClient()) {
+			drone.yaw = yaw;
 			drone.rotateY(yaw);
 		}
 
@@ -143,10 +144,7 @@ public class DroneEntity extends PhysicsEntity {
 			Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(this.thrust);
 			Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
 
-			this.prevYaw = this.yaw;
-			this.prevPitch = this.pitch;
-			this.yaw = QuaternionHelper.getYaw(this.getOrientation());
-			this.pitch = QuaternionHelper.getPitch(this.getOrientation());
+
 
 			this.decreaseAngularVelocity();
 			this.applyForce(

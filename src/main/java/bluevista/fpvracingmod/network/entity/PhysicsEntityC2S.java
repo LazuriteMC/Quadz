@@ -21,6 +21,9 @@ public class PhysicsEntityC2S {
         PlayerEntity player = context.getPlayer();
 
         int id = buf.readInt();
+        float yaw = buf.readFloat();
+        float pitch = buf.readFloat();
+
         Quat4f orientation = PacketHelper.deserializeQuaternion(buf);
         Vector3f position = PacketHelper.deserializeVector3f(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
@@ -33,6 +36,8 @@ public class PhysicsEntityC2S {
                 physics = (PhysicsEntity) player.world.getEntityById(id);
 
             if (physics != null) {
+                physics.yaw = yaw;
+                physics.pitch = pitch;
                 physics.setOrientation(orientation);
                 physics.setRigidBodyPos(position);
                 physics.getRigidBody().setLinearVelocity(linearVel);
@@ -45,6 +50,9 @@ public class PhysicsEntityC2S {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 
         buf.writeInt(physics.getEntityId());
+        buf.writeFloat(physics.yaw);
+        buf.writeFloat(physics.pitch);
+
         PacketHelper.serializeQuaternion(buf, physics.getOrientation());
         PacketHelper.serializeVector3f(buf, physics.getRigidBody().getCenterOfMassPosition(new Vector3f()));
         PacketHelper.serializeVector3f(buf, physics.getRigidBody().getLinearVelocity(new Vector3f()));
