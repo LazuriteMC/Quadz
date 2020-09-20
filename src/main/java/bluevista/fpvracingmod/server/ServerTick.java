@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.server;
 
+import bluevista.fpvracingmod.network.entity.ShouldRenderPlayerS2C;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.GogglesItem;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
@@ -36,13 +37,16 @@ public class ServerTick {
                 DroneEntity drone = (DroneEntity) player.getCameraEntity();
                 Vec3d pos = drone.getPlayerStartPos().get(player);
 
+                ShouldRenderPlayerS2C.send(player, player.getPos().equals(drone.getPlayerStartPos().get(player)));
+
                 if (Math.sqrt(drone.squaredDistanceTo(pos)) < DroneEntity.NEAR_TRACKING_RANGE && !player.getPos().equals(pos)) {
                     /* If the drone is in range of where the player started, teleport the player there. */
                     player.requestTeleport(pos.x, pos.y, pos.z);
 
                 } else if (player.distanceTo(drone) > DroneEntity.NEAR_TRACKING_RANGE) {
                     /* Else, teleport the player to the drone if it's nearing the end of it's tracking range. */
-                    player.requestTeleport(drone.getX(), DroneEntity.PLAYER_HEIGHT, drone.getZ());
+                    drone.setPlayerHeight((int) drone.getY() + 50);
+                    player.requestTeleport(drone.getX(), drone.getPlayerHeight(), drone.getZ());
 
                 }
             }
@@ -80,6 +84,7 @@ public class ServerTick {
             movePlayer(pos.x, pos.y, pos.z, player);
             drone.removePlayerStartPos(player);
 
+            ShouldRenderPlayerS2C.send(player, true);
             player.setNoGravity(false);
             player.setCameraEntity(player);
         }

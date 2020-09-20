@@ -12,6 +12,8 @@ import java.util.UUID;
 
 @Environment(EnvType.CLIENT)
 public class ClientTick {
+    public static boolean shouldRenderPlayer = true;
+
     private static float droneFOV;
     private static double prevFOV;
 

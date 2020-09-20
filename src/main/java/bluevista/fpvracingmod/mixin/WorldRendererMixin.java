@@ -1,6 +1,6 @@
 package bluevista.fpvracingmod.mixin;
 
-import bluevista.fpvracingmod.client.ClientInitializer;
+import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
@@ -25,7 +25,7 @@ public class WorldRendererMixin {
             )
     )
     public Entity getFocusedEntity(Camera camera) {
-        if (camera.getFocusedEntity() instanceof DroneEntity) {
+        if (ClientTick.shouldRenderPlayer) {
             return client.player;
         }
 

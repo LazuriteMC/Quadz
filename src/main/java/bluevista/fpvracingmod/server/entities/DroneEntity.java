@@ -42,7 +42,6 @@ import java.util.*;
 
 public class DroneEntity extends PhysicsEntity {
 	public static final int TRACKING_RANGE = 80;
-	public static int PLAYER_HEIGHT = 100;
 	public static int NEAR_TRACKING_RANGE = TRACKING_RANGE - 5;
 
 	/* Misc */
@@ -50,6 +49,7 @@ public class DroneEntity extends PhysicsEntity {
 	private float thrust;
 	private float damageCoefficient;
 	private int crashMomentumThreshold;
+	private int playerHeight;
 
 	/* God Mode */
 	private boolean godMode;
@@ -100,8 +100,6 @@ public class DroneEntity extends PhysicsEntity {
 
 		if (!this.world.isClient()) {
 			DroneEntityS2C.send(this);
-
-			PLAYER_HEIGHT = (int) this.getPos().getY() + 100;
 
 			this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {
 				Vector3f vec = this.getRigidBody().getLinearVelocity(new Vector3f());
@@ -209,8 +207,8 @@ public class DroneEntity extends PhysicsEntity {
 		}
 	}
 
-	public void setAxisValues(AxisValues axisValues) {
-		this.axisValues.set(axisValues);
+	public void setPlayerHeight(int playerHeight) {
+		this.playerHeight = playerHeight;
 	}
 
 	public void addPlayerStartPos(PlayerEntity player) {
@@ -282,6 +280,10 @@ public class DroneEntity extends PhysicsEntity {
 
 	public float getThrottle() {
 		return this.axisValues.currT;
+	}
+
+	public int getPlayerHeight() {
+		return this.playerHeight;
 	}
 
 	public HashMap<PlayerEntity, Vec3d> getPlayerStartPos() {
