@@ -38,6 +38,10 @@ public class ClientTick {
         }
     }
 
+    public static boolean isInGoggles() {
+        return ClientInitializer.client.getCameraEntity() instanceof DroneEntity;
+    }
+
     public static boolean isPlayerIDClient(UUID playerID) {
         if(ClientInitializer.client.player != null && playerID != null) {
             return playerID.equals(ClientInitializer.client.player.getUuid());
