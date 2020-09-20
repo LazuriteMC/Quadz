@@ -9,6 +9,7 @@ import bluevista.fpvracingmod.helper.Matrix4fInject;
 import bluevista.fpvracingmod.helper.QuaternionHelper;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
 import bluevista.fpvracingmod.network.entity.KillDroneC2S;
+import bluevista.fpvracingmod.network.entity.RigidBodyS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -42,17 +43,14 @@ import javax.vecmath.Vector3f;
 import java.util.*;
 
 public class DroneEntity extends PhysicsEntity {
-	public static final UUID NULL_UUID = new UUID(0, 0);
 	public static final int TRACKING_RANGE = 80;
 	public static final int PLAYER_HEIGHT = 200;
-
 	public static int NEAR_TRACKING_RANGE = TRACKING_RANGE - 5;
 
 	/* Misc */
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
 	private float thrust;
 	private float damageCoefficient;
-	private boolean shouldKill;
 
 	/* God Mode */
 	private boolean godMode;
@@ -72,26 +70,27 @@ public class DroneEntity extends PhysicsEntity {
 	/* CONSTRUCTORS */
 
 	public DroneEntity(EntityType<?> type, World world) {
-		this(world, null, Vec3d.ZERO, 0);
+		this(world, null, Vec3d.ZERO);
 	}
 
-	public DroneEntity(World world, PlayerEntity player, Vec3d pos, float yaw) {
-		super(ServerInitializer.DRONE_ENTITY, world, player != null ? player.getUuid() : NULL_UUID, pos);
+	public DroneEntity(World world, UUID playerID, Vec3d pos) {
+		super(ServerInitializer.DRONE_ENTITY, world, playerID, pos);
 
 		this.axisValues = new AxisValues();
 		this.playerStartPos = new HashMap();
-
-		this.shouldKill = false;
 		this.godMode = false;
-
 		this.createRigidBody();
-		this.rotateY(yaw);
 	}
 
-	public static DroneEntity create(PlayerEntity player, World world, Vec3d pos, float yaw) {
-		DroneEntity d = new DroneEntity(world, player, pos, yaw);
-		world.spawnEntity(d);
-		return d;
+	public static DroneEntity create(World world, UUID playerID, Vec3d pos, float yaw) {
+		DroneEntity drone = new DroneEntity(world, playerID, pos);
+
+		if (!world.isClient()) {
+			drone.rotateY(yaw);
+		}
+
+		world.spawnEntity(drone);
+		return drone;
 	}
 
 	/* TICKS */
@@ -100,12 +99,7 @@ public class DroneEntity extends PhysicsEntity {
 	public void tick() {
 		super.tick();
 
-		if (this.world.isClient()) {
-			if (shouldKill) {
-				KillDroneC2S.send(this);
-			}
-
-		} else {
+		if (!this.world.isClient()) {
 			DroneEntityS2C.send(this);
 
 			this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {
@@ -209,8 +203,10 @@ public class DroneEntity extends PhysicsEntity {
 								vec.set(!Float.isNaN(vec0.length()) ? vec0 : vec1);
 							}
 
-							// setup the drone to die
-							this.shouldKill = vec.length() > 10; // TODO crash momentum threshold
+							// kil
+							if(vec.length() > 10.0f) { // TODO crash momentum threshold
+								KillDroneC2S.send(this);
+							}
 						}
 						break;
 					}

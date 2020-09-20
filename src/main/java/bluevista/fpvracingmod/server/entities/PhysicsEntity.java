@@ -7,6 +7,7 @@ import bluevista.fpvracingmod.helper.QuaternionHelper;
 import bluevista.fpvracingmod.network.NetQuat4f;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityS2C;
+import bluevista.fpvracingmod.network.entity.RigidBodyS2C;
 import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
@@ -30,13 +31,16 @@ import javax.vecmath.Vector3f;
 import java.util.UUID;
 
 public abstract class PhysicsEntity extends Entity {
+    public static final UUID NULL_UUID = new UUID(0, 0);
+
     public UUID playerID;
+    public NetQuat4f netQuat;
+
     private float linearDamping;
     private float mass;
-    private boolean active;
     private RigidBody body;
-
-    public NetQuat4f netQuat;
+    private boolean active;
+    private boolean justSpawned;
 
     public PhysicsEntity(EntityType type, World world, UUID playerID, Vec3d pos) {
         super(type, world);
@@ -46,6 +50,7 @@ public abstract class PhysicsEntity extends Entity {
 
         this.playerID = playerID;
         this.netQuat = new NetQuat4f(this.getOrientation());
+        this.justSpawned = true;
 
         if (world.isClient()) {
             ClientInitializer.physicsWorld.add(this);
@@ -66,6 +71,7 @@ public abstract class PhysicsEntity extends Entity {
             }
         } else {
             PhysicsEntityS2C.send(this);
+            RigidBodyS2C.send(this, justSpawned);
 
             if (this.world.getPlayerByUuid(playerID) == null) {
                 this.kill();
@@ -74,6 +80,8 @@ public abstract class PhysicsEntity extends Entity {
 
         Vector3f pos = this.getRigidBody().getCenterOfMassPosition(new Vector3f());
         this.updatePosition(pos.x, pos.y, pos.z);
+
+        justSpawned = false;
     }
 
     @Environment(EnvType.CLIENT)
