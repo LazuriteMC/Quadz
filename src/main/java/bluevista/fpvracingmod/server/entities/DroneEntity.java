@@ -9,7 +9,6 @@ import bluevista.fpvracingmod.helper.Matrix4fInject;
 import bluevista.fpvracingmod.helper.QuaternionHelper;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
 import bluevista.fpvracingmod.network.entity.KillDroneC2S;
-import bluevista.fpvracingmod.network.entity.RigidBodyS2C;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -33,8 +32,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
@@ -278,10 +276,6 @@ public class DroneEntity extends PhysicsEntity {
 
 	private boolean isKillable() {
 		return !(this.godMode || this.noClip);
-	}
-
-	public AxisValues getAxisValues() {
-		return this.axisValues;
 	}
 
 	public float getThrottle() {

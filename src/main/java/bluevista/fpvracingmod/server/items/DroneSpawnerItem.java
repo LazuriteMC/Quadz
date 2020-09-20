@@ -3,16 +3,31 @@ package bluevista.fpvracingmod.server.items;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.MobSpawnerBlockEntity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
+
+import java.util.Objects;
 
 public class DroneSpawnerItem extends Item {
 
@@ -23,24 +38,30 @@ public class DroneSpawnerItem extends Item {
 	/**
 	 * Called when this item is used while targeting a Block
 	 */
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		ItemStack itemStack = user.getStackInHand(hand);
-		HitResult hitResult = raycast(world, user, RaycastContext.FluidHandling.NONE);
+	public ActionResult useOnBlock(ItemUsageContext context) {
+		World world = context.getWorld();
+		if (!(world instanceof ServerWorld)) {
+			return ActionResult.SUCCESS;
+		} else {
+			ItemStack itemStack = context.getStack();
+			BlockPos blockPos = context.getBlockPos();
+			Direction direction = context.getSide();
+			BlockState blockState = world.getBlockState(blockPos);
 
-		if (!world.isClient()) {
-			if (hitResult.getType() == HitResult.Type.MISS)
-				return TypedActionResult.pass(itemStack);
-
-			if (hitResult.getType() == HitResult.Type.BLOCK) {
-				DroneEntity drone = DroneEntity.create(world, user.getUuid(), hitResult.getPos(), 180f - user.yaw);
-				prepSpawnedDrone(user, drone);
-
-				itemStack.decrement(1);
-				itemStack = new ItemStack(Items.AIR);
+			BlockPos blockPos3;
+			if (blockState.getCollisionShape(world, blockPos).isEmpty()) {
+				blockPos3 = blockPos;
+			} else {
+				blockPos3 = blockPos.offset(direction);
 			}
-		}
 
-		return TypedActionResult.success(itemStack);
+			Vec3d pos = new Vec3d(blockPos3.getX() + 0.5, blockPos3.getY(), blockPos3.getZ() + 0.5);
+			DroneEntity drone = DroneEntity.create(world, context.getPlayer().getUuid(), pos, 180f - context.getPlayerYaw());
+			prepSpawnedDrone(context.getPlayer(), drone);
+
+			itemStack.decrement(1);
+			return ActionResult.CONSUME;
+		}
 	}
 
 	public static void setTagValue(ItemStack itemStack, String key, Number value) {
