@@ -53,18 +53,4 @@ public class MouseMixin {
             KeyBinding.onKeyPressed(key);
         }
     }
-
-//    @Inject(at = @At("HEAD"), method = "wasLeftButtonClicked", cancellable = true)
-//    public void wasLeftButtonClicked(CallbackInfoReturnable<Boolean> info) {
-//        if (ClientTick.isInGoggles()) {
-//            info.setReturnValue(false);
-//        }
-//    }
-//
-//    @Inject(at = @At("HEAD"), method = "wasRightButtonClicked", cancellable = true)
-//    public void wasRightButtonClicked(CallbackInfoReturnable<Boolean> info) {
-//        if (ClientTick.isInGoggles()) {
-//            info.setReturnValue(false);
-//        }
-//    }
 }
