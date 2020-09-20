@@ -1,38 +1,62 @@
 package bluevista.fpvracingmod.helper;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+/**
+ * A helper class for {@link Quat4f} which contains methods to perform
+ * many different operations.
+ * @author Ethan Johnson
+ */
 public class QuaternionHelper {
-    public static void rotateX(Quat4f q, double deg) {
+    /**
+     * Rotate the given {@link Quat4f} by the given number of degrees on the X axis.
+     * @param quat the {@link Quat4f} to perform the operation on
+     * @param deg number of degrees to rotate by
+     */
+    public static void rotateX(Quat4f quat, double deg) {
         double radHalfAngle = Math.toRadians(deg) / 2.0;
         Quat4f rot = new Quat4f();
         rot.x = (float) Math.sin(radHalfAngle);
         rot.w = (float) Math.cos(radHalfAngle);
-        q.mul(rot);
+        quat.mul(rot);
     }
 
-    public static void rotateY(Quat4f q, double deg) {
+    /**
+     * Rotate the given {@link Quat4f} by the given number of degrees on the Y axis.
+     * @param quat the {@link Quat4f} to perform the operation on
+     * @param deg number of degrees to rotate by
+     */
+    public static void rotateY(Quat4f quat, double deg) {
         double radHalfAngle = Math.toRadians(deg) / 2.0;
         Quat4f rot = new Quat4f();
         rot.y = (float) Math.sin(radHalfAngle);
         rot.w = (float) Math.cos(radHalfAngle);
-        q.mul(rot);
+        quat.mul(rot);
     }
 
-    public static void rotateZ(Quat4f q, double deg) {
+    /**
+     * Rotate the given {@link Quat4f} by the given number of degrees on the Z axis.
+     * @param quat the {@link Quat4f} to perform the operation on
+     * @param deg number of degrees to rotate by
+     */
+    public static void rotateZ(Quat4f quat, double deg) {
         double radHalfAngle = Math.toRadians(deg) / 2.0;
         Quat4f rot = new Quat4f();
         rot.z = (float) Math.sin(radHalfAngle);
         rot.w = (float) Math.cos(radHalfAngle);
-        q.mul(rot);
+        quat.mul(rot);
     }
 
-    // roll, pitch, yaw
+    /**
+     * Converts the given {@link Quat4f} to a vector containing three axes of rotation in degrees.
+     * The order is (roll, pitch, yaw).
+     * @param quat the {@link Quat4f} to extract the euler angles from
+     * @return a new vector containing three rotations in degrees
+     */
     public static Vector3f toEulerAngles(Quat4f quat) {
         Quat4f q = new Quat4f();
         q.set(quat.z, quat.x, quat.y, quat.w);
@@ -59,6 +83,11 @@ public class QuaternionHelper {
         return angles;
     }
 
+    /**
+     * Places the given {@link Quat4f} information inside of the given {@link CompoundTag}.
+     * @param quat the {@link Quat4f} to place in a {@link CompoundTag}
+     * @param tag the {@link CompoundTag} to place the {@link Quat4f} inside of
+     */
     public static void toTag(Quat4f quat, CompoundTag tag) {
         tag.putFloat("x", quat.x);
         tag.putFloat("y", quat.y);
@@ -66,6 +95,11 @@ public class QuaternionHelper {
         tag.putFloat("w", quat.w);
     }
 
+    /**
+     * Retrieves {@link Quat4f} information from the given {@link CompoundTag}.
+     * @param tag the {@link CompoundTag} to retrieve the {@link Quat4f} information from
+     * @return the new {@link Quat4f}
+     */
     public static Quat4f fromTag(CompoundTag tag) {
         Quat4f quat = new Quat4f();
         quat.set(tag.getFloat("x"),
@@ -75,10 +109,20 @@ public class QuaternionHelper {
         return quat;
     }
 
+    /**
+     * Converts a {@link Quat4f} to a {@link Quaternion}.
+     * @param quat the {@link Quat4f} to convert
+     * @return the new {@link Quaternion}
+     */
     public static Quaternion quat4fToQuaternion(Quat4f quat) {
         return new Quaternion(quat.x, quat.y, quat.z, quat.w);
     }
 
+    /**
+     * Converts a {@link Quaternion} to a {@link Quat4f}.
+     * @param quat the {@link Quaternion} to convert
+     * @return the new {@link Quat4f}
+     */
     public static Quat4f quaternionToQuat4f(Quaternion quat) {
         Quat4f q = new Quat4f();
         q.x = quat.getX();
@@ -88,10 +132,20 @@ public class QuaternionHelper {
         return q;
     }
 
+    /**
+     * Gets the yaw rotation from the given {@link Quat4f}.
+     * @param quat the {@link Quat4f} to get the angle from
+     * @return the yaw angle
+     */
     public static float getYaw(Quat4f quat) {
         return -1 * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(quat).z);
     }
 
+    /**
+     * Gets the pitch rotation from the given {@link Quat4f}.
+     * @param quat the {@link Quat4f} to get the angle from
+     * @return the pitch angle
+     */
     public static float getPitch(Quat4f quat) {
         return (float) Math.toDegrees(QuaternionHelper.toEulerAngles(quat).y);
     }
