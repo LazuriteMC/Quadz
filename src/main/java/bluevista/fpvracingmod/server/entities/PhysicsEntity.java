@@ -163,7 +163,7 @@ public abstract class PhysicsEntity extends Entity {
     }
 
     public void applyForce(Vector3f... forces) {
-        for(Vector3f force : forces) {
+        for (Vector3f force : forces) {
             this.body.applyCentralForce(force);
         }
     }

@@ -419,7 +419,7 @@ public class DroneEntity extends PhysicsEntity {
 		boolean mightCollide = false;
 		float t = 0.25f;
 
-		for(RigidBody body : bodies) {
+		for (RigidBody body : bodies) {
 			if (body != getRigidBody()) {
 				Vector3f dist = body.getCenterOfMassPosition(new Vector3f());
 				dist.sub(this.getRigidBody().getCenterOfMassPosition(new Vector3f()));
