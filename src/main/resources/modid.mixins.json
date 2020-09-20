@@ -13,7 +13,8 @@
   "client": [
     "ClientPlayNetworkHandlerMixin",
     "ClientWorldMixin",
-    "GameRendererMixin"
+    "GameRendererMixin",
+    "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
