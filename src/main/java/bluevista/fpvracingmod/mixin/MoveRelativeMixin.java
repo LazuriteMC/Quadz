@@ -18,10 +18,10 @@ public class MoveRelativeMixin extends EntityS2CPacket {
         MinecraftServer server = ServerInitializer.server;
         Entity entity = server.getOverworld().getEntityById(entityId);
 
-        if(entity instanceof ServerPlayerEntity) {
+        if (entity instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity) entity;
 
-            if(player.getCameraEntity() instanceof DroneEntity) {
+            if (player.getCameraEntity() instanceof DroneEntity) {
                 this.deltaX = 0; //(short) (int) EntityS2CPacket.encodePacketCoordinate(0);
                 this.deltaY = 0; //(short) (int) EntityS2CPacket.encodePacketCoordinate(0);
                 this.deltaZ = 0; //(short) (int) EntityS2CPacket.encodePacketCoordinate(0);

@@ -72,7 +72,7 @@ public class ClientInitializer implements ClientModInitializer {
     }
 
     public static boolean isPlayerIDClient(UUID playerID) {
-        if(client.player != null) {
+        if (client.player != null) {
             return playerID.equals(client.player.getUuid());
         } else {
             return false;

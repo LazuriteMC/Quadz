@@ -19,7 +19,7 @@ public class RenderTick {
         Entity entity = client.getCameraEntity();
 
         PhysicsWorld w = ClientInitializer.physicsWorld;
-        if(w != null) {
+        if (w != null) {
             if (!client.isPaused())
                 w.stepWorld(tickDelta);
             else w.clock.reset();

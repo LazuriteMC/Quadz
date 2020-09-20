@@ -36,7 +36,7 @@ public class ServerPlayNetworkHandlerMixin {
         this.teleportRequestTick = this.ticks;
         this.player.updatePositionAndAngles(x, y, z, yaw, pitch);
 
-        if(!(this.player.getCameraEntity() instanceof DroneEntity)) {
+        if (!(this.player.getCameraEntity() instanceof DroneEntity)) {
             this.player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(x - d, y - e, z - f, yaw - g, pitch - h, set, this.requestedTeleportId));
         }
 

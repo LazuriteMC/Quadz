@@ -26,7 +26,7 @@ public class ConfigReader {
 
     private void copyFileIfNotFound() {
         try {
-            if(!file.exists()) {
+            if (!file.exists()) {
                 InputStream in = this.getClass().getResourceAsStream("/" + CONFIG_NAME);
                 OutputStream out = new FileOutputStream("config/" + CONFIG_NAME);
                 IOUtils.copy(in, out);
@@ -46,7 +46,7 @@ public class ConfigReader {
                 while (scanner.hasNextLine()) {
                     line = scanner.nextLine();
 
-                    if(line.contains("#") || line.isEmpty()) {
+                    if (line.contains("#") || line.isEmpty()) {
                         // this handles a case where the line is a comment or a blank line (line separator)
                         continue;
                     }

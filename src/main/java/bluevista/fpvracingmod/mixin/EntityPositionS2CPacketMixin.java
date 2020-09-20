@@ -20,10 +20,10 @@ public class EntityPositionS2CPacketMixin {
 
     @Inject(method = "<init>(Lnet/minecraft/entity/Entity;)V", at = @At("RETURN"))
     public void init(Entity entity, CallbackInfo info) {
-        if(entity instanceof ServerPlayerEntity) {
+        if (entity instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity) entity;
 
-            if(player.getCameraEntity() instanceof DroneEntity) {
+            if (player.getCameraEntity() instanceof DroneEntity) {
                 Vec3d pos = ((DroneEntity) player.getCameraEntity()).getPlayerStartPos().get(player);
 
                 this.x = pos.x;

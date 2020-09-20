@@ -25,7 +25,7 @@ public class WorldRendererMixin {
             )
     )
     public Entity getFocusedEntity(Camera camera) {
-        if(camera.getFocusedEntity() instanceof DroneEntity) {
+        if (camera.getFocusedEntity() instanceof DroneEntity) {
             return client.player;
         }
 

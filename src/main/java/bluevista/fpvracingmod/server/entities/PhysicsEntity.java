@@ -119,7 +119,7 @@ public abstract class PhysicsEntity extends Entity {
         float old = this.mass;
         this.mass = mass;
 
-        if(old != mass) {
+        if (old != mass) {
             refreshRigidBody();
         }
     }
@@ -236,7 +236,7 @@ public abstract class PhysicsEntity extends Entity {
         this.setRigidBodyPos(old.getCenterOfMassPosition(new Vector3f()));
         this.setOrientation(old.getOrientation(new Quat4f()));
 
-        if(this.world.isClient()) {
+        if (this.world.isClient()) {
             ClientInitializer.physicsWorld.removeRigidBody(old);
             ClientInitializer.physicsWorld.addRigidBody(this.getRigidBody());
         }

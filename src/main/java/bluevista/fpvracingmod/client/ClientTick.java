@@ -43,7 +43,7 @@ public class ClientTick {
     }
 
     public static boolean isPlayerIDClient(UUID playerID) {
-        if(ClientInitializer.client.player != null && playerID != null) {
+        if (ClientInitializer.client.player != null && playerID != null) {
             return playerID.equals(ClientInitializer.client.player.getUuid());
         } else {
             return false;

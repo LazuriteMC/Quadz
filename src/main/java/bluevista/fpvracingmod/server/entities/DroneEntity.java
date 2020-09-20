@@ -420,23 +420,23 @@ public class DroneEntity extends PhysicsEntity {
 		float t = 0.25f;
 
 		for(RigidBody body : bodies) {
-			if(body != getRigidBody()) {
+			if (body != getRigidBody()) {
 				Vector3f dist = body.getCenterOfMassPosition(new Vector3f());
 				dist.sub(this.getRigidBody().getCenterOfMassPosition(new Vector3f()));
 
-				if(dist.length() < 1.0f) {
+				if (dist.length() < 1.0f) {
 					mightCollide = true;
 					break;
 				}
 			}
 		}
 
-		if(!mightCollide) {
+		if (!mightCollide) {
 			getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
 		} else {
 			float it = 1 - getThrottle();
 
-			if(Math.abs(axisValues.currX) * it > t ||
+			if (Math.abs(axisValues.currX) * it > t ||
 					Math.abs(axisValues.currY) * it > t ||
 					Math.abs(axisValues.currZ) * it > t) {
 				getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));

@@ -39,10 +39,10 @@ public class DroneEntityS2C {
         context.getTaskQueue().execute(() -> {
             DroneEntity drone = null;
 
-            if(player != null)
+            if (player != null)
                 drone = (DroneEntity) player.world.getEntityById(droneID);
 
-            if(drone != null) {
+            if (drone != null) {
                 drone.setConfigValues(Config.NO_CLIP, noClip);
                 drone.setConfigValues(Config.GOD_MODE, godMode);
 

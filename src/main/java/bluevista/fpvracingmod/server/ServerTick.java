@@ -59,13 +59,13 @@ public class ServerTick {
     }
 
     public static void setView(ServerPlayerEntity player, DroneEntity drone) {
-        if(!(player.getCameraEntity() instanceof DroneEntity)) {
+        if (!(player.getCameraEntity() instanceof DroneEntity)) {
             drone.addPlayerStartPos(player);
             player.setNoGravity(true);
             player.setCameraEntity(drone);
 
             String[] keys = ServerInitializer.SERVER_PLAYER_KEYS.get(player.getUuid());
-            if(keys != null) {
+            if (keys != null) {
                 String subString = keys[0] + " or " + keys[1];
                 player.sendMessage(new LiteralText("Press " + subString + " power off goggles"), true);
             }
@@ -73,7 +73,7 @@ public class ServerTick {
     }
 
     public static void resetView(ServerPlayerEntity player) {
-        if(player.getCameraEntity() instanceof DroneEntity) {
+        if (player.getCameraEntity() instanceof DroneEntity) {
             DroneEntity drone = (DroneEntity) player.getCameraEntity();
 
             Vec3d pos = drone.getPlayerStartPos().get(player);

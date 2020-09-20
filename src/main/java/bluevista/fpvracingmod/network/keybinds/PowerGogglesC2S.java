@@ -27,7 +27,7 @@ public class PowerGogglesC2S {
             ServerInitializer.SERVER_PLAYER_KEYS.remove(player.getUuid());
             ServerInitializer.SERVER_PLAYER_KEYS.put(player.getUuid(), keys);
 
-            if(hat.getItem() instanceof GogglesItem)
+            if (hat.getItem() instanceof GogglesItem)
                 GogglesItem.setOn(hat, on);
         });
     }

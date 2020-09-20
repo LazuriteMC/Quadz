@@ -31,10 +31,10 @@ public class PhysicsEntityS2C {
         context.getTaskQueue().execute(() -> {
             PhysicsEntity physics = null;
 
-            if(player != null)
+            if (player != null)
                 physics = (PhysicsEntity) player.world.getEntityById(id);
 
-            if(physics != null) {
+            if (physics != null) {
                 physics.playerID = playerID;
 
                 physics.setConfigValues(Config.MASS, mass);

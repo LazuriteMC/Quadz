@@ -29,10 +29,10 @@ public class PhysicsEntityC2S {
         context.getTaskQueue().execute(() -> {
             PhysicsEntity physics = null;
 
-            if(player != null)
+            if (player != null)
                 physics = (PhysicsEntity) player.world.getEntityById(id);
 
-            if(physics != null) {
+            if (physics != null) {
                 physics.setOrientation(orientation);
                 physics.setRigidBodyPos(position);
                 physics.getRigidBody().setLinearVelocity(linearVel);

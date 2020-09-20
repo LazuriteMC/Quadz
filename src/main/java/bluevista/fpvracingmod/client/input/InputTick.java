@@ -15,7 +15,7 @@ public class InputTick {
     public static void tick() {
         MinecraftClient client = MinecraftClient.getInstance();
 
-        if(!client.isPaused() && controllerExists()) {
+        if (!client.isPaused() && controllerExists()) {
             axisValues.currT = glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.THROTTLE));
             axisValues.currX = glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.PITCH));
             axisValues.currY = glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.YAW));

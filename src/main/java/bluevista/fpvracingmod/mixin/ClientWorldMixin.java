@@ -22,7 +22,7 @@ public abstract class ClientWorldMixin {
         int camY = (int) cam.getPos().getY();
         int camZ = (int) cam.getPos().getZ();
 
-        if(camX != xCenter && camY != yCenter && camZ != zCenter) {
+        if (camX != xCenter && camY != yCenter && camZ != zCenter) {
             doRandomBlockDisplayTicks(camX, camY, camZ);
         }
     }

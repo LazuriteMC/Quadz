@@ -78,16 +78,16 @@ public class PhysicsWorld {
         clock.reset();
 
         this.physicsEntities.forEach(physics -> {
-            if(world != null) {
+            if (world != null) {
                 if (physics.isActive()) {
                     if (!(physics instanceof DroneEntity) || ((DroneEntity) physics).getConfigValues(Config.NO_CLIP).equals(0)) {
                         loadBlockCollisions(physics, world);
                     }
 
-                    if(!physics.getRigidBody().isInWorld()) {
+                    if (!physics.getRigidBody().isInWorld()) {
                         this.dynamicsWorld.addRigidBody(physics.getRigidBody());
                     }
-                } else if(physics.getRigidBody().isInWorld()) {
+                } else if (physics.getRigidBody().isInWorld()) {
                     this.dynamicsWorld.removeRigidBody(physics.getRigidBody());
                 }
             }
@@ -106,8 +106,8 @@ public class PhysicsWorld {
         BlockView blockView = world.getChunkManager().getChunk(physics.chunkX, physics.chunkZ);
 
         blockList.forEach((blockPos, blockState) -> {
-            if(!blockState.getBlock().canMobSpawnInside()) {
-                if(!this.collisionBlocks.containsKey(blockPos)) {
+            if (!blockState.getBlock().canMobSpawnInside()) {
+                if (!this.collisionBlocks.containsKey(blockPos)) {
                     VoxelShape coll = blockState.getCollisionShape(blockView, blockPos);
 
                     if (!coll.isEmpty()) {
@@ -138,7 +138,7 @@ public class PhysicsWorld {
         List<BlockPos> toRemove = new ArrayList();
 
         this.collisionBlocks.forEach((pos, body) -> {
-            if(!toKeepBlocks.contains(pos)) {
+            if (!toKeepBlocks.contains(pos)) {
                 dynamicsWorld.removeRigidBody(collisionBlocks.get(pos));
                 toRemove.add(pos);
             }
@@ -152,7 +152,7 @@ public class PhysicsWorld {
         Box area = new Box(physics.getRigidBodyBlockPos()).expand(BLOCK_RADIUS);
 
         world.getOtherEntities(physics, area).forEach(entity -> {
-            if(!(entity instanceof PhysicsEntity) && !collisionEntities.containsKey(entity)) {
+            if (!(entity instanceof PhysicsEntity) && !collisionEntities.containsKey(entity)) {
                 Box c = entity.getBoundingBox();
                 Vector3f box = new Vector3f(
                         ((float) (c.maxX - c.minX) / 2.0F),
@@ -179,7 +179,7 @@ public class PhysicsWorld {
         List<Entity> toRemove = new ArrayList();
 
         this.collisionEntities.forEach((entity, body) -> {
-            if(!toKeepEntities.contains(entity)) {
+            if (!toKeepEntities.contains(entity)) {
                 dynamicsWorld.removeRigidBody(collisionEntities.get(entity));
                 toRemove.add(entity);
             }

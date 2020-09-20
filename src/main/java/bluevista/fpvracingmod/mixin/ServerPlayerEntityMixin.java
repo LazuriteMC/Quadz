@@ -23,7 +23,7 @@ public class ServerPlayerEntityMixin {
         if (entity instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity) entity;
 
-            if(ServerTick.isInGoggles(player)) {
+            if (ServerTick.isInGoggles(player)) {
                 info.cancel();
             }
         }
@@ -45,7 +45,7 @@ public class ServerPlayerEntityMixin {
     public void onDisconnect(CallbackInfo info) {
         ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
 
-        if(ServerTick.isInGoggles(player)) {
+        if (ServerTick.isInGoggles(player)) {
             ServerTick.resetView(player);
         }
     }
@@ -55,7 +55,7 @@ public class ServerPlayerEntityMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;shouldDismount()Z")
     )
     public boolean shouldDismount(ServerPlayerEntity player) {
-        if(ServerTick.isInGoggles(player)) {
+        if (ServerTick.isInGoggles(player)) {
             return false;
         } else {
             return player.isSneaking();
