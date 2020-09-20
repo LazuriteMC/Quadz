@@ -34,9 +34,11 @@ public class MouseMixin {
             )
     )
     public void setKeyPressed(InputUtil.Key key, boolean pressed) {
-        if (!ClientTick.isInGoggles()) {
-            KeyBinding.setKeyPressed(key, pressed);
+        if (ClientTick.isInGoggles()) {
+            KeyBinding.setKeyPressed(key, false);
         }
+
+        KeyBinding.setKeyPressed(key, pressed);
     }
 
     @Redirect(
@@ -52,17 +54,17 @@ public class MouseMixin {
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "wasLeftButtonClicked", cancellable = true)
-    public void wasLeftButtonClicked(CallbackInfoReturnable<Boolean> info) {
-        if (ClientTick.isInGoggles()) {
-            info.setReturnValue(false);
-        }
-    }
-
-    @Inject(at = @At("HEAD"), method = "wasRightButtonClicked", cancellable = true)
-    public void wasRightButtonClicked(CallbackInfoReturnable<Boolean> info) {
-        if (ClientTick.isInGoggles()) {
-            info.setReturnValue(false);
-        }
-    }
+//    @Inject(at = @At("HEAD"), method = "wasLeftButtonClicked", cancellable = true)
+//    public void wasLeftButtonClicked(CallbackInfoReturnable<Boolean> info) {
+//        if (ClientTick.isInGoggles()) {
+//            info.setReturnValue(false);
+//        }
+//    }
+//
+//    @Inject(at = @At("HEAD"), method = "wasRightButtonClicked", cancellable = true)
+//    public void wasRightButtonClicked(CallbackInfoReturnable<Boolean> info) {
+//        if (ClientTick.isInGoggles()) {
+//            info.setReturnValue(false);
+//        }
+//    }
 }
