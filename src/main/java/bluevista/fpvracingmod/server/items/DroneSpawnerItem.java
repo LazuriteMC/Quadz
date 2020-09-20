@@ -32,7 +32,7 @@ public class DroneSpawnerItem extends Item {
 				return TypedActionResult.pass(itemStack);
 
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
-				DroneEntity drone = DroneEntity.create(user, world, hitResult.getPos(), 180f - user.yaw);
+				DroneEntity drone = DroneEntity.create(world, user.getUuid(), hitResult.getPos(), 180f - user.yaw);
 				prepSpawnedDrone(user, drone);
 
 				itemStack.decrement(1);
