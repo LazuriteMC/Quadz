@@ -64,7 +64,7 @@ public abstract class PhysicsEntity extends Entity {
         if (this.world.isClient()) {
             this.active = ClientTick.isPlayerIDClient(playerID);
 
-            if(active) {
+            if (active) {
                 PhysicsEntityC2S.send(this);
             } else {
                 this.netQuat.setPrev(this.getOrientation());
@@ -86,7 +86,7 @@ public abstract class PhysicsEntity extends Entity {
 
     @Environment(EnvType.CLIENT)
     public void stepPhysics(float d, float tickDelta) {
-        if(!this.isActive()) {
+        if (!this.isActive()) {
             this.setOrientation(this.netQuat.slerp(tickDelta));
         }
     }

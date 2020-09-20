@@ -186,6 +186,11 @@ public class Commands {
                         .executes(context -> setConfigValue(context, Config.DAMAGE_COEFFICIENT)))
                     .executes(context -> getConfigValue(context, Config.DAMAGE_COEFFICIENT)))
 
+                .then(CommandManager.literal(Config.CRASH_MOMENTUM_THRESHOLD)
+                    .then(CommandManager.argument(Config.CRASH_MOMENTUM_THRESHOLD, new NumberArgumentType())
+                        .executes(context -> setConfigValue(context, Config.CRASH_MOMENTUM_THRESHOLD)))
+                    .executes(context -> getConfigValue(context, Config.CRASH_MOMENTUM_THRESHOLD)))
+
                 .then(CommandManager.literal(Config.GRAVITY)
                     .then(CommandManager.argument(Config.GRAVITY, new NumberArgumentType())
                         .executes(context -> setConfigValue(context, Config.GRAVITY)))
@@ -245,6 +250,11 @@ public class Commands {
                     .then(CommandManager.argument(Config.DAMAGE_COEFFICIENT, new NumberArgumentType())
                         .executes(context -> setDroneValue(context, Config.DAMAGE_COEFFICIENT)))
                     .executes(context -> getDroneValue(context, Config.DAMAGE_COEFFICIENT)))
+
+                .then(CommandManager.literal(Config.CRASH_MOMENTUM_THRESHOLD)
+                    .then(CommandManager.argument(Config.CRASH_MOMENTUM_THRESHOLD, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.CRASH_MOMENTUM_THRESHOLD)))
+                    .executes(context -> getDroneValue(context, Config.CRASH_MOMENTUM_THRESHOLD)))
 
                 .then(CommandManager.literal(Config.RATE)
                     .then(CommandManager.argument(Config.RATE, new NumberArgumentType())

@@ -51,6 +51,7 @@ public class DroneEntity extends PhysicsEntity {
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
 	private float thrust;
 	private float damageCoefficient;
+	private int crashMomentumThreshold;
 
 	/* God Mode */
 	private boolean godMode;
@@ -109,7 +110,7 @@ public class DroneEntity extends PhysicsEntity {
 				entity.damage(DamageSource.GENERIC, vec.length() * damageCoefficient);
 			}));
 
-			if (!(this.godMode || this.noClip) && (
+			if (isKillable() && (
 					this.world.isRaining() ||
 							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.WATER ||
 							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.BUBBLE_COLUMN ||
@@ -128,8 +129,8 @@ public class DroneEntity extends PhysicsEntity {
 	public void stepPhysics(float d, float tickDelta) {
 		super.stepPhysics(d, tickDelta);
 
-		if(isActive()) {
-			if(TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
+		if (isActive()) {
+			if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
 				this.axisValues.set(InputTick.axisValues);
 			}
 
@@ -155,62 +156,8 @@ public class DroneEntity extends PhysicsEntity {
 					new Vector3f((float) yawForce.x, (float) yawForce.y, (float) yawForce.z)
 			);
 
-			// drone crash stuff
-			Dispatcher dispatcher = ClientInitializer.physicsWorld.getDynamicsWorld().getDispatcher();
-
-			// manifold is a potential collision between rigid bodies
-			// run through every manifold (every loaded rigid body)
-			for (int manifoldNum = 0; manifoldNum < dispatcher.getNumManifolds(); ++manifoldNum) {
-
-				// stops block-to-block collisions from continuing
-				if (ClientInitializer.physicsWorld.collisionBlocks.containsValue((RigidBody) dispatcher.getManifoldByIndexInternal(manifoldNum).getBody0()) &&
-					ClientInitializer.physicsWorld.collisionBlocks.containsValue((RigidBody) dispatcher.getManifoldByIndexInternal(manifoldNum).getBody1())) {
-					continue;
-				}
-
-				// current manifold
-				PersistentManifold manifold = dispatcher.getManifoldByIndexInternal(manifoldNum);
-
-				// for every contact within this manifold
-				for (int contactNum = 0; contactNum < manifold.getNumContacts(); ++contactNum) {
-
-					// if the two rigid bodies are touching on this contact
-					if (manifold.getContactPoint(contactNum).getDistance() <= 0.0f) {
-
-						// if one or both of the touching rigid bodies is this drone
-						if (this.getRigidBody().equals(manifold.getBody0()) || this.getRigidBody().equals(manifold.getBody1())) {
-
-							// get the velocity of the first rigid body
-							Vector3f vec0 = ((RigidBody)manifold.getBody0()).getLinearVelocity(new Vector3f());
-							vec0.scale(1.0f / ((RigidBody) manifold.getBody0()).getInvMass());
-
-							// get the velocity of the second rigid body
-							Vector3f vec1 = ((RigidBody)manifold.getBody1()).getLinearVelocity(new Vector3f());
-							vec1.scale(1.0f / ((RigidBody) manifold.getBody1()).getInvMass());
-
-							Vector3f vec = new Vector3f(0, 0, 0);
-
-							// if both of the rigid bodies have momentum
-							if (!Float.isNaN(vec0.length()) && !Float.isNaN(vec1.length())) {
-
-								// add their momentums together
-								vec.add(vec0, vec1);
-
-							// if only one of the rigid bodies has momentum (the drone)
-							} else if (!Float.isNaN(vec0.length()) || !Float.isNaN(vec1.length())) {
-
-								// use the momentum from that rigid body
-								vec.set(!Float.isNaN(vec0.length()) ? vec0 : vec1);
-							}
-
-							// kil
-							if(vec.length() > 10.0f) { // TODO crash momentum threshold
-								KillDroneC2S.send(this);
-							}
-						}
-						break;
-					}
-				}
+			if (isKillable()) {
+				calculateCrashConditions();
 			}
 		}
 	}
@@ -249,8 +196,13 @@ public class DroneEntity extends PhysicsEntity {
 				break;
 			case Config.THRUST:
 				this.thrust = value.floatValue();
+				break;
 			case Config.DAMAGE_COEFFICIENT:
 				this.damageCoefficient = value.floatValue();
+				break;
+			case Config.CRASH_MOMENTUM_THRESHOLD:
+				this.crashMomentumThreshold = value.intValue();
+				break;
 			default:
 				super.setConfigValues(key, value);
 				break;
@@ -281,6 +233,7 @@ public class DroneEntity extends PhysicsEntity {
 		tag.putFloat(Config.EXPO, getConfigValues(Config.EXPO).floatValue());
 		tag.putFloat(Config.THRUST, getConfigValues(Config.THRUST).floatValue());
 		tag.putFloat(Config.DAMAGE_COEFFICIENT, getConfigValues(Config.DAMAGE_COEFFICIENT).floatValue());
+		tag.putInt(Config.CRASH_MOMENTUM_THRESHOLD, getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
 
 		// don't write noClip or prevGodMode because...
 		// noClip shouldn't be preserved after a restart (your drone may fall through the world) and ...
@@ -315,10 +268,16 @@ public class DroneEntity extends PhysicsEntity {
 				return this.thrust;
 			case Config.DAMAGE_COEFFICIENT:
 				return this.damageCoefficient;
+			case Config.CRASH_MOMENTUM_THRESHOLD:
+				return this.crashMomentumThreshold;
 			default:
 				return super.getConfigValues(key);
 //				return null; // 0?
 		}
+	}
+
+	private boolean isKillable() {
+		return !(this.godMode || this.noClip);
 	}
 
 	public AxisValues getAxisValues() {
@@ -386,12 +345,74 @@ public class DroneEntity extends PhysicsEntity {
 		setConfigValues(Config.EXPO, tag.getFloat(Config.EXPO));
 		setConfigValues(Config.THRUST, tag.getFloat(Config.THRUST));
 		setConfigValues(Config.DAMAGE_COEFFICIENT, tag.getFloat(Config.DAMAGE_COEFFICIENT));
+		setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD, tag.getInt(Config.CRASH_MOMENTUM_THRESHOLD));
 
 		// don't retrieve noClip or prevGodMode because they weren't written (reason in writeCustomDataToTag)
 		setConfigValues(Config.GOD_MODE, tag.getInt(Config.GOD_MODE));
 	}
 
 	/* DOERS */
+
+	private void calculateCrashConditions() {
+		// drone crash stuff
+		Dispatcher dispatcher = ClientInitializer.physicsWorld.getDynamicsWorld().getDispatcher();
+
+		// manifold is a potential collision between rigid bodies
+		// run through every manifold (every loaded rigid body)
+		for (int manifoldNum = 0; manifoldNum < dispatcher.getNumManifolds(); ++manifoldNum) {
+
+			// stops block-to-block collisions from continuing
+			if (ClientInitializer.physicsWorld.collisionBlocks.containsValue((RigidBody) dispatcher.getManifoldByIndexInternal(manifoldNum).getBody0()) &&
+					ClientInitializer.physicsWorld.collisionBlocks.containsValue((RigidBody) dispatcher.getManifoldByIndexInternal(manifoldNum).getBody1())) {
+				continue;
+			}
+
+			// current manifold
+			PersistentManifold manifold = dispatcher.getManifoldByIndexInternal(manifoldNum);
+
+			// for every contact within this manifold
+			for (int contactNum = 0; contactNum < manifold.getNumContacts(); ++contactNum) {
+
+				// if the two rigid bodies are touching on this contact
+				if (manifold.getContactPoint(contactNum).getDistance() <= 0.0f) {
+
+					// if one or both of the touching rigid bodies is this drone
+					if (this.getRigidBody().equals(manifold.getBody0()) || this.getRigidBody().equals(manifold.getBody1())) {
+
+						// get the velocity of the first rigid body
+						Vector3f vec0 = ((RigidBody)manifold.getBody0()).getLinearVelocity(new Vector3f());
+						vec0.scale(1.0f / ((RigidBody) manifold.getBody0()).getInvMass());
+
+						// get the velocity of the second rigid body
+						Vector3f vec1 = ((RigidBody)manifold.getBody1()).getLinearVelocity(new Vector3f());
+						vec1.scale(1.0f / ((RigidBody) manifold.getBody1()).getInvMass());
+
+						Vector3f vec = new Vector3f(0, 0, 0);
+
+						// if both of the rigid bodies have momentum
+						if (!Float.isNaN(vec0.length()) && !Float.isNaN(vec1.length())) {
+
+							// add their momentums together
+							vec.add(vec0, vec1);
+
+							// if only one of the rigid bodies has momentum (the drone)
+						} else if (!Float.isNaN(vec0.length()) || !Float.isNaN(vec1.length())) {
+
+							// use the momentum from that rigid body
+							vec.set(!Float.isNaN(vec0.length()) ? vec0 : vec1);
+						}
+
+						// setup the drone to die
+						if (vec.length() > this.crashMomentumThreshold) {
+							KillDroneC2S.send(this);
+						}
+					}
+
+					break;
+				}
+			}
+		}
+	}
 
 	public void decreaseAngularVelocity() {
 		List<RigidBody> bodies = ClientInitializer.physicsWorld.getRigidBodies();
