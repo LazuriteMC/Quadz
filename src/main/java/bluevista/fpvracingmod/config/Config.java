@@ -44,6 +44,7 @@ public class Config {
     public static final String GRAVITY = "gravity";
     public static final String BLOCK_RADIUS = "blockRadius";
     public static final String DAMAGE_COEFFICIENT = "damageCoefficient";
+    public static final String CRASH_MOMENTUM_THRESHOLD = "crashMomentumThreshold";
 
     public static final List<String> INT_KEYS = Arrays.asList(
             CONTROLLER_ID,
@@ -59,7 +60,8 @@ public class Config {
             CAMERA_ANGLE,
             BAND,
             CHANNEL,
-            BLOCK_RADIUS
+            BLOCK_RADIUS,
+            CRASH_MOMENTUM_THRESHOLD
     );
 
     public static final List<String> FLOAT_KEYS = Arrays.asList(

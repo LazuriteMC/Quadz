@@ -30,6 +30,7 @@ public class DroneEntityS2C {
         int cameraAngle = buf.readInt();
         float fieldOfView = buf.readFloat();
         float thrust = buf.readFloat();
+        int crashMomentumThreshold = buf.readInt();
 
         float rate = buf.readFloat();
         float superRate = buf.readFloat();
@@ -50,6 +51,7 @@ public class DroneEntityS2C {
                 drone.setConfigValues(Config.CAMERA_ANGLE, cameraAngle);
                 drone.setConfigValues(Config.FIELD_OF_VIEW, fieldOfView);
                 drone.setConfigValues(Config.THRUST, thrust);
+                drone.setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD, crashMomentumThreshold);
 
                 drone.setConfigValues(Config.RATE, rate);
                 drone.setConfigValues(Config.SUPER_RATE, superRate);
@@ -70,6 +72,7 @@ public class DroneEntityS2C {
         buf.writeInt(drone.getConfigValues(Config.CAMERA_ANGLE).intValue());
         buf.writeFloat(drone.getConfigValues(Config.FIELD_OF_VIEW).floatValue());
         buf.writeFloat(drone.getConfigValues(Config.THRUST).floatValue());
+        buf.writeInt(drone.getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
 
         buf.writeFloat(drone.getConfigValues(Config.RATE).floatValue());
         buf.writeFloat(drone.getConfigValues(Config.SUPER_RATE).floatValue());
