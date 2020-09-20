@@ -42,7 +42,7 @@ import java.util.*;
 
 public class DroneEntity extends PhysicsEntity {
 	public static final int TRACKING_RANGE = 80;
-	public static final int PLAYER_HEIGHT = 200;
+	public static int PLAYER_HEIGHT = 100;
 	public static int NEAR_TRACKING_RANGE = TRACKING_RANGE - 5;
 
 	/* Misc */
@@ -100,6 +100,8 @@ public class DroneEntity extends PhysicsEntity {
 
 		if (!this.world.isClient()) {
 			DroneEntityS2C.send(this);
+
+			PLAYER_HEIGHT = (int) this.getPos().getY() + 100;
 
 			this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {
 				Vector3f vec = this.getRigidBody().getLinearVelocity(new Vector3f());
