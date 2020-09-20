@@ -116,7 +116,7 @@ public class DroneEntity extends PhysicsEntity {
 				entity.damage(DamageSource.GENERIC, vec.length() * damageCoefficient);
 			}));
 
-			if (!(this.godMode || this.noClip) && (
+			if (isKillable() && (
 					this.world.isRaining() ||
 							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.WATER ||
 							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.BUBBLE_COLUMN ||
@@ -162,7 +162,9 @@ public class DroneEntity extends PhysicsEntity {
 					new Vector3f((float) yawForce.x, (float) yawForce.y, (float) yawForce.z)
 			);
 
-			calculateCrashConditions();
+			if (isKillable()) {
+				calculateCrashConditions();
+			}
 		}
 	}
 
@@ -278,6 +280,10 @@ public class DroneEntity extends PhysicsEntity {
 				return super.getConfigValues(key);
 //				return null; // 0?
 		}
+	}
+
+	private boolean isKillable() {
+		return !(this.godMode || this.noClip);
 	}
 
 	public AxisValues getAxisValues() {
