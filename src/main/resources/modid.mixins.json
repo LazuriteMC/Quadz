@@ -8,11 +8,9 @@
     "Matrix4fMixin",
     "MoveRelativeMixin",
     "PlayerInventoryMixin",
-    "ServerPlayerEntityMixin",
-    "ServerPlayerInteractionManagerMixin"
+    "ServerPlayerEntityMixin"
   ],
   "client": [
-    "ClientPlayerInteractionManagerMixin",
     "ClientPlayNetworkHandlerMixin",
     "ClientWorldMixin",
     "GameRendererMixin",

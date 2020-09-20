@@ -38,30 +38,26 @@ public class DroneSpawnerItem extends Item {
 	/**
 	 * Called when this item is used while targeting a Block
 	 */
-	public ActionResult useOnBlock(ItemUsageContext context) {
-		World world = context.getWorld();
-		if (!(world instanceof ServerWorld)) {
-			return ActionResult.SUCCESS;
-		} else {
-			ItemStack itemStack = context.getStack();
-			BlockPos blockPos = context.getBlockPos();
-			Direction direction = context.getSide();
-			BlockState blockState = world.getBlockState(blockPos);
+	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+		ItemStack itemStack = user.getStackInHand(hand);
+		HitResult hitResult = raycast(world, user, RaycastContext.FluidHandling.NONE);
 
-			BlockPos blockPos3;
-			if (blockState.getCollisionShape(world, blockPos).isEmpty()) {
-				blockPos3 = blockPos;
-			} else {
-				blockPos3 = blockPos.offset(direction);
+		if (!(world instanceof ServerWorld)) {
+			return TypedActionResult.success(itemStack);
+		} else if (hitResult.getType() == HitResult.Type.MISS) {
+			return TypedActionResult.pass(itemStack);
+		} else {
+			if (hitResult.getType() == HitResult.Type.BLOCK) {
+				Vec3d pos = new Vec3d(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
+				DroneEntity drone = DroneEntity.create(world, user.getUuid(), pos, 180f - user.yaw);
+				prepSpawnedDrone(user, drone);
 			}
 
-			Vec3d pos = new Vec3d(blockPos3.getX() + 0.5, blockPos3.getY(), blockPos3.getZ() + 0.5);
-			DroneEntity drone = DroneEntity.create(world, context.getPlayer().getUuid(), pos, 180f - context.getPlayerYaw());
-			prepSpawnedDrone(context.getPlayer(), drone);
-
 			itemStack.decrement(1);
-			return ActionResult.CONSUME;
+			itemStack = new ItemStack(Items.AIR);
 		}
+
+		return TypedActionResult.success(itemStack);
 	}
 
 	public static void setTagValue(ItemStack itemStack, String key, Number value) {

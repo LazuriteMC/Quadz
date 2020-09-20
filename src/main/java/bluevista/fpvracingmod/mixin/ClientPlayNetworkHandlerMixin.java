@@ -36,8 +36,10 @@ public class ClientPlayNetworkHandlerMixin {
     )
     private void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo info, double x, double y, double z, EntityType<?> type) {
         Entity entity = null;
-        if (type == ServerInitializer.DRONE_ENTITY)
-            entity = DroneEntity.create(world, DroneEntity.NULL_UUID, new Vec3d(x, y, z), packet.getYaw());
+        if (type == ServerInitializer.DRONE_ENTITY) {
+            float yaw = (float)(packet.getYaw() * 360) / 256.0F;
+            entity = DroneEntity.create(world, DroneEntity.NULL_UUID, new Vec3d(x, y, z), yaw);
+        }
 
         if (entity != null) {
             int i = packet.getId();

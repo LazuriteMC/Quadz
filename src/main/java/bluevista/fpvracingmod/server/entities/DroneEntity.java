@@ -84,10 +84,9 @@ public class DroneEntity extends PhysicsEntity {
 	public static DroneEntity create(World world, UUID playerID, Vec3d pos, float yaw) {
 		DroneEntity drone = new DroneEntity(world, playerID, pos);
 
-		if (world.isClient()) {
-			drone.yaw = yaw;
-			drone.rotateY(yaw);
-		}
+		System.out.println("YAW: " + yaw);
+		drone.yaw = yaw;
+		drone.rotateY(yaw);
 
 		world.spawnEntity(drone);
 		return drone;
