@@ -17,8 +17,7 @@ import net.minecraft.util.math.BlockPos;
 
 @Environment(EnvType.CLIENT)
 public class DroneRenderer extends EntityRenderer<DroneEntity> {
-
-    private static final Identifier droneTexture = new Identifier(ServerInitializer.MODID, "textures/entity/drone.png");
+    public static final Identifier droneTexture = new Identifier(ServerInitializer.MODID, "textures/entity/drone.png");
     private static final DroneModel model = new DroneModel();
 
     public DroneRenderer(EntityRenderDispatcher dispatcher) {

@@ -5,6 +5,7 @@ import bluevista.fpvracingmod.client.input.keybinds.GodModeKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.GogglePowerKeybind;
 import bluevista.fpvracingmod.client.input.keybinds.NoClipKeybind;
 import bluevista.fpvracingmod.client.renderers.DroneRenderer;
+import bluevista.fpvracingmod.client.renderers.DroneSpawnerItemRenderer;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.network.config.ConfigS2C;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
