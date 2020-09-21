@@ -32,11 +32,9 @@ public class MouseMixin {
             )
     )
     public void setKeyPressed(InputUtil.Key key, boolean pressed) {
-        if (ClientTick.isInGoggles()) {
-            KeyBinding.setKeyPressed(key, false);
+        if (!ClientTick.isInGoggles()) {
+            KeyBinding.setKeyPressed(key, pressed);
         }
-
-        KeyBinding.setKeyPressed(key, pressed);
     }
 
     @Redirect(

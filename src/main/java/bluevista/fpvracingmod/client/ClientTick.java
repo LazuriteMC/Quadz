@@ -19,8 +19,6 @@ public class ClientTick {
 
     public static void tick(MinecraftClient client) {
         if (client.player != null && !client.isPaused()) {
-            DroneEntity.NEAR_TRACKING_RANGE = MathHelper.floor(DroneEntity.TRACKING_RANGE / 16.0D) < client.options.viewDistance ? DroneEntity.TRACKING_RANGE - 5 : client.options.viewDistance * 16;
-
             if (client.cameraEntity instanceof DroneEntity) {
                 droneFOV = ((DroneEntity)client.cameraEntity).getConfigValues(Config.FIELD_OF_VIEW).floatValue();
 

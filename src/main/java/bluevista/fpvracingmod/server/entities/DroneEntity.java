@@ -42,7 +42,7 @@ import java.util.*;
 
 public class DroneEntity extends PhysicsEntity {
 	public static final int TRACKING_RANGE = 80;
-	public static int NEAR_TRACKING_RANGE = TRACKING_RANGE - 5;
+	public static final int PSEUDO_TRACKING_RANGE = TRACKING_RANGE / 2;
 
 	/* Misc */
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;

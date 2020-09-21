@@ -38,8 +38,10 @@ public class PhysicsEntityC2S {
             if (physics != null) {
                 physics.yaw = yaw;
                 physics.pitch = pitch;
+
                 physics.setOrientation(orientation);
                 physics.setRigidBodyPos(position);
+                physics.setPos(position.x, position.y, position.z);
                 physics.getRigidBody().setLinearVelocity(linearVel);
                 physics.getRigidBody().setAngularVelocity(angularVel);
             }

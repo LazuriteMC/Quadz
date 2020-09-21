@@ -47,7 +47,7 @@ public abstract class PhysicsEntity extends Entity {
         this.createRigidBody();
 
         this.playerID = playerID;
-        this.netQuat = new NetQuat4f(this.getOrientation());
+        this.netQuat = new NetQuat4f(new Quat4f(0, 1, 0, 0));
 
         if (world.isClient()) {
             ClientInitializer.physicsWorld.add(this);
@@ -62,6 +62,11 @@ public abstract class PhysicsEntity extends Entity {
             this.active = ClientTick.isPlayerIDClient(playerID);
 
             if (active) {
+                Vector3f pos = this.getRigidBody().getCenterOfMassPosition(new Vector3f());
+                this.updatePosition(pos.x, pos.y, pos.z);
+                this.lastRenderX = pos.x;
+                this.lastRenderY = pos.y;
+                this.lastRenderZ = pos.z;
                 PhysicsEntityC2S.send(this);
             } else {
                 this.netQuat.setPrev(this.getOrientation());
@@ -73,9 +78,6 @@ public abstract class PhysicsEntity extends Entity {
                 this.kill();
             }
         }
-
-        Vector3f pos = this.getRigidBody().getCenterOfMassPosition(new Vector3f());
-        this.updatePosition(pos.x, pos.y, pos.z);
     }
 
     @Environment(EnvType.CLIENT)

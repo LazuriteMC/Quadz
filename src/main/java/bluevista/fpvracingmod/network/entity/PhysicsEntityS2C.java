@@ -48,9 +48,9 @@ public class PhysicsEntityS2C {
                 physics.setConfigValues(Config.MASS, mass);
                 physics.setConfigValues(Config.LINEAR_DAMPING, linearDamping);
 
-                if(!physics.isActive()) {
+                if (!physics.isActive()) {
                     physics.netQuat.set(orientation);
-                    physics.updatePosition(position.x, position.y, position.z);
+                    physics.setPos(position.x, position.y, position.z);
                     physics.setRigidBodyPos(position);
                     physics.getRigidBody().setLinearVelocity(linearVel);
                     physics.getRigidBody().setAngularVelocity(angularVel);
