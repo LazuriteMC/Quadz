@@ -47,6 +47,7 @@ public class DroneEntity extends PhysicsEntity {
 	/* Misc */
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
 	private float thrust;
+	private float thrustCurve;
 	private float damageCoefficient;
 	private int crashMomentumThreshold;
 	private int playerHeight;
@@ -93,29 +94,22 @@ public class DroneEntity extends PhysicsEntity {
 
 	/* TICKS */
 
-	float fast;
 	@Override
 	public void tick() {
 		super.tick();
 
+		System.out.println("Curve: " + this.thrustCurve);
+
 		if (!this.world.isClient()) {
 			Vector3f vel = this.getRigidBody().getLinearVelocity(new Vector3f());
-			if (vel.length() > fast) {
-				fast = vel.length();
-			}
 
-			System.out.println("Velocity: " + vel.length() + " m/s, " + fast + " m/s");
-
+			System.out.println("Velocity: " + vel.length() + " m/s");
 			DroneEntityS2C.send(this);
 
 			this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {
 				Vector3f vec = this.getRigidBody().getLinearVelocity(new Vector3f());
 				vec.scale(this.getMass());
-
-				float damage = vec.length() * damageCoefficient;
-				if(damage > 0.5) {
-					entity.damage(DamageSource.GENERIC, damage);
-				}
+				entity.damage(DamageSource.GENERIC, vec.length() * damageCoefficient);
 			}));
 
 			if (isKillable() && (
@@ -181,6 +175,9 @@ public class DroneEntity extends PhysicsEntity {
 			case Config.THRUST:
 				this.thrust = value.floatValue();
 				break;
+			case Config.THRUST_CURVE:
+				this.thrustCurve = value.floatValue();
+				break;
 			case Config.DAMAGE_COEFFICIENT:
 				this.damageCoefficient = value.floatValue();
 				break;
@@ -216,6 +213,7 @@ public class DroneEntity extends PhysicsEntity {
 		tag.putFloat(Config.SUPER_RATE, getConfigValues(Config.SUPER_RATE).floatValue());
 		tag.putFloat(Config.EXPO, getConfigValues(Config.EXPO).floatValue());
 		tag.putFloat(Config.THRUST, getConfigValues(Config.THRUST).floatValue());
+		tag.putFloat(Config.THRUST_CURVE, getConfigValues(Config.THRUST_CURVE).floatValue());
 		tag.putFloat(Config.DAMAGE_COEFFICIENT, getConfigValues(Config.DAMAGE_COEFFICIENT).floatValue());
 		tag.putInt(Config.CRASH_MOMENTUM_THRESHOLD, getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
 
@@ -250,6 +248,8 @@ public class DroneEntity extends PhysicsEntity {
 				return this.expo;
 			case Config.THRUST:
 				return this.thrust;
+			case Config.THRUST_CURVE:
+				return this.thrustCurve;
 			case Config.DAMAGE_COEFFICIENT:
 				return this.damageCoefficient;
 			case Config.CRASH_MOMENTUM_THRESHOLD:
@@ -322,6 +322,7 @@ public class DroneEntity extends PhysicsEntity {
 		setConfigValues(Config.SUPER_RATE, tag.getFloat(Config.SUPER_RATE));
 		setConfigValues(Config.EXPO, tag.getFloat(Config.EXPO));
 		setConfigValues(Config.THRUST, tag.getFloat(Config.THRUST));
+		setConfigValues(Config.THRUST_CURVE, tag.getFloat(Config.THRUST_CURVE));
 		setConfigValues(Config.DAMAGE_COEFFICIENT, tag.getFloat(Config.DAMAGE_COEFFICIENT));
 		setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD, tag.getInt(Config.CRASH_MOMENTUM_THRESHOLD));
 
@@ -332,7 +333,7 @@ public class DroneEntity extends PhysicsEntity {
 	/* DOERS */
 
 	protected float calculateThrustCurve() {
-		return (float) (Math.sqrt(this.getThrottle()));
+		return (float) (Math.pow(this.getThrottle(), thrustCurve));
 	}
 
 	protected void calculateThrustVectors(float d) {

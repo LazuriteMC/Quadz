@@ -41,6 +41,7 @@ public class Config {
     public static final String MASS = "mass";
     public static final String LINEAR_DAMPING = "linearDamping";
     public static final String THRUST = "thrust";
+    public static final String THRUST_CURVE = "thrustCurve";
     public static final String GRAVITY = "gravity";
     public static final String BLOCK_RADIUS = "blockRadius";
     public static final String DAMAGE_COEFFICIENT = "damageCoefficient";
@@ -73,6 +74,7 @@ public class Config {
             MASS,
             LINEAR_DAMPING,
             THRUST,
+            THRUST_CURVE,
             GRAVITY,
             DAMAGE_COEFFICIENT
     );

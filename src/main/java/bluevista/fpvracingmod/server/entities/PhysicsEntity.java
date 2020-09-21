@@ -43,7 +43,7 @@ public abstract class PhysicsEntity extends Entity {
     public PhysicsEntity(EntityType type, World world, UUID playerID, Vec3d pos) {
         super(type, world);
 
-        this.setPos(pos.x, pos.y, pos.z);
+        this.resetPosition(pos.x, pos.y, pos.z);
         this.createRigidBody();
 
         this.playerID = playerID;
@@ -63,10 +63,7 @@ public abstract class PhysicsEntity extends Entity {
 
             if (active) {
                 Vector3f pos = this.getRigidBody().getCenterOfMassPosition(new Vector3f());
-                this.updatePosition(pos.x, pos.y, pos.z);
-                this.lastRenderX = pos.x;
-                this.lastRenderY = pos.y;
-                this.lastRenderZ = pos.z;
+                this.setPos(pos.x, pos.y, pos.z);
                 PhysicsEntityC2S.send(this);
             } else {
                 this.netQuat.setPrev(this.getOrientation());

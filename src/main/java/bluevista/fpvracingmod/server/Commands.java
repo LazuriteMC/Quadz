@@ -181,6 +181,11 @@ public class Commands {
                         .executes(context -> setConfigValue(context, Config.THRUST)))
                     .executes(context -> getConfigValue(context, Config.THRUST)))
 
+                .then(CommandManager.literal(Config.THRUST_CURVE)
+                    .then(CommandManager.argument(Config.THRUST_CURVE, new NumberArgumentType())
+                        .executes(context -> setConfigValue(context, Config.THRUST_CURVE)))
+                    .executes(context -> getConfigValue(context, Config.THRUST_CURVE)))
+
                 .then(CommandManager.literal(Config.DAMAGE_COEFFICIENT)
                     .then(CommandManager.argument(Config.DAMAGE_COEFFICIENT, new NumberArgumentType())
                         .executes(context -> setConfigValue(context, Config.DAMAGE_COEFFICIENT)))
@@ -245,6 +250,11 @@ public class Commands {
                     .then(CommandManager.argument(Config.THRUST, new NumberArgumentType())
                         .executes(context -> setDroneValue(context, Config.THRUST)))
                     .executes(context -> getDroneValue(context, Config.THRUST)))
+
+                .then(CommandManager.literal(Config.THRUST_CURVE)
+                    .then(CommandManager.argument(Config.THRUST_CURVE, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.THRUST_CURVE)))
+                    .executes(context -> getDroneValue(context, Config.THRUST_CURVE)))
 
                 .then(CommandManager.literal(Config.DAMAGE_COEFFICIENT)
                     .then(CommandManager.argument(Config.DAMAGE_COEFFICIENT, new NumberArgumentType())
