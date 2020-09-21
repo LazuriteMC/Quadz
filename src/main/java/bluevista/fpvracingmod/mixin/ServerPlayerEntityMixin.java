@@ -3,6 +3,7 @@ package bluevista.fpvracingmod.mixin;
 import bluevista.fpvracingmod.server.ServerTick;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.network.packet.s2c.play.SetCameraEntityS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -13,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * A mixin class for {@link ServerPlayerEntity} which
@@ -37,6 +39,25 @@ public class ServerPlayerEntityMixin {
 
             if (ServerTick.isInGoggles(player)) {
                 info.cancel();
+            }
+        }
+    }
+
+    /**
+     * Helps prevent the {@link ServerPlayerEntity} from taking damage while in teleported state.
+     * @param source the damage source
+     * @param amount the damage amount
+     * @param info required by every mixin injection
+     */
+    @Inject(at = @At("HEAD"), method = "damage", cancellable = true)
+    public void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
+        ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
+
+        if (ServerTick.isInGoggles(player)) {
+            DroneEntity drone = (DroneEntity) player.getCameraEntity();
+
+            if (!player.getPos().equals(drone.getPlayerStartPos().get(player))) {
+                info.setReturnValue(false);
             }
         }
     }
