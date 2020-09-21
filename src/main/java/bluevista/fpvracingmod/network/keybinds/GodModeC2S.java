@@ -27,7 +27,7 @@ public class GodModeC2S {
 
             if (hand.getItem() instanceof TransmitterItem) {
                 if (TransmitterItem.getTagValue(hand, Config.BIND) != null) {
-                    DroneEntity drone = DroneEntity.getByEntityID(context.getPlayer(), TransmitterItem.getTagValue(hand, Config.BIND));
+                    DroneEntity drone = (DroneEntity) player.getEntityWorld().getEntityById(TransmitterItem.getTagValue(hand, Config.BIND).intValue());
 
                     if (drone != null) {
                         drone.setConfigValues(Config.GOD_MODE, drone.getConfigValues(Config.GOD_MODE).intValue() == 1 ? 0 : 1);

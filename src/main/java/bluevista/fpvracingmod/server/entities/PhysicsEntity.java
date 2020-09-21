@@ -201,18 +201,14 @@ public abstract class PhysicsEntity extends Entity {
 
     @Override
     protected void readCustomDataFromTag(CompoundTag tag) {
-        setOrientation(QuaternionHelper.fromTag(tag));
         this.playerID = tag.getUuid(Config.PLAYER_ID);
-
         setConfigValues(Config.MASS, tag.getFloat(Config.MASS));
         setConfigValues(Config.LINEAR_DAMPING, tag.getFloat(Config.LINEAR_DAMPING));
     }
 
     @Override
     protected void writeCustomDataToTag(CompoundTag tag) {
-        QuaternionHelper.toTag(getOrientation(), tag);
         tag.putUuid(Config.PLAYER_ID, this.playerID);
-
         tag.putFloat(Config.MASS, getConfigValues(Config.MASS).floatValue());
         tag.putFloat(Config.LINEAR_DAMPING, getConfigValues(Config.LINEAR_DAMPING).floatValue());
     }

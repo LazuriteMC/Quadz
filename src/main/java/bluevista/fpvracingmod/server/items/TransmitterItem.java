@@ -45,7 +45,7 @@ public class TransmitterItem extends Item {
 
         if (itemStack.getItem() instanceof TransmitterItem) {
             if (TransmitterItem.getTagValue(itemStack, Config.BIND) != null) {
-                drone = DroneEntity.getByEntityID(player, TransmitterItem.getTagValue(itemStack, Config.BIND));
+                drone = (DroneEntity) player.getEntityWorld().getEntityById(TransmitterItem.getTagValue(itemStack, Config.BIND).intValue());
             }
         }
 

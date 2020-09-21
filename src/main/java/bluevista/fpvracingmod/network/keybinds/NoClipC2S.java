@@ -27,7 +27,7 @@ public class NoClipC2S {
 
             if (hand.getItem() instanceof TransmitterItem) {
                 if (TransmitterItem.getTagValue(hand, Config.BIND) != null) {
-                    DroneEntity drone = DroneEntity.getByEntityID(context.getPlayer(), TransmitterItem.getTagValue(hand, Config.BIND));
+                    DroneEntity drone = (DroneEntity) player.getEntityWorld().getEntityById(TransmitterItem.getTagValue(hand, Config.BIND).intValue());
 
                     if (drone != null) {
                         drone.setConfigValues(Config.NO_CLIP, drone.getConfigValues(Config.NO_CLIP).intValue() == 1 ? 0 : 1);

@@ -127,28 +127,7 @@ public class DroneEntity extends PhysicsEntity {
 		super.stepPhysics(d, tickDelta);
 
 		if (isActive()) {
-			if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
-				this.axisValues.set(InputTick.axisValues);
-			}
-
-			float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, rate, expo, superRate, d);
-			float deltaY = (float) BetaflightHelper.calculateRates(axisValues.currY, rate, expo, superRate, d);
-			float deltaZ = (float) BetaflightHelper.calculateRates(axisValues.currZ, rate, expo, superRate, d);
-
-			rotateX(deltaX);
-			rotateY(deltaY);
-			rotateZ(deltaZ);
-
-			Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(this.thrust);
-			Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
-
-
-
-			this.decreaseAngularVelocity();
-			this.applyForce(
-					new Vector3f((float) thrust.x, (float) thrust.y, (float) thrust.z),
-					new Vector3f((float) yawForce.x, (float) yawForce.y, (float) yawForce.z)
-			);
+			calculateThrustVectors(d);
 
 			if (isKillable()) {
 				calculateCrashConditions();
@@ -310,21 +289,15 @@ public class DroneEntity extends PhysicsEntity {
 		return Matrix4fInject.from(mat).matrixToVector().multiply(-1, -1, -1);
 	}
 
-	/*
-	 * Returns all drones within the entity's world.
-	 * The provided entity is typically just the player.
+	/**
+	 * Finds all instances of {@link DroneEntity} within range of the given {@link Entity}.
+	 * @param entity the {@link Entity} as the origin
+	 * @return a {@link List} of type {@link DroneEntity}
 	 */
 	public static List<Entity> getNearbyDrones(Entity entity) {
 		ServerWorld world = (ServerWorld) entity.getEntityWorld();
-		List<Entity> drones = world.getEntitiesByType(ServerInitializer.DRONE_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
+		List<Entity> drones = world.getEntitiesByType(ServerInitializer.DRONE_ENTITY, entity.getBoundingBox().expand(TRACKING_RANGE), EntityPredicates.EXCEPT_SPECTATOR);
 		return drones;
-	}
-
-	public static DroneEntity getByEntityID(Entity entity, Number entityID) {
-		if (entityID != null) {
-			return (DroneEntity) entity.getEntityWorld().getEntityById(entityID.intValue());
-		}
-		return null;
 	}
 
 	@Override
@@ -347,7 +320,30 @@ public class DroneEntity extends PhysicsEntity {
 
 	/* DOERS */
 
-	private void calculateCrashConditions() {
+	protected void calculateThrustVectors(float d) {
+		if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
+			this.axisValues.set(InputTick.axisValues);
+		}
+
+		float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, rate, expo, superRate, d);
+		float deltaY = (float) BetaflightHelper.calculateRates(axisValues.currY, rate, expo, superRate, d);
+		float deltaZ = (float) BetaflightHelper.calculateRates(axisValues.currZ, rate, expo, superRate, d);
+
+		rotateX(deltaX);
+		rotateY(deltaY);
+		rotateZ(deltaZ);
+
+		Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(this.thrust);
+		Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
+
+		this.decreaseAngularVelocity();
+		this.applyForce(
+				new Vector3f((float) thrust.x, (float) thrust.y, (float) thrust.z),
+				new Vector3f((float) yawForce.x, (float) yawForce.y, (float) yawForce.z)
+		);
+	}
+
+	protected void calculateCrashConditions() {
 		// drone crash stuff
 		Dispatcher dispatcher = ClientInitializer.physicsWorld.getDynamicsWorld().getDispatcher();
 
@@ -408,7 +404,7 @@ public class DroneEntity extends PhysicsEntity {
 		}
 	}
 
-	public void decreaseAngularVelocity() {
+	protected void decreaseAngularVelocity() {
 		List<RigidBody> bodies = ClientInitializer.physicsWorld.getRigidBodies();
 		boolean mightCollide = false;
 		float t = 0.25f;
@@ -438,20 +434,23 @@ public class DroneEntity extends PhysicsEntity {
 		}
 	}
 
-	/*
-	 * Break the drone when it's shot or hit by the player.
+	/**
+	 * Break the {@link DroneEntity} when it's shot or otherwise damaged in some way.
+	 * @param source
+	 * @param amount
+	 * @return
 	 */
 	@Override
 	public boolean damage(DamageSource source, float amount) {
-		if (source.getAttacker() instanceof PlayerEntity || ((!this.godMode || !this.noClip) && source instanceof ProjectileDamageSource)) {
+		if (source.getAttacker() instanceof PlayerEntity || (isKillable() && source instanceof ProjectileDamageSource)) {
 			this.kill();
 			return true;
 		}
 		return false;
 	}
 
-	/*
-	 * Called whenever the drone is broken. Drops drone spawner item containing nbt info
+	/**
+	 * Called whenever the {@link DroneEntity} is broken. Drops {@link DroneSpawnerItem} containing tag info.
 	 */
 	@Override
 	public void kill() {
@@ -465,9 +464,12 @@ public class DroneEntity extends PhysicsEntity {
 		this.remove();
 	}
 
-	/*
-	 * If the player is holding a transmitter item when they right click
-	 * on the drone, bind it using the drone's UUID.
+	/**
+	 * If the {@link PlayerEntity} is holding a {@link TransmitterItem} when they right
+	 * click on the {@link DroneEntity}, bind it using the drone's UUID.
+	 * @param player
+	 * @param hand
+	 * @return
 	 */
 	public ActionResult interact(PlayerEntity player, Hand hand) {
 		if (!player.world.isClient()) {
@@ -490,5 +492,6 @@ public class DroneEntity extends PhysicsEntity {
 
 	@Override
 	protected void initDataTracker() {
+
 	}
 }
