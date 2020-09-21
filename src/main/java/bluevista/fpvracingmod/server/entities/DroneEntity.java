@@ -93,21 +93,30 @@ public class DroneEntity extends PhysicsEntity {
 
 	/* TICKS */
 
+	float fast;
 	@Override
 	public void tick() {
 		super.tick();
 
 		if (!this.world.isClient()) {
+			Vector3f vel = this.getRigidBody().getLinearVelocity(new Vector3f());
+			if (vel.length() > fast) {
+				fast = vel.length();
+			}
+
+			System.out.println("Velocity: " + vel.length() + " m/s, " + fast + " m/s");
+
 			DroneEntityS2C.send(this);
 
-			if(this.getThrottle() > 0.05) {
-				this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {
-					Vector3f vec = this.getRigidBody().getLinearVelocity(new Vector3f());
-					vec.scale(this.getMass());
+			this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {
+				Vector3f vec = this.getRigidBody().getLinearVelocity(new Vector3f());
+				vec.scale(this.getMass());
 
-					entity.damage(DamageSource.GENERIC, vec.length() * damageCoefficient);
-				}));
-			}
+				float damage = vec.length() * damageCoefficient;
+				if(damage > 0.5) {
+					entity.damage(DamageSource.GENERIC, damage);
+				}
+			}));
 
 			if (isKillable() && (
 					this.world.isRaining() ||
@@ -322,6 +331,10 @@ public class DroneEntity extends PhysicsEntity {
 
 	/* DOERS */
 
+	protected float calculateThrustCurve() {
+		return (float) (Math.sqrt(this.getThrottle()));
+	}
+
 	protected void calculateThrustVectors(float d) {
 		if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
 			this.axisValues.set(InputTick.axisValues);
@@ -335,7 +348,7 @@ public class DroneEntity extends PhysicsEntity {
 		rotateY(deltaY);
 		rotateZ(deltaZ);
 
-		Vec3d thrust = this.getThrustVector().multiply(this.getThrottle()).multiply(this.thrust);
+		Vec3d thrust = this.getThrustVector().multiply(this.calculateThrustCurve()).multiply(this.thrust);
 		Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
 
 		this.decreaseAngularVelocity();
