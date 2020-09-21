@@ -281,9 +281,10 @@ public class DroneEntity extends PhysicsEntity {
 		return true;
 	}
 
-	/*
-	 * Essentially get the direction the bottom
-	 * of the drone is facing. Returned in vector form.
+	/**
+	 * Get the direction the bottom of the
+	 * drone is facing.
+	 * @return {@link Vec3d} containing thrust direction
 	 */
 	public Vec3d getThrustVector() {
 		Quat4f q = getOrientation();
@@ -302,7 +303,7 @@ public class DroneEntity extends PhysicsEntity {
 	 */
 	public static List<Entity> getNearbyDrones(Entity entity) {
 		ServerWorld world = (ServerWorld) entity.getEntityWorld();
-		List<Entity> drones = world.getEntitiesByType(ServerInitializer.DRONE_ENTITY, entity.getBoundingBox().expand(TRACKING_RANGE), EntityPredicates.EXCEPT_SPECTATOR);
+		List<Entity> drones = world.getEntitiesIncludingUngeneratedChunks(DroneEntity.class, entity.getBoundingBox().expand(TRACKING_RANGE * 2));
 		return drones;
 	}
 

@@ -41,7 +41,7 @@ public class PhysicsEntityC2S {
 
                 physics.setOrientation(orientation);
                 physics.setRigidBodyPos(position);
-                physics.setPos(position.x, position.y, position.z);
+                physics.resetPosition(position.x, position.y, position.z);
                 physics.getRigidBody().setLinearVelocity(linearVel);
                 physics.getRigidBody().setAngularVelocity(angularVel);
             }
