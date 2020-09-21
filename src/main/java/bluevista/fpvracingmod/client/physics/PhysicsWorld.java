@@ -90,9 +90,9 @@ public class PhysicsWorld {
                 } else if (physics.getRigidBody().isInWorld()) {
                     this.dynamicsWorld.removeRigidBody(physics.getRigidBody());
                 }
-            }
 
-            physics.stepPhysics(d, tickDelta);
+                physics.stepPhysics(d, tickDelta);
+            }
         });
 
         unloadBlockCollisions();

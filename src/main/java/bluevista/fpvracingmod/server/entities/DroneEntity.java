@@ -100,12 +100,14 @@ public class DroneEntity extends PhysicsEntity {
 		if (!this.world.isClient()) {
 			DroneEntityS2C.send(this);
 
-			this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {
-				Vector3f vec = this.getRigidBody().getLinearVelocity(new Vector3f());
-				vec.scale(this.getMass());
+			if(this.getThrottle() > 0.05) {
+				this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {
+					Vector3f vec = this.getRigidBody().getLinearVelocity(new Vector3f());
+					vec.scale(this.getMass());
 
-				entity.damage(DamageSource.GENERIC, vec.length() * damageCoefficient);
-			}));
+					entity.damage(DamageSource.GENERIC, vec.length() * damageCoefficient);
+				}));
+			}
 
 			if (isKillable() && (
 					this.world.isRaining() ||
