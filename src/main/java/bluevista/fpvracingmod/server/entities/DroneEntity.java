@@ -98,12 +98,7 @@ public class DroneEntity extends PhysicsEntity {
 	public void tick() {
 		super.tick();
 
-		System.out.println("Curve: " + this.thrustCurve);
-
 		if (!this.world.isClient()) {
-			Vector3f vel = this.getRigidBody().getLinearVelocity(new Vector3f());
-
-			System.out.println("Velocity: " + vel.length() + " m/s");
 			DroneEntityS2C.send(this);
 
 			this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {
