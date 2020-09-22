@@ -43,7 +43,7 @@ public class ServerPlayerEntityMixin {
         }
 
         if (entity instanceof DroneEntity) {
-            if (ServerTick.isInGoggles((ServerPlayerEntity) (Object) this)) {
+            if (ServerTick.isInGoggles((ServerPlayerEntity) (Object) this) && !entity.removed) {
                 info.cancel();
             }
         }
