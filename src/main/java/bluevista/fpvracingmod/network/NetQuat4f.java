@@ -22,6 +22,10 @@ public class NetQuat4f {
         this.prev.set(prev);
     }
 
+    public Quat4f get() {
+        return this.target;
+    }
+
     public Quat4f slerp(float tickDelta) {
         Quat4f out = new Quat4f();
         out.interpolate(prev, target, tickDelta);

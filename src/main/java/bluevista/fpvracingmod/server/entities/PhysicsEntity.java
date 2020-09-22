@@ -34,17 +34,20 @@ public abstract class PhysicsEntity extends Entity {
 
     public UUID playerID;
     public NetQuat4f netQuat;
-
-    private float linearDamping;
-    private float mass;
     private RigidBody body;
     private boolean active;
 
-    public PhysicsEntity(EntityType type, World world, UUID playerID, Vec3d pos) {
+    private float dragCoefficient;
+    private float mass;
+    private int size;
+
+    public PhysicsEntity(EntityType type, World world, UUID playerID, Vec3d pos, float yaw) {
         super(type, world);
 
+        this.yaw = yaw;
         this.resetPosition(pos.x, pos.y, pos.z);
         this.createRigidBody();
+        this.rotateY(180f - yaw);
 
         this.playerID = playerID;
         this.netQuat = new NetQuat4f(new Quat4f(0, 1, 0, 0));
@@ -63,7 +66,7 @@ public abstract class PhysicsEntity extends Entity {
 
             if (active) {
                 Vector3f pos = this.getRigidBody().getCenterOfMassPosition(new Vector3f());
-                this.setPos(pos.x, pos.y, pos.z);
+                this.updatePosition(pos.x, pos.y, pos.z);
                 PhysicsEntityC2S.send(this);
             } else {
                 this.netQuat.setPrev(this.getOrientation());
@@ -82,11 +85,6 @@ public abstract class PhysicsEntity extends Entity {
         if (!this.isActive()) {
             this.setOrientation(this.netQuat.slerp(tickDelta));
         }
-
-        this.prevYaw = this.yaw;
-        this.prevPitch = this.pitch;
-        this.yaw = QuaternionHelper.getYaw(this.getOrientation());
-        this.pitch = QuaternionHelper.getPitch(this.getOrientation());
     }
 
     public void setConfigValues(String key, Number value) {
@@ -94,8 +92,11 @@ public abstract class PhysicsEntity extends Entity {
             case Config.MASS:
                 this.setMass(value.floatValue());
                 break;
-            case Config.LINEAR_DAMPING:
-                this.setLinearDamping(value.floatValue());
+            case Config.SIZE:
+                this.setSize(value.intValue());
+                break;
+            case Config.DRAG_COEFFICIENT:
+                this.dragCoefficient = value.floatValue();
                 break;
             default:
                 break;
@@ -106,11 +107,23 @@ public abstract class PhysicsEntity extends Entity {
         switch (key) {
             case Config.MASS:
                 return this.mass;
-            case Config.LINEAR_DAMPING:
-                return this.linearDamping;
+            case Config.SIZE:
+                return this.size;
+            case Config.DRAG_COEFFICIENT:
+                return this.dragCoefficient;
             default:
                 return null;
         }
+    }
+
+    public void doAirResistance() {
+        Vector3f vec3f = getRigidBody().getLinearVelocity(new Vector3f());
+        Vec3d velocity = new Vec3d(vec3f.x, vec3f.y, vec3f.z);
+        float k = (ClientInitializer.physicsWorld.airDensity * dragCoefficient * (float) Math.pow(size / 16f, 2)) / 2.0f;
+
+        Vec3d airVec3d = velocity.multiply(k).multiply(velocity.lengthSquared()).negate();
+        Vector3f airResistance = new Vector3f((float) airVec3d.x, (float) airVec3d.y, (float) airVec3d.z);
+        this.applyForce(airResistance);
     }
 
     public void setMass(float mass) {
@@ -122,17 +135,18 @@ public abstract class PhysicsEntity extends Entity {
         }
     }
 
+    public void setSize(int size) {
+        System.out.println("SET SIZE");
+        int old = this.size;
+        this.size = size;
+
+        if (old != size) {
+            refreshRigidBody();
+        }
+    }
+
     public float getMass() {
         return this.mass;
-    }
-
-    public void setLinearDamping(float linearDamping) {
-        this.linearDamping = linearDamping;
-        this.body.setDamping(linearDamping, this.body.getAngularDamping());
-    }
-
-    public float getLinearDamping() {
-        return this.linearDamping;
     }
 
     public BlockPos getRigidBodyBlockPos() {
@@ -202,14 +216,16 @@ public abstract class PhysicsEntity extends Entity {
     protected void readCustomDataFromTag(CompoundTag tag) {
         this.playerID = tag.getUuid(Config.PLAYER_ID);
         setConfigValues(Config.MASS, tag.getFloat(Config.MASS));
-        setConfigValues(Config.LINEAR_DAMPING, tag.getFloat(Config.LINEAR_DAMPING));
+        setConfigValues(Config.SIZE, tag.getInt(Config.SIZE));
+        setConfigValues(Config.DRAG_COEFFICIENT, tag.getFloat(Config.DRAG_COEFFICIENT));
     }
 
     @Override
     protected void writeCustomDataToTag(CompoundTag tag) {
         tag.putUuid(Config.PLAYER_ID, this.playerID);
         tag.putFloat(Config.MASS, getConfigValues(Config.MASS).floatValue());
-        tag.putFloat(Config.LINEAR_DAMPING, getConfigValues(Config.LINEAR_DAMPING).floatValue());
+        tag.putInt(Config.SIZE, getConfigValues(Config.SIZE).intValue());
+        tag.putFloat(Config.DRAG_COEFFICIENT, getConfigValues(Config.DRAG_COEFFICIENT).floatValue());
     }
 
     @Override
@@ -237,7 +253,8 @@ public abstract class PhysicsEntity extends Entity {
     }
 
     public void createRigidBody() {
-        Box cBox = getBoundingBox();
+        float s = size / 16.0f;
+        Box cBox = new Box(-s / 2.0f, -s / 8.0f, -s / 2.0f, s / 2.0f, s / 8.0f, s / 2.0f);
         Vector3f inertia = new Vector3f(0.0F, 0.0F, 0.0F);
         Vector3f box = new Vector3f(
                 ((float) (cBox.maxX - cBox.minX) / 2.0F) + 0.005f,
@@ -254,7 +271,6 @@ public abstract class PhysicsEntity extends Entity {
 
         RigidBody body = new RigidBody(ci);
         body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
-        body.setDamping(linearDamping, 0);
         this.body = body;
     }
 }

@@ -39,10 +39,12 @@ public class Config {
     public static final String BAND = "band";
     public static final String CHANNEL = "channel";
     public static final String MASS = "mass";
-    public static final String LINEAR_DAMPING = "linearDamping";
+    public static final String SIZE = "size";
     public static final String THRUST = "thrust";
     public static final String THRUST_CURVE = "thrustCurve";
     public static final String GRAVITY = "gravity";
+    public static final String AIR_DENSITY = "airDensity";
+    public static final String DRAG_COEFFICIENT = "dragCoefficient";
     public static final String BLOCK_RADIUS = "blockRadius";
     public static final String DAMAGE_COEFFICIENT = "damageCoefficient";
     public static final String CRASH_MOMENTUM_THRESHOLD = "crashMomentumThreshold";
@@ -62,7 +64,8 @@ public class Config {
             BAND,
             CHANNEL,
             BLOCK_RADIUS,
-            CRASH_MOMENTUM_THRESHOLD
+            CRASH_MOMENTUM_THRESHOLD,
+            SIZE
     );
 
     public static final List<String> FLOAT_KEYS = Arrays.asList(
@@ -72,7 +75,8 @@ public class Config {
             EXPO,
             FIELD_OF_VIEW,
             MASS,
-            LINEAR_DAMPING,
+            DRAG_COEFFICIENT,
+            AIR_DENSITY,
             THRUST,
             THRUST_CURVE,
             GRAVITY,

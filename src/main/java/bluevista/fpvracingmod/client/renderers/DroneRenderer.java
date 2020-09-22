@@ -1,6 +1,8 @@
 package bluevista.fpvracingmod.client.renderers;
 
+import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.client.models.DroneModel;
+import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.helper.QuaternionHelper;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
@@ -18,11 +20,12 @@ import net.minecraft.util.math.BlockPos;
 @Environment(EnvType.CLIENT)
 public class DroneRenderer extends EntityRenderer<DroneEntity> {
     public static final Identifier droneTexture = new Identifier(ServerInitializer.MODID, "textures/entity/drone.png");
-    private static final DroneModel model = new DroneModel();
+    private DroneModel model;
 
     public DroneRenderer(EntityRenderDispatcher dispatcher) {
         super(dispatcher);
         this.shadowRadius = 0.2F;
+        this.model = new DroneModel(ClientInitializer.getConfig().getIntOption(Config.SIZE));
     }
 
     public void render(DroneEntity droneEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
@@ -30,10 +33,10 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
 
         matrixStack.push();
         matrixStack.peek().getModel().multiply(QuaternionHelper.quat4fToQuaternion(droneEntity.getOrientation()));
-        matrixStack.translate(0.0D, -1.4375D, 0.0D);
 
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(this.getTexture(droneEntity)));
-        this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.model.setSize(droneEntity.getConfigValues(Config.SIZE).intValue());
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(model.getLayer(this.getTexture(droneEntity)));
+        model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.pop();
 
         super.render(droneEntity, f, g, matrixStack, vertexConsumerProvider, i);

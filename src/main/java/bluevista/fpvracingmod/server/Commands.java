@@ -171,10 +171,15 @@ public class Commands {
                         .executes(context -> setConfigValue(context, Config.MASS)))
                     .executes(context -> getConfigValue(context, Config.MASS)))
 
-                .then(CommandManager.literal(Config.LINEAR_DAMPING)
-                    .then(CommandManager.argument(Config.LINEAR_DAMPING, new NumberArgumentType())
-                        .executes(context -> setConfigValue(context, Config.LINEAR_DAMPING)))
-                    .executes(context -> getConfigValue(context, Config.LINEAR_DAMPING)))
+                .then(CommandManager.literal(Config.DRAG_COEFFICIENT)
+                    .then(CommandManager.argument(Config.DRAG_COEFFICIENT, new NumberArgumentType())
+                        .executes(context -> setConfigValue(context, Config.DRAG_COEFFICIENT)))
+                    .executes(context -> getConfigValue(context, Config.DRAG_COEFFICIENT)))
+
+                .then(CommandManager.literal(Config.SIZE)
+                    .then(CommandManager.argument(Config.SIZE, new NumberArgumentType())
+                        .executes(context -> setConfigValue(context, Config.SIZE)))
+                    .executes(context -> getConfigValue(context, Config.SIZE)))
 
                 .then(CommandManager.literal(Config.THRUST)
                     .then(CommandManager.argument(Config.THRUST, new NumberArgumentType())
@@ -205,6 +210,11 @@ public class Commands {
                     .then(CommandManager.argument(Config.BLOCK_RADIUS, new NumberArgumentType())
                         .executes(context -> setConfigValue(context, Config.BLOCK_RADIUS)))
                     .executes(context -> getConfigValue(context, Config.BLOCK_RADIUS)))
+
+                .then(CommandManager.literal(Config.AIR_DENSITY)
+                    .then(CommandManager.argument(Config.AIR_DENSITY, new NumberArgumentType())
+                        .executes(context -> setConfigValue(context, Config.AIR_DENSITY)))
+                    .executes(context -> getConfigValue(context, Config.AIR_DENSITY)))
 
                 .then(CommandManager.literal(Config.WRITE)
                     .executes(context -> config(context, Config.WRITE)))
@@ -241,10 +251,15 @@ public class Commands {
                         .executes(context -> setDroneValue(context, Config.MASS)))
                     .executes(context -> getDroneValue(context, Config.MASS)))
 
-                .then(CommandManager.literal(Config.LINEAR_DAMPING)
-                    .then(CommandManager.argument(Config.LINEAR_DAMPING, new NumberArgumentType())
-                        .executes(context -> setDroneValue(context, Config.LINEAR_DAMPING)))
-                    .executes(context -> getDroneValue(context, Config.LINEAR_DAMPING)))
+                .then(CommandManager.literal(Config.DRAG_COEFFICIENT)
+                    .then(CommandManager.argument(Config.DRAG_COEFFICIENT, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.DRAG_COEFFICIENT)))
+                    .executes(context -> getDroneValue(context, Config.DRAG_COEFFICIENT)))
+
+                .then(CommandManager.literal(Config.SIZE)
+                    .then(CommandManager.argument(Config.SIZE, new NumberArgumentType())
+                        .executes(context -> setDroneValue(context, Config.SIZE)))
+                    .executes(context -> getDroneValue(context, Config.SIZE)))
 
                 .then(CommandManager.literal(Config.THRUST)
                     .then(CommandManager.argument(Config.THRUST, new NumberArgumentType())

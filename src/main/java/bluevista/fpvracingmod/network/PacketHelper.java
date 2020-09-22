@@ -6,10 +6,6 @@ import net.minecraft.network.PacketByteBuf;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
 
 public class PacketHelper {
     public static void serializeVector3f(PacketByteBuf buf, Vector3f vec) {
