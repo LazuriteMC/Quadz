@@ -102,14 +102,14 @@ public class DroneEntity extends PhysicsEntity {
 			}));
 
 			if (isKillable() && (
-					this.world.isRaining() ||
-							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.WATER ||
-							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.BUBBLE_COLUMN ||
-							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.LAVA ||
-							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.CAMPFIRE ||
-							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_CAMPFIRE ||
-							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_FIRE ||
-							this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.FIRE)) {
+					this.world.hasRain(getBlockPos()) ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.WATER ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.BUBBLE_COLUMN ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.LAVA ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.CAMPFIRE ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_CAMPFIRE ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_FIRE ||
+					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.FIRE)) {
 				this.kill();
 			}
 		}
