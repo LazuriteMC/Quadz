@@ -327,10 +327,6 @@ public class DroneEntity extends PhysicsEntity {
 		return (float) (Math.pow(getThrottle(), thrustCurve));
 	}
 
-	protected float calculateResistanceCurve() {
-		return (float) (Math.pow(getThrottle(), thrustCurve)) * getThrottle();
-	}
-
 	protected void doForces(float d) {
 		if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
 			this.axisValues.set(InputTick.axisValues);
