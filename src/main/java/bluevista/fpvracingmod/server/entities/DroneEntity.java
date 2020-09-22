@@ -287,7 +287,7 @@ public class DroneEntity extends PhysicsEntity {
 	 * @param entity the {@link Entity} as the origin
 	 * @return a {@link List} of type {@link DroneEntity}
 	 */
-	public static List<Entity> getNearbyDrones(Entity entity) {
+	public static List<Entity> getDrones(Entity entity) {
 		ServerWorld world = (ServerWorld) entity.getEntityWorld();
 		List<Entity> drones = world.getEntitiesByType(ServerInitializer.DRONE_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
 		return drones;

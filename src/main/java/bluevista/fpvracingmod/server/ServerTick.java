@@ -30,41 +30,45 @@ public class ServerTick {
     public static void tick(MinecraftServer server) {
         List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
 
-        for (ServerPlayerEntity player : players) { // for every player in the server
+        for (ServerPlayerEntity player : players) { // For every player in the server...
             boolean shouldRenderPlayer = false;
 
-            if (GogglesItem.isWearingGoggles(player) && !isInGoggles(player)) {
-                List<Entity> drones = DroneEntity.getNearbyDrones(player);
+            // If the player is wearing powered-on goggles but not in a DroneEntity's view...
+            if (GogglesItem.isOn(player) && !isInGoggles(player)) {
+                List<Entity> drones = DroneEntity.getDrones(player); // list of all drones
 
-                for (Entity entity : drones) { // for every drone in range of given player
+                for (Entity entity : drones) { // For every drone...
                     DroneEntity drone = (DroneEntity) entity;
 
+                    // Make sure drone is within range of player...
                     if(player.distanceTo(drone) > DroneEntity.TRACKING_RANGE) {
                         continue;
-                    }
 
-                    if (GogglesItem.isOnSameChannel(drone, player)) {
+                    // Otherwise, see if the drone is on the same channel as the goggles...
+                    } else if (GogglesItem.isOnSameChannel(drone, player)) {
                         setView(player, drone);
                     }
                 }
             }
 
+            // If the player is already viewing a DroneEntity...
             if (isInGoggles(player)) {
                 DroneEntity drone = (DroneEntity) player.getCameraEntity();
                 Vec3d pos = drone.getPlayerStartPos().get(player);
-                shouldRenderPlayer = player.getPos().equals(drone.getPlayerStartPos().get(player));
 
+                // If the drone is in range of where the player started...
                 if (Math.sqrt(drone.squaredDistanceTo(pos)) < DroneEntity.PSEUDO_TRACKING_RANGE && !player.getPos().equals(pos)) {
-                    /* If the drone is in range of where the player started, teleport the player there. */
                     player.requestTeleport(pos.x, pos.y, pos.z);
+                    player.setNoGravity(false);
+                    shouldRenderPlayer = true;
 
+                // If the drone is nearing the end of it's tracking range...
                 } else if (player.distanceTo(drone) > DroneEntity.PSEUDO_TRACKING_RANGE) {
-                    /* Else, teleport the player to the drone if it's nearing the end of it's tracking range. */
                     player.requestTeleport(drone.getX(), drone.getY() + 50, drone.getZ());
+                    player.setNoGravity(true);
+                    shouldRenderPlayer = false;
 
                 }
-            } else {
-                shouldRenderPlayer = false;
             }
 
             ShouldRenderPlayerS2C.send(player, shouldRenderPlayer);
@@ -88,16 +92,13 @@ public class ServerTick {
      * @param drone the {@link DroneEntity} to change the camera to
      */
     public static void setView(ServerPlayerEntity player, DroneEntity drone) {
-        if (!(player.getCameraEntity() instanceof DroneEntity)) {
-            drone.addPlayerStartPos(player);
-            player.setNoGravity(true);
-            player.setCameraEntity(drone);
+        drone.addPlayerStartPos(player);
+        player.setCameraEntity(drone);
 
-            String[] keys = ServerInitializer.SERVER_PLAYER_KEYS.get(player.getUuid());
-            if (keys != null) {
-                String subString = keys[0] + " or " + keys[1];
-                player.sendMessage(new LiteralText("Press " + subString + " power off goggles"), true);
-            }
+        String[] keys = ServerInitializer.SERVER_PLAYER_KEYS.get(player.getUuid());
+        if (keys != null) {
+            String subString = keys[0] + " or " + keys[1];
+            player.sendMessage(new LiteralText("Press " + subString + " power off goggles"), true);
         }
     }
 
