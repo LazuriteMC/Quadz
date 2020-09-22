@@ -56,7 +56,8 @@ public class PhysicsEntityS2C {
                 if (!physics.isActive()) {
                     physics.netQuat.set(orientation);
                     physics.updatePosition(position.x, position.y, position.z);
-                    physics.refreshPositionAndAngles(position.x, position.y, position.z, yaw, pitch);
+                    physics.resetPosition(position.x, position.y, position.z);
+//                    physics.refreshPositionAndAngles(position.x, position.y, position.z, yaw, pitch);
                     physics.setRigidBodyPos(position);
                     physics.getRigidBody().setLinearVelocity(linearVel);
                     physics.getRigidBody().setAngularVelocity(angularVel);
