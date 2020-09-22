@@ -1,42 +1,42 @@
 package bluevista.fpvracingmod.network.entity;
 
 import bluevista.fpvracingmod.server.ServerInitializer;
-import bluevista.fpvracingmod.server.entities.DroneEntity;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
-public class KillDroneC2S {
-    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "kill_drone_c2s");
+public class KillEntityC2S {
+    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "kill_entity_c2s");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
         PlayerEntity player = context.getPlayer();
-        int droneID = buf.readInt();
+        int entityID = buf.readInt();
 
         context.getTaskQueue().execute(() -> {
-            DroneEntity drone = null;
+            Entity entity = null;
 
-            if (player != null)
-                drone = (DroneEntity) player.world.getEntityById(droneID);
+            if (player != null) {
+                entity = player.world.getEntityById(entityID);
 
-            if (drone != null) {
-                drone.kill();
+                if (entity != null) {
+                    entity .kill();
+                }
             }
         });
     }
 
-    public static void send(DroneEntity drone) {
+    public static void send(Entity entity) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeInt(drone.getEntityId());
-
+        buf.writeInt(entity.getEntityId());
         ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, KillDroneC2S::accept);
+        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, KillEntityC2S::accept);
     }
 }

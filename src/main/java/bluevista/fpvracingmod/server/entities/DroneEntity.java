@@ -8,7 +8,7 @@ import bluevista.fpvracingmod.client.math.BetaflightHelper;
 import bluevista.fpvracingmod.client.math.Matrix4fInject;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
-import bluevista.fpvracingmod.network.entity.KillDroneC2S;
+import bluevista.fpvracingmod.network.entity.KillEntityC2S;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
@@ -390,9 +390,9 @@ public class DroneEntity extends PhysicsEntity {
 							vec.set(!Float.isNaN(vec0.length()) ? vec0 : vec1);
 						}
 
-						// setup the drone to die
+						// kil
 						if (vec.length() > this.crashMomentumThreshold) {
-							KillDroneC2S.send(this);
+							KillEntityC2S.send(this);
 						}
 					}
 
