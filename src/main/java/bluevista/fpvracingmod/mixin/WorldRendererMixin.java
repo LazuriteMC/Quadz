@@ -1,7 +1,6 @@
 package bluevista.fpvracingmod.mixin;
 
 import bluevista.fpvracingmod.client.ClientTick;
-import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.WorldRenderer;
