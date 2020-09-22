@@ -29,7 +29,8 @@ public class PhysicsEntityS2C {
         UUID playerID = buf.readUuid();
 
         float mass = buf.readFloat();
-        float linearDamping = buf.readFloat();
+        int size = buf.readInt();
+        float dragCoefficient = buf.readFloat();
 
         Quat4f orientation = PacketHelper.deserializeQuaternion(buf);
         Vector3f position = PacketHelper.deserializeVector3f(buf);
@@ -46,7 +47,8 @@ public class PhysicsEntityS2C {
                 physics.playerID = playerID;
 
                 physics.setConfigValues(Config.MASS, mass);
-                physics.setConfigValues(Config.LINEAR_DAMPING, linearDamping);
+                physics.setConfigValues(Config.SIZE, size);
+                physics.setConfigValues(Config.DRAG_COEFFICIENT, dragCoefficient);
 
                 if (!physics.isActive()) {
                     physics.netQuat.set(orientation);
@@ -65,8 +67,9 @@ public class PhysicsEntityS2C {
         buf.writeInt(physics.getEntityId());
         buf.writeUuid(physics.playerID);
 
-        buf.writeFloat(physics.getMass());
-        buf.writeFloat(physics.getLinearDamping());
+        buf.writeFloat(physics.getConfigValues(Config.MASS).floatValue());
+        buf.writeInt(physics.getConfigValues(Config.SIZE).intValue());
+        buf.writeFloat(physics.getConfigValues(Config.DRAG_COEFFICIENT).floatValue());
 
         PacketHelper.serializeQuaternion(buf, physics.getOrientation());
         PacketHelper.serializeVector3f(buf, physics.getRigidBody().getCenterOfMassPosition(new Vector3f()));

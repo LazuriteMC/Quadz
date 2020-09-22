@@ -10,10 +10,11 @@ import net.minecraft.client.util.math.MatrixStack;
 
 @Environment(EnvType.CLIENT)
 public class DroneModel extends EntityModel<DroneEntity> {
-
     private ModelPart base;
+    private int size;
 
-    public DroneModel() {
+    public DroneModel(int size) {
+        this.size = size;
         this.textureHeight = 16;
         this.textureWidth = 16;
     }
@@ -26,10 +27,11 @@ public class DroneModel extends EntityModel<DroneEntity> {
     @Override
     public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha) {
         base = new ModelPart(this, 0, 0);
-        base.addCuboid(-4, -1, -4, 8, 2, 8);
-
-        matrices.translate(0, 1.4375, 0);
-
+        base.addCuboid(size / -2.0f, size / -8.0f, size / -2.0f, size, size / 4.0f, size);
         base.render(matrices, vertexConsumer, light, overlay);
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 }

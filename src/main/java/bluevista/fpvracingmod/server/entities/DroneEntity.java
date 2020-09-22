@@ -70,24 +70,19 @@ public class DroneEntity extends PhysicsEntity {
 	/* CONSTRUCTORS */
 
 	public DroneEntity(EntityType<?> type, World world) {
-		this(world, null, Vec3d.ZERO);
+		this(world, null, Vec3d.ZERO, 0);
 	}
 
-	public DroneEntity(World world, UUID playerID, Vec3d pos) {
-		super(ServerInitializer.DRONE_ENTITY, world, playerID, pos);
+	public DroneEntity(World world, UUID playerID, Vec3d pos, float yaw) {
+		super(ServerInitializer.DRONE_ENTITY, world, playerID, pos, yaw);
 
 		this.axisValues = new AxisValues();
 		this.playerStartPos = new HashMap();
 		this.godMode = false;
-		this.createRigidBody();
 	}
 
 	public static DroneEntity create(World world, UUID playerID, Vec3d pos, float yaw) {
-		DroneEntity drone = new DroneEntity(world, playerID, pos);
-
-		drone.yaw = yaw;
-		drone.rotateY(yaw);
-
+		DroneEntity drone = new DroneEntity(world, playerID, pos, yaw);
 		world.spawnEntity(drone);
 		return drone;
 	}
@@ -127,7 +122,7 @@ public class DroneEntity extends PhysicsEntity {
 		super.stepPhysics(d, tickDelta);
 
 		if (isActive()) {
-			calculateThrustVectors(d);
+			doForces(d);
 
 			if (isKillable()) {
 				calculateCrashConditions();
@@ -303,7 +298,7 @@ public class DroneEntity extends PhysicsEntity {
 	 */
 	public static List<Entity> getNearbyDrones(Entity entity) {
 		ServerWorld world = (ServerWorld) entity.getEntityWorld();
-		List<Entity> drones = world.getEntitiesIncludingUngeneratedChunks(DroneEntity.class, entity.getBoundingBox().expand(TRACKING_RANGE * 2));
+		List<Entity> drones = world.getEntitiesByType(ServerInitializer.DRONE_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
 		return drones;
 	}
 
@@ -329,10 +324,14 @@ public class DroneEntity extends PhysicsEntity {
 	/* DOERS */
 
 	protected float calculateThrustCurve() {
-		return (float) (Math.pow(this.getThrottle(), thrustCurve));
+		return (float) (Math.pow(getThrottle(), thrustCurve));
 	}
 
-	protected void calculateThrustVectors(float d) {
+	protected float calculateResistanceCurve() {
+		return (float) (Math.pow(getThrottle(), thrustCurve)) * getThrottle();
+	}
+
+	protected void doForces(float d) {
 		if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
 			this.axisValues.set(InputTick.axisValues);
 		}
@@ -345,7 +344,7 @@ public class DroneEntity extends PhysicsEntity {
 		rotateY(deltaY);
 		rotateZ(deltaZ);
 
-		Vec3d thrust = this.getThrustVector().multiply(this.calculateThrustCurve()).multiply(this.thrust);
+		Vec3d thrust = this.getThrustVector().multiply(calculateThrustCurve()).multiply(this.thrust);
 		Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
 
 		this.decreaseAngularVelocity();

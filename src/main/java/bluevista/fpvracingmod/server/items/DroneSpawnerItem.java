@@ -3,31 +3,18 @@ package bluevista.fpvracingmod.server.items;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.MobSpawnerBlockEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-
-import java.util.Objects;
 
 public class DroneSpawnerItem extends Item {
 
@@ -49,7 +36,7 @@ public class DroneSpawnerItem extends Item {
 		} else {
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
 				Vec3d pos = new Vec3d(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
-				DroneEntity drone = DroneEntity.create(world, user.getUuid(), pos, 180f - user.yaw);
+				DroneEntity drone = DroneEntity.create(world, user.getUuid(), pos, user.getHeadYaw());
 				prepSpawnedDrone(user, drone);
 			}
 
@@ -93,8 +80,11 @@ public class DroneSpawnerItem extends Item {
 				case Config.MASS:
 					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putFloat(Config.MASS, value.floatValue());
 					break;
-				case Config.LINEAR_DAMPING:
-					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putFloat(Config.LINEAR_DAMPING, value.floatValue());
+				case Config.SIZE:
+					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putInt(Config.SIZE, value.intValue());
+					break;
+				case Config.DRAG_COEFFICIENT:
+					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putFloat(Config.DRAG_COEFFICIENT, value.floatValue());
 					break;
 				case Config.THRUST:
 					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putFloat(Config.THRUST, value.floatValue());
@@ -141,8 +131,10 @@ public class DroneSpawnerItem extends Item {
 					return tag.getFloat(Config.EXPO);
 				case Config.MASS:
 					return tag.getFloat(Config.MASS);
-				case Config.LINEAR_DAMPING:
-					return tag.getFloat(Config.LINEAR_DAMPING);
+				case Config.DRAG_COEFFICIENT:
+					return tag.getFloat(Config.DRAG_COEFFICIENT);
+				case Config.SIZE:
+					return tag.getInt(Config.SIZE);
 				case Config.THRUST:
 					return tag.getFloat(Config.THRUST);
 				case Config.THRUST_CURVE:
@@ -175,8 +167,9 @@ public class DroneSpawnerItem extends Item {
 		drone.setConfigValues(Config.DAMAGE_COEFFICIENT,		DroneSpawnerItem.getTagValue(itemStack, Config.DAMAGE_COEFFICIENT)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.DAMAGE_COEFFICIENT)		: config.getOption(Config.DAMAGE_COEFFICIENT));
 		drone.setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD,	DroneSpawnerItem.getTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD)	: config.getOption(Config.CRASH_MOMENTUM_THRESHOLD));
 
-		drone.setConfigValues(Config.MASS,				DroneSpawnerItem.getTagValue(itemStack, Config.MASS)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.MASS)				: config.getOption(Config.MASS));
-		drone.setConfigValues(Config.LINEAR_DAMPING,	DroneSpawnerItem.getTagValue(itemStack, Config.LINEAR_DAMPING)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.LINEAR_DAMPING)	: config.getOption(Config.LINEAR_DAMPING));
+		drone.setConfigValues(Config.MASS,				DroneSpawnerItem.getTagValue(itemStack, Config.MASS)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.MASS)				: config.getOption(Config.MASS));
+		drone.setConfigValues(Config.SIZE,				DroneSpawnerItem.getTagValue(itemStack, Config.SIZE)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.SIZE)				: config.getOption(Config.SIZE));
+		drone.setConfigValues(Config.DRAG_COEFFICIENT,	DroneSpawnerItem.getTagValue(itemStack, Config.DRAG_COEFFICIENT)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.DRAG_COEFFICIENT)	: config.getOption(Config.DRAG_COEFFICIENT));
 
 		// config doesn't contain values for these, setting to default values if itemStack doesn't contain the value
 		drone.setConfigValues(Config.NO_CLIP,	DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)	: 0);
@@ -198,8 +191,9 @@ public class DroneSpawnerItem extends Item {
 		DroneSpawnerItem.setTagValue(itemStack, Config.DAMAGE_COEFFICIENT,			drone.getConfigValues(Config.DAMAGE_COEFFICIENT));
 		DroneSpawnerItem.setTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD,	drone.getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD));
 
-		DroneSpawnerItem.setTagValue(itemStack, Config.MASS,			drone.getConfigValues(Config.MASS));
-		DroneSpawnerItem.setTagValue(itemStack, Config.LINEAR_DAMPING,	drone.getConfigValues(Config.LINEAR_DAMPING));
+		DroneSpawnerItem.setTagValue(itemStack, Config.MASS,				drone.getConfigValues(Config.MASS));
+		DroneSpawnerItem.setTagValue(itemStack, Config.SIZE,				drone.getConfigValues(Config.SIZE));
+		DroneSpawnerItem.setTagValue(itemStack, Config.DRAG_COEFFICIENT,	drone.getConfigValues(Config.DRAG_COEFFICIENT));
 	}
 
 	public static void prepDroneSpawnerItem(PlayerEntity user, ItemStack itemStack) {
@@ -217,8 +211,9 @@ public class DroneSpawnerItem extends Item {
 		DroneSpawnerItem.setTagValue(itemStack, Config.DAMAGE_COEFFICIENT,			DroneSpawnerItem.getTagValue(itemStack, Config.DAMAGE_COEFFICIENT)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.DAMAGE_COEFFICIENT)		: config.getOption(Config.DAMAGE_COEFFICIENT));
 		DroneSpawnerItem.setTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD,	DroneSpawnerItem.getTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD)	: config.getOption(Config.CRASH_MOMENTUM_THRESHOLD));
 
-		DroneSpawnerItem.setTagValue(itemStack, Config.MASS,			DroneSpawnerItem.getTagValue(itemStack, Config.MASS)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.MASS)				: config.getOption(Config.MASS));
-		DroneSpawnerItem.setTagValue(itemStack, Config.LINEAR_DAMPING,	DroneSpawnerItem.getTagValue(itemStack, Config.LINEAR_DAMPING)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.LINEAR_DAMPING)	: config.getOption(Config.LINEAR_DAMPING));
+		DroneSpawnerItem.setTagValue(itemStack, Config.MASS,				DroneSpawnerItem.getTagValue(itemStack, Config.MASS)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.MASS)				: config.getOption(Config.MASS));
+		DroneSpawnerItem.setTagValue(itemStack, Config.SIZE,				DroneSpawnerItem.getTagValue(itemStack, Config.SIZE)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.SIZE)				: config.getOption(Config.SIZE));
+		DroneSpawnerItem.setTagValue(itemStack, Config.DRAG_COEFFICIENT,	DroneSpawnerItem.getTagValue(itemStack, Config.DRAG_COEFFICIENT)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.DRAG_COEFFICIENT)	: config.getOption(Config.DRAG_COEFFICIENT));
 
 		// config doesn't contain values for these, setting to default values if itemStack doesn't contain the value
 		DroneSpawnerItem.setTagValue(itemStack, Config.NO_CLIP,		DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)	: 0);

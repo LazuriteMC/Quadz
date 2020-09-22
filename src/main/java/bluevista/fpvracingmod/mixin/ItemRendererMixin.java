@@ -1,6 +1,8 @@
 package bluevista.fpvracingmod.mixin;
 
+import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.client.renderers.DroneSpawnerItemRenderer;
+import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -50,7 +52,8 @@ public class ItemRendererMixin {
     )
     private void renderItem(ItemStack stack, Mode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, BakedModel model, CallbackInfo info) {
         if(stack.getItem() instanceof DroneSpawnerItem) {
-            DroneSpawnerItemRenderer.render(matrices, vertexConsumers, light, overlay);
+            int size = DroneSpawnerItem.getTagValue(stack, Config.SIZE) != null ? DroneSpawnerItem.getTagValue(stack, Config.SIZE).intValue() : ClientInitializer.getConfig().getIntOption(Config.SIZE);
+            DroneSpawnerItemRenderer.render(matrices, vertexConsumers, light, overlay, size);
         }
     }
 }

@@ -29,6 +29,10 @@ public class ServerTick {
                 for (Entity entity : drones) { // for every drone in range of given player
                     DroneEntity drone = (DroneEntity) entity;
 
+                    if(player.distanceTo(drone) > DroneEntity.TRACKING_RANGE) {
+                        continue;
+                    }
+
                     if (GogglesItem.isOnSameChannel(drone, player)) {
                         setView(player, drone);
                     }

@@ -39,8 +39,9 @@ import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class PhysicsWorld {
-    public float GRAVITY;
-    public int BLOCK_RADIUS;
+    public float gravity;
+    public float airDensity;
+    public int blockRadius;
 
     public final Clock clock;
     public final List<PhysicsEntity> physicsEntities;
@@ -59,15 +60,16 @@ public class PhysicsWorld {
         this.toKeepEntities = new ArrayList();
         this.clock = new Clock();
 
-        BLOCK_RADIUS = ClientInitializer.getConfig().getIntOption(Config.BLOCK_RADIUS);
-        GRAVITY = ClientInitializer.getConfig().getFloatOption(Config.GRAVITY);
+        blockRadius = ClientInitializer.getConfig().getIntOption(Config.BLOCK_RADIUS);
+        gravity = ClientInitializer.getConfig().getFloatOption(Config.GRAVITY);
+        airDensity = ClientInitializer.getConfig().getFloatOption(Config.AIR_DENSITY);
 
         BroadphaseInterface broadphase = new DbvtBroadphase();
         CollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
         CollisionDispatcher dispatcher = new CollisionDispatcher(collisionConfiguration);
         SequentialImpulseConstraintSolver solver = new SequentialImpulseConstraintSolver();
         dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-        dynamicsWorld.setGravity(new Vector3f(0, GRAVITY, 0));
+        dynamicsWorld.setGravity(new Vector3f(0, gravity, 0));
     }
 
     public void stepWorld(float tickDelta) {
@@ -80,6 +82,8 @@ public class PhysicsWorld {
         this.physicsEntities.forEach(physics -> {
             if (world != null) {
                 if (physics.isActive()) {
+                    physics.doAirResistance();
+
                     if (!(physics instanceof DroneEntity) || ((DroneEntity) physics).getConfigValues(Config.NO_CLIP).equals(0)) {
                         loadBlockCollisions(physics, world);
                     }
@@ -101,7 +105,7 @@ public class PhysicsWorld {
     }
 
     public void loadBlockCollisions(PhysicsEntity physics, ClientWorld world) {
-        Box area = new Box(physics.getRigidBodyBlockPos()).expand(BLOCK_RADIUS);
+        Box area = new Box(physics.getRigidBodyBlockPos()).expand(blockRadius);
         Map<BlockPos, BlockState> blockList = BlockHelper.getBlockList(world, area);
         BlockView blockView = world.getChunkManager().getChunk(physics.chunkX, physics.chunkZ);
 
@@ -149,7 +153,7 @@ public class PhysicsWorld {
     }
 
     public void loadEntityCollisions(PhysicsEntity physics, ClientWorld world) {
-        Box area = new Box(physics.getRigidBodyBlockPos()).expand(BLOCK_RADIUS);
+        Box area = new Box(physics.getRigidBodyBlockPos()).expand(blockRadius);
 
         world.getOtherEntities(physics, area).forEach(entity -> {
             if (!(entity instanceof PhysicsEntity) && !collisionEntities.containsKey(entity)) {
@@ -189,9 +193,34 @@ public class PhysicsWorld {
         toKeepEntities.clear();
     }
 
-    public void setGravity(float gravity) {
-        GRAVITY = gravity;
-        this.dynamicsWorld.setGravity(new Vector3f(0, GRAVITY, 0));
+    public void setConfigValues(String key, Number value) {
+        switch (key) {
+            case Config.GRAVITY:
+                this.gravity = value.floatValue();
+                this.dynamicsWorld.setGravity(new Vector3f(0, this.gravity, 0));
+                break;
+            case Config.AIR_DENSITY:
+                this.airDensity = value.floatValue();
+                break;
+            case Config.BLOCK_RADIUS:
+                this.blockRadius = value.intValue();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public Number getConfigValues(String key) {
+        switch (key) {
+            case Config.GRAVITY:
+                return this.gravity;
+            case Config.AIR_DENSITY:
+                return this.airDensity;
+            case Config.BLOCK_RADIUS:
+                return this.blockRadius;
+            default:
+                return null;
+        }
     }
 
     public void add(PhysicsEntity physics) {

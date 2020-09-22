@@ -34,10 +34,10 @@ public class ClientInitializer implements ClientModInitializer {
         GLFW.glfwInit(); // forcefully initializes GLFW
 
         ClientTick.register();
+        registerConfig();
         registerKeybinds();
         registerRenderers();
         registerNetwork();
-        registerConfig();
     }
 
     public static void registerConfig() {
@@ -54,6 +54,7 @@ public class ClientInitializer implements ClientModInitializer {
 
     private void registerRenderers() {
         EntityRendererRegistry.INSTANCE.register(ServerInitializer.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
+        DroneSpawnerItemRenderer.register();
     }
 
     private void registerNetwork() {
