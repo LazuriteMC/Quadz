@@ -64,6 +64,11 @@ public abstract class PhysicsEntity extends Entity {
         if (this.world.isClient()) {
             this.active = ClientTick.isPlayerIDClient(playerID);
 
+            prevYaw = yaw;
+            prevPitch = pitch;
+            yaw = QuaternionHelper.getYaw(getOrientation());
+            pitch = QuaternionHelper.getPitch(getOrientation());
+
             if (active) {
                 Vector3f pos = this.getRigidBody().getCenterOfMassPosition(new Vector3f());
                 this.updatePosition(pos.x, pos.y, pos.z);
@@ -136,7 +141,6 @@ public abstract class PhysicsEntity extends Entity {
     }
 
     public void setSize(int size) {
-        System.out.println("SET SIZE");
         int old = this.size;
         this.size = size;
 
