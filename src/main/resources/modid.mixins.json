@@ -15,6 +15,7 @@
     "ClientWorldMixin",
     "GameRendererMixin",
     "ItemRendererMixin",
+    "InGameHudMixin",
     "MouseMixin",
     "WorldRendererMixin"
   ],
