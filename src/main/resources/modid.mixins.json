@@ -8,6 +8,7 @@
     "Matrix4fMixin",
     "MoveRelativeMixin",
     "PlayerInventoryMixin",
+    "RotateAndMoveRelativeMixin",
     "ServerPlayerEntityMixin"
   ],
   "client": [

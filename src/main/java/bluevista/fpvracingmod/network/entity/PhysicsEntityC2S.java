@@ -36,12 +36,10 @@ public class PhysicsEntityC2S {
                 physics = (PhysicsEntity) player.world.getEntityById(id);
 
             if (physics != null) {
-                physics.yaw = yaw;
-                physics.pitch = pitch;
-
                 physics.setOrientation(orientation);
                 physics.setRigidBodyPos(position);
-                physics.resetPosition(position.x, position.y, position.z);
+                physics.updatePosition(position.x, position.y, position.z);
+                physics.refreshPositionAndAngles(position.x, position.y, position.z, yaw, pitch);
                 physics.getRigidBody().setLinearVelocity(linearVel);
                 physics.getRigidBody().setAngularVelocity(angularVel);
             }
