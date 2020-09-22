@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.mixin;
 
+import bluevista.fpvracingmod.server.ServerTick;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;
@@ -23,7 +24,7 @@ public class EntityPositionS2CPacketMixin {
         if (entity instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity) entity;
 
-            if (player.getCameraEntity() instanceof DroneEntity) {
+            if (ServerTick.isInGoggles(player)) {
                 Vec3d pos = ((DroneEntity) player.getCameraEntity()).getPlayerStartPos().get(player);
 
                 this.x = pos.x;

@@ -50,8 +50,7 @@ public class ServerTick {
 
                 } else if (player.distanceTo(drone) > DroneEntity.PSEUDO_TRACKING_RANGE) {
                     /* Else, teleport the player to the drone if it's nearing the end of it's tracking range. */
-                    drone.setPlayerHeight((int) drone.getY() + 50);
-                    player.requestTeleport(drone.getX(), drone.getPlayerHeight(), drone.getZ());
+                    player.requestTeleport(drone.getX(), drone.getY() + 50, drone.getZ());
 
                 }
             } else {
