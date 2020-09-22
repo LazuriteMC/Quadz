@@ -3,7 +3,7 @@ package bluevista.fpvracingmod.server.entities;
 import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.config.Config;
-import bluevista.fpvracingmod.helper.QuaternionHelper;
+import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.network.NetQuat4f;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityC2S;
 import bluevista.fpvracingmod.network.entity.PhysicsEntityS2C;

@@ -2,7 +2,7 @@ package bluevista.fpvracingmod.client;
 
 import bluevista.fpvracingmod.client.physics.PhysicsWorld;
 import bluevista.fpvracingmod.config.Config;
-import bluevista.fpvracingmod.helper.QuaternionHelper;
+import bluevista.fpvracingmod.client.math.QuaternionHelper;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
