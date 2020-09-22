@@ -41,6 +41,12 @@ public class ServerPlayerEntityMixin {
                 info.cancel();
             }
         }
+
+        if (entity instanceof DroneEntity) {
+            if (ServerTick.isInGoggles((ServerPlayerEntity) (Object) this)) {
+                info.cancel();
+            }
+        }
     }
 
     /**

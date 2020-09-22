@@ -50,7 +50,6 @@ public class DroneEntity extends PhysicsEntity {
 	private float thrustCurve;
 	private float damageCoefficient;
 	private int crashMomentumThreshold;
-	private int playerHeight;
 
 	/* God Mode */
 	private boolean godMode;
@@ -180,10 +179,6 @@ public class DroneEntity extends PhysicsEntity {
 		}
 	}
 
-	public void setPlayerHeight(int playerHeight) {
-		this.playerHeight = playerHeight;
-	}
-
 	public void addPlayerStartPos(PlayerEntity player) {
 		this.playerStartPos.put(player, player.getPos());
 	}
@@ -256,10 +251,6 @@ public class DroneEntity extends PhysicsEntity {
 
 	public float getThrottle() {
 		return this.axisValues.currT;
-	}
-
-	public int getPlayerHeight() {
-		return this.playerHeight;
 	}
 
 	public HashMap<PlayerEntity, Vec3d> getPlayerStartPos() {
