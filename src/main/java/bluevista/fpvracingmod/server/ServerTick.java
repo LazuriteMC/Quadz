@@ -16,7 +16,17 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
+/**
+ * This class handles most of the game logic involved with putting on the goggles
+ * and controlling whether or not players should render.
+ * @author Ethan Johnson
+ */
 public class ServerTick {
+    /**
+     * This method is responsible for handling whether or not a
+     * {@link ServerPlayerEntity} is viewing a {@link DroneEntity} through their {@link GogglesItem}.
+     * @param server the {@link MinecraftServer} object
+     */
     public static void tick(MinecraftServer server) {
         List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
 
@@ -70,6 +80,13 @@ public class ServerTick {
         }
     }
 
+    /**
+     * Changes the camera entity for the given {@link ServerPlayerEntity}
+     * to the given {@link DroneEntity}. It also prints out a message on
+     * how to go back to the player view.
+     * @param player the {@link ServerPlayerEntity} to change the camera from
+     * @param drone the {@link DroneEntity} to change the camera to
+     */
     public static void setView(ServerPlayerEntity player, DroneEntity drone) {
         if (!(player.getCameraEntity() instanceof DroneEntity)) {
             drone.addPlayerStartPos(player);
@@ -84,6 +101,11 @@ public class ServerTick {
         }
     }
 
+    /**
+     * Resets the view of the {@link ServerPlayerEntity} back to
+     * itself from the {@link DroneEntity} it was set to.
+     * @param player the {@link ServerPlayerEntity} to change the view of
+     */
     public static void resetView(ServerPlayerEntity player) {
         if (player.getCameraEntity() instanceof DroneEntity) {
             DroneEntity drone = (DroneEntity) player.getCameraEntity();
@@ -98,17 +120,35 @@ public class ServerTick {
         }
     }
 
-    public static boolean isInGoggles(ServerPlayerEntity player) {
-        return player.getCameraEntity() instanceof DroneEntity;
-    }
-
-    public static void movePlayer(double x, double y, double z, ServerPlayerEntity player) {
+    /**
+     * Moves the {@link ServerPlayerEntity} to the given coordinates.
+     * Most notably, it submits a chunk ticket. Should be used when teleporting
+     * a long distance.
+     * @param x
+     * @param y
+     * @param z
+     * @param player the given {@link ServerPlayerEntity} to teleport
+     */
+    protected static void movePlayer(double x, double y, double z, ServerPlayerEntity player) {
         ServerWorld world = player.getServerWorld();
         ChunkPos chunkPos = new ChunkPos(new BlockPos(x, y, z));
         world.getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getEntityId());
         player.networkHandler.requestTeleport(x, y, z, player.yaw, player.pitch);
     }
 
+    /**
+     * Determines whether or not the given {@link ServerPlayerEntity}
+     * has a camera entity of type {@link DroneEntity}.
+     * @param player the given {@link ServerPlayerEntity}
+     * @return whether or not the camera entity is of type {@link DroneEntity}
+     */
+    public static boolean isInGoggles(ServerPlayerEntity player) {
+        return player.getCameraEntity() instanceof DroneEntity;
+    }
+
+    /**
+     * Register the {@link ServerTick#tick(MinecraftServer)} method.
+     */
     public static void register() {
         ServerTickCallback.EVENT.register(ServerTick::tick);
     }
