@@ -108,12 +108,6 @@ public class DroneEntity extends Entity {
 		}
 	}
 
-	public static DroneEntity create(World world, UUID playerID, Vec3d pos, float yaw) {
-		DroneEntity drone = new DroneEntity(world, playerID, pos, yaw);
-		world.spawnEntity(drone);
-		return drone;
-	}
-
 	@Override
 	public void tick() {
 		super.tick();
