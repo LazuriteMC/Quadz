@@ -11,10 +11,23 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+/**
+ * This mixin class modifies the behavior of the entity renderer
+ * such that the client player will render even in first-person view.
+ * The reason for this is then the player can be seen while flying a drone.
+ * @author Ethan Johnson
+ */
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
     @Shadow @Final MinecraftClient client;
 
+    /**
+     * This mixin modifies the {@link Camera#getFocusedEntity()} method
+     * to return the {@link net.minecraft.client.network.ClientPlayerEntity}
+     * whenever {@link ClientTick#shouldRenderPlayer} is true.
+     * @param camera the camera object
+     * @return the focused entity
+     */
     @Redirect(
             method = "render",
             at = @At(
