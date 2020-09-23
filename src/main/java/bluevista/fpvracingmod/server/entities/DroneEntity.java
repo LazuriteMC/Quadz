@@ -49,10 +49,16 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 import java.util.*;
 
+/**
+ * This class does most of the work in this mod. Not only does it store all of the physics
+ * information necessary, but it also handles the update logic for both physics and minecraft entities.
+ * @author Ethan Johnson
+ * @author Patrick Hofmann
+ */
 public class DroneEntity extends Entity {
-	public static final UUID NULL_UUID = new UUID(0, 0);
 	public static final int TRACKING_RANGE = 80;
 	public static final int PSEUDO_TRACKING_RANGE = TRACKING_RANGE / 2;
+	public static final UUID NULL_UUID = new UUID(0, 0);
 
 	/* Misc */
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
@@ -85,10 +91,22 @@ public class DroneEntity extends Entity {
 	public UUID playerID;
 	private boolean active;
 
+	/**
+	 * The constructor called by the Fabric API in {@link ServerInitializer}. Calls the main constructor.
+	 * @param type the {@link EntityType}
+	 * @param world the {@link World} that the {@link DroneEntity} will be spawned in
+	 */
 	public DroneEntity(EntityType<?> type, World world) {
 		this(world, null, Vec3d.ZERO, 0);
 	}
 
+	/**
+	 * The main constructor for {@link DroneEntity}.
+	 * @param world the {@link World} the {@link DroneEntity} will be spawned in
+	 * @param playerID the {@link UUID} of the {@link PlayerEntity} who spawned it
+	 * @param pos the position where the {@link DroneEntity} will be spawned
+	 * @param yaw the yaw of the {@link DroneEntity}
+	 */
 	public DroneEntity(World world, UUID playerID, Vec3d pos, float yaw) {
 		super(ServerInitializer.DRONE_ENTITY, world);
 
@@ -108,6 +126,10 @@ public class DroneEntity extends Entity {
 		}
 	}
 
+	/**
+	 * Called every tick, this method handles several pieces of logic.
+	 * Packets are also sent from both the client and the server within this method.
+	 */
 	@Override
 	public void tick() {
 		super.tick();
@@ -157,6 +179,11 @@ public class DroneEntity extends Entity {
 		}
 	}
 
+	/**
+	 * Called every frame, this method calculates forces and modifies the orientation of the {@link DroneEntity}.
+	 * @param d delta time
+	 * @param tickDelta minecraft tick delta
+	 */
 	@Environment(EnvType.CLIENT)
 	public void stepPhysics(float d, float tickDelta) {
 		if (isActive()) {
@@ -183,6 +210,11 @@ public class DroneEntity extends Entity {
 		}
 	}
 
+	/**
+	 * The main config value setter for the {@link DroneEntity}.
+	 * @param key the {@link Config} key to set
+	 * @param value the {@link Number} value to set
+	 */
 	public void setConfigValues(String key, Number value) {
 		switch (key) {
 			case Config.BAND:
@@ -238,6 +270,11 @@ public class DroneEntity extends Entity {
 		}
 	}
 
+	/**
+	 * The main config value getter for the {@link DroneEntity}.
+	 * @param key the {@link Config} key to get
+	 * @return the {@link Number} value based off of the {@link Config} key
+	 */
 	public Number getConfigValues(String key) {
 		switch (key) {
 			case Config.BAND:
@@ -277,24 +314,28 @@ public class DroneEntity extends Entity {
 		}
 	}
 
+	/**
+	 * Adds a start position for the given {@link PlayerEntity}.
+	 * @param player the {@link PlayerEntity} to add
+	 */
 	public void addPlayerStartPos(PlayerEntity player) {
 		this.playerStartPos.put(player, player.getPos());
 	}
 
+	/**
+	 * Removes a start position for the given {@link PlayerEntity}.
+	 * @param player the {@link PlayerEntity} to remove
+	 */
 	public void removePlayerStartPos(PlayerEntity player) {
 		this.playerStartPos.remove(player);
 	}
 
+	/**
+	 * Gets the start position {@link HashMap} made up of players.
+	 * @return a {@link HashMap} containing players vs their start position
+	 */
 	public HashMap<PlayerEntity, Vec3d> getPlayerStartPos() {
 		return this.playerStartPos;
-	}
-
-	private boolean isKillable() {
-		return !(this.godMode || this.noClip);
-	}
-
-	public float getThrottle() {
-		return this.axisValues.currT;
 	}
 
 	/**
@@ -308,6 +349,11 @@ public class DroneEntity extends Entity {
 		return drones;
 	}
 
+	/**
+	 * Called whenever a world is saved. Contains {@link CompoundTag} information
+	 * for the {@link DroneEntity} which should persist across restarts of the game.
+	 * @param tag the tag to save to
+	 */
 	@Override
 	protected void writeCustomDataToTag(CompoundTag tag) {
 		tag.putInt(Config.BAND, getConfigValues(Config.BAND).intValue());
@@ -333,6 +379,11 @@ public class DroneEntity extends Entity {
 		tag.putInt(Config.GOD_MODE, getConfigValues(Config.GOD_MODE).intValue());
 	}
 
+	/**
+	 * Called whenever a world is loaded. Contains {@link CompoundTag} information
+	 * for the {@link DroneEntity} which should persist across restarts of the game.
+	 * @param tag the tag to load from
+	 */
 	@Override
 	protected void readCustomDataFromTag(CompoundTag tag) {
 		setConfigValues(Config.BAND, tag.getInt(Config.BAND));
@@ -354,6 +405,278 @@ public class DroneEntity extends Entity {
 
 		// don't retrieve noClip or prevGodMode because they weren't written (reason in writeCustomDataToTag)
 		setConfigValues(Config.GOD_MODE, tag.getInt(Config.GOD_MODE));
+	}
+
+	/**
+	 * Break the {@link DroneEntity} when it's shot or otherwise damaged in some way.
+	 * @param source the source of the damage
+	 * @param amount the amount of damage taken
+	 * @return
+	 */
+	@Override
+	public boolean damage(DamageSource source, float amount) {
+		if (source.getAttacker() instanceof PlayerEntity || (isKillable() && source instanceof ProjectileDamageSource)) {
+			this.kill();
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Called whenever the {@link DroneEntity} is killed. Drops {@link DroneSpawnerItem} containing tag info.
+	 */
+	@Override
+	public void kill() {
+		if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+			ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
+			DroneSpawnerItem.prepDestroyedDrone(this, itemStack);
+
+			this.dropStack(itemStack);
+		}
+
+		this.remove();
+	}
+
+	/**
+	 * If the {@link PlayerEntity} is holding a {@link TransmitterItem} when they right
+	 * click on the {@link DroneEntity}, bind it using the drone's UUID.
+	 * @param player the {@link PlayerEntity} who is interacting
+	 * @param hand the hand of the {@link PlayerEntity}
+	 * @return
+	 */
+	@Override
+	public ActionResult interact(PlayerEntity player, Hand hand) {
+		if (!player.world.isClient()) {
+			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
+				TransmitterItem.setTagValue(player.getMainHandStack(), Config.BIND, this.getEntityId());
+				player.sendMessage(new TranslatableText("Transmitter bound"), false);
+				this.playerID = player.getUuid();
+			}
+		} else if (!InputTick.controllerExists()) {
+			player.sendMessage(new TranslatableText("Controller not found"), false);
+		}
+
+		return ActionResult.SUCCESS;
+	}
+
+	/**
+	 * Whenever the {@link DroneEntity} is killed or
+	 * otherwise not supposed to be there, this is called.
+	 */
+	@Override
+	public void remove() {
+		super.remove();
+
+		if (this.world.isClient()) {
+			ClientInitializer.physicsWorld.remove(this);
+		}
+	}
+
+	@Override
+	public Packet<?> createSpawnPacket() {
+		return new EntitySpawnS2CPacket(this);
+	}
+
+	@Override
+	protected void initDataTracker() {
+
+	}
+
+	@Override
+	public boolean isGlowing() {
+		return false;
+	}
+
+	@Override
+	public boolean collides() {
+		return true;
+	}
+
+	/**
+	 * Gets whether the {@link DroneEntity} is active. It is active when
+	 * the {@link RigidBody} is in the {@link bluevista.fpvracingmod.client.physics.PhysicsWorld}.
+	 * @return whether or not the {@link DroneEntity} is active
+	 */
+	public boolean isActive() {
+		return this.active;
+	}
+
+	/**
+	 * Gets whether the {@link DroneEntity} can be killed
+	 * by conventional means (e.g. punched, rained on, set on fire, etc.)
+	 * @return whether or not the {@link DroneEntity} is killable
+	 */
+	private boolean isKillable() {
+		return !(this.godMode || this.noClip);
+	}
+
+	/**
+	 * Gets the throttle position.
+	 * @return the throttle position
+	 */
+	public float getThrottle() {
+		return this.axisValues.currT;
+	}
+
+	/**
+	 * Sets the {@link RigidBody}.
+	 * @param body the new {@link RigidBody}
+	 */
+	public void setRigidBody(RigidBody body) {
+		this.body = body;
+	}
+
+	/**
+	 * Gets the {@link RigidBody}.
+	 * @return the drone's current {@link RigidBody}
+	 */
+	public RigidBody getRigidBody() {
+		return this.body;
+	}
+
+	/**
+	 * Sets the orientation of the {@link RigidBody}.
+	 * @param q the new orientation
+	 */
+	public void setOrientation(Quat4f q) {
+		Transform trans = this.body.getWorldTransform(new Transform());
+		trans.setRotation(q);
+		this.body.setWorldTransform(trans);
+	}
+
+	/**
+	 * Gets the orientation of the {@link RigidBody}.
+	 * @return a new {@link Quat4f} containing orientation
+	 */
+	public Quat4f getOrientation() {
+		return this.body.getWorldTransform(new Transform()).getRotation(new Quat4f());
+	}
+
+	/**
+	 * Sets the position of the {@link RigidBody}.
+	 * @param vec the new position
+	 */
+	public void setRigidBodyPos(Vector3f vec) {
+		Transform trans = this.body.getWorldTransform(new Transform());
+		trans.origin.set(vec);
+		this.body.setWorldTransform(trans);
+	}
+
+	/**
+	 * Sets the mass of the drone. Also refreshes the {@link RigidBody}.
+	 * @param mass the new mass
+	 */
+	public void setMass(float mass) {
+		float old = this.mass;
+		this.mass = mass;
+
+		if (old != mass) {
+			refreshRigidBody();
+		}
+	}
+
+	/**
+	 * Sets the size of the drone. Also refreshes the {@link RigidBody}.
+	 * @param size the new size
+	 */
+	public void setSize(int size) {
+		int old = this.size;
+		this.size = size;
+
+		if (old != size) {
+			refreshRigidBody();
+		}
+	}
+
+	/**
+	 * Get the direction the bottom of the
+	 * drone is facing.
+	 * @return {@link Vec3d} containing thrust direction
+	 */
+	protected Vec3d getThrustVector() {
+		Quat4f q = getOrientation();
+		QuaternionHelper.rotateX(q, 90);
+
+		Matrix4f mat = new Matrix4f();
+		Matrix4fInject.from(mat).fromQuaternion(QuaternionHelper.quat4fToQuaternion(q));
+
+		return Matrix4fInject.from(mat).matrixToVector().multiply(-1, -1, -1);
+	}
+
+	/**
+	 * Calculates the amount of force generated by air resistance.
+	 * @return a {@link Vector3f} containing the direction and amount of force (in newtons)
+	 */
+	protected Vector3f getAirResistanceForce() {
+		Vector3f vec3f = getRigidBody().getLinearVelocity(new Vector3f());
+		Vec3d velocity = new Vec3d(vec3f.x, vec3f.y, vec3f.z);
+		float k = (ClientInitializer.physicsWorld.airDensity * dragCoefficient * (float) Math.pow(size / 16f, 2)) / 2.0f;
+
+		Vec3d airVec3d = velocity.multiply(k).multiply(velocity.lengthSquared()).negate();
+		Vector3f airResistance = new Vector3f((float) airVec3d.x, (float) airVec3d.y, (float) airVec3d.z);
+		return airResistance;
+	}
+
+	/**
+	 * Calculates the amount of force thrust should produce based on throttle and yaw input.
+	 * @param deltaY needed to calculate yaw thrust
+	 * @return a {@link Vector3f} containing the direction and amount of force (in newtons)
+	 */
+	protected Vector3f getThrustForce(float deltaY) {
+		Vector3f thrust = VectorHelper.vec3dToVector3f(getThrustVector().multiply(calculateThrustCurve()).multiply(this.thrust));
+		Vector3f yaw = VectorHelper.vec3dToVector3f(getThrustVector().multiply(Math.abs(deltaY)));
+
+		Vector3f out = new Vector3f();
+		out.add(thrust, yaw);
+		return out;
+	}
+
+	/**
+	 * Calculates the thrust curve using a power between zero and one (one being perfectly linear).
+	 * @return a point on the thrust curve
+	 */
+	protected float calculateThrustCurve() {
+		return (float) (Math.pow(getThrottle(), thrustCurve));
+	}
+
+	/**
+	 * Apply a list of forces. Mostly a convenience method.
+	 * @param forces an array of forces to apply to the {@link RigidBody}
+	 */
+	public void applyForce(Vector3f... forces) {
+		for (Vector3f force : forces) {
+			getRigidBody().applyCentralForce(force);
+		}
+	}
+
+	/**
+	 * Rotate the drone's {@link Quat4f} by the given degrees on the X axis.
+	 * @param deg degrees to rotate by
+	 */
+	public void rotateX(float deg) {
+		Quat4f quat = getOrientation();
+		QuaternionHelper.rotateX(quat, deg);
+		setOrientation(quat);
+	}
+
+	/**
+	 * Rotate the drone's {@link Quat4f} by the given degrees on the Y axis.
+	 * @param deg degrees to rotate by
+	 */
+	public void rotateY(float deg) {
+		Quat4f quat = getOrientation();
+		QuaternionHelper.rotateY(quat, deg);
+		setOrientation(quat);
+	}
+
+	/**
+	 * Rotate the drone's {@link Quat4f} by the given degrees on the Z axis.
+	 * @param deg degrees to rotate by
+	 */
+	public void rotateZ(float deg) {
+		Quat4f quat = getOrientation();
+		QuaternionHelper.rotateZ(quat, deg);
+		setOrientation(quat);
 	}
 
 	protected void calculateCrashConditions() {
@@ -417,195 +740,6 @@ public class DroneEntity extends Entity {
 		}
 	}
 
-	@Override
-	public boolean isGlowing() {
-		return false;
-	}
-
-	@Override
-	public boolean collides() {
-		return true;
-	}
-
-	/**
-	 * Break the {@link DroneEntity} when it's shot or otherwise damaged in some way.
-	 * @param source
-	 * @param amount
-	 * @return
-	 */
-	@Override
-	public boolean damage(DamageSource source, float amount) {
-		if (source.getAttacker() instanceof PlayerEntity || (isKillable() && source instanceof ProjectileDamageSource)) {
-			this.kill();
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Called whenever the {@link DroneEntity} is broken. Drops {@link DroneSpawnerItem} containing tag info.
-	 */
-	@Override
-	public void kill() {
-		if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-			ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
-			DroneSpawnerItem.prepDestroyedDrone(this, itemStack);
-
-			this.dropStack(itemStack);
-		}
-
-		this.remove();
-	}
-
-	@Override
-	public void remove() {
-		super.remove();
-
-		if (this.world.isClient()) {
-			ClientInitializer.physicsWorld.remove(this);
-		}
-	}
-
-	/**
-	 * If the {@link PlayerEntity} is holding a {@link TransmitterItem} when they right
-	 * click on the {@link DroneEntity}, bind it using the drone's UUID.
-	 * @param player
-	 * @param hand
-	 * @return
-	 */
-	@Override
-	public ActionResult interact(PlayerEntity player, Hand hand) {
-		if (!player.world.isClient()) {
-			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
-				TransmitterItem.setTagValue(player.getMainHandStack(), Config.BIND, this.getEntityId());
-				player.sendMessage(new TranslatableText("Transmitter bound"), false);
-				this.playerID = player.getUuid();
-			}
-		} else if (!InputTick.controllerExists()) {
-			player.sendMessage(new TranslatableText("Controller not found"), false);
-		}
-
-		return ActionResult.SUCCESS;
-	}
-
-	@Override
-	public Packet<?> createSpawnPacket() {
-		return new EntitySpawnS2CPacket(this);
-	}
-
-	@Override
-	protected void initDataTracker() {
-
-	}
-
-	public boolean isActive() {
-		return this.active;
-	}
-
-	public void setRigidBody(RigidBody body) {
-		this.body = body;
-	}
-
-	public RigidBody getRigidBody() {
-		return this.body;
-	}
-
-	public void setOrientation(Quat4f q) {
-		Transform trans = this.body.getWorldTransform(new Transform());
-		trans.setRotation(q);
-		this.body.setWorldTransform(trans);
-	}
-
-	public Quat4f getOrientation() {
-		return this.body.getWorldTransform(new Transform()).getRotation(new Quat4f());
-	}
-
-	public void setRigidBodyPos(Vector3f vec) {
-		Transform trans = this.body.getWorldTransform(new Transform());
-		trans.origin.set(vec);
-		this.body.setWorldTransform(trans);
-	}
-
-	public void setMass(float mass) {
-		float old = this.mass;
-		this.mass = mass;
-
-		if (old != mass) {
-			refreshRigidBody();
-		}
-	}
-
-	public void setSize(int size) {
-		int old = this.size;
-		this.size = size;
-
-		if (old != size) {
-			refreshRigidBody();
-		}
-	}
-
-	/**
-	 * Get the direction the bottom of the
-	 * drone is facing.
-	 * @return {@link Vec3d} containing thrust direction
-	 */
-	protected Vec3d getThrustVector() {
-		Quat4f q = getOrientation();
-		QuaternionHelper.rotateX(q, 90);
-
-		Matrix4f mat = new Matrix4f();
-		Matrix4fInject.from(mat).fromQuaternion(QuaternionHelper.quat4fToQuaternion(q));
-
-		return Matrix4fInject.from(mat).matrixToVector().multiply(-1, -1, -1);
-	}
-
-	protected Vector3f getAirResistanceForce() {
-		Vector3f vec3f = getRigidBody().getLinearVelocity(new Vector3f());
-		Vec3d velocity = new Vec3d(vec3f.x, vec3f.y, vec3f.z);
-		float k = (ClientInitializer.physicsWorld.airDensity * dragCoefficient * (float) Math.pow(size / 16f, 2)) / 2.0f;
-
-		Vec3d airVec3d = velocity.multiply(k).multiply(velocity.lengthSquared()).negate();
-		Vector3f airResistance = new Vector3f((float) airVec3d.x, (float) airVec3d.y, (float) airVec3d.z);
-		return airResistance;
-	}
-
-	protected float calculateThrustCurve() {
-		return (float) (Math.pow(getThrottle(), thrustCurve));
-	}
-
-	protected Vector3f getThrustForce(float deltaY) {
-		Vector3f thrust = VectorHelper.vec3dToVector3f(getThrustVector().multiply(calculateThrustCurve()).multiply(this.thrust));
-		Vector3f yaw = VectorHelper.vec3dToVector3f(getThrustVector().multiply(Math.abs(deltaY)));
-
-		Vector3f out = new Vector3f();
-		out.add(thrust, yaw);
-		return out;
-	}
-
-	public void applyForce(Vector3f... forces) {
-		for (Vector3f force : forces) {
-			getRigidBody().applyCentralForce(force);
-		}
-	}
-
-	public void rotateX(float deg) {
-		Quat4f quat = getOrientation();
-		QuaternionHelper.rotateX(quat, deg);
-		setOrientation(quat);
-	}
-
-	public void rotateY(float deg) {
-		Quat4f quat = getOrientation();
-		QuaternionHelper.rotateY(quat, deg);
-		setOrientation(quat);
-	}
-
-	public void rotateZ(float deg) {
-		Quat4f quat = getOrientation();
-		QuaternionHelper.rotateZ(quat, deg);
-		setOrientation(quat);
-	}
-
 	protected void decreaseAngularVelocity() {
 		List<RigidBody> bodies = ClientInitializer.physicsWorld.getRigidBodies();
 		boolean mightCollide = false;
@@ -636,6 +770,10 @@ public class DroneEntity extends Entity {
 		}
 	}
 
+	/**
+	 * Creates a new {@link RigidBody} using the old body's information
+	 * and replaces it within the {@link bluevista.fpvracingmod.client.physics.PhysicsWorld}.
+	 */
 	protected void refreshRigidBody() {
 		RigidBody old = this.getRigidBody();
 		this.createRigidBody();
@@ -651,6 +789,9 @@ public class DroneEntity extends Entity {
 		}
 	}
 
+	/**
+	 * Creates a new {@link RigidBody} based off of the drone's attributes.
+	 */
 	protected void createRigidBody() {
 		float s = size / 16.0f;
 		Box cBox = new Box(-s / 2.0f, -s / 8.0f, -s / 2.0f, s / 2.0f, s / 8.0f, s / 2.0f);
