@@ -19,6 +19,13 @@ public class EntityPositionS2CPacketMixin {
     @Shadow double z;
     @Shadow boolean onGround;
 
+    /**
+     * This mixin modifies the constructor of {@link EntityPositionS2CPacket} in
+     * order to keep the player position in the same place when the given {@link ServerPlayerEntity}
+     * is flying a {@link DroneEntity}.
+     * @param entity the given {@link Entity}. In this case, the {@link ServerPlayerEntity}
+     * @param info required by every mixin injection
+     */
     @Inject(method = "<init>(Lnet/minecraft/entity/Entity;)V", at = @At("RETURN"))
     public void init(Entity entity, CallbackInfo info) {
         if (entity instanceof ServerPlayerEntity) {

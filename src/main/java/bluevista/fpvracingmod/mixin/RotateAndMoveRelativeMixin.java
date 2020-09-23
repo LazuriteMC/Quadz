@@ -13,6 +13,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityS2CPacket.RotateAndMoveRelative.class)
 public class RotateAndMoveRelativeMixin extends EntityS2CPacket {
+
+    /**
+     * Similar to {@link MoveRelativeMixin}, this mixin modifies the
+     * constructor of {@link RotateAndMoveRelative} so that deltaX, deltaY,
+     * and deltaZ are always zero when it is given a {@link ServerPlayerEntity}
+     * who is flying a drone. Pitch and yaw are always passed through normally.
+     * @param entityId the entity id
+     * @param deltaX the change in x position
+     * @param deltaY the change in y position
+     * @param deltaZ the change in z position
+     * @param yaw the yaw rotation
+     * @param pitch the pitch rotation
+     * @param onGround whether or not the entity is on the ground
+     * @param info required by every mixin injection
+     */
     @Inject(method = "<init>(ISSSBBZ)V", at = @At("RETURN"))
     public void init(int entityId, short deltaX, short deltaY, short deltaZ, byte yaw, byte pitch, boolean onGround, CallbackInfo info) {
         MinecraftServer server = ServerInitializer.server;
@@ -22,14 +37,11 @@ public class RotateAndMoveRelativeMixin extends EntityS2CPacket {
             ServerPlayerEntity player = (ServerPlayerEntity) entity;
 
             if (player.getCameraEntity() instanceof DroneEntity) {
-                this.deltaX = 0; //(short) (int) EntityS2CPacket.encodePacketCoordinate(0);
-                this.deltaY = 0; //(short) (int) EntityS2CPacket.encodePacketCoordinate(0);
-                this.deltaZ = 0; //(short) (int) EntityS2CPacket.encodePacketCoordinate(0);
-                this.yaw = yaw;
-                this.pitch = pitch;
+                this.deltaX = 0;
+                this.deltaY = 0;
+                this.deltaZ = 0;
                 this.onGround = true;
                 this.positionChanged = false;
-                this.rotate = false;
             }
         }
     }
