@@ -10,11 +10,24 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * Contains mixin related to the {@link ClientWorld}.
+ * @author Ethan Johnson
+ */
 @Mixin(ClientWorld.class)
 public abstract class ClientWorldMixin {
     @Shadow @Final MinecraftClient client;
     @Shadow abstract void doRandomBlockDisplayTicks(int x, int y, int z);
 
+    /**
+     * This mixin changes the code so it uses the position of the camera rather
+     * than the position of the player if the player is flying a drone. The main effect
+     * it has is it allows particles, name tags, etc. to render when not near the player.
+     * @param xCenter x position
+     * @param yCenter y position
+     * @param zCenter z position
+     * @param info required by every mixin injection
+     */
     @Inject(at = @At("HEAD"), method = "doRandomBlockDisplayTicks", cancellable = true)
     public void blockDisplayTicks(int xCenter, int yCenter, int zCenter, CallbackInfo info) {
         Camera cam = client.gameRenderer.getCamera();
