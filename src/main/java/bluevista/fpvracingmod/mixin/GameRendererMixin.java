@@ -16,6 +16,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * This mixin class is responsible for changing several behaviors in the {@link GameRenderer}.
+ * The render of the player's hand is modified, the rendering of the camera's pitch and yaw are modified,
+ * and updating the screens rotation is handled here as well as updating the player's controller input.
+ * @author Ethan Johnson
+ */
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 	@Shadow MinecraftClient client;

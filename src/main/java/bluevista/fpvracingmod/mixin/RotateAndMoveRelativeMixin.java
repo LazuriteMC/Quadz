@@ -11,6 +11,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * This mixin class modifies the values in the packet before they are sent.
+ * @author Ethan Johnson
+ */
 @Mixin(EntityS2CPacket.RotateAndMoveRelative.class)
 public class RotateAndMoveRelativeMixin extends EntityS2CPacket {
 
