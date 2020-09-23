@@ -1,20 +1,29 @@
 package bluevista.fpvracingmod.server.entities;
 
 import bluevista.fpvracingmod.client.ClientInitializer;
+import bluevista.fpvracingmod.client.ClientTick;
 import bluevista.fpvracingmod.client.input.AxisValues;
 import bluevista.fpvracingmod.client.input.InputTick;
+import bluevista.fpvracingmod.client.math.VectorHelper;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.client.math.BetaflightHelper;
 import bluevista.fpvracingmod.client.math.Matrix4fInject;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
+import bluevista.fpvracingmod.network.NetQuat4f;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
-import bluevista.fpvracingmod.network.entity.KillEntityC2S;
+import bluevista.fpvracingmod.network.entity.DroneEntityC2S;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.TransmitterItem;
 import com.bulletphysics.collision.broadphase.Dispatcher;
+import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.narrowphase.PersistentManifold;
+import com.bulletphysics.collision.shapes.BoxShape;
+import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.dynamics.RigidBody;
+import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
+import com.bulletphysics.linearmath.DefaultMotionState;
+import com.bulletphysics.linearmath.Transform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Blocks;
@@ -40,18 +49,14 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 import java.util.*;
 
-public class DroneEntity extends PhysicsEntity {
+public class DroneEntity extends Entity {
+	public static final UUID NULL_UUID = new UUID(0, 0);
 	public static final int TRACKING_RANGE = 80;
 	public static final int PSEUDO_TRACKING_RANGE = TRACKING_RANGE / 2;
 
 	/* Misc */
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
-	private float thrust;
-	private float thrustCurve;
 	private float damageCoefficient;
-	private int crashMomentumThreshold;
-
-	/* God Mode */
 	private boolean godMode;
 
 	/* Video Settings */
@@ -66,18 +71,41 @@ public class DroneEntity extends PhysicsEntity {
 	private float superRate;
 	private float expo;
 
-	/* CONSTRUCTORS */
+	/* Physics Settings */
+	private float dragCoefficient;
+	private float mass;
+	private int size;
+	private float thrust;
+	private float thrustCurve;
+	private int crashMomentumThreshold;
+
+	/* Misc Physics Info */
+	private RigidBody body;
+	public NetQuat4f netQuat;
+	public UUID playerID;
+	private boolean active;
 
 	public DroneEntity(EntityType<?> type, World world) {
 		this(world, null, Vec3d.ZERO, 0);
 	}
 
 	public DroneEntity(World world, UUID playerID, Vec3d pos, float yaw) {
-		super(ServerInitializer.DRONE_ENTITY, world, playerID, pos, yaw);
+		super(ServerInitializer.DRONE_ENTITY, world);
 
+		this.netQuat = new NetQuat4f(new Quat4f(0, 1, 0, 0));
 		this.axisValues = new AxisValues();
 		this.playerStartPos = new HashMap();
+
 		this.godMode = false;
+		this.playerID = playerID;
+
+		this.updatePositionAndAngles(pos.x, pos.y, pos.z, yaw, 0);
+		this.createRigidBody();
+		this.rotateY(180f - yaw);
+
+		if (world.isClient()) {
+			ClientInitializer.physicsWorld.add(this);
+		}
 	}
 
 	public static DroneEntity create(World world, UUID playerID, Vec3d pos, float yaw) {
@@ -86,16 +114,24 @@ public class DroneEntity extends PhysicsEntity {
 		return drone;
 	}
 
-	/* TICKS */
-
 	@Override
 	public void tick() {
 		super.tick();
 
+		Vector3f pos = this.getRigidBody().getCenterOfMassPosition(new Vector3f());
+		this.updatePosition(pos.x, pos.y, pos.z);
+
 		if (this.world.isClient()) {
+			this.active = ClientTick.isPlayerIDClient(playerID);
+
+			if (active) {
+				DroneEntityC2S.send(this);
+			} else {
+				this.netQuat.setPrev(this.getOrientation());
+			}
+
 			prevYaw = yaw;
 			prevPitch = pitch;
-
 			Quat4f cameraPitch = getOrientation();
 			QuaternionHelper.rotateX(cameraPitch, -cameraAngle);
 			yaw = QuaternionHelper.getYaw(getOrientation());
@@ -103,9 +139,13 @@ public class DroneEntity extends PhysicsEntity {
 		} else {
 			DroneEntityS2C.send(this);
 
-			this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {
-				Vector3f vec = this.getRigidBody().getLinearVelocity(new Vector3f());
-				vec.scale(this.getMass());
+			if (this.world.getPlayerByUuid(playerID) == null) {
+				this.kill();
+			}
+
+			this.world.getOtherEntities(this, getBoundingBox(), (entity -> true)).forEach((entity -> {
+				Vector3f vec = getRigidBody().getLinearVelocity(new Vector3f());
+				vec.scale(mass);
 				entity.damage(DamageSource.GENERIC, vec.length() * damageCoefficient);
 			}));
 
@@ -123,23 +163,32 @@ public class DroneEntity extends PhysicsEntity {
 		}
 	}
 
-	@Override
 	@Environment(EnvType.CLIENT)
 	public void stepPhysics(float d, float tickDelta) {
-		super.stepPhysics(d, tickDelta);
-
 		if (isActive()) {
-			doForces(d);
+			if (isKillable()) calculateCrashConditions();
 
-			if (isKillable()) {
-				calculateCrashConditions();
+			if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
+				this.axisValues.set(InputTick.axisValues);
 			}
+
+			float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, rate, expo, superRate, d);
+			float deltaY = (float) BetaflightHelper.calculateRates(axisValues.currY, rate, expo, superRate, d);
+			float deltaZ = (float) BetaflightHelper.calculateRates(axisValues.currZ, rate, expo, superRate, d);
+
+			rotateX(deltaX);
+			rotateY(deltaY);
+			rotateZ(deltaZ);
+
+			decreaseAngularVelocity();
+			Vector3f thrust = getThrustForce(deltaY);
+			Vector3f air = getAirResistanceForce();
+			applyForce(thrust, air);
+		} else {
+			this.setOrientation(this.netQuat.slerp(tickDelta));
 		}
 	}
 
-	/* SETTERS */
-
-	@Override
 	public void setConfigValues(String key, Number value) {
 		switch (key) {
 			case Config.BAND:
@@ -169,56 +218,32 @@ public class DroneEntity extends PhysicsEntity {
 			case Config.EXPO:
 				this.expo = value.floatValue();
 				break;
+			case Config.DAMAGE_COEFFICIENT:
+				this.damageCoefficient = value.floatValue();
+				break;
 			case Config.THRUST:
 				this.thrust = value.floatValue();
 				break;
 			case Config.THRUST_CURVE:
 				this.thrustCurve = value.floatValue();
 				break;
-			case Config.DAMAGE_COEFFICIENT:
-				this.damageCoefficient = value.floatValue();
+			case Config.MASS:
+				this.setMass(value.floatValue());
+				break;
+			case Config.SIZE:
+				this.setSize(value.intValue());
 				break;
 			case Config.CRASH_MOMENTUM_THRESHOLD:
 				this.crashMomentumThreshold = value.intValue();
 				break;
+			case Config.DRAG_COEFFICIENT:
+				this.dragCoefficient = value.floatValue();
+				break;
 			default:
-				super.setConfigValues(key, value);
 				break;
 		}
 	}
 
-	public void addPlayerStartPos(PlayerEntity player) {
-		this.playerStartPos.put(player, player.getPos());
-	}
-
-	public void removePlayerStartPos(PlayerEntity player) {
-		this.playerStartPos.remove(player);
-	}
-
-	@Override
-	protected void writeCustomDataToTag(CompoundTag tag) {
-		super.writeCustomDataToTag(tag);
-		tag.putInt(Config.BAND, getConfigValues(Config.BAND).intValue());
-		tag.putInt(Config.CHANNEL, getConfigValues(Config.CHANNEL).intValue());
-		tag.putInt(Config.CAMERA_ANGLE, getConfigValues(Config.CAMERA_ANGLE).intValue());
-		tag.putFloat(Config.FIELD_OF_VIEW, getConfigValues(Config.FIELD_OF_VIEW).floatValue());
-		tag.putFloat(Config.RATE, getConfigValues(Config.RATE).floatValue());
-		tag.putFloat(Config.SUPER_RATE, getConfigValues(Config.SUPER_RATE).floatValue());
-		tag.putFloat(Config.EXPO, getConfigValues(Config.EXPO).floatValue());
-		tag.putFloat(Config.THRUST, getConfigValues(Config.THRUST).floatValue());
-		tag.putFloat(Config.THRUST_CURVE, getConfigValues(Config.THRUST_CURVE).floatValue());
-		tag.putFloat(Config.DAMAGE_COEFFICIENT, getConfigValues(Config.DAMAGE_COEFFICIENT).floatValue());
-		tag.putInt(Config.CRASH_MOMENTUM_THRESHOLD, getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
-
-		// don't write noClip or prevGodMode because...
-		// noClip shouldn't be preserved after a restart (your drone may fall through the world) and ...
-		// prevGodMode is only used when noClip is set, keeping this value between restarts isn't required
-		tag.putInt(Config.GOD_MODE, getConfigValues(Config.GOD_MODE).intValue());
-	}
-
-	/* GETTERS */
-
-	@Override
 	public Number getConfigValues(String key) {
 		switch (key) {
 			case Config.BAND:
@@ -239,18 +264,35 @@ public class DroneEntity extends PhysicsEntity {
 				return this.superRate;
 			case Config.EXPO:
 				return this.expo;
+			case Config.DAMAGE_COEFFICIENT:
+				return this.damageCoefficient;
 			case Config.THRUST:
 				return this.thrust;
 			case Config.THRUST_CURVE:
 				return this.thrustCurve;
-			case Config.DAMAGE_COEFFICIENT:
-				return this.damageCoefficient;
+			case Config.MASS:
+				return this.mass;
+			case Config.SIZE:
+				return this.size;
 			case Config.CRASH_MOMENTUM_THRESHOLD:
 				return this.crashMomentumThreshold;
+			case Config.DRAG_COEFFICIENT:
+				return this.dragCoefficient;
 			default:
-				return super.getConfigValues(key);
-//				return null; // 0?
+				return null;
 		}
+	}
+
+	public void addPlayerStartPos(PlayerEntity player) {
+		this.playerStartPos.put(player, player.getPos());
+	}
+
+	public void removePlayerStartPos(PlayerEntity player) {
+		this.playerStartPos.remove(player);
+	}
+
+	public HashMap<PlayerEntity, Vec3d> getPlayerStartPos() {
+		return this.playerStartPos;
 	}
 
 	private boolean isKillable() {
@@ -259,35 +301,6 @@ public class DroneEntity extends PhysicsEntity {
 
 	public float getThrottle() {
 		return this.axisValues.currT;
-	}
-
-	public HashMap<PlayerEntity, Vec3d> getPlayerStartPos() {
-		return this.playerStartPos;
-	}
-
-	@Override
-	public boolean isGlowing() {
-		return false;
-	}
-
-	@Override
-	public boolean collides() {
-		return true;
-	}
-
-	/**
-	 * Get the direction the bottom of the
-	 * drone is facing.
-	 * @return {@link Vec3d} containing thrust direction
-	 */
-	public Vec3d getThrustVector() {
-		Quat4f q = getOrientation();
-		QuaternionHelper.rotateX(q, 90);
-
-		Matrix4f mat = new Matrix4f();
-		Matrix4fInject.from(mat).fromQuaternion(QuaternionHelper.quat4fToQuaternion(q));
-
-		return Matrix4fInject.from(mat).matrixToVector().multiply(-1, -1, -1);
 	}
 
 	/**
@@ -302,8 +315,32 @@ public class DroneEntity extends PhysicsEntity {
 	}
 
 	@Override
+	protected void writeCustomDataToTag(CompoundTag tag) {
+		tag.putInt(Config.BAND, getConfigValues(Config.BAND).intValue());
+		tag.putInt(Config.CHANNEL, getConfigValues(Config.CHANNEL).intValue());
+		tag.putInt(Config.CAMERA_ANGLE, getConfigValues(Config.CAMERA_ANGLE).intValue());
+		tag.putFloat(Config.FIELD_OF_VIEW, getConfigValues(Config.FIELD_OF_VIEW).floatValue());
+		tag.putFloat(Config.RATE, getConfigValues(Config.RATE).floatValue());
+		tag.putFloat(Config.SUPER_RATE, getConfigValues(Config.SUPER_RATE).floatValue());
+		tag.putFloat(Config.EXPO, getConfigValues(Config.EXPO).floatValue());
+		tag.putFloat(Config.THRUST, getConfigValues(Config.THRUST).floatValue());
+		tag.putFloat(Config.THRUST_CURVE, getConfigValues(Config.THRUST_CURVE).floatValue());
+		tag.putFloat(Config.DAMAGE_COEFFICIENT, getConfigValues(Config.DAMAGE_COEFFICIENT).floatValue());
+		tag.putInt(Config.CRASH_MOMENTUM_THRESHOLD, getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
+
+		tag.putUuid(Config.PLAYER_ID, this.playerID);
+		tag.putFloat(Config.MASS, getConfigValues(Config.MASS).floatValue());
+		tag.putInt(Config.SIZE, getConfigValues(Config.SIZE).intValue());
+		tag.putFloat(Config.DRAG_COEFFICIENT, getConfigValues(Config.DRAG_COEFFICIENT).floatValue());
+
+		// don't write noClip or prevGodMode because...
+		// noClip shouldn't be preserved after a restart (your drone may fall through the world) and ...
+		// prevGodMode is only used when noClip is set, keeping this value between restarts isn't required
+		tag.putInt(Config.GOD_MODE, getConfigValues(Config.GOD_MODE).intValue());
+	}
+
+	@Override
 	protected void readCustomDataFromTag(CompoundTag tag) {
-		super.readCustomDataFromTag(tag);
 		setConfigValues(Config.BAND, tag.getInt(Config.BAND));
 		setConfigValues(Config.CHANNEL, tag.getInt(Config.CHANNEL));
 		setConfigValues(Config.CAMERA_ANGLE, tag.getInt(Config.CAMERA_ANGLE));
@@ -316,37 +353,13 @@ public class DroneEntity extends PhysicsEntity {
 		setConfigValues(Config.DAMAGE_COEFFICIENT, tag.getFloat(Config.DAMAGE_COEFFICIENT));
 		setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD, tag.getInt(Config.CRASH_MOMENTUM_THRESHOLD));
 
+		this.playerID = tag.getUuid(Config.PLAYER_ID);
+		setConfigValues(Config.MASS, tag.getFloat(Config.MASS));
+		setConfigValues(Config.SIZE, tag.getInt(Config.SIZE));
+		setConfigValues(Config.DRAG_COEFFICIENT, tag.getFloat(Config.DRAG_COEFFICIENT));
+
 		// don't retrieve noClip or prevGodMode because they weren't written (reason in writeCustomDataToTag)
 		setConfigValues(Config.GOD_MODE, tag.getInt(Config.GOD_MODE));
-	}
-
-	/* DOERS */
-
-	protected float calculateThrustCurve() {
-		return (float) (Math.pow(getThrottle(), thrustCurve));
-	}
-
-	protected void doForces(float d) {
-		if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
-			this.axisValues.set(InputTick.axisValues);
-		}
-
-		float deltaX = (float) BetaflightHelper.calculateRates(axisValues.currX, rate, expo, superRate, d);
-		float deltaY = (float) BetaflightHelper.calculateRates(axisValues.currY, rate, expo, superRate, d);
-		float deltaZ = (float) BetaflightHelper.calculateRates(axisValues.currZ, rate, expo, superRate, d);
-
-		rotateX(deltaX);
-		rotateY(deltaY);
-		rotateZ(deltaZ);
-
-		Vec3d thrust = this.getThrustVector().multiply(calculateThrustCurve()).multiply(this.thrust);
-		Vec3d yawForce = this.getThrustVector().multiply(Math.abs(deltaY));
-
-		this.decreaseAngularVelocity();
-		this.applyForce(
-				new Vector3f((float) thrust.x, (float) thrust.y, (float) thrust.z),
-				new Vector3f((float) yawForce.x, (float) yawForce.y, (float) yawForce.z)
-		);
 	}
 
 	protected void calculateCrashConditions() {
@@ -400,7 +413,7 @@ public class DroneEntity extends PhysicsEntity {
 
 						// kil
 						if (vec.length() > this.crashMomentumThreshold) {
-							KillEntityC2S.send(this);
+							kill();
 						}
 					}
 
@@ -410,34 +423,14 @@ public class DroneEntity extends PhysicsEntity {
 		}
 	}
 
-	protected void decreaseAngularVelocity() {
-		List<RigidBody> bodies = ClientInitializer.physicsWorld.getRigidBodies();
-		boolean mightCollide = false;
-		float t = 0.25f;
+	@Override
+	public boolean isGlowing() {
+		return false;
+	}
 
-		for (RigidBody body : bodies) {
-			if (body != getRigidBody()) {
-				Vector3f dist = body.getCenterOfMassPosition(new Vector3f());
-				dist.sub(this.getRigidBody().getCenterOfMassPosition(new Vector3f()));
-
-				if (dist.length() < 1.0f) {
-					mightCollide = true;
-					break;
-				}
-			}
-		}
-
-		if (!mightCollide) {
-			getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
-		} else {
-			float it = 1 - getThrottle();
-
-			if (Math.abs(axisValues.currX) * it > t ||
-					Math.abs(axisValues.currY) * it > t ||
-					Math.abs(axisValues.currZ) * it > t) {
-				getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
-			}
-		}
+	@Override
+	public boolean collides() {
+		return true;
 	}
 
 	/**
@@ -470,6 +463,15 @@ public class DroneEntity extends PhysicsEntity {
 		this.remove();
 	}
 
+	@Override
+	public void remove() {
+		super.remove();
+
+		if (this.world.isClient()) {
+			ClientInitializer.physicsWorld.remove(this);
+		}
+	}
+
 	/**
 	 * If the {@link PlayerEntity} is holding a {@link TransmitterItem} when they right
 	 * click on the {@link DroneEntity}, bind it using the drone's UUID.
@@ -477,6 +479,7 @@ public class DroneEntity extends PhysicsEntity {
 	 * @param hand
 	 * @return
 	 */
+	@Override
 	public ActionResult interact(PlayerEntity player, Hand hand) {
 		if (!player.world.isClient()) {
 			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
@@ -499,5 +502,180 @@ public class DroneEntity extends PhysicsEntity {
 	@Override
 	protected void initDataTracker() {
 
+	}
+
+	public boolean isActive() {
+		return this.active;
+	}
+
+	public void setRigidBody(RigidBody body) {
+		this.body = body;
+	}
+
+	public RigidBody getRigidBody() {
+		return this.body;
+	}
+
+	public void setOrientation(Quat4f q) {
+		Transform trans = this.body.getWorldTransform(new Transform());
+		trans.setRotation(q);
+		this.body.setWorldTransform(trans);
+	}
+
+	public Quat4f getOrientation() {
+		return this.body.getWorldTransform(new Transform()).getRotation(new Quat4f());
+	}
+
+	public void setRigidBodyPos(Vector3f vec) {
+		Transform trans = this.body.getWorldTransform(new Transform());
+		trans.origin.set(vec);
+		this.body.setWorldTransform(trans);
+	}
+
+	public void setMass(float mass) {
+		float old = this.mass;
+		this.mass = mass;
+
+		if (old != mass) {
+			refreshRigidBody();
+		}
+	}
+
+	public void setSize(int size) {
+		int old = this.size;
+		this.size = size;
+
+		if (old != size) {
+			refreshRigidBody();
+		}
+	}
+
+	/**
+	 * Get the direction the bottom of the
+	 * drone is facing.
+	 * @return {@link Vec3d} containing thrust direction
+	 */
+	protected Vec3d getThrustVector() {
+		Quat4f q = getOrientation();
+		QuaternionHelper.rotateX(q, 90);
+
+		Matrix4f mat = new Matrix4f();
+		Matrix4fInject.from(mat).fromQuaternion(QuaternionHelper.quat4fToQuaternion(q));
+
+		return Matrix4fInject.from(mat).matrixToVector().multiply(-1, -1, -1);
+	}
+
+	protected Vector3f getAirResistanceForce() {
+		Vector3f vec3f = getRigidBody().getLinearVelocity(new Vector3f());
+		Vec3d velocity = new Vec3d(vec3f.x, vec3f.y, vec3f.z);
+		float k = (ClientInitializer.physicsWorld.airDensity * dragCoefficient * (float) Math.pow(size / 16f, 2)) / 2.0f;
+
+		Vec3d airVec3d = velocity.multiply(k).multiply(velocity.lengthSquared()).negate();
+		Vector3f airResistance = new Vector3f((float) airVec3d.x, (float) airVec3d.y, (float) airVec3d.z);
+		return airResistance;
+	}
+
+	protected float calculateThrustCurve() {
+		return (float) (Math.pow(getThrottle(), thrustCurve));
+	}
+
+	protected Vector3f getThrustForce(float deltaY) {
+		Vector3f thrust = VectorHelper.vec3dToVector3f(getThrustVector().multiply(calculateThrustCurve()).multiply(this.thrust));
+		Vector3f yaw = VectorHelper.vec3dToVector3f(getThrustVector().multiply(Math.abs(deltaY)));
+
+		Vector3f out = new Vector3f();
+		out.add(thrust, yaw);
+		return out;
+	}
+
+	public void applyForce(Vector3f... forces) {
+		for (Vector3f force : forces) {
+			getRigidBody().applyCentralForce(force);
+		}
+	}
+
+	public void rotateX(float deg) {
+		Quat4f quat = getOrientation();
+		QuaternionHelper.rotateX(quat, deg);
+		setOrientation(quat);
+	}
+
+	public void rotateY(float deg) {
+		Quat4f quat = getOrientation();
+		QuaternionHelper.rotateY(quat, deg);
+		setOrientation(quat);
+	}
+
+	public void rotateZ(float deg) {
+		Quat4f quat = getOrientation();
+		QuaternionHelper.rotateZ(quat, deg);
+		setOrientation(quat);
+	}
+
+	protected void decreaseAngularVelocity() {
+		List<RigidBody> bodies = ClientInitializer.physicsWorld.getRigidBodies();
+		boolean mightCollide = false;
+		float t = 0.25f;
+
+		for (RigidBody body : bodies) {
+			if (body != getRigidBody()) {
+				Vector3f dist = body.getCenterOfMassPosition(new Vector3f());
+				dist.sub(this.getRigidBody().getCenterOfMassPosition(new Vector3f()));
+
+				if (dist.length() < 1.0f) {
+					mightCollide = true;
+					break;
+				}
+			}
+		}
+
+		if (!mightCollide) {
+			getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
+		} else {
+			float it = 1 - getThrottle();
+
+			if (Math.abs(axisValues.currX) * it > t ||
+					Math.abs(axisValues.currY) * it > t ||
+					Math.abs(axisValues.currZ) * it > t) {
+				getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
+			}
+		}
+	}
+
+	protected void refreshRigidBody() {
+		RigidBody old = this.getRigidBody();
+		this.createRigidBody();
+
+		this.getRigidBody().setLinearVelocity(old.getLinearVelocity(new Vector3f()));
+		this.getRigidBody().setAngularVelocity(old.getAngularVelocity(new Vector3f()));
+		this.setRigidBodyPos(old.getCenterOfMassPosition(new Vector3f()));
+		this.setOrientation(old.getOrientation(new Quat4f()));
+
+		if (this.world.isClient()) {
+			ClientInitializer.physicsWorld.removeRigidBody(old);
+			ClientInitializer.physicsWorld.addRigidBody(this.getRigidBody());
+		}
+	}
+
+	protected void createRigidBody() {
+		float s = size / 16.0f;
+		Box cBox = new Box(-s / 2.0f, -s / 8.0f, -s / 2.0f, s / 2.0f, s / 8.0f, s / 2.0f);
+		Vector3f inertia = new Vector3f(0.0F, 0.0F, 0.0F);
+		Vector3f box = new Vector3f(
+				((float) (cBox.maxX - cBox.minX) / 2.0F) + 0.005f,
+				((float) (cBox.maxY - cBox.minY) / 2.0F) + 0.005f,
+				((float) (cBox.maxZ - cBox.minZ) / 2.0F) + 0.005f);
+		CollisionShape shape = new BoxShape(box);
+		shape.calculateLocalInertia(this.mass, inertia);
+
+		Vec3d pos = this.getPos();
+		Vector3f position = new Vector3f((float) pos.x, (float) pos.y + 0.125f, (float) pos.z);
+
+		DefaultMotionState motionState = new DefaultMotionState(new Transform(new javax.vecmath.Matrix4f(new Quat4f(0, 1, 0, 0), position, 1.0f)));
+		RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(this.mass, motionState, shape, inertia);
+
+		RigidBody body = new RigidBody(ci);
+		body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
+		setRigidBody(body);
 	}
 }

@@ -3,7 +3,6 @@ package bluevista.fpvracingmod.client.physics;
 import bluevista.fpvracingmod.client.ClientInitializer;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
-import bluevista.fpvracingmod.server.entities.PhysicsEntity;
 import com.bulletphysics.collision.broadphase.BroadphaseInterface;
 import com.bulletphysics.collision.broadphase.DbvtBroadphase;
 import com.bulletphysics.collision.dispatch.CollisionConfiguration;
@@ -44,7 +43,7 @@ public class PhysicsWorld {
     public int blockRadius;
 
     public final Clock clock;
-    public final List<PhysicsEntity> physicsEntities;
+    public final List<DroneEntity> droneEntities;
     public final Map<Entity, RigidBody> collisionEntities;
     public final Map<BlockPos, RigidBody> collisionBlocks;
 
@@ -53,7 +52,7 @@ public class PhysicsWorld {
     private final List<Entity> toKeepEntities;
 
     public PhysicsWorld() {
-        this.physicsEntities = new ArrayList();
+        this.droneEntities = new ArrayList();
         this.collisionEntities = new HashMap();
         this.collisionBlocks = new HashMap();
         this.toKeepBlocks = new ArrayList();
@@ -79,35 +78,32 @@ public class PhysicsWorld {
         float maxSubSteps = 5.0f;
         clock.reset();
 
-        this.physicsEntities.forEach(physics -> {
+        this.droneEntities.forEach(drone -> {
             if (world != null) {
-                if (physics.isActive()) {
-                    physics.doAirResistance();
-
-                    if (!(physics instanceof DroneEntity) || ((DroneEntity) physics).getConfigValues(Config.NO_CLIP).equals(0)) {
-                        loadBlockCollisions(physics, world);
+                if (drone.isActive()) {
+                    if (drone.getConfigValues(Config.NO_CLIP).equals(0)) {
+                        loadBlockCollisions(drone, world);
                     }
 
-                    if (!physics.getRigidBody().isInWorld()) {
-                        this.dynamicsWorld.addRigidBody(physics.getRigidBody());
+                    if (!drone.getRigidBody().isInWorld()) {
+                        this.dynamicsWorld.addRigidBody(drone.getRigidBody());
                     }
-                } else if (physics.getRigidBody().isInWorld()) {
-                    this.dynamicsWorld.removeRigidBody(physics.getRigidBody());
+                } else if (drone.getRigidBody().isInWorld()) {
+                    this.dynamicsWorld.removeRigidBody(drone.getRigidBody());
                 }
 
-                physics.stepPhysics(d, tickDelta);
+                drone.stepPhysics(d, tickDelta);
             }
         });
 
         unloadBlockCollisions();
-
         this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
     }
 
-    public void loadBlockCollisions(PhysicsEntity physics, ClientWorld world) {
-        Box area = new Box(physics.getRigidBodyBlockPos()).expand(blockRadius);
+    public void loadBlockCollisions(DroneEntity drone, ClientWorld world) {
+        Box area = new Box(new BlockPos(drone.getPos())).expand(blockRadius);
         Map<BlockPos, BlockState> blockList = BlockHelper.getBlockList(world, area);
-        BlockView blockView = world.getChunkManager().getChunk(physics.chunkX, physics.chunkZ);
+        BlockView blockView = world.getChunkManager().getChunk(drone.chunkX, drone.chunkZ);
 
         blockList.forEach((blockPos, blockState) -> {
             if (!blockState.getBlock().canMobSpawnInside()) {
@@ -152,11 +148,11 @@ public class PhysicsWorld {
         toKeepBlocks.clear();
     }
 
-    public void loadEntityCollisions(PhysicsEntity physics, ClientWorld world) {
-        Box area = new Box(physics.getRigidBodyBlockPos()).expand(blockRadius);
+    public void loadEntityCollisions(DroneEntity drone, ClientWorld world) {
+        Box area = new Box(new BlockPos(drone.getPos())).expand(blockRadius);
 
-        world.getOtherEntities(physics, area).forEach(entity -> {
-            if (!(entity instanceof PhysicsEntity) && !collisionEntities.containsKey(entity)) {
+        world.getOtherEntities(drone, area).forEach(entity -> {
+            if (!(entity instanceof DroneEntity) && !collisionEntities.containsKey(entity)) {
                 Box c = entity.getBoundingBox();
                 Vector3f box = new Vector3f(
                         ((float) (c.maxX - c.minX) / 2.0F),
@@ -223,13 +219,13 @@ public class PhysicsWorld {
         }
     }
 
-    public void add(PhysicsEntity physics) {
-        this.physicsEntities.add(physics);
+    public void add(DroneEntity drone) {
+        this.droneEntities.add(drone);
     }
 
-    public void remove(PhysicsEntity physics) {
-        this.dynamicsWorld.removeRigidBody(physics.getRigidBody());
-        this.physicsEntities.remove(physics);
+    public void remove(DroneEntity drone) {
+        this.dynamicsWorld.removeRigidBody(drone.getRigidBody());
+        this.droneEntities.remove(drone);
     }
 
     public void addRigidBody(RigidBody body) {
@@ -243,7 +239,7 @@ public class PhysicsWorld {
     public List<RigidBody> getRigidBodies() {
         List<RigidBody> bodies = new ArrayList();
 
-        physicsEntities.forEach(physics -> bodies.add(physics.getRigidBody()));
+        droneEntities.forEach(drone -> bodies.add(drone.getRigidBody()));
         bodies.addAll(collisionEntities.values());
         bodies.addAll(collisionBlocks.values());
 
