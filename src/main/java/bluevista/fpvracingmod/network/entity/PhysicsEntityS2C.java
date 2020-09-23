@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
@@ -27,9 +28,6 @@ public class PhysicsEntityS2C {
 
         int id = buf.readInt();
         UUID playerID = buf.readUuid();
-
-        float yaw = buf.readFloat();
-        float pitch = buf.readFloat();
 
         float mass = buf.readFloat();
         int size = buf.readInt();
@@ -55,9 +53,7 @@ public class PhysicsEntityS2C {
 
                 if (!physics.isActive()) {
                     physics.netQuat.set(orientation);
-                    physics.updatePosition(position.x, position.y, position.z);
-                    physics.resetPosition(position.x, position.y, position.z);
-//                    physics.refreshPositionAndAngles(position.x, position.y, position.z, yaw, pitch);
+//                    physics.updatePosition(position.x, position.y, position.z);
                     physics.setRigidBodyPos(position);
                     physics.getRigidBody().setLinearVelocity(linearVel);
                     physics.getRigidBody().setAngularVelocity(angularVel);
@@ -71,9 +67,6 @@ public class PhysicsEntityS2C {
 
         buf.writeInt(physics.getEntityId());
         buf.writeUuid(physics.playerID);
-
-        buf.writeFloat(physics.yaw);
-        buf.writeFloat(physics.pitch);
 
         buf.writeFloat(physics.getConfigValues(Config.MASS).floatValue());
         buf.writeInt(physics.getConfigValues(Config.SIZE).intValue());

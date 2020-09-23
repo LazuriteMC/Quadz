@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
@@ -41,9 +42,7 @@ public class PhysicsEntityC2S {
 
                 physics.setOrientation(orientation);
                 physics.setRigidBodyPos(position);
-                physics.updatePosition(position.x, position.y, position.z);
-                physics.resetPosition(position.x, position.y, position.z);
-//                physics.refreshPositionAndAngles(position.x, position.y, position.z, yaw, pitch);
+
                 physics.getRigidBody().setLinearVelocity(linearVel);
                 physics.getRigidBody().setAngularVelocity(angularVel);
             }

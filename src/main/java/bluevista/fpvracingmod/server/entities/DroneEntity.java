@@ -92,7 +92,15 @@ public class DroneEntity extends PhysicsEntity {
 	public void tick() {
 		super.tick();
 
-		if (!this.world.isClient()) {
+		if (this.world.isClient()) {
+			prevYaw = yaw;
+			prevPitch = pitch;
+
+			Quat4f cameraPitch = getOrientation();
+			QuaternionHelper.rotateX(cameraPitch, -cameraAngle);
+			yaw = QuaternionHelper.getYaw(getOrientation());
+			pitch = QuaternionHelper.getPitch(cameraPitch);
+		} else {
 			DroneEntityS2C.send(this);
 
 			this.world.getOtherEntities(this, this.getBoundingBox(), (entity -> true)).forEach((entity -> {

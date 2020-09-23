@@ -28,6 +28,17 @@ public class MouseMixin {
             method = "onMouseButton",
             at = @At(
                     value = "INVOKE",
+                    target = "Lnet/minecraft/client/options/KeyBinding;setKeyPressed(Lnet/minecraft/client/util/InputUtil$Key;Z)V"
+            )
+    )
+    public void setKeyPressed(InputUtil.Key key, boolean pressed) {
+        KeyBinding.setKeyPressed(key, !ClientTick.isInGoggles() && pressed);
+    }
+
+    @Redirect(
+            method = "onMouseButton",
+            at = @At(
+                    value = "INVOKE",
                     target = "Lnet/minecraft/client/options/KeyBinding;onKeyPressed(Lnet/minecraft/client/util/InputUtil$Key;)V"
             )
     )

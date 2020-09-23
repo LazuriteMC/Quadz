@@ -3,6 +3,7 @@ package bluevista.fpvracingmod.network;
 import bluevista.fpvracingmod.client.input.AxisValues;
 import bluevista.fpvracingmod.config.Config;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.math.Vec3d;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
@@ -19,6 +20,20 @@ public class PacketHelper {
                 buf.readFloat(),
                 buf.readFloat(),
                 buf.readFloat()
+        );
+    }
+
+    public static void serializeVec3d(PacketByteBuf buf, Vec3d vec) {
+        buf.writeDouble(vec.x);
+        buf.writeDouble(vec.y);
+        buf.writeDouble(vec.z);
+    }
+
+    public static Vec3d deserializeVec3d(PacketByteBuf buf) {
+        return new Vec3d(
+                buf.readDouble(),
+                buf.readDouble(),
+                buf.readDouble()
         );
     }
 

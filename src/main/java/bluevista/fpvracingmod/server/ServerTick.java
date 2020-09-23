@@ -57,10 +57,13 @@ public class ServerTick {
                 Vec3d pos = drone.getPlayerStartPos().get(player);
 
                 // If the drone is in range of where the player started...
-                if (Math.sqrt(drone.squaredDistanceTo(pos)) < DroneEntity.PSEUDO_TRACKING_RANGE && !player.getPos().equals(pos)) {
-                    player.requestTeleport(pos.x, pos.y, pos.z);
-                    player.setNoGravity(false);
+                if (Math.sqrt(drone.squaredDistanceTo(pos)) < DroneEntity.PSEUDO_TRACKING_RANGE) {
                     shouldRenderPlayer = true;
+
+                    if(!player.getPos().equals(pos)) {
+                        player.requestTeleport(pos.x, pos.y, pos.z);
+                        player.setNoGravity(false);
+                    }
 
                 // If the drone is nearing the end of it's tracking range...
                 } else if (player.distanceTo(drone) > DroneEntity.PSEUDO_TRACKING_RANGE) {

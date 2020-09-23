@@ -23,7 +23,7 @@ public class NetQuat4f {
     }
 
     public Quat4f get() {
-        return this.target;
+        return new Quat4f(target);
     }
 
     public Quat4f slerp(float tickDelta) {

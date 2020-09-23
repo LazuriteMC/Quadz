@@ -45,7 +45,7 @@ public abstract class PhysicsEntity extends Entity {
         super(type, world);
 
         this.yaw = yaw;
-        this.resetPosition(pos.x, pos.y, pos.z);
+        this.updatePosition(pos.x, pos.y, pos.z);
         this.createRigidBody();
         this.rotateY(180f - yaw);
 
@@ -61,17 +61,13 @@ public abstract class PhysicsEntity extends Entity {
     public void tick() {
         super.tick();
 
+        Vector3f pos = this.getRigidBody().getCenterOfMassPosition(new Vector3f());
+        this.updatePosition(pos.x, pos.y, pos.z);
+
         if (this.world.isClient()) {
             this.active = ClientTick.isPlayerIDClient(playerID);
 
-            prevYaw = yaw;
-            prevPitch = pitch;
-            yaw = QuaternionHelper.getYaw(getOrientation());
-            pitch = QuaternionHelper.getPitch(getOrientation());
-
             if (active) {
-                Vector3f pos = this.getRigidBody().getCenterOfMassPosition(new Vector3f());
-                this.updatePosition(pos.x, pos.y, pos.z);
                 PhysicsEntityC2S.send(this);
             } else {
                 this.netQuat.setPrev(this.getOrientation());
@@ -236,6 +232,32 @@ public abstract class PhysicsEntity extends Entity {
     public void updateTrackedPositionAndAngles(double x, double y, double z, float yaw, float pitch, int interpolationSteps, boolean interpolate) {
 
     }
+
+    @Override
+    public void updateTrackedPosition(double x, double y, double z) {
+
+    }
+
+    @Override
+    public void updateTrackedPosition(Vec3d pos) {
+
+    }
+
+//    @Override
+//    public void refreshPositionAndAngles(double x, double y, double z, float yaw, float pitch) {
+//
+//    }
+//
+//    @Override
+//    public void resetPosition(double x, double y, double z) {
+//        this.setPos(x, y, z);
+//        this.prevX = x;
+//        this.prevY = y;
+//        this.prevZ = z;
+//        this.lastRenderX = x;
+//        this.lastRenderY = y;
+//        this.lastRenderZ = z;
+//    }
 
     public boolean isActive() {
         return this.active;

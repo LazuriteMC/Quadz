@@ -29,6 +29,30 @@ public class ClientPlayNetworkHandlerMixin {
     }
 
     @Inject(
+            method = "onEntityPosition(Lnet/minecraft/network/packet/s2c/play/EntityPositionS2CPacket;)V",
+            at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/world/ClientWorld;getEntityById(I)Lnet/minecraft/entity/Entity;"),
+            cancellable = true,
+            locals = LocalCapture.CAPTURE_FAILHARD
+    )
+    public void onEntityPosition(EntityPositionS2CPacket packet, CallbackInfo info, Entity entity) {
+        if (entity instanceof DroneEntity) {
+            info.cancel();
+        }
+    }
+
+    @Inject(
+        method = "onEntityUpdate(Lnet/minecraft/network/packet/s2c/play/EntityS2CPacket;)V",
+        at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/network/packet/s2c/play/EntityS2CPacket;getEntity(Lnet/minecraft/world/World;)Lnet/minecraft/entity/Entity;"),
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD
+    )
+    public void onEntityUpdate(EntityS2CPacket packet, CallbackInfo info, Entity entity) {
+        if (entity instanceof DroneEntity) {
+            info.cancel();
+        }
+    }
+
+    @Inject(
             method = "onEntitySpawn(Lnet/minecraft/network/packet/s2c/play/EntitySpawnS2CPacket;)V",
             at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/network/packet/s2c/play/EntitySpawnS2CPacket;getEntityTypeId()Lnet/minecraft/entity/EntityType;"),
             cancellable = true,
