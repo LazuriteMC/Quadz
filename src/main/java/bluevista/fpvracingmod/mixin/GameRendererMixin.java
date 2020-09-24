@@ -71,7 +71,7 @@ public class GameRendererMixin {
 	)
 	public void yaw(MatrixStack stack, Quaternion quat) {
 		if (ClientInitializer.isInGoggles(client)) {
-			stack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(0));
+			stack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180));
 		} else {
 			stack.multiply(quat);
 		}

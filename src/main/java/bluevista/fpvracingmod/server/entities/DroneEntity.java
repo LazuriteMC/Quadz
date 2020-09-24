@@ -63,7 +63,6 @@ public class DroneEntity extends Entity {
 	/* Misc */
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
 	private float damageCoefficient;
-	private boolean godMode;
 
 	/* Video Settings */
 	private int cameraAngle;
@@ -86,10 +85,10 @@ public class DroneEntity extends Entity {
 	private int crashMomentumThreshold;
 
 	/* Misc Physics Info */
+	public UUID playerID;
 	private RigidBody body;
 	public NetQuat4f netQuat;
-	public UUID playerID;
-	private boolean active;
+	private boolean godMode;
 
 	/**
 	 * The constructor called by the Fabric API in {@link ServerInitializer}. Calls the main constructor.
@@ -138,9 +137,7 @@ public class DroneEntity extends Entity {
 		this.updatePosition(pos.x, pos.y, pos.z);
 
 		if (this.world.isClient()) {
-			this.active = ClientTick.isPlayerIDClient(playerID);
-
-			if (active) {
+			if (isActive()) {
 				DroneEntityC2S.send(this);
 			} else {
 				this.netQuat.setPrev(this.getOrientation());
@@ -498,7 +495,7 @@ public class DroneEntity extends Entity {
 	 * @return whether or not the {@link DroneEntity} is active
 	 */
 	public boolean isActive() {
-		return this.active;
+		return ClientTick.isPlayerIDClient(playerID);
 	}
 
 	/**
