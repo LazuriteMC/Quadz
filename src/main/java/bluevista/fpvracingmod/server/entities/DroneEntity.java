@@ -113,6 +113,7 @@ public class DroneEntity extends Entity {
 		this.axisValues = new AxisValues();
 		this.playerStartPos = new HashMap();
 
+		this.ignoreCameraFrustum = true;
 		this.godMode = false;
 		this.playerID = playerID;
 
@@ -463,10 +464,12 @@ public class DroneEntity extends Entity {
 	@Override
 	public void remove() {
 		super.remove();
+	}
 
-		if (this.world.isClient()) {
-			ClientInitializer.physicsWorld.remove(this);
-		}
+	@Override
+	@Environment(EnvType.CLIENT)
+	public boolean shouldRender(double distance) {
+		return distance < Math.pow(ClientInitializer.client.options.viewDistance * 16, 2);
 	}
 
 	@Override

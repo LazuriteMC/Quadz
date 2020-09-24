@@ -52,11 +52,11 @@ public class PhysicsWorld {
     private final List<Entity> toKeepEntities;
 
     public PhysicsWorld() {
-        this.droneEntities = new ArrayList();
-        this.collisionEntities = new HashMap();
-        this.collisionBlocks = new HashMap();
-        this.toKeepBlocks = new ArrayList();
-        this.toKeepEntities = new ArrayList();
+        this.droneEntities = new ArrayList<>();
+        this.collisionEntities = new HashMap<>();
+        this.collisionBlocks = new HashMap<>();
+        this.toKeepBlocks = new ArrayList<>();
+        this.toKeepEntities = new ArrayList<>();
         this.clock = new Clock();
 
         blockRadius = ClientInitializer.getConfig().getIntOption(Config.BLOCK_RADIUS);
@@ -78,7 +78,13 @@ public class PhysicsWorld {
         float maxSubSteps = 5.0f;
         clock.reset();
 
+        List<DroneEntity> toRemove = new ArrayList<>();
+
         this.droneEntities.forEach(drone -> {
+            if (drone.removed) {
+                toRemove.add(drone);
+            }
+
             if (world != null) {
                 if (drone.isActive()) {
                     if (drone.getConfigValues(Config.NO_CLIP).equals(0)) {
@@ -97,6 +103,7 @@ public class PhysicsWorld {
         });
 
         unloadBlockCollisions();
+        toRemove.forEach(droneEntities::remove);
         this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
     }
 

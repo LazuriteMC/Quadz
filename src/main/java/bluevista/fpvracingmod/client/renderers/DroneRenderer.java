@@ -8,6 +8,7 @@ import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -40,6 +41,11 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
         matrixStack.pop();
 
         super.render(droneEntity, f, g, matrixStack, vertexConsumerProvider, i);
+    }
+
+    @Override
+    public boolean shouldRender(DroneEntity drone, Frustum frustum, double x, double y, double z) {
+        return drone.shouldRender(x, y, z);
     }
 
     @Override
