@@ -29,6 +29,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -158,9 +159,11 @@ public class DroneEntity extends Entity {
 			}
 
 			this.world.getOtherEntities(this, getBoundingBox(), (entity -> true)).forEach((entity -> {
-				Vector3f vec = getRigidBody().getLinearVelocity(new Vector3f());
-				vec.scale(mass);
-				entity.damage(DamageSource.GENERIC, vec.length() * damageCoefficient);
+				if (entity instanceof LivingEntity) {
+					Vector3f vec = getRigidBody().getLinearVelocity(new Vector3f());
+					vec.scale(mass);
+					entity.damage(DamageSource.GENERIC, vec.length() * damageCoefficient);
+				}
 			}));
 
 			if (isKillable() && (
@@ -464,8 +467,14 @@ public class DroneEntity extends Entity {
 	@Override
 	public void remove() {
 		super.remove();
+		DroneEntityC2S.send(this);
 	}
 
+	/**
+	 * Allows the drone to be seen from far away.
+	 * @param distance the distance away from the drone
+	 * @return whether or not the drone is outside of the view distance
+	 */
 	@Override
 	@Environment(EnvType.CLIENT)
 	public boolean shouldRender(double distance) {
