@@ -87,8 +87,9 @@ public class DroneEntity extends Entity {
 
 	/* Misc Physics Info */
 	public UUID playerID;
-	private RigidBody body;
 	public NetQuat4f netQuat;
+	private int bindID;
+	private RigidBody body;
 	private boolean godMode;
 
 	/**
@@ -117,6 +118,7 @@ public class DroneEntity extends Entity {
 		this.ignoreCameraFrustum = true;
 		this.godMode = false;
 		this.playerID = playerID;
+		this.bindID = -1;
 
 		this.updatePositionAndAngles(pos.x, pos.y, pos.z, yaw, 0);
 		this.createRigidBody();
@@ -245,6 +247,9 @@ public class DroneEntity extends Entity {
 			case Config.EXPO:
 				this.expo = value.floatValue();
 				break;
+			case Config.BIND:
+				this.bindID = value.intValue();
+				break;
 			case Config.DAMAGE_COEFFICIENT:
 				this.damageCoefficient = value.floatValue();
 				break;
@@ -296,6 +301,8 @@ public class DroneEntity extends Entity {
 				return this.superRate;
 			case Config.EXPO:
 				return this.expo;
+			case Config.BIND:
+				return this.bindID;
 			case Config.DAMAGE_COEFFICIENT:
 				return this.damageCoefficient;
 			case Config.THRUST:
@@ -370,6 +377,7 @@ public class DroneEntity extends Entity {
 		tag.putInt(Config.CRASH_MOMENTUM_THRESHOLD, getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
 
 		tag.putUuid(Config.PLAYER_ID, this.playerID);
+		tag.putInt(Config.BIND, getConfigValues(Config.BIND).intValue());
 		tag.putFloat(Config.MASS, getConfigValues(Config.MASS).floatValue());
 		tag.putInt(Config.SIZE, getConfigValues(Config.SIZE).intValue());
 		tag.putFloat(Config.DRAG_COEFFICIENT, getConfigValues(Config.DRAG_COEFFICIENT).floatValue());
@@ -400,6 +408,7 @@ public class DroneEntity extends Entity {
 		setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD, tag.getInt(Config.CRASH_MOMENTUM_THRESHOLD));
 
 		this.playerID = tag.getUuid(Config.PLAYER_ID);
+		setConfigValues(Config.BIND, tag.getInt(Config.BIND));
 		setConfigValues(Config.MASS, tag.getFloat(Config.MASS));
 		setConfigValues(Config.SIZE, tag.getInt(Config.SIZE));
 		setConfigValues(Config.DRAG_COEFFICIENT, tag.getFloat(Config.DRAG_COEFFICIENT));
@@ -449,9 +458,13 @@ public class DroneEntity extends Entity {
 	public ActionResult interact(PlayerEntity player, Hand hand) {
 		if (!player.world.isClient()) {
 			if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
-				TransmitterItem.setTagValue(player.getMainHandStack(), Config.BIND, this.getEntityId());
+				Random rand = new Random();
+
+				bindID = rand.nextInt();
+				playerID = player.getUuid();
+
+				TransmitterItem.setTagValue(player.getMainHandStack(), Config.BIND, bindID);
 				player.sendMessage(new TranslatableText("Transmitter bound"), false);
-				this.playerID = player.getUuid();
 			}
 		} else if (!InputTick.controllerExists()) {
 			player.sendMessage(new TranslatableText("Controller not found"), false);

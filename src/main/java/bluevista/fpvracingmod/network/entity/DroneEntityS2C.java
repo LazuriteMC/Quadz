@@ -26,6 +26,7 @@ public class DroneEntityS2C {
         PlayerEntity player = context.getPlayer();
 
         int droneID = buf.readInt();
+        int bindID = buf.readInt();
         UUID playerID = buf.readUuid();
 
         int noClip = buf.readInt();
@@ -62,6 +63,7 @@ public class DroneEntityS2C {
             if (drone != null) {
                 drone.playerID = playerID;
 
+                drone.setConfigValues(Config.BIND, bindID);
                 drone.setConfigValues(Config.NO_CLIP, noClip);
                 drone.setConfigValues(Config.GOD_MODE, godMode);
                 drone.setConfigValues(Config.DAMAGE_COEFFICIENT, damageCoefficient);
@@ -96,6 +98,7 @@ public class DroneEntityS2C {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 
         buf.writeInt(drone.getEntityId());
+        buf.writeInt(drone.getConfigValues(Config.BIND).intValue());
         buf.writeUuid(drone.playerID);
 
         buf.writeInt(drone.getConfigValues(Config.NO_CLIP).intValue());

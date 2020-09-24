@@ -9,11 +9,16 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+
+import java.util.List;
 
 public class GodModeC2S {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "godmode_c2s");
@@ -27,7 +32,16 @@ public class GodModeC2S {
 
             if (hand.getItem() instanceof TransmitterItem) {
                 if (TransmitterItem.getTagValue(hand, Config.BIND) != null) {
-                    DroneEntity drone = (DroneEntity) player.getEntityWorld().getEntityById(TransmitterItem.getTagValue(hand, Config.BIND).intValue());
+                    List<Entity> entities = ((ServerWorld) player.getEntityWorld()).getEntitiesByType(ServerInitializer.DRONE_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
+                    DroneEntity drone = null;
+
+                    for (Entity entity : entities) {
+                        drone = (DroneEntity) entity;
+
+                        if (drone.getConfigValues(Config.BIND).intValue() == TransmitterItem.getTagValue(hand, Config.BIND).intValue()) {
+                            break;
+                        }
+                    }
 
                     if (drone != null) {
                         drone.setConfigValues(Config.GOD_MODE, drone.getConfigValues(Config.GOD_MODE).intValue() == 1 ? 0 : 1);

@@ -3,10 +3,15 @@ package bluevista.fpvracingmod.server.items;
 import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.ServerInitializer;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.server.world.ServerWorld;
+
+import java.util.List;
 
 public class TransmitterItem extends Item {
 
@@ -41,21 +46,28 @@ public class TransmitterItem extends Item {
     }
 
     public static DroneEntity droneFromTransmitter(ItemStack itemStack, PlayerEntity player) {
-        DroneEntity drone = null;
-
         if (itemStack.getItem() instanceof TransmitterItem) {
             if (TransmitterItem.getTagValue(itemStack, Config.BIND) != null) {
-                drone = (DroneEntity) player.getEntityWorld().getEntityById(TransmitterItem.getTagValue(itemStack, Config.BIND).intValue());
+                List<Entity> entities = ((ServerWorld) player.getEntityWorld()).getEntitiesByType(ServerInitializer.DRONE_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
+
+                for (Entity entity : entities) {
+                    DroneEntity drone = (DroneEntity) entity;
+
+                    if (drone.getConfigValues(Config.BIND).intValue() == getTagValue(itemStack, Config.BIND).intValue()) {
+                        return drone;
+                    }
+                }
             }
         }
 
-        return drone;
+        return null;
     }
 
     public static boolean isBoundTransmitter(ItemStack itemStack, DroneEntity drone) {
         if (TransmitterItem.getTagValue(itemStack, Config.BIND) != null) {
-            return drone.getEntityId() == TransmitterItem.getTagValue(itemStack, Config.BIND).intValue();
+            return drone.getConfigValues(Config.BIND).intValue() == TransmitterItem.getTagValue(itemStack, Config.BIND).intValue();
         }
+
         return false;
     }
 }

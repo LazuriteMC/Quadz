@@ -1,7 +1,9 @@
 package bluevista.fpvracingmod.mixin;
 
+import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.GogglesItem;
+import bluevista.fpvracingmod.server.items.TransmitterItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -15,18 +17,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerInventory.class)
 public class PlayerInventoryMixin {
-
     @Shadow @Final PlayerEntity player;
 
     // used when picking a stack off the ground (including /give)
     @Inject(at = @At("HEAD"), method = "addStack(ILnet/minecraft/item/ItemStack;)I")
     private void addStack(int slot, ItemStack itemStack, CallbackInfoReturnable info) {
-        if (itemStack.getItem() instanceof GogglesItem && !player.world.isClient) {
+        if (itemStack.getItem() instanceof GogglesItem && !player.world.isClient()) {
             GogglesItem.prepGogglesItem(player, itemStack);
         }
 
-        if (itemStack.getItem() instanceof DroneSpawnerItem && !player.world.isClient) {
+        if (itemStack.getItem() instanceof DroneSpawnerItem && !player.world.isClient()) {
             DroneSpawnerItem.prepDroneSpawnerItem(player, itemStack);
+        }
+
+        if (itemStack.getItem() instanceof TransmitterItem && !player.world.isClient()) {
+            DroneEntity drone = TransmitterItem.droneFromTransmitter(itemStack, player);
+
+            if (drone != null) {
+                drone.playerID = player.getUuid();
+            }
         }
     }
 
