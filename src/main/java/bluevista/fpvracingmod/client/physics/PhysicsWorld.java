@@ -19,7 +19,7 @@ import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.*;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
@@ -130,6 +130,18 @@ public class PhysicsWorld {
                         DefaultMotionState motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(), position, 1.0f)));
                         RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(0, motionState, shape, new Vector3f(0, 0, 0));
                         RigidBody body = new RigidBody(ci);
+
+                        if (blockState.getBlock() instanceof IceBlock) {
+                            body.setFriction(0.05f);
+                        } else if (
+                                blockState.getBlock() instanceof HoneyBlock ||
+                                blockState.getBlock() instanceof SlimeBlock ||
+                                blockState.getBlock() instanceof SoulSandBlock
+                        ) {
+                            body.setFriction(1.5f);
+                        } else {
+                            body.setFriction(0.9f);
+                        }
 
                         this.collisionBlocks.put(blockPos, body);
                         this.dynamicsWorld.addRigidBody(body);
