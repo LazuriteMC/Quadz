@@ -60,7 +60,7 @@ public class ServerTick {
                 if (Math.sqrt(drone.squaredDistanceTo(pos)) < DroneEntity.PSEUDO_TRACKING_RANGE) {
                     shouldRenderPlayer = true;
 
-                    if(!player.getPos().equals(pos)) {
+                    if (!player.getPos().equals(pos)) {
                         player.requestTeleport(pos.x, pos.y, pos.z);
                         player.setNoGravity(false);
                     }

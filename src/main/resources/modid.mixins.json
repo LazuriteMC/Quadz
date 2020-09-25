@@ -10,6 +10,7 @@
     "PlayerInventoryMixin",
     "RotateAndMoveRelativeMixin",
     "PlayerManagerMixin",
+    "PlayerSpawnS2CPacketMixin",
     "ServerPlayerEntityMixin"
   ],
   "client": [
