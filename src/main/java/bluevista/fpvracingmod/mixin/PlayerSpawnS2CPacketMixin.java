@@ -2,7 +2,9 @@ package bluevista.fpvracingmod.mixin;
 
 import bluevista.fpvracingmod.server.ServerTick;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerSpawnS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec3d;
@@ -22,6 +24,13 @@ public class PlayerSpawnS2CPacketMixin {
     @Shadow double y;
     @Shadow double z;
 
+    /**
+     * This mixin modifies the constructor of {@link PlayerSpawnS2CPacket} in
+     * order to keep the player position in the same place when the given {@link PlayerEntity}
+     * is flying a {@link DroneEntity}.
+     * @param player the given {@link PlayerEntity}
+     * @param info required by every mixin injection
+     */
     @Inject(method = "<init>(Lnet/minecraft/entity/player/PlayerEntity;)V", at = @At("RETURN"))
     public void init(PlayerEntity player, CallbackInfo info) {
         if (ServerTick.isInGoggles((ServerPlayerEntity) player)) {
