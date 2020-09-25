@@ -480,7 +480,10 @@ public class DroneEntity extends Entity {
 	@Override
 	public void remove() {
 		super.remove();
-		DroneEntityC2S.send(this);
+
+		if (isActive()) {
+			DroneEntityC2S.send(this);
+		}
 	}
 
 	/**
