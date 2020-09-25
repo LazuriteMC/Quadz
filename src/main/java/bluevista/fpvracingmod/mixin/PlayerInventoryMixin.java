@@ -1,5 +1,6 @@
 package bluevista.fpvracingmod.mixin;
 
+import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.server.entities.DroneEntity;
 import bluevista.fpvracingmod.server.items.DroneSpawnerItem;
 import bluevista.fpvracingmod.server.items.GogglesItem;
@@ -34,7 +35,7 @@ public class PlayerInventoryMixin {
             DroneEntity drone = TransmitterItem.droneFromTransmitter(itemStack, player);
 
             if (drone != null) {
-                drone.playerID = player.getUuid();
+                drone.setConfigValues(Config.PLAYER_ID, player.getEntityId());
             }
         }
     }

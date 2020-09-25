@@ -51,9 +51,9 @@ public class ClientTick {
         return ClientInitializer.client.getCameraEntity() instanceof DroneEntity;
     }
 
-    public static boolean isPlayerIDClient(UUID playerID) {
-        if (ClientInitializer.client.player != null && playerID != null) {
-            return playerID.equals(ClientInitializer.client.player.getUuid());
+    public static boolean isPlayerIDClient(int playerID) {
+        if (ClientInitializer.client.player != null) {
+            return playerID == ClientInitializer.client.player.getEntityId();
         } else {
             return false;
         }

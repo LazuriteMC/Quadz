@@ -65,7 +65,7 @@ public class DroneEntity extends Entity {
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
 	private float damageCoefficient;
 
-	/* Video Settings */
+	/* Camera Settings */
 	private int cameraAngle;
 	private float fieldOfView;
 	private int band;
@@ -86,8 +86,8 @@ public class DroneEntity extends Entity {
 	private int crashMomentumThreshold;
 
 	/* Misc Physics Info */
-	public UUID playerID;
 	public NetQuat4f netQuat;
+	private int playerID;
 	private int bindID;
 	private RigidBody body;
 	private boolean godMode;
@@ -98,7 +98,7 @@ public class DroneEntity extends Entity {
 	 * @param world the {@link World} that the {@link DroneEntity} will be spawned in
 	 */
 	public DroneEntity(EntityType<?> type, World world) {
-		this(world, null, Vec3d.ZERO, 0);
+		this(world, 0, Vec3d.ZERO, 0);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class DroneEntity extends Entity {
 	 * @param pos the position where the {@link DroneEntity} will be spawned
 	 * @param yaw the yaw of the {@link DroneEntity}
 	 */
-	public DroneEntity(World world, UUID playerID, Vec3d pos, float yaw) {
+	public DroneEntity(World world, int playerID, Vec3d pos, float yaw) {
 		super(ServerInitializer.DRONE_ENTITY, world);
 
 		this.netQuat = new NetQuat4f(new Quat4f(0, 1, 0, 0));
@@ -142,21 +142,23 @@ public class DroneEntity extends Entity {
 
 		if (this.world.isClient()) {
 			if (isActive()) {
+				Quat4f cameraPitch = getOrientation();
+				QuaternionHelper.rotateX(cameraPitch, -cameraAngle);
+				pitch = QuaternionHelper.getPitch(cameraPitch);
+
+				yaw = QuaternionHelper.getYaw(getOrientation());
 				DroneEntityC2S.send(this);
 			} else {
 				this.netQuat.setPrev(this.getOrientation());
 			}
 
-			prevYaw = yaw;
-			prevPitch = pitch;
-			Quat4f cameraPitch = getOrientation();
-			QuaternionHelper.rotateX(cameraPitch, -cameraAngle);
-			yaw = QuaternionHelper.getYaw(getOrientation());
-			pitch = QuaternionHelper.getPitch(cameraPitch);
+//			prevYaw = yaw;
+//			prevPitch = pitch;
+
 		} else {
 			DroneEntityS2C.send(this);
 
-			if (this.world.getPlayerByUuid(playerID) == null) {
+			if (this.world.getEntityById(playerID) == null) {
 				this.kill();
 			}
 
@@ -250,6 +252,9 @@ public class DroneEntity extends Entity {
 			case Config.BIND:
 				this.bindID = value.intValue();
 				break;
+			case Config.PLAYER_ID:
+				this.playerID = value.intValue();
+				break;
 			case Config.DAMAGE_COEFFICIENT:
 				this.damageCoefficient = value.floatValue();
 				break;
@@ -303,6 +308,8 @@ public class DroneEntity extends Entity {
 				return this.expo;
 			case Config.BIND:
 				return this.bindID;
+			case Config.PLAYER_ID:
+				return this.playerID;
 			case Config.DAMAGE_COEFFICIENT:
 				return this.damageCoefficient;
 			case Config.THRUST:
@@ -376,7 +383,7 @@ public class DroneEntity extends Entity {
 		tag.putFloat(Config.DAMAGE_COEFFICIENT, getConfigValues(Config.DAMAGE_COEFFICIENT).floatValue());
 		tag.putInt(Config.CRASH_MOMENTUM_THRESHOLD, getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
 
-		tag.putUuid(Config.PLAYER_ID, this.playerID);
+		tag.putInt(Config.PLAYER_ID, getConfigValues(Config.PLAYER_ID).intValue());
 		tag.putInt(Config.BIND, getConfigValues(Config.BIND).intValue());
 		tag.putFloat(Config.MASS, getConfigValues(Config.MASS).floatValue());
 		tag.putInt(Config.SIZE, getConfigValues(Config.SIZE).intValue());
@@ -407,7 +414,7 @@ public class DroneEntity extends Entity {
 		setConfigValues(Config.DAMAGE_COEFFICIENT, tag.getFloat(Config.DAMAGE_COEFFICIENT));
 		setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD, tag.getInt(Config.CRASH_MOMENTUM_THRESHOLD));
 
-		this.playerID = tag.getUuid(Config.PLAYER_ID);
+		setConfigValues(Config.PLAYER_ID, tag.getInt(Config.PLAYER_ID));
 		setConfigValues(Config.BIND, tag.getInt(Config.BIND));
 		setConfigValues(Config.MASS, tag.getFloat(Config.MASS));
 		setConfigValues(Config.SIZE, tag.getInt(Config.SIZE));
@@ -461,7 +468,7 @@ public class DroneEntity extends Entity {
 				Random rand = new Random();
 
 				bindID = rand.nextInt();
-				playerID = player.getUuid();
+				playerID = player.getEntityId();
 
 				TransmitterItem.setTagValue(player.getMainHandStack(), Config.BIND, bindID);
 				player.sendMessage(new TranslatableText("Transmitter bound"), false);

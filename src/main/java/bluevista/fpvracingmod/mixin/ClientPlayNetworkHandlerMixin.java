@@ -98,7 +98,7 @@ public class ClientPlayNetworkHandlerMixin {
 
         if (type == ServerInitializer.DRONE_ENTITY) {
             float yaw = (float)(packet.getYaw() * 360) / 256.0F;
-            entity = new DroneEntity(world, DroneEntity.NULL_UUID, new Vec3d(x, y, z), yaw);
+            entity = new DroneEntity(world, 0, new Vec3d(x, y, z), yaw);
             world.spawnEntity(entity);
         }
 

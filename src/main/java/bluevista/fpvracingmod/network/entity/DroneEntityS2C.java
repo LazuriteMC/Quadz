@@ -16,18 +16,27 @@ import net.minecraft.util.math.BlockPos;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
-import java.util.UUID;
 import java.util.stream.Stream;
 
+/**
+ * The packet responsible for sending drone information from the server to the client.
+ * @author Ethan Johnson
+ */
 public class DroneEntityS2C {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_entity_s2c");
 
+    /**
+     * Accepts the packet. Server-side attributes are received from the server in this method including camera info,
+     * physics info, and rate info.
+     * @param context the packet context
+     * @param buf the buffer containing the information
+     */
     public static void accept(PacketContext context, PacketByteBuf buf) {
         PlayerEntity player = context.getPlayer();
 
         int droneID = buf.readInt();
         int bindID = buf.readInt();
-        UUID playerID = buf.readUuid();
+        int playerID = buf.readInt();
 
         int noClip = buf.readInt();
         int godMode = buf.readInt();
@@ -49,6 +58,8 @@ public class DroneEntityS2C {
         float dragCoefficient = buf.readFloat();
         int crashMomentumThreshold = buf.readInt();
 
+        float yaw = buf.readFloat();
+        float pitch = buf.readFloat();
         Quat4f orientation = PacketHelper.deserializeQuaternion(buf);
         Vector3f position = PacketHelper.deserializeVector3f(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
@@ -61,30 +72,36 @@ public class DroneEntityS2C {
                 drone = (DroneEntity) player.world.getEntityById(droneID);
 
             if (drone != null) {
-                drone.playerID = playerID;
-
+                /* Misc Attributes */
+                drone.setConfigValues(Config.PLAYER_ID, playerID);
                 drone.setConfigValues(Config.BIND, bindID);
                 drone.setConfigValues(Config.NO_CLIP, noClip);
                 drone.setConfigValues(Config.GOD_MODE, godMode);
-                drone.setConfigValues(Config.DAMAGE_COEFFICIENT, damageCoefficient);
 
+                /* Camera Settings */
                 drone.setConfigValues(Config.BAND, band);
                 drone.setConfigValues(Config.CHANNEL, channel);
                 drone.setConfigValues(Config.CAMERA_ANGLE, cameraAngle);
                 drone.setConfigValues(Config.FIELD_OF_VIEW, fieldOfView);
 
+                /* Rate Settings */
                 drone.setConfigValues(Config.RATE, rate);
                 drone.setConfigValues(Config.SUPER_RATE, superRate);
                 drone.setConfigValues(Config.EXPO, expo);
 
+                /* Physics Settings */
                 drone.setConfigValues(Config.MASS, mass);
                 drone.setConfigValues(Config.SIZE, size);
                 drone.setConfigValues(Config.THRUST, thrust);
                 drone.setConfigValues(Config.THRUST_CURVE, thrustCurve);
                 drone.setConfigValues(Config.DRAG_COEFFICIENT, dragCoefficient);
+                drone.setConfigValues(Config.DAMAGE_COEFFICIENT, damageCoefficient);
                 drone.setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD, crashMomentumThreshold);
 
+                /* Physics Vectors (orientation, position, velocity, etc.) */
                 if (!drone.isActive()) {
+                    drone.yaw = yaw;
+                    drone.pitch = pitch;
                     drone.netQuat.set(orientation);
                     drone.setRigidBodyPos(position);
                     drone.getRigidBody().setLinearVelocity(linearVel);
@@ -94,26 +111,34 @@ public class DroneEntityS2C {
         });
     }
 
+    /**
+     * The method that send the drone information from the server to the client. Contains all
+     * server-side values such as camera settings, physics settings, and rate settings.
+     * @param drone the {@link DroneEntity} to send
+     */
     public static void send(DroneEntity drone) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-
         buf.writeInt(drone.getEntityId());
-        buf.writeInt(drone.getConfigValues(Config.BIND).intValue());
-        buf.writeUuid(drone.playerID);
 
+        /* Misc Attributes */
+        buf.writeInt(drone.getConfigValues(Config.BIND).intValue());
+        buf.writeInt(drone.getConfigValues(Config.PLAYER_ID).intValue());
         buf.writeInt(drone.getConfigValues(Config.NO_CLIP).intValue());
         buf.writeInt(drone.getConfigValues(Config.GOD_MODE).intValue());
         buf.writeFloat(drone.getConfigValues(Config.DAMAGE_COEFFICIENT).floatValue());
 
+        /* Camera Settings */
         buf.writeInt(drone.getConfigValues(Config.BAND).intValue());
         buf.writeInt(drone.getConfigValues(Config.CHANNEL).intValue());
         buf.writeInt(drone.getConfigValues(Config.CAMERA_ANGLE).intValue());
         buf.writeFloat(drone.getConfigValues(Config.FIELD_OF_VIEW).floatValue());
 
+        /* Rate Settings */
         buf.writeFloat(drone.getConfigValues(Config.RATE).floatValue());
         buf.writeFloat(drone.getConfigValues(Config.SUPER_RATE).floatValue());
         buf.writeFloat(drone.getConfigValues(Config.EXPO).floatValue());
 
+        /* Physics Settings */
         buf.writeFloat(drone.getConfigValues(Config.MASS).floatValue());
         buf.writeInt(drone.getConfigValues(Config.SIZE).intValue());
         buf.writeFloat(drone.getConfigValues(Config.THRUST).floatValue());
@@ -121,6 +146,9 @@ public class DroneEntityS2C {
         buf.writeFloat(drone.getConfigValues(Config.DRAG_COEFFICIENT).floatValue());
         buf.writeInt(drone.getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
 
+        /* Physics Vectors */
+        buf.writeFloat(drone.yaw);
+        buf.writeFloat(drone.pitch);
         PacketHelper.serializeQuaternion(buf, drone.getOrientation());
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getCenterOfMassPosition(new Vector3f()));
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getLinearVelocity(new Vector3f()));
@@ -130,6 +158,9 @@ public class DroneEntityS2C {
         watchingPlayers.forEach(player -> ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, PACKET_ID, buf));
     }
 
+    /**
+     * Registers the packet in {@link bluevista.fpvracingmod.client.ClientInitializer}.
+     */
     public static void register() {
         ClientSidePacketRegistry.INSTANCE.register(PACKET_ID, DroneEntityS2C::accept);
     }

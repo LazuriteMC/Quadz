@@ -14,16 +14,28 @@ import net.minecraft.util.Identifier;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+/**
+ * The packet responsible for sending drone information from the client to the server. This packet is sent
+ * exclusively by the client which is responsible for the drone's physics. The server, after it receives the info,
+ * disperses it to the rest of the clients using {@link DroneEntityS2C}.
+ * @author Ethan Johnson
+ */
 public class DroneEntityC2S {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "drone_entity_c2s");
 
+    /**
+     * Accepts the packet. Client physics information is mainly received.
+     * @param context the packet context
+     * @param buf the buffer containing the information
+     */
     public static void accept(PacketContext context, PacketByteBuf buf) {
         PlayerEntity player = context.getPlayer();
 
         int id = buf.readInt();
+        boolean removed = buf.readBoolean();
+
         float yaw = buf.readFloat();
         float pitch = buf.readFloat();
-        boolean removed = buf.readBoolean();
 
         Quat4f orientation = PacketHelper.deserializeQuaternion(buf);
         Vector3f position = PacketHelper.deserializeVector3f(buf);
@@ -37,30 +49,39 @@ public class DroneEntityC2S {
                 drone = (DroneEntity) player.world.getEntityById(id);
 
             if (drone != null) {
-                drone.yaw = yaw;
-                drone.pitch = pitch;
-
                 if (removed && !drone.removed) {
                     drone.kill();
                 }
 
-                drone.setOrientation(orientation);
-                drone.setRigidBodyPos(position);
+                /* Minecraft Camera Orientation */
+                drone.yaw = yaw;
+                drone.pitch = pitch;
 
+                /* Physics Vectors (orientation, position, velocity) */
+                drone.setRigidBodyPos(position);
+                drone.setOrientation(orientation);
                 drone.getRigidBody().setLinearVelocity(linearVel);
                 drone.getRigidBody().setAngularVelocity(angularVel);
             }
         });
     }
 
+    /**
+     * Sends the packet to the server. Mainly just includes physics information. Also includes
+     * camera rotation (yaw, pitch).
+     * @param drone the {@link DroneEntity} to send
+     */
     public static void send(DroneEntity drone) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 
         buf.writeInt(drone.getEntityId());
-        buf.writeFloat(drone.yaw);
-        buf.writeFloat(drone.pitch);
         buf.writeBoolean(drone.removed);
 
+        /* Minecraft Camera Orientation */
+        buf.writeFloat(drone.yaw);
+        buf.writeFloat(drone.pitch);
+
+        /* Physics Vectors */
         PacketHelper.serializeQuaternion(buf, drone.getOrientation());
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getCenterOfMassPosition(new Vector3f()));
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getLinearVelocity(new Vector3f()));
@@ -69,6 +90,9 @@ public class DroneEntityC2S {
         ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
     }
 
+    /**
+     * Registers the packet in {@link ServerInitializer}.
+     */
     public static void register() {
         ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, DroneEntityC2S::accept);
     }
