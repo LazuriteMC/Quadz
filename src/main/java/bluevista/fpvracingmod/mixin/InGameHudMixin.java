@@ -43,4 +43,19 @@ public class InGameHudMixin {
             info.cancel();
         }
     }
+
+    /**
+     * This mixin method removes the experience bar from the player's screen
+     * when in adventure or survival modes
+     * and are flying a {@link bluevista.fpvracingmod.server.entities.DroneEntity}
+     * @param matrices the matrix stack
+     * @param x the x coordinate
+     * @param info required by every mixin injection
+     */
+    @Inject(method = "renderExperienceBar", at = @At("HEAD"), cancellable = true)
+    public void renderExperienceBar(MatrixStack matrices, int x, CallbackInfo info) {
+        if (ClientTick.isInGoggles()) {
+            info.cancel();
+        }
+    }
 }
