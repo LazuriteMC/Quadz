@@ -190,7 +190,7 @@ public class DroneEntity extends Entity {
 	@Environment(EnvType.CLIENT)
 	public void stepPhysics(float d, float tickDelta) {
 		if (isActive()) {
-			if (isKillable()) calculateCrashConditions();
+//			if (isKillable()) calculateCrashConditions();
 
 			if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
 				this.axisValues.set(InputTick.axisValues);
