@@ -58,8 +58,6 @@ public class DroneEntityS2C {
         float dragCoefficient = buf.readFloat();
         int crashMomentumThreshold = buf.readInt();
 
-        float yaw = buf.readFloat();
-        float pitch = buf.readFloat();
         Quat4f orientation = PacketHelper.deserializeQuaternion(buf);
         Vector3f position = PacketHelper.deserializeVector3f(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
@@ -100,8 +98,6 @@ public class DroneEntityS2C {
 
                 /* Physics Vectors (orientation, position, velocity, etc.) */
                 if (!drone.isActive()) {
-                    drone.yaw = yaw;
-                    drone.pitch = pitch;
                     drone.setNetOrientation(orientation);
                     drone.setRigidBodyPos(position);
                     drone.getRigidBody().setLinearVelocity(linearVel);
@@ -147,8 +143,6 @@ public class DroneEntityS2C {
         buf.writeInt(drone.getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
 
         /* Physics Vectors */
-        buf.writeFloat(drone.yaw);
-        buf.writeFloat(drone.pitch);
         PacketHelper.serializeQuaternion(buf, drone.getOrientation());
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getCenterOfMassPosition(new Vector3f()));
         PacketHelper.serializeVector3f(buf, drone.getRigidBody().getLinearVelocity(new Vector3f()));

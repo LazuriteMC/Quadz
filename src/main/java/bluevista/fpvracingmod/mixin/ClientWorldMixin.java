@@ -46,19 +46,4 @@ public abstract class ClientWorldMixin {
             doRandomBlockDisplayTicks(camX, camY, camZ);
         }
     }
-
-    @Inject(
-            method = "tickEntity",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;resetPosition(DDD)V")
-    )
-    public void tickEntity(Entity entity, CallbackInfo info) {
-        if (entity instanceof DroneEntity) {
-            DroneEntity drone = (DroneEntity) entity;
-
-            if (!drone.isActive()) {
-//                drone.setPrevOrientation(drone.getOrientation());
-//                drone.setOrientation((drone.getNetQuaternion()));
-            }
-        }
-    }
 }

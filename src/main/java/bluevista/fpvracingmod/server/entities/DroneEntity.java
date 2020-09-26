@@ -142,12 +142,9 @@ public class DroneEntity extends Entity {
 		this.updatePosition(pos.x, pos.y, pos.z);
 
 		if (this.world.isClient()) {
-			if (isActive()) {
-				Quat4f cameraPitch = getOrientation();
-				QuaternionHelper.rotateX(cameraPitch, -cameraAngle);
-				pitch = QuaternionHelper.getPitch(cameraPitch);
-				yaw = QuaternionHelper.getYaw(getOrientation());
+			updateYawAndPitch();
 
+			if (isActive()) {
 				DroneEntityC2S.send(this);
 			} else {
 				setPrevOrientation(getOrientation());
@@ -712,6 +709,27 @@ public class DroneEntity extends Entity {
 	public void applyForce(Vector3f... forces) {
 		for (Vector3f force : forces) {
 			getRigidBody().applyCentralForce(force);
+		}
+	}
+
+	/**
+	 * This method changes the yaw and the pitch of
+	 * the drone based on it's orientation.
+	 */
+	public void updateYawAndPitch() {
+		Quat4f cameraPitch = getOrientation();
+		QuaternionHelper.rotateX(cameraPitch, -cameraAngle);
+		pitch = QuaternionHelper.getPitch(cameraPitch);
+
+		prevYaw = yaw;
+		yaw = QuaternionHelper.getYaw(getOrientation());
+
+		while(this.yaw - this.prevYaw < -180.0F) {
+			this.prevYaw -= 360.0F;
+		}
+
+		while(this.yaw - this.prevYaw >= 180.0F) {
+			this.prevYaw += 360.0F;
 		}
 	}
 
