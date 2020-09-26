@@ -120,6 +120,9 @@ public class DroneEntity extends Entity {
 		this.playerID = playerID;
 		this.bindID = -1;
 
+		this.yaw = yaw;
+		this.prevYaw = yaw;
+
 		this.updatePositionAndAngles(pos.x, pos.y, pos.z, yaw, 0);
 		this.createRigidBody();
 		this.rotateY(180f - yaw);
