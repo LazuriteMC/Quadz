@@ -71,7 +71,7 @@ public class PhysicsWorld {
         dynamicsWorld.setGravity(new Vector3f(0, gravity, 0));
     }
 
-    public void stepWorld(float tickDelta) {
+    public void stepWorld() {
         ClientWorld world = ClientInitializer.client.world;
 
         float d = clock.getTimeMicroseconds() / 1000000F;
@@ -98,7 +98,7 @@ public class PhysicsWorld {
                     this.dynamicsWorld.removeRigidBody(drone.getRigidBody());
                 }
 
-                drone.stepPhysics(d, tickDelta);
+                drone.stepPhysics(d);
             }
         });
 

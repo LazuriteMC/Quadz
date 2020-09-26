@@ -21,19 +21,24 @@ public class RenderTick {
         PhysicsWorld w = ClientInitializer.physicsWorld;
         if (w != null) {
             if (!client.isPaused())
-                w.stepWorld(tickDelta);
+                w.stepWorld();
             else w.clock.reset();
         }
 
         if (entity instanceof DroneEntity) {
             DroneEntity drone = (DroneEntity) entity;
 
-            Quat4f q = drone.getOrientation();
-            Quat4f newQ = new Quat4f();
-            newQ.set(q.x, -q.y, q.z, -q.w);
-            QuaternionHelper.rotateX(newQ, drone.getConfigValues(Config.CAMERA_ANGLE).intValue());
+            Quat4f q;
+            if (drone.isActive()) {
+                q = drone.getOrientation();
+            } else {
+                q = QuaternionHelper.slerp(drone.getPrevOrientation(), drone.getOrientation(), tickDelta);
+            }
 
-            Matrix4f newMat = new Matrix4f(QuaternionHelper.quat4fToQuaternion(newQ));
+            q.set(q.x, -q.y, q.z, -q.w);
+            QuaternionHelper.rotateX(q, drone.getConfigValues(Config.CAMERA_ANGLE).intValue());
+
+            Matrix4f newMat = new Matrix4f(QuaternionHelper.quat4fToQuaternion(q));
             newMat.transpose();
             stack.peek().getModel().multiply(newMat);
         }

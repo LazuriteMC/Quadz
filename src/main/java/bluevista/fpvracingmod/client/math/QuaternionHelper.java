@@ -149,4 +149,66 @@ public class QuaternionHelper {
     public static float getPitch(Quat4f quat) {
         return (float) Math.toDegrees(QuaternionHelper.toEulerAngles(quat).y);
     }
+
+//    /**
+//     * Interpolates between the start {@link Quat4f} and the end {@link Quat4f}.
+//     * @param start the beginning
+//     * @param end the end
+//     * @param tickDelta minecraft tick delta
+//     * @return the new slerped {@link Quat4f}
+//     */
+//    public static Quat4f slerp(Quat4f start, Quat4f end, float tickDelta) {
+//        Quat4f out = new Quat4f();
+//        out.interpolate(start, end, tickDelta);
+//        return out;
+//    }
+
+    public static Quat4f slerp(Quat4f q1, Quat4f q2, float t) {
+        Quat4f out = new Quat4f();
+
+        if (q1.x == q2.x && q1.y == q2.y && q1.z == q2.z && q1.w == q2.w) {
+            out.set(q1);
+            return out;
+        }
+
+        float result = (q1.x * q2.x) + (q1.y * q2.y) + (q1.z * q2.z)
+                + (q1.w * q2.w);
+
+        if (result < 0.0f) {
+            // Negate the second quaternion and the result of the dot product
+            q2.x = -q2.x;
+            q2.y = -q2.y;
+            q2.z = -q2.z;
+            q2.w = -q2.w;
+            result = -result;
+        }
+
+        // Set the first and second scale for the interpolation
+        float scale0 = 1 - t;
+        float scale1 = t;
+
+        // Check if the angle between the 2 quaternions was big enough to
+        // warrant such calculations
+        if ((1 - result) > 0.1f) {// Get the angle between the 2 quaternions,
+            // and then store the sin() of that angle
+            float theta = (float) Math.acos(result);
+            float invSinTheta = 1f / (float) Math.sin(theta);
+
+            // Calculate the scale for q1 and q2, according to the angle and
+            // it's sine value
+            scale0 = (float) Math.sin((1 - t) * theta) * invSinTheta;
+            scale1 = (float) Math.sin((t * theta)) * invSinTheta;
+        }
+
+        // Calculate the x, y, z and w values for the quaternion by using a
+        // special
+        // form of linear interpolation for quaternions.
+        out.x = (scale0 * q1.x) + (scale1 * q2.x);
+        out.y = (scale0 * q1.y) + (scale1 * q2.y);
+        out.z = (scale0 * q1.z) + (scale1 * q2.z);
+        out.w = (scale0 * q1.w) + (scale1 * q2.w);
+
+        // Return the interpolated quaternion
+        return out;
+    }
 }

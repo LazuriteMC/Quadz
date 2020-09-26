@@ -9,7 +9,6 @@ import bluevista.fpvracingmod.config.Config;
 import bluevista.fpvracingmod.client.math.BetaflightHelper;
 import bluevista.fpvracingmod.client.math.Matrix4fInject;
 import bluevista.fpvracingmod.client.math.QuaternionHelper;
-import bluevista.fpvracingmod.network.NetQuat4f;
 import bluevista.fpvracingmod.network.entity.DroneEntityS2C;
 import bluevista.fpvracingmod.network.entity.DroneEntityC2S;
 import bluevista.fpvracingmod.server.ServerInitializer;
@@ -59,7 +58,6 @@ import java.util.*;
 public class DroneEntity extends Entity {
 	public static final int TRACKING_RANGE = 80;
 	public static final int PSEUDO_TRACKING_RANGE = TRACKING_RANGE / 2;
-	public static final UUID NULL_UUID = new UUID(0, 0);
 
 	/* Misc */
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
@@ -86,14 +84,15 @@ public class DroneEntity extends Entity {
 	private int crashMomentumThreshold;
 
 	/* Misc Physics Info */
-	public NetQuat4f netQuat;
+	private Quat4f prevOrientation;
+	private Quat4f netOrientation;
 	private int playerID;
 	private int bindID;
 	private RigidBody body;
 	private boolean godMode;
 
 	/**
-	 * The constructor called by the Fabric API in {@link ServerInitializer}. Calls the main constructor.
+	 * The constructor called by the Fabric API in {@link ServerInitializer}. Invokes the main constructor.
 	 * @param type the {@link EntityType}
 	 * @param world the {@link World} that the {@link DroneEntity} will be spawned in
 	 */
@@ -111,7 +110,8 @@ public class DroneEntity extends Entity {
 	public DroneEntity(World world, int playerID, Vec3d pos, float yaw) {
 		super(ServerInitializer.DRONE_ENTITY, world);
 
-		this.netQuat = new NetQuat4f(new Quat4f(0, 1, 0, 0));
+		this.prevOrientation = new Quat4f(0, 1, 0, 0);
+		this.netOrientation = new Quat4f(0, 1, 0, 0);
 		this.axisValues = new AxisValues();
 		this.playerStartPos = new HashMap();
 
@@ -137,6 +137,7 @@ public class DroneEntity extends Entity {
 	public void tick() {
 		super.tick();
 
+		// Update the position of the drone based on the rigid body's position
 		Vector3f pos = this.getRigidBody().getCenterOfMassPosition(new Vector3f());
 		this.updatePosition(pos.x, pos.y, pos.z);
 
@@ -145,16 +146,13 @@ public class DroneEntity extends Entity {
 				Quat4f cameraPitch = getOrientation();
 				QuaternionHelper.rotateX(cameraPitch, -cameraAngle);
 				pitch = QuaternionHelper.getPitch(cameraPitch);
-
 				yaw = QuaternionHelper.getYaw(getOrientation());
+
 				DroneEntityC2S.send(this);
 			} else {
-				this.netQuat.setPrev(this.getOrientation());
+				setPrevOrientation(getOrientation());
+				setOrientation(netOrientation);
 			}
-
-//			prevYaw = yaw;
-//			prevPitch = pitch;
-
 		} else {
 			DroneEntityS2C.send(this);
 
@@ -187,10 +185,9 @@ public class DroneEntity extends Entity {
 	/**
 	 * Called every frame, this method calculates forces and modifies the orientation of the {@link DroneEntity}.
 	 * @param d delta time
-	 * @param tickDelta minecraft tick delta
 	 */
 	@Environment(EnvType.CLIENT)
-	public void stepPhysics(float d, float tickDelta) {
+	public void stepPhysics(float d) {
 		if (isActive()) {
 //			if (isKillable()) calculateCrashConditions();
 
@@ -207,11 +204,9 @@ public class DroneEntity extends Entity {
 			rotateZ(deltaZ);
 
 			decreaseAngularVelocity();
-			Vector3f thrust = getThrustForce(deltaY);
+			Vector3f thrust = getThrustForce();
 			Vector3f air = getAirResistanceForce();
 			applyForce(thrust, air);
-		} else {
-			this.setOrientation(this.netQuat.slerp(tickDelta));
 		}
 	}
 
@@ -530,7 +525,11 @@ public class DroneEntity extends Entity {
 	 * @return whether or not the {@link DroneEntity} is active
 	 */
 	public boolean isActive() {
-		return ClientTick.isPlayerIDClient(playerID);
+		if (this.world.isClient()) {
+			return ClientTick.isPlayerIDClient(playerID);
+		}
+
+		return false;
 	}
 
 	/**
@@ -582,6 +581,42 @@ public class DroneEntity extends Entity {
 	 */
 	public Quat4f getOrientation() {
 		return this.body.getWorldTransform(new Transform()).getRotation(new Quat4f());
+	}
+
+	/**
+	 * Sets the previous orientation of the {@link DroneEntity}.
+	 * @param q the new previous orientation
+	 */
+	public void setPrevOrientation(Quat4f q) {
+		this.prevOrientation.set(q);
+	}
+
+	/**
+	 * Gets the previous orientation of the {@link DroneEntity}.
+	 * @return a new previous orientation
+	 */
+	public Quat4f getPrevOrientation() {
+		Quat4f out = new Quat4f();
+		out.set(prevOrientation);
+		return out;
+	}
+
+	/**
+	 * Sets the orientation received over the network.
+	 * @param q the new net orientation
+	 */
+	public void setNetOrientation(Quat4f q) {
+		this.netOrientation.set(q);
+	}
+
+	/**
+	 * Gets the orientation received over the network.
+	 * @return a new net orientation:
+	 */
+	public Quat4f getNetQuaternion() {
+		Quat4f out = new Quat4f();
+		out.set(netOrientation);
+		return out;
 	}
 
 	/**
@@ -651,12 +686,11 @@ public class DroneEntity extends Entity {
 
 	/**
 	 * Calculates the amount of force thrust should produce based on throttle and yaw input.
-	 * @param deltaY needed to calculate yaw thrust
 	 * @return a {@link Vector3f} containing the direction and amount of force (in newtons)
 	 */
-	protected Vector3f getThrustForce(float deltaY) {
+	protected Vector3f getThrustForce() {
 		Vector3f thrust = VectorHelper.vec3dToVector3f(getThrustVector().multiply(calculateThrustCurve()).multiply(this.thrust));
-		Vector3f yaw = VectorHelper.vec3dToVector3f(getThrustVector().multiply(Math.abs(deltaY)));
+		Vector3f yaw = VectorHelper.vec3dToVector3f(getThrustVector().multiply(Math.abs(axisValues.currY)));
 
 		Vector3f out = new Vector3f();
 		out.add(thrust, yaw);

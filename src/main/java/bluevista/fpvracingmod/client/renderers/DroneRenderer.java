@@ -29,18 +29,24 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
         this.model = new DroneModel(ClientInitializer.getConfig().getIntOption(Config.SIZE));
     }
 
-    public void render(DroneEntity droneEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
+    public void render(DroneEntity droneEntity, float yaw, float delta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         this.shadowRadius = 0.2F;
 
         matrixStack.push();
-        matrixStack.peek().getModel().multiply(QuaternionHelper.quat4fToQuaternion(droneEntity.getOrientation()));
+        if (droneEntity.isActive()) {
+            matrixStack.peek().getModel().multiply(QuaternionHelper.quat4fToQuaternion(droneEntity.getOrientation()));
+        } else {
+            matrixStack.peek().getModel().multiply(QuaternionHelper.quat4fToQuaternion(
+                    QuaternionHelper.slerp(droneEntity.getPrevOrientation(), droneEntity.getOrientation(), delta)
+            ));
+        }
 
         this.model.setSize(droneEntity.getConfigValues(Config.SIZE).intValue());
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(model.getLayer(this.getTexture(droneEntity)));
         model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.pop();
 
-        super.render(droneEntity, f, g, matrixStack, vertexConsumerProvider, i);
+        super.render(droneEntity, yaw, delta, matrixStack, vertexConsumerProvider, i);
     }
 
     @Override

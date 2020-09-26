@@ -102,7 +102,7 @@ public class DroneEntityS2C {
                 if (!drone.isActive()) {
                     drone.yaw = yaw;
                     drone.pitch = pitch;
-                    drone.netQuat.set(orientation);
+                    drone.setNetOrientation(orientation);
                     drone.setRigidBodyPos(position);
                     drone.getRigidBody().setLinearVelocity(linearVel);
                     drone.getRigidBody().setAngularVelocity(angularVel);
