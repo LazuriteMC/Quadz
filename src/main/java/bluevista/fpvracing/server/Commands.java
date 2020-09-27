@@ -21,9 +21,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -68,8 +66,8 @@ public class Commands {
     public static void registerCommands() {
 
         try {
-            MESSAGES = (JsonObject) new JsonParser().parse(new FileReader(new File(Commands.class.getResource("/fpvracing_messages.json").toURI())));
-        } catch (FileNotFoundException | URISyntaxException e) {
+            MESSAGES = (JsonObject) new JsonParser().parse(new InputStreamReader(Commands.class.getResourceAsStream("/fpvracing.messages.json")));
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

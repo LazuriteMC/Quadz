@@ -1,0 +1,738 @@
+{
+  "help" : {
+    "config" : [
+      {
+        "text" : "FPV Racing Config Commands: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "\nController Setup: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "controllerID: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The controller's identifier.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "deadzone: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The controller's input deadzone.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "pitch: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The controller's pitch channel.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "roll: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The controller's roll channel.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "throttle: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The controller's throttle channel.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "throttleCenterPosition: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "yaw: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The controller's yaw channel.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "\nRate Setup: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "rate: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's betaflight rate value.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "superRate: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's betaflight superRate value.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "expo: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's betaflight expo value.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "\nInvert Controls: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "invertPitch: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Inverts the controller's pitch input.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "invertRoll: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Inverts the controller's roll input.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "invertThrottle: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Inverts the controller's throttle input.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "invertYaw: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Inverts the controller's yaw input.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "\nCamera Settings: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "cameraAngle: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's camera angle. Measured in degrees.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "fieldOfView: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's field of view. Measured in degrees.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "\nVideo Settings: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "band: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's video frequency band.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "channel: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's video frequency channel.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "\nPhysics Settings: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "damageCoefficient: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Determines drone's damage to entities.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "dragCoefficient: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's drag coefficient.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "mass: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's mass. Measured in kg.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "size: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's size. Measured in pixels.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "thrust: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's thrust. Measured in Newtons.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "thrustCurve: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Curves the drone's thrust. Value range: 0-1.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "\nGlobal Physics Settings: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "airDensity: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's air density. Measured in kg/m^3.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "blockRadius: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's block radius for collisions.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "gravity: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's gravity. Measured in m/s^2.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "\nMiscellaneous Settings: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "revert: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Reverts the loaded config with the config file's values.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "write: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Writes the loaded config to the config file.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      }
+    ],
+
+    "drone" : [
+      {
+        "text" : "FPV Racing Drone Commands: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "\nRate Setup: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "rate: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's betaflight rate value.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "superRate: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's betaflight superRate value.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "expo: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's betaflight expo value.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "\nCamera Settings: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "cameraAngle: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's camera angle. Measured in degrees.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "fieldOfView: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's field of view. Measured in degrees.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "\nVideo Settings: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "band: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's video frequency band.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "channel: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's video frequency channel.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "\nPhysics Settings: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "damageCoefficient: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Determines drone's damage to entities.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "dragCoefficient: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's drag coefficient.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "mass: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's mass. Measured in kg.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "size: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's size. Measured in pixels.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "thrust: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The drone's thrust. Measured in Newtons.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "thrustCurve: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Curves the drone's thrust. Value range: 0-1.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "\nMiscellaneous Settings: \n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "godMode: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Disables drone dying to certain damage sources.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "noCLip: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Disables drone collisions.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      }
+    ],
+
+    "fpvracing" : [
+      {
+        "text" : "FPV Racing Commands: \n\n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "config: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Config settings.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "drone: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Drone settings.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "goggles: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "Goggle settings.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      }
+    ],
+
+    "goggles" : [
+      {
+        "text" : "FPV Racing Goggles Commands: \n\n",
+        "bold" : true,
+        "italic" : false,
+        "color" : "white"
+      },
+
+      {
+        "text" : "band: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The goggle's video frequency band.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      },
+
+      {
+        "text" : "channel: ",
+        "bold" : false,
+        "italic" : true,
+        "color" : "white"
+      }, {
+        "text" : "The goggle's video frequency channel.\n",
+        "bold" : false,
+        "italic" : false,
+        "color" : "gray"
+      }
+    ]
+  },
+
+  "error" : {
+    "drone" : {
+      "text" : "Must be holding a Drone Spawner or a bound Transmitter."
+    },
+
+    "goggles" : {
+      "text" : "Must be holding or wearing Goggles."
+    }
+  },
+
+  "success" : {
+    "revert" : {
+      "text" : "Successfully reverted config."
+    },
+
+    "write" : {
+      "text" : "successfully wrote config."
+    }
+  }
+}
