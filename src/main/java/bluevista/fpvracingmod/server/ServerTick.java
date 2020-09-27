@@ -44,7 +44,7 @@ public class ServerTick {
                     if(player.distanceTo(drone) > DroneEntity.TRACKING_RANGE) {
                         continue;
 
-                    // Otherwise, see if the drone is on the same channel as the goggles...
+                    // Otherwise, see if the drone is on the same channel as the goggles..lie
                     } else if (GogglesItem.isOnSameChannel(drone, player)) {
                         setView(player, drone);
                     }
