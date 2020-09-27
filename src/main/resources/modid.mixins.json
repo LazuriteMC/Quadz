@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "bluevista.fpvracingmod.mixin",
+  "package": "bluevista.fpvracing.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "EntityPositionS2CPacketMixin",

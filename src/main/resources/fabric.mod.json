@@ -20,10 +20,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "bluevista.fpvracingmod.server.ServerInitializer"
+      "bluevista.fpvracing.server.ServerInitializer"
     ],
     "client": [
-      "bluevista.fpvracingmod.client.ClientInitializer"
+      "bluevista.fpvracing.client.ClientInitializer"
     ]
   },
   "mixins": [
