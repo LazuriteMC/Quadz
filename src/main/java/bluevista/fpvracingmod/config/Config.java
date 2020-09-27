@@ -7,6 +7,16 @@ import java.util.List;
 
 public class Config {
 
+    // For dealing with commands
+    public static final String CONFIG = "config";
+    public static final String DRONE = "drone";
+    public static final String GOGGLES = "goggles";
+    public static final String HELP = "help";
+    public static final String SUCCESS = "success";
+    public static final String ERROR = "error";
+    public static final String WRITE = "write";
+    public static final String REVERT = "revert";
+
     // For dealing with item tags for item specific configuration
     public static final String ON = "on";
     public static final String BIND = "bind";
@@ -15,9 +25,6 @@ public class Config {
     public static final String GOD_MODE = "godMode";
 
     // For dealing with the config file items
-    public static final String WRITE = "write"; // used to write config options to local config file
-    public static final String REVERT = "revert"; // used to revert the config to its initial state
-
     public static final String ALL = "all"; // used to represent all config options
 
     public static final String CONTROLLER_ID = "controllerID";
@@ -47,7 +54,7 @@ public class Config {
     public static final String DRAG_COEFFICIENT = "dragCoefficient";
     public static final String BLOCK_RADIUS = "blockRadius";
     public static final String DAMAGE_COEFFICIENT = "damageCoefficient";
-    public static final String CRASH_MOMENTUM_THRESHOLD = "crashMomentumThreshold";
+//    public static final String CRASH_MOMENTUM_THRESHOLD = "crashMomentumThreshold";
 
     public static final List<String> INT_KEYS = Arrays.asList(
             CONTROLLER_ID,
@@ -64,7 +71,7 @@ public class Config {
             BAND,
             CHANNEL,
             BLOCK_RADIUS,
-            CRASH_MOMENTUM_THRESHOLD,
+//            CRASH_MOMENTUM_THRESHOLD,
             SIZE
     );
 

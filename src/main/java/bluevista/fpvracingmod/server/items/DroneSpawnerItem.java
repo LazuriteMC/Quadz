@@ -96,9 +96,9 @@ public class DroneSpawnerItem extends Item {
 				case Config.DAMAGE_COEFFICIENT:
 					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putFloat(Config.DAMAGE_COEFFICIENT, value.floatValue());
 					break;
-				case Config.CRASH_MOMENTUM_THRESHOLD:
-					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putInt(Config.CRASH_MOMENTUM_THRESHOLD, value.intValue());
-					break;
+//				case Config.CRASH_MOMENTUM_THRESHOLD:
+//					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putInt(Config.CRASH_MOMENTUM_THRESHOLD, value.intValue());
+//					break;
 				default:
 					break;
 			}
@@ -142,8 +142,8 @@ public class DroneSpawnerItem extends Item {
 					return tag.getFloat(Config.THRUST_CURVE);
 				case Config.DAMAGE_COEFFICIENT:
 					return tag.getFloat(Config.DAMAGE_COEFFICIENT);
-				case Config.CRASH_MOMENTUM_THRESHOLD:
-					return tag.getInt(Config.CRASH_MOMENTUM_THRESHOLD);
+//				case Config.CRASH_MOMENTUM_THRESHOLD:
+//					return tag.getInt(Config.CRASH_MOMENTUM_THRESHOLD);
 				default:
 					return null;
 			}
@@ -166,7 +166,7 @@ public class DroneSpawnerItem extends Item {
 		drone.setConfigValues(Config.THRUST,					DroneSpawnerItem.getTagValue(itemStack, Config.THRUST)						!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.THRUST)					: config.getOption(Config.THRUST));
 		drone.setConfigValues(Config.THRUST_CURVE,				DroneSpawnerItem.getTagValue(itemStack, Config.THRUST_CURVE)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.THRUST_CURVE)				: config.getOption(Config.THRUST_CURVE));
 		drone.setConfigValues(Config.DAMAGE_COEFFICIENT,		DroneSpawnerItem.getTagValue(itemStack, Config.DAMAGE_COEFFICIENT)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.DAMAGE_COEFFICIENT)		: config.getOption(Config.DAMAGE_COEFFICIENT));
-		drone.setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD,	DroneSpawnerItem.getTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD)	: config.getOption(Config.CRASH_MOMENTUM_THRESHOLD));
+//		drone.setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD,	DroneSpawnerItem.getTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD)	: config.getOption(Config.CRASH_MOMENTUM_THRESHOLD));
 
 		drone.setConfigValues(Config.MASS,				DroneSpawnerItem.getTagValue(itemStack, Config.MASS)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.MASS)				: config.getOption(Config.MASS));
 		drone.setConfigValues(Config.SIZE,				DroneSpawnerItem.getTagValue(itemStack, Config.SIZE)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.SIZE)				: config.getOption(Config.SIZE));
@@ -190,7 +190,7 @@ public class DroneSpawnerItem extends Item {
 		DroneSpawnerItem.setTagValue(itemStack, Config.THRUST,						drone.getConfigValues(Config.THRUST));
 		DroneSpawnerItem.setTagValue(itemStack, Config.THRUST_CURVE,				drone.getConfigValues(Config.THRUST_CURVE));
 		DroneSpawnerItem.setTagValue(itemStack, Config.DAMAGE_COEFFICIENT,			drone.getConfigValues(Config.DAMAGE_COEFFICIENT));
-		DroneSpawnerItem.setTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD,	drone.getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD));
+//		DroneSpawnerItem.setTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD,	drone.getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD));
 
 		DroneSpawnerItem.setTagValue(itemStack, Config.MASS,				drone.getConfigValues(Config.MASS));
 		DroneSpawnerItem.setTagValue(itemStack, Config.SIZE,				drone.getConfigValues(Config.SIZE));
@@ -210,7 +210,7 @@ public class DroneSpawnerItem extends Item {
 		DroneSpawnerItem.setTagValue(itemStack, Config.THRUST,						DroneSpawnerItem.getTagValue(itemStack, Config.THRUST)						!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.THRUST)					: config.getOption(Config.THRUST));
 		DroneSpawnerItem.setTagValue(itemStack, Config.THRUST_CURVE,				DroneSpawnerItem.getTagValue(itemStack, Config.THRUST_CURVE)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.THRUST_CURVE)				: config.getOption(Config.THRUST_CURVE));
 		DroneSpawnerItem.setTagValue(itemStack, Config.DAMAGE_COEFFICIENT,			DroneSpawnerItem.getTagValue(itemStack, Config.DAMAGE_COEFFICIENT)			!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.DAMAGE_COEFFICIENT)		: config.getOption(Config.DAMAGE_COEFFICIENT));
-		DroneSpawnerItem.setTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD,	DroneSpawnerItem.getTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD)	: config.getOption(Config.CRASH_MOMENTUM_THRESHOLD));
+//		DroneSpawnerItem.setTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD,	DroneSpawnerItem.getTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.CRASH_MOMENTUM_THRESHOLD)	: config.getOption(Config.CRASH_MOMENTUM_THRESHOLD));
 
 		DroneSpawnerItem.setTagValue(itemStack, Config.MASS,				DroneSpawnerItem.getTagValue(itemStack, Config.MASS)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.MASS)				: config.getOption(Config.MASS));
 		DroneSpawnerItem.setTagValue(itemStack, Config.SIZE,				DroneSpawnerItem.getTagValue(itemStack, Config.SIZE)				!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.SIZE)				: config.getOption(Config.SIZE));
