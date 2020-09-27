@@ -94,7 +94,7 @@ public class DroneEntityS2C {
                 drone.setConfigValues(Config.THRUST_CURVE, thrustCurve);
                 drone.setConfigValues(Config.DRAG_COEFFICIENT, dragCoefficient);
                 drone.setConfigValues(Config.DAMAGE_COEFFICIENT, damageCoefficient);
-                drone.setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD, crashMomentumThreshold);
+//                drone.setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD, crashMomentumThreshold);
 
                 /* Physics Vectors (orientation, position, velocity, etc.) */
                 if (!drone.isActive()) {
@@ -140,7 +140,7 @@ public class DroneEntityS2C {
         buf.writeFloat(drone.getConfigValues(Config.THRUST).floatValue());
         buf.writeFloat(drone.getConfigValues(Config.THRUST_CURVE).floatValue());
         buf.writeFloat(drone.getConfigValues(Config.DRAG_COEFFICIENT).floatValue());
-        buf.writeInt(drone.getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
+//        buf.writeInt(drone.getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
 
         /* Physics Vectors */
         PacketHelper.serializeQuaternion(buf, drone.getOrientation());

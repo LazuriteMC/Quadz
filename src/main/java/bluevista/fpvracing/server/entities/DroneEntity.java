@@ -265,9 +265,9 @@ public class DroneEntity extends Entity {
 			case Config.SIZE:
 				this.setSize(value.intValue());
 				break;
-			case Config.CRASH_MOMENTUM_THRESHOLD:
-				this.crashMomentumThreshold = value.intValue();
-				break;
+//			case Config.CRASH_MOMENTUM_THRESHOLD:
+//				this.crashMomentumThreshold = value.intValue();
+//				break;
 			case Config.DRAG_COEFFICIENT:
 				this.dragCoefficient = value.floatValue();
 				break;
@@ -315,8 +315,8 @@ public class DroneEntity extends Entity {
 				return this.mass;
 			case Config.SIZE:
 				return this.size;
-			case Config.CRASH_MOMENTUM_THRESHOLD:
-				return this.crashMomentumThreshold;
+//			case Config.CRASH_MOMENTUM_THRESHOLD:
+//				return this.crashMomentumThreshold;
 			case Config.DRAG_COEFFICIENT:
 				return this.dragCoefficient;
 			default:
@@ -376,7 +376,7 @@ public class DroneEntity extends Entity {
 		tag.putFloat(Config.THRUST, getConfigValues(Config.THRUST).floatValue());
 		tag.putFloat(Config.THRUST_CURVE, getConfigValues(Config.THRUST_CURVE).floatValue());
 		tag.putFloat(Config.DAMAGE_COEFFICIENT, getConfigValues(Config.DAMAGE_COEFFICIENT).floatValue());
-		tag.putInt(Config.CRASH_MOMENTUM_THRESHOLD, getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
+//		tag.putInt(Config.CRASH_MOMENTUM_THRESHOLD, getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
 
 		tag.putInt(Config.PLAYER_ID, getConfigValues(Config.PLAYER_ID).intValue());
 		tag.putInt(Config.BIND, getConfigValues(Config.BIND).intValue());
@@ -407,7 +407,7 @@ public class DroneEntity extends Entity {
 		setConfigValues(Config.THRUST, tag.getFloat(Config.THRUST));
 		setConfigValues(Config.THRUST_CURVE, tag.getFloat(Config.THRUST_CURVE));
 		setConfigValues(Config.DAMAGE_COEFFICIENT, tag.getFloat(Config.DAMAGE_COEFFICIENT));
-		setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD, tag.getInt(Config.CRASH_MOMENTUM_THRESHOLD));
+//		setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD, tag.getInt(Config.CRASH_MOMENTUM_THRESHOLD));
 
 		setConfigValues(Config.PLAYER_ID, tag.getInt(Config.PLAYER_ID));
 		setConfigValues(Config.BIND, tag.getInt(Config.BIND));

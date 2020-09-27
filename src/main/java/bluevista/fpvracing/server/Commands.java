@@ -6,6 +6,8 @@ import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.server.items.DroneSpawnerItem;
 import bluevista.fpvracing.server.items.GogglesItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -17,10 +19,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
@@ -28,6 +32,8 @@ import java.util.*;
 public class Commands {
 
     private static class NumberArgumentType implements ArgumentType<Number> {
+
+        static final String NAME = "number";
 
         @Override
         public Number parse(StringReader reader) {
@@ -48,7 +54,7 @@ public class Commands {
 
         @Override
         public Collection<String> getExamples() {
-            return null; // no examples looool
+            return null; // no examples, figure it out :)
         }
 
         public static Number getNumber(CommandContext<ServerCommandSource> context, final String name) {
@@ -56,25 +62,28 @@ public class Commands {
         }
     }
 
-    private static final Text DRONE_ERROR_MESSAGE = new LiteralText("Must be holding a ")
-            .append(new TranslatableText("item.fpvracing.drone_spawner_item"))
-            .append(" or a bound ")
-            .append(new TranslatableText("item.fpvracing.transmitter_item"));
-
-    private static final Text GOGGLES_ERROR_MESSAGE = new LiteralText("Must be holding or wearing ")
-            .append(new TranslatableText("item.fpvracing.goggles_item"));
-
-    private static final Map<String, Text> SUCCESS_MESSAGES = new HashMap<String, Text>() {{
-        put(Config.WRITE, new LiteralText("Successfully wrote config"));
-        put(Config.REVERT, new LiteralText("Successfully reverted config"));
-    }};
+    private static final String COLON_SPACE = ": ";
+    private static JsonObject MESSAGES = null;
 
     public static void registerCommands() {
 
-        ArgumentTypes.register("number", NumberArgumentType.class, new ConstantArgumentSerializer(NumberArgumentType::new));
+        try {
+            MESSAGES = (JsonObject) new JsonParser().parse(new FileReader(new File(Commands.class.getResource("/fpvracing_messages.json").toURI())));
+        } catch (FileNotFoundException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        ArgumentTypes.register(NumberArgumentType.NAME, NumberArgumentType.class, new ConstantArgumentSerializer(NumberArgumentType::new));
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(CommandManager.literal(ServerInitializer.MODID)
-            .then(CommandManager.literal("config")
+
+            .then(CommandManager.literal(Config.HELP)
+                .executes(context -> help(context, ServerInitializer.MODID)))
+
+            .then(CommandManager.literal(Config.CONFIG)
+
+                .then(CommandManager.literal(Config.HELP)
+                    .executes(context -> help(context, Config.CONFIG)))
 
                 .then(CommandManager.literal(Config.CONTROLLER_ID)
                     .then(CommandManager.argument(Config.CONTROLLER_ID, new NumberArgumentType())
@@ -196,10 +205,10 @@ public class Commands {
                         .executes(context -> setConfigValue(context, Config.DAMAGE_COEFFICIENT)))
                     .executes(context -> getConfigValue(context, Config.DAMAGE_COEFFICIENT)))
 
-                .then(CommandManager.literal(Config.CRASH_MOMENTUM_THRESHOLD)
-                    .then(CommandManager.argument(Config.CRASH_MOMENTUM_THRESHOLD, new NumberArgumentType())
-                        .executes(context -> setConfigValue(context, Config.CRASH_MOMENTUM_THRESHOLD)))
-                    .executes(context -> getConfigValue(context, Config.CRASH_MOMENTUM_THRESHOLD)))
+//                .then(CommandManager.literal(Config.CRASH_MOMENTUM_THRESHOLD)
+//                    .then(CommandManager.argument(Config.CRASH_MOMENTUM_THRESHOLD, new NumberArgumentType())
+//                        .executes(context -> setConfigValue(context, Config.CRASH_MOMENTUM_THRESHOLD)))
+//                    .executes(context -> getConfigValue(context, Config.CRASH_MOMENTUM_THRESHOLD)))
 
                 .then(CommandManager.literal(Config.GRAVITY)
                     .then(CommandManager.argument(Config.GRAVITY, new NumberArgumentType())
@@ -224,7 +233,10 @@ public class Commands {
 
                 )
 
-            .then(CommandManager.literal("drone")
+            .then(CommandManager.literal(Config.DRONE)
+
+                .then(CommandManager.literal(Config.HELP)
+                    .executes(context -> help(context, Config.DRONE)))
 
                 .then(CommandManager.literal(Config.BAND)
                     .then(CommandManager.argument(Config.BAND, new NumberArgumentType())
@@ -276,10 +288,10 @@ public class Commands {
                         .executes(context -> setDroneValue(context, Config.DAMAGE_COEFFICIENT)))
                     .executes(context -> getDroneValue(context, Config.DAMAGE_COEFFICIENT)))
 
-                .then(CommandManager.literal(Config.CRASH_MOMENTUM_THRESHOLD)
-                    .then(CommandManager.argument(Config.CRASH_MOMENTUM_THRESHOLD, new NumberArgumentType())
-                        .executes(context -> setDroneValue(context, Config.CRASH_MOMENTUM_THRESHOLD)))
-                    .executes(context -> getDroneValue(context, Config.CRASH_MOMENTUM_THRESHOLD)))
+//                .then(CommandManager.literal(Config.CRASH_MOMENTUM_THRESHOLD)
+//                    .then(CommandManager.argument(Config.CRASH_MOMENTUM_THRESHOLD, new NumberArgumentType())
+//                        .executes(context -> setDroneValue(context, Config.CRASH_MOMENTUM_THRESHOLD)))
+//                    .executes(context -> getDroneValue(context, Config.CRASH_MOMENTUM_THRESHOLD)))
 
                 .then(CommandManager.literal(Config.RATE)
                     .then(CommandManager.argument(Config.RATE, new NumberArgumentType())
@@ -308,7 +320,10 @@ public class Commands {
 
                 )
 
-            .then(CommandManager.literal("goggles")
+            .then(CommandManager.literal(Config.GOGGLES)
+
+                .then(CommandManager.literal(Config.HELP)
+                    .executes(context -> help(context, Config.GOGGLES)))
 
                 .then(CommandManager.literal(Config.BAND)
                     .then(CommandManager.argument(Config.BAND, new NumberArgumentType())
@@ -321,8 +336,7 @@ public class Commands {
                     .executes(context -> getGogglesValue(context, Config.CHANNEL)))
 
                 )
-
-            ));
+        ));
     }
 
     private static int setConfigValue(CommandContext<ServerCommandSource> context, String key) {
@@ -353,7 +367,7 @@ public class Commands {
             final ServerPlayerEntity player = context.getSource().getPlayer();
             final Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(player.getUuid());
 
-            player.sendMessage(new LiteralText(key + ": " + config.getOption(key)), false);
+            player.sendMessage(new LiteralText(key + COLON_SPACE + config.getOption(key)), false);
             return 1;
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
@@ -387,7 +401,10 @@ public class Commands {
                     return 1;
                 }
             }
-            player.sendMessage(DRONE_ERROR_MESSAGE, false);
+
+            if (MESSAGES != null) {
+                player.sendMessage(Text.Serializer.fromJson(MESSAGES.getAsJsonObject(Config.ERROR).getAsJsonObject(Config.DRONE).toString()), false);
+            }
             return -1;
 
         } catch (CommandSyntaxException e) {
@@ -402,16 +419,19 @@ public class Commands {
             final ItemStack stack = player.getMainHandStack();
 
             if (stack.getItem() instanceof DroneSpawnerItem) {
-                player.sendMessage(new LiteralText(key + ": " + DroneSpawnerItem.getTagValue(stack, key)), false);
+                player.sendMessage(new LiteralText(key + COLON_SPACE + DroneSpawnerItem.getTagValue(stack, key)), false);
                 return 1;
             } else if (stack.getItem() instanceof TransmitterItem) {
                 DroneEntity drone = TransmitterItem.droneFromTransmitter(stack, player);
                 if (drone != null) {
-                    player.sendMessage(new LiteralText(key + ": " + drone.getConfigValues(key)), false);
+                    player.sendMessage(new LiteralText(key + COLON_SPACE + drone.getConfigValues(key)), false);
                     return 1;
                 }
             }
-            player.sendMessage(DRONE_ERROR_MESSAGE, false);
+
+            if (MESSAGES != null) {
+                player.sendMessage(Text.Serializer.fromJson(MESSAGES.getAsJsonObject(Config.ERROR).getAsJsonObject(Config.DRONE).toString()), false);
+            }
             return -1;
 
         } catch (CommandSyntaxException e) {
@@ -446,7 +466,10 @@ public class Commands {
                     return 1;
                 }
             }
-            player.sendMessage(GOGGLES_ERROR_MESSAGE, false);
+
+            if (MESSAGES != null) {
+                player.sendMessage(Text.Serializer.fromJson(MESSAGES.getAsJsonObject(Config.ERROR).getAsJsonObject(Config.GOGGLES).toString()), false);
+            }
             return -1;
 
         } catch (CommandSyntaxException e) {
@@ -462,13 +485,16 @@ public class Commands {
             final ItemStack helmet = player.inventory.armor.get(3);
 
             if (stack.getItem() instanceof GogglesItem) {
-                player.sendMessage(new LiteralText(key + ": " + GogglesItem.getTagValue(stack, key)), false);
+                player.sendMessage(new LiteralText(key + COLON_SPACE + GogglesItem.getTagValue(stack, key)), false);
                 return 1;
             } else if (helmet.getItem() instanceof GogglesItem) {
-                player.sendMessage(new LiteralText(key + ": " + GogglesItem.getTagValue(helmet, key)), false);
+                player.sendMessage(new LiteralText(key + COLON_SPACE + GogglesItem.getTagValue(helmet, key)), false);
                 return 1;
             }
-            player.sendMessage(GOGGLES_ERROR_MESSAGE, false);
+
+            if (MESSAGES != null) {
+                player.sendMessage(Text.Serializer.fromJson(MESSAGES.getAsJsonObject(Config.ERROR).getAsJsonObject(Config.GOGGLES).toString()), false);
+            }
             return -1;
 
         } catch (CommandSyntaxException e) {
@@ -481,8 +507,27 @@ public class Commands {
         try {
             final ServerPlayerEntity player = context.getSource().getPlayer();
             ConfigS2C.send(player, key);
-            player.sendMessage(SUCCESS_MESSAGES.get(key), false);
+
+            if (MESSAGES != null) {
+                player.sendMessage(Text.Serializer.fromJson(MESSAGES.getAsJsonObject(Config.SUCCESS).getAsJsonObject(key).toString()), false);
+            }
             return 1;
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    private static int help(CommandContext<ServerCommandSource> context, String key) {
+        try {
+            final ServerPlayerEntity player = context.getSource().getPlayer();
+            if (MESSAGES != null) {
+                final String message = MESSAGES.getAsJsonObject(Config.HELP).getAsJsonArray(key).toString();
+                player.sendMessage(Text.Serializer.fromJson(message), false);
+                return 1;
+            } else {
+                return -1;
+            }
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
             return -1;
