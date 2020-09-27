@@ -56,7 +56,7 @@ public class DroneEntityS2C {
         float thrust = buf.readFloat();
         float thrustCurve = buf.readFloat();
         float dragCoefficient = buf.readFloat();
-        int crashMomentumThreshold = buf.readInt();
+//        int crashMomentumThreshold = buf.readInt();
 
         Quat4f orientation = PacketHelper.deserializeQuaternion(buf);
         Vector3f position = PacketHelper.deserializeVector3f(buf);
