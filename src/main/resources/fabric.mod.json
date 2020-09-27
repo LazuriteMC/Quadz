@@ -15,7 +15,7 @@
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/fpvracing/icon.png",
 
   "environment": "*",
   "entrypoints": {
@@ -27,7 +27,7 @@
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "fpvracing.mixins.json"
   ],
 
   "depends": {

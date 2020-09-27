@@ -1,0 +1,29 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "bluevista.fpvracing.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "EntityPositionS2CPacketMixin",
+    "Matrix4fMixin",
+    "MoveRelativeMixin",
+    "PlayerInventoryMixin",
+    "RotateAndMoveRelativeMixin",
+    "PlayerManagerMixin",
+    "PlayerSpawnS2CPacketMixin",
+    "ServerPlayerEntityMixin"
+  ],
+  "client": [
+    "ClientPlayerEntityMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "ClientWorldMixin",
+    "GameRendererMixin",
+    "ItemRendererMixin",
+    "InGameHudMixin",
+    "MouseMixin",
+    "WorldRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
