@@ -690,7 +690,7 @@ public class DroneEntity extends Entity {
 	 */
 	protected Vector3f getThrustForce() {
 		Vector3f thrust = VectorHelper.vec3dToVector3f(getThrustVector().multiply(calculateThrustCurve()).multiply(this.thrust));
-		Vector3f yaw = VectorHelper.vec3dToVector3f(getThrustVector().multiply(Math.abs(axisValues.currY)));
+		Vector3f yaw = VectorHelper.vec3dToVector3f(getThrustVector().multiply(Math.abs(axisValues.currY * 15)));
 
 		Vector3f out = new Vector3f();
 		out.add(thrust, yaw);
