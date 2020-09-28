@@ -1,5 +1,8 @@
 package bluevista.fpvracing.config;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -102,7 +105,11 @@ public class Config {
 
     public Config() {
         options = new HashMap<>();
-        configReader = new ConfigReader();
+    }
+
+    public Config(ConfigReader configReader) {
+        this();
+        this.configReader = configReader;
     }
 
     /* SETTERS */
@@ -134,6 +141,7 @@ public class Config {
 
     /* OTHER METHODS */
 
+    @Environment(EnvType.CLIENT)
     public void loadConfig() {
         for (String key : ALL_OPTIONS) {
             try {
@@ -145,8 +153,8 @@ public class Config {
         }
     }
 
+    @Environment(EnvType.CLIENT)
     public void writeConfig() {
         configReader.writeValues();
     }
-
 }
