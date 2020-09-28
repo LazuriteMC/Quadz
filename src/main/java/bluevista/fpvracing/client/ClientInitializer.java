@@ -21,14 +21,25 @@ import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.UUID;
-
+/**
+ * This class is responsible for loading all of the client-side
+ * registries and configurations.
+ */
 @Environment(EnvType.CLIENT)
 public class ClientInitializer implements ClientModInitializer {
+
+    /** The running instance of the minecraft client. */
     public static final MinecraftClient client = MinecraftClient.getInstance();
+
+    /** The physics world used for {@link DroneEntity} objects. */
     public static PhysicsWorld physicsWorld;
+
+    /** The client player's config which is later sent to the server. */
     private static Config config;
 
+    /**
+     * Initializes all of the registries and loads the player config.
+     */
     @Override
     public void onInitializeClient() {
         GLFW.glfwInit(); // forcefully initializes GLFW
@@ -40,11 +51,18 @@ public class ClientInitializer implements ClientModInitializer {
         registerNetwork();
     }
 
+    /**
+     * Loads the player's config from disk.
+     */
     public static void registerConfig() {
         config = new Config(new ConfigReader());
         config.loadConfig();
     }
 
+    /**
+     * Registers keybindings such as
+     * god mode, noclip, EMP, etc.
+     */
     private void registerKeybinds() {
         GogglePowerKeybind.register();
         GodModeKeybind.register();
@@ -52,30 +70,39 @@ public class ClientInitializer implements ClientModInitializer {
         EMPKeybind.register();
     }
 
+    /**
+     * Registers the renderers which use {@link bluevista.fpvracing.client.models.DroneModel}.
+     */
     private void registerRenderers() {
         EntityRendererRegistry.INSTANCE.register(ServerInitializer.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
         DroneSpawnerItemRenderer.register();
     }
 
+    /**
+     * Registers the network packets which are sent
+     * from the server and received by the client.
+     */
     private void registerNetwork() {
         DroneEntityS2C.register();
         ShouldRenderPlayerS2C.register();
         ConfigS2C.register();
     }
 
+    /**
+     * Get the config object created in {@link ClientInitializer#registerConfig()}.
+     * @return the {@link Config} object being stored
+     */
     public static Config getConfig() {
         return config;
     }
 
+    /**
+     * Finds out whether or not the player is in the goggles
+     * by checking what the client camera entity is.
+     * @param client the minecraft client to use
+     * @return whether or not the player is in goggles
+     */
     public static boolean isInGoggles(MinecraftClient client) {
         return client.getCameraEntity() instanceof DroneEntity;
-    }
-
-    public static boolean isPlayerIDClient(UUID playerID) {
-        if (client.player != null) {
-            return playerID.equals(client.player.getUuid());
-        } else {
-            return false;
-        }
     }
 }
