@@ -102,7 +102,11 @@ public class Config {
 
     public Config() {
         options = new HashMap<>();
-        configReader = new ConfigReader();
+    }
+
+    public Config(ConfigReader configReader) {
+        this();
+        this.configReader = configReader;
     }
 
     /* SETTERS */

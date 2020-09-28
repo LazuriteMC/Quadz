@@ -7,6 +7,7 @@ import bluevista.fpvracing.client.input.keybinds.NoClipKeybind;
 import bluevista.fpvracing.client.renderers.DroneRenderer;
 import bluevista.fpvracing.client.renderers.DroneSpawnerItemRenderer;
 import bluevista.fpvracing.config.Config;
+import bluevista.fpvracing.config.ConfigReader;
 import bluevista.fpvracing.network.config.ConfigS2C;
 import bluevista.fpvracing.network.entity.DroneEntityS2C;
 import bluevista.fpvracing.client.physics.PhysicsWorld;
@@ -40,7 +41,7 @@ public class ClientInitializer implements ClientModInitializer {
     }
 
     public static void registerConfig() {
-        config = new Config();
+        config = new Config(new ConfigReader());
         config.loadConfig();
     }
 
