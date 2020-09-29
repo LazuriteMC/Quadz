@@ -38,6 +38,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -122,6 +124,13 @@ public class DroneEntity extends Entity {
 
 		this.yaw = yaw;
 		this.prevYaw = yaw;
+
+		Entity entity = world.getEntityById(playerID);
+		if (entity instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity) entity;
+			this.setCustomName(new LiteralText(player.getGameProfile().getName()));
+			this.setCustomNameVisible(true);
+		}
 
 		this.updatePositionAndAngles(pos.x, pos.y, pos.z, yaw, 0);
 		this.createRigidBody();
