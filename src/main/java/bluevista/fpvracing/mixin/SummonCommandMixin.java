@@ -18,8 +18,26 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import javax.vecmath.Vector3f;
 
+/**
+ * This mixin allows drones to be spawned using the summon command.
+ */
 @Mixin(SummonCommand.class)
 public class SummonCommandMixin {
+    /**
+     * After the position is set for the summoned entity, this mixin checks to see if
+     * the entity being summoned is a drone and sets it's {@link com.bulletphysics.dynamics.RigidBody}
+     * position and also it's yaw rotation.
+     * @param source the command source
+     * @param entity the identifier of the entity to be spawned
+     * @param pos the position to spawn at
+     * @param nbt the compound tag for the entity
+     * @param initialize
+     * @param info required by every mixin injection
+     * @param tag a local capture variable
+     * @param world a local capture variable
+     * @param entity2 a local capture variable
+     * @throws CommandSyntaxException
+     */
     @Inject(
             method = "execute",
             at = @At(
