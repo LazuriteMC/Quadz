@@ -175,6 +175,8 @@ public class DroneSpawnerItem extends Item {
 		// config doesn't contain values for these, setting to default values if itemStack doesn't contain the value
 		drone.setConfigValues(Config.NO_CLIP,	DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)		!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.NO_CLIP)	: 0);
 		drone.setConfigValues(Config.GOD_MODE,	DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)	!= null ? DroneSpawnerItem.getTagValue(itemStack, Config.GOD_MODE)	: 0);
+
+		drone.setConfigValues(Config.PLAYER_ID, user.getEntityId());
 	}
 
 	public static void prepDestroyedDrone(DroneEntity drone, ItemStack itemStack) {
