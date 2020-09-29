@@ -49,6 +49,11 @@ public class ServerPlayerEntityMixin {
         }
     }
 
+    /**
+     * This mixin prevents the server log from getting spammed with messages
+     * about the player moving too quickly.
+     * @param info required by every mixin injection
+     */
     @Inject(at = @At("HEAD"), method = "isInTeleportationState()Z", cancellable = true)
     public void isInTeleportationState(CallbackInfoReturnable<Boolean> info) {
         if (ServerTick.isInGoggles((ServerPlayerEntity) (Object) this)) {
