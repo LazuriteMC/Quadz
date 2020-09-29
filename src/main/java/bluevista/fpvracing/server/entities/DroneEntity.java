@@ -185,6 +185,7 @@ public class DroneEntity extends Entity {
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.CAMPFIRE ||
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_CAMPFIRE ||
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_FIRE ||
+					this.world.getBlockState(this.getBlockPos().down()).getBlock() == Blocks.MAGMA_BLOCK ||
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.FIRE)) {
 				this.kill();
 			}
