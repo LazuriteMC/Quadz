@@ -2,6 +2,8 @@ package bluevista.fpvracing.config;
 
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.server.ServerInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -10,6 +12,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
 
+@Environment(EnvType.CLIENT)
 public class ConfigReader {
 
     private static final String CONFIG_NAME = ServerInitializer.MODID + ".cfg";

@@ -38,6 +38,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -123,6 +125,13 @@ public class DroneEntity extends Entity {
 		this.yaw = yaw;
 		this.prevYaw = yaw;
 
+		Entity entity = world.getEntityById(playerID);
+		if (entity instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity) entity;
+			this.setCustomName(new LiteralText(player.getGameProfile().getName()));
+			this.setCustomNameVisible(true);
+		}
+
 		this.updatePositionAndAngles(pos.x, pos.y, pos.z, yaw, 0);
 		this.createRigidBody();
 		this.rotateY(180f - yaw);
@@ -176,6 +185,7 @@ public class DroneEntity extends Entity {
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.CAMPFIRE ||
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_CAMPFIRE ||
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.SOUL_FIRE ||
+					this.world.getBlockState(this.getBlockPos().down()).getBlock() == Blocks.MAGMA_BLOCK ||
 					this.world.getBlockState(this.getBlockPos()).getBlock() == Blocks.FIRE)) {
 				this.kill();
 			}
@@ -690,7 +700,7 @@ public class DroneEntity extends Entity {
 	 */
 	protected Vector3f getThrustForce() {
 		Vector3f thrust = VectorHelper.vec3dToVector3f(getThrustVector().multiply(calculateThrustCurve()).multiply(this.thrust));
-		Vector3f yaw = VectorHelper.vec3dToVector3f(getThrustVector().multiply(Math.abs(axisValues.currY * 15)));
+		Vector3f yaw = VectorHelper.vec3dToVector3f(getThrustVector().multiply(Math.abs(BetaflightHelper.calculateRates(axisValues.currY, rate, expo, superRate, 0.01f))));
 
 		Vector3f out = new Vector3f();
 		out.add(thrust, yaw);
