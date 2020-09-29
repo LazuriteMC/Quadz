@@ -8,10 +8,11 @@
     "Matrix4fMixin",
     "MoveRelativeMixin",
     "PlayerInventoryMixin",
-    "RotateAndMoveRelativeMixin",
     "PlayerManagerMixin",
     "PlayerSpawnS2CPacketMixin",
-    "ServerPlayerEntityMixin"
+    "RotateAndMoveRelativeMixin",
+    "ServerPlayerEntityMixin",
+    "SummonCommandMixin"
   ],
   "client": [
     "ClientPlayerEntityMixin",

@@ -10,5 +10,7 @@ drone simulators available.
 
 To find out what we're currently working on, see the [Trello Board](https://trello.com/b/naSFhSWz/fpv-racing-mod).
 
+The old repository can be found [here](https://github.com/ethanejohnsons/FPV-Racing-Mod).
+
 ### Community
 If you wanna find out what we're working on or need help with the mod, join our discord [here](https://discord.gg/efCMR7U).

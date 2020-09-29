@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class PlayerManagerMixin {
      * @param packet the packet that will be sent
      * @param info required by every mixin injection
      */
-    @Inject(at = @At("HEAD"), method = "sendToAround", cancellable = true)
+    @Inject(method = "sendToAround", at = @At("TAIL"))
     public void sendToAround(PlayerEntity player, double x, double y, double z, double distance, RegistryKey<World> worldKey, Packet<?> packet, CallbackInfo info) {
         for (int i = 0; i < this.players.size(); ++i) {
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) this.players.get(i);
@@ -58,7 +59,5 @@ public class PlayerManagerMixin {
                 }
             }
         }
-
-        info.cancel();
     }
 }
