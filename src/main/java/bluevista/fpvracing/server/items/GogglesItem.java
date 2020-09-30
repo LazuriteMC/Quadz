@@ -100,11 +100,9 @@ public class GogglesItem extends ArmorItem {
 		if (GogglesItem.isWearingGoggles(player)) {
 			ItemStack hat = player.inventory.armor.get(3);
 
-			if (GogglesItem.isOn(player)) {
-				if (GogglesItem.getTagValue(hat, Config.BAND) != null && GogglesItem.getTagValue(hat, Config.CHANNEL) != null) {
-					return drone.getConfigValues(Config.BAND).equals(GogglesItem.getTagValue(hat, Config.BAND)) &&
-							drone.getConfigValues(Config.CHANNEL).equals(GogglesItem.getTagValue(hat, Config.CHANNEL));
-				}
+			if (GogglesItem.getTagValue(hat, Config.BAND) != null && GogglesItem.getTagValue(hat, Config.CHANNEL) != null) {
+				return drone.getConfigValues(Config.BAND).equals(GogglesItem.getTagValue(hat, Config.BAND)) &&
+						drone.getConfigValues(Config.CHANNEL).equals(GogglesItem.getTagValue(hat, Config.CHANNEL));
 			}
 		}
 		return false;

@@ -1,4 +1,4 @@
-package bluevista.fpvracing.network.entity;
+package bluevista.fpvracing.network;
 
 import bluevista.fpvracing.client.ClientTick;
 import bluevista.fpvracing.server.ServerInitializer;

@@ -1,10 +1,12 @@
 package bluevista.fpvracing.server;
 
-import bluevista.fpvracing.network.entity.ShouldRenderPlayerS2C;
+import bluevista.fpvracing.network.SelectedSlotS2C;
+import bluevista.fpvracing.network.ShouldRenderPlayerS2C;
 import bluevista.fpvracing.server.entities.DroneEntity;
 import bluevista.fpvracing.server.items.GogglesItem;
+import bluevista.fpvracing.server.items.TransmitterItem;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
-import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
@@ -31,25 +33,6 @@ public class ServerTick {
         List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
 
         for (ServerPlayerEntity player : players) { // For every player in the server...
-            boolean shouldRenderPlayer = false;
-
-            // If the player is wearing powered-on goggles but not in a DroneEntity's view...
-            if (GogglesItem.isOn(player) && !isInGoggles(player)) {
-                List<Entity> drones = DroneEntity.getDrones(player); // list of all drones
-
-                for (Entity entity : drones) { // For every drone...
-                    DroneEntity drone = (DroneEntity) entity;
-
-                    // Make sure drone is within range of player...
-                    if(player.distanceTo(drone) > DroneEntity.TRACKING_RANGE) {
-                        continue;
-
-                    // Otherwise, see if the drone is on the same channel as the goggles..lie
-                    } else if (GogglesItem.isOnSameChannel(drone, player)) {
-                        setView(player, drone);
-                    }
-                }
-            }
 
             // If the player is already viewing a DroneEntity...
             if (isInGoggles(player)) {
@@ -58,7 +41,7 @@ public class ServerTick {
 
                 // If the drone is in range of where the player started...
                 if (Math.sqrt(drone.squaredDistanceTo(pos)) < DroneEntity.PSEUDO_TRACKING_RANGE) {
-                    shouldRenderPlayer = true;
+                    ShouldRenderPlayerS2C.send(player, true);
 
                     if (!player.getPos().equals(pos)) {
                         player.requestTeleport(pos.x, pos.y, pos.z);
@@ -69,12 +52,9 @@ public class ServerTick {
                 } else if (player.distanceTo(drone) > DroneEntity.PSEUDO_TRACKING_RANGE) {
                     player.requestTeleport(drone.getX(), drone.getY() + 50, drone.getZ());
                     player.setNoGravity(true);
-                    shouldRenderPlayer = false;
-
+                    ShouldRenderPlayerS2C.send(player, false);
                 }
             }
-
-            ShouldRenderPlayerS2C.send(player, shouldRenderPlayer);
 
             if (player.getCameraEntity() instanceof DroneEntity && (                            // currently viewing through the goggles AND one of the following:
                 !GogglesItem.isWearingGoggles(player) ||                                        // not wearing goggles on head
@@ -98,6 +78,15 @@ public class ServerTick {
         drone.addPlayerStartPos(player);
         player.setCameraEntity(drone);
 
+        for (int i = 0; i < 9; i++) {
+            ItemStack itemStack = player.inventory.getStack(i);
+
+            if (TransmitterItem.isBoundTransmitter(itemStack, drone)) { //&& !player.getMainHandStack().equals(itemStack)) {
+                player.inventory.selectedSlot = i;
+                SelectedSlotS2C.send(player, i);
+            }
+        }
+
         String[] keys = ServerInitializer.SERVER_PLAYER_KEYS.get(player.getUuid());
         if (keys != null) {
             String subString = keys[0] + " or " + keys[1];
@@ -118,7 +107,9 @@ public class ServerTick {
             movePlayer(pos.x, pos.y, pos.z, player);
             drone.removePlayerStartPos(player);
 
+
             ShouldRenderPlayerS2C.send(player, true);
+            GogglesItem.setOn(player.inventory.armor.get(3), false);
             player.setNoGravity(false);
             player.setCameraEntity(player);
         }

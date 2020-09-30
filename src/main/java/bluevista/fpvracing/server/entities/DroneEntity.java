@@ -63,6 +63,9 @@ public class DroneEntity extends Entity {
 	/* Misc */
 	private final HashMap<PlayerEntity, Vec3d> playerStartPos;
 	private float damageCoefficient;
+	private boolean godMode;
+	private int playerID;
+	private int bindID;
 
 	/* Camera Settings */
 	private int cameraAngle;
@@ -86,10 +89,7 @@ public class DroneEntity extends Entity {
 	/* Misc Physics Info */
 	private Quat4f prevOrientation;
 	private Quat4f netOrientation;
-	private int playerID;
-	private int bindID;
 	private RigidBody body;
-	private boolean godMode;
 
 	/**
 	 * The constructor called by the Fabric API in {@link ServerInitializer}. Invokes the main constructor.
