@@ -808,7 +808,12 @@ public class DroneEntity extends Entity {
 		setOrientation(quat);
 	}
 
-	// TODO document
+	/**
+	 * Finds and returns a {@link Set} of {@link Block} objects that the
+	 * {@link DroneEntity} is touching based on the provided {@link Direction}(s)
+	 * @param directions the {@link Direction}s of the desired touching {@link Block}s
+	 * @return a list of touching {@link Block}s
+	 */
 	private Set<Block> getTouchingBlocks(Direction... directions) {
 		Dispatcher dispatcher = ClientInitializer.physicsWorld.getDynamicsWorld().getDispatcher();
 		Set<Block> blocks = new HashSet<>();
