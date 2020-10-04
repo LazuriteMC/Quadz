@@ -19,13 +19,16 @@ import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.util.math.*;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DronePhysics {
     private final DroneEntity drone;
@@ -74,6 +77,8 @@ public class DronePhysics {
 
     public void step(float delta) {
         if (isActive()) {
+            calculateBlockDamage();
+
             if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), drone)) {
                 float deltaX = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currX, drone.getConfigValues(Config.RATE).floatValue(), drone.getConfigValues(Config.EXPO).floatValue(), drone.getConfigValues(Config.SUPER_RATE).floatValue(), delta);
                 float deltaY = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currY, drone.getConfigValues(Config.RATE).floatValue(), drone.getConfigValues(Config.EXPO).floatValue(), drone.getConfigValues(Config.SUPER_RATE).floatValue(), delta);
@@ -385,6 +390,123 @@ public class DronePhysics {
         }
     }
 
+
+    /**
+     * Calculates when block collisions damage the {@link DroneEntity}
+     */
+    private void calculateBlockDamage() {
+        List<Block> damagingBlocks = Arrays.asList(
+                Blocks.WATER,
+                Blocks.BUBBLE_COLUMN,
+                Blocks.LAVA,
+                Blocks.FIRE,
+                Blocks.SOUL_FIRE,
+                Blocks.CAMPFIRE,
+                Blocks.SOUL_CAMPFIRE,
+                Blocks.CACTUS
+        );
+
+        if (drone.isKillable()) {
+            // if it's raining
+            if (drone.world.hasRain(drone.getBlockPos())) {
+                drone.kill();
+                return;
+            }
+
+            // inside collisions for all damaging blocks
+            if (damagingBlocks.contains(drone.world.getBlockState(drone.getBlockPos()).getBlock())) {
+                drone.kill();
+                return;
+            }
+
+            // all direction collisions for certain damaging blocks
+            for (Block block : this.getTouchingBlocks(Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST)) {
+                if (block.is(Blocks.CACTUS)) {
+                    drone.kill();
+                    return;
+                }
+            }
+
+            // downward collisions for certain damaging blocks
+            for (Block block : this.getTouchingBlocks(Direction.DOWN)) {
+                if (block.is(Blocks.MAGMA_BLOCK)) {
+                    drone.kill();
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Finds and returns a {@link Set} of {@link Block} objects that the
+     * {@link DroneEntity} is touching based on the provided {@link Direction}(s)
+     * @param directions the {@link Direction}s of the desired touching {@link Block}s
+     * @return a list of touching {@link Block}s
+     */
+    private Set<Block> getTouchingBlocks(Direction... directions) {
+        Dispatcher dispatcher = ClientInitializer.physicsWorld.getDynamicsWorld().getDispatcher();
+        Set<Block> blocks = new HashSet<>();
+
+        for (int manifoldNum = 0; manifoldNum < dispatcher.getNumManifolds(); ++manifoldNum) {
+            PersistentManifold manifold = dispatcher.getManifoldByIndexInternal(manifoldNum);
+
+            if (ClientInitializer.physicsWorld.collisionBlocks.containsValue((RigidBody) manifold.getBody0()) &&
+                    ClientInitializer.physicsWorld.collisionBlocks.containsValue((RigidBody) manifold.getBody1())) {
+                continue;
+            }
+
+            for (int contactNum = 0; contactNum < manifold.getNumContacts(); ++contactNum) {
+                if (manifold.getContactPoint(contactNum).getDistance() <= 0.0f) {
+                    if (getRigidBody().equals(manifold.getBody0()) || getRigidBody().equals(manifold.getBody1())) {
+                        Vector3f droneRigidBodyPos = getRigidBody().equals(manifold.getBody0()) ? ((RigidBody) manifold.getBody0()).getCenterOfMassPosition(new Vector3f()) : ((RigidBody) manifold.getBody1()).getCenterOfMassPosition(new Vector3f());
+                        Vector3f otherRigidBodyPos = getRigidBody().equals(manifold.getBody0()) ? ((RigidBody) manifold.getBody1()).getCenterOfMassPosition(new Vector3f()) : ((RigidBody) manifold.getBody0()).getCenterOfMassPosition(new Vector3f());
+
+                        for (Direction direction : directions) {
+                            switch (direction) {
+                                case UP:
+                                    if (droneRigidBodyPos.y < otherRigidBodyPos.y) {
+                                        blocks.add(drone.world.getBlockState(new BlockPos(otherRigidBodyPos.x, otherRigidBodyPos.y, otherRigidBodyPos.z)).getBlock());
+                                    }
+                                    break;
+                                case DOWN:
+                                    if (droneRigidBodyPos.y > otherRigidBodyPos.y) {
+                                        blocks.add(drone.world.getBlockState(new BlockPos(otherRigidBodyPos.x, otherRigidBodyPos.y, otherRigidBodyPos.z)).getBlock());
+                                    }
+                                    break;
+                                case EAST:
+                                    if (droneRigidBodyPos.x < otherRigidBodyPos.x) {
+                                        blocks.add(drone.world.getBlockState(new BlockPos(otherRigidBodyPos.x, otherRigidBodyPos.y, otherRigidBodyPos.z)).getBlock());
+                                    }
+                                    break;
+                                case WEST:
+                                    if (droneRigidBodyPos.x > otherRigidBodyPos.x) {
+                                        blocks.add(drone.world.getBlockState(new BlockPos(otherRigidBodyPos.x, otherRigidBodyPos.y, otherRigidBodyPos.z)).getBlock());
+                                    }
+                                    break;
+                                case NORTH:
+                                    if (droneRigidBodyPos.z < otherRigidBodyPos.z) {
+                                        blocks.add(drone.world.getBlockState(new BlockPos(otherRigidBodyPos.x, otherRigidBodyPos.y, otherRigidBodyPos.z)).getBlock());
+                                    }
+                                    break;
+                                case SOUTH:
+                                    if (droneRigidBodyPos.z > otherRigidBodyPos.z) {
+                                        blocks.add(drone.world.getBlockState(new BlockPos(otherRigidBodyPos.x, otherRigidBodyPos.y, otherRigidBodyPos.z)).getBlock());
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return blocks;
+    }
+
+    /**
+     * Calculates when the {@link DroneEntity} should crash
+     */
     protected void calculateCrashConditions() {
         // drone crash stuff
         Dispatcher dispatcher = ClientInitializer.physicsWorld.getDynamicsWorld().getDispatcher();

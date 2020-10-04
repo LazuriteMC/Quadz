@@ -9,8 +9,13 @@ import bluevista.fpvracing.network.entity.DroneEntityC2S;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.items.DroneSpawnerItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
+import com.bulletphysics.collision.broadphase.Dispatcher;
+import com.bulletphysics.collision.narrowphase.PersistentManifold;
+import com.bulletphysics.dynamics.RigidBody;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -387,7 +392,7 @@ public class DroneEntity extends Entity {
 	 * by conventional means (e.g. punched, rained on, set on fire, etc.)
 	 * @return whether or not the {@link DroneEntity} is killable
 	 */
-	private boolean isKillable() {
+	public boolean isKillable() {
 		return !(this.godMode || this.noClip);
 	}
 }
