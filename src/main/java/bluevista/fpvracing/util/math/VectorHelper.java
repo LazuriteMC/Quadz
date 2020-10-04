@@ -1,4 +1,4 @@
-package bluevista.fpvracing.client.math;
+package bluevista.fpvracing.util.math;
 
 import net.minecraft.util.math.Vec3d;
 

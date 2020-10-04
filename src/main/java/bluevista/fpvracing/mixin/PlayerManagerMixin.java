@@ -1,8 +1,10 @@
 package bluevista.fpvracing.mixin;
 
+import bluevista.fpvracing.network.ModdedServerS2C;
 import bluevista.fpvracing.server.entities.DroneEntity;
 import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -27,6 +29,11 @@ import java.util.List;
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
     @Shadow @Final List<ServerPlayerEntity> players;
+
+    @Inject(at = @At("TAIL"), method = "onPlayerConnect")
+    public void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo info) {
+        ModdedServerS2C.send(player);
+    }
 
     /**
      * This mixin method recalculates the distance between the {@link ServerPlayerEntity} and the entity

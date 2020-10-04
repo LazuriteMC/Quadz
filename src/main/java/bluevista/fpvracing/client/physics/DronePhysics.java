@@ -3,10 +3,10 @@ package bluevista.fpvracing.client.physics;
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.client.ClientTick;
 import bluevista.fpvracing.client.input.InputTick;
-import bluevista.fpvracing.client.math.BetaflightHelper;
-import bluevista.fpvracing.client.math.Matrix4fInject;
-import bluevista.fpvracing.client.math.QuaternionHelper;
-import bluevista.fpvracing.client.math.VectorHelper;
+import bluevista.fpvracing.util.math.BetaflightHelper;
+import bluevista.fpvracing.util.Matrix4fInject;
+import bluevista.fpvracing.util.math.QuaternionHelper;
+import bluevista.fpvracing.util.math.VectorHelper;
 import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.server.entities.DroneEntity;
 import bluevista.fpvracing.server.items.TransmitterItem;
@@ -19,6 +19,8 @@ import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.*;
@@ -75,11 +77,12 @@ public class DronePhysics {
         }
     }
 
+    @Environment(EnvType.CLIENT)
     public void step(float delta) {
         if (isActive()) {
             calculateBlockDamage();
 
-            if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), drone)) {
+            if (!ClientTick.isServerModded || TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), drone)) {
                 float deltaX = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currX, drone.getConfigValues(Config.RATE).floatValue(), drone.getConfigValues(Config.EXPO).floatValue(), drone.getConfigValues(Config.SUPER_RATE).floatValue(), delta);
                 float deltaY = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currY, drone.getConfigValues(Config.RATE).floatValue(), drone.getConfigValues(Config.EXPO).floatValue(), drone.getConfigValues(Config.SUPER_RATE).floatValue(), delta);
                 float deltaZ = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currZ, drone.getConfigValues(Config.RATE).floatValue(), drone.getConfigValues(Config.EXPO).floatValue(), drone.getConfigValues(Config.SUPER_RATE).floatValue(), delta);

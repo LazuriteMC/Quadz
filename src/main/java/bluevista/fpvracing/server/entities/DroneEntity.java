@@ -1,6 +1,7 @@
 package bluevista.fpvracing.server.entities;
 
 import bluevista.fpvracing.client.ClientInitializer;
+import bluevista.fpvracing.client.ClientTick;
 import bluevista.fpvracing.client.input.InputTick;
 import bluevista.fpvracing.client.physics.DronePhysics;
 import bluevista.fpvracing.config.Config;
@@ -9,13 +10,9 @@ import bluevista.fpvracing.network.entity.DroneEntityC2S;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.items.DroneSpawnerItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
-import com.bulletphysics.collision.broadphase.Dispatcher;
-import com.bulletphysics.collision.narrowphase.PersistentManifold;
-import com.bulletphysics.dynamics.RigidBody;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -215,6 +212,33 @@ public class DroneEntity extends Entity {
 		}
 	}
 
+	@Environment(EnvType.CLIENT)
+	public void prepConfig() {
+		String[] CLIENT_KEYS = {
+				Config.CAMERA_ANGLE,
+				Config.FIELD_OF_VIEW,
+				Config.RATE,
+				Config.SUPER_RATE,
+				Config.EXPO,
+				Config.THRUST,
+				Config.THRUST_CURVE,
+				Config.DAMAGE_COEFFICIENT,
+				Config.MASS,
+				Config.SIZE,
+				Config.DRAG_COEFFICIENT
+		};
+
+		Config config = ClientInitializer.getConfig();
+
+		for (String key : CLIENT_KEYS) {
+			if (Config.FLOAT_KEYS.contains(key)) {
+				this.setConfigValues(key, config.getFloatOption(key));
+			} else if (Config.INT_KEYS.contains(key)){
+				this.setConfigValues(key, config.getIntOption(key));
+			}
+		}
+	}
+
 	/**
 	 * Finds all instances of {@link DroneEntity} within range of the given {@link Entity}.
 	 * @param entity the {@link Entity} as the origin
@@ -306,14 +330,22 @@ public class DroneEntity extends Entity {
 	 */
 	@Override
 	public void kill() {
-		if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-			ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
-			DroneSpawnerItem.prepDestroyedDrone(this, itemStack);
+		if (this.world.isClient()) {
+			if (!ClientTick.isServerModded) {
+				ClientTick.destroyDrone(ClientInitializer.client);
+			} else {
+				this.remove();
+			}
+		} else {
+			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+				ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
+				DroneSpawnerItem.prepDestroyedDrone(this, itemStack);
 
-			this.dropStack(itemStack);
+				this.dropStack(itemStack);
+			}
+
+			this.remove();
 		}
-
-		this.remove();
 	}
 
 	/**
@@ -351,8 +383,10 @@ public class DroneEntity extends Entity {
 	public void remove() {
 		super.remove();
 
-		if (physics.isActive()) {
-			DroneEntityC2S.send(this);
+		if (world.isClient()) {
+			if (physics.isActive() && ClientTick.isServerModded) {
+				DroneEntityC2S.send(this);
+			}
 		}
 	}
 
@@ -364,6 +398,12 @@ public class DroneEntity extends Entity {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public boolean shouldRender(double distance) {
+//		MinecraftClient client = ClientInitializer.client;
+//
+//		if (client.getCameraEntity() == this) {
+//			return !client.options.getPerspective().isFirstPerson();
+//		}
+
 		return distance < Math.pow(ClientInitializer.client.options.viewDistance * 16, 2);
 	}
 

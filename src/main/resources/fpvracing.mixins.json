@@ -15,6 +15,7 @@
     "SummonCommandMixin"
   ],
   "client": [
+    "ClientChunkManagerMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
     "ClientWorldMixin",
