@@ -30,6 +30,12 @@ import java.util.List;
 public class PlayerManagerMixin {
     @Shadow @Final List<ServerPlayerEntity> players;
 
+    /**
+     * This method allows the server to tell the client that it is modded upon player connect.
+     * @param connection
+     * @param player
+     * @param info required by every mixin injection
+     */
     @Inject(at = @At("TAIL"), method = "onPlayerConnect")
     public void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo info) {
         ModdedServerS2C.send(player);
