@@ -29,10 +29,10 @@ public class RenderTick {
             DroneEntity drone = (DroneEntity) entity;
 
             Quat4f q;
-            if (drone.isActive()) {
-                q = drone.getOrientation();
+            if (drone.physics.isActive()) {
+                q = drone.physics.getOrientation();
             } else {
-                q = QuaternionHelper.slerp(drone.getPrevOrientation(), drone.getOrientation(), tickDelta);
+                q = QuaternionHelper.slerp(drone.physics.getPrevOrientation(), drone.physics.getOrientation(), tickDelta);
             }
 
             q.set(q.x, -q.y, q.z, -q.w);

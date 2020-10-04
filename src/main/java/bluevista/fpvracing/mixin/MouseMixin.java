@@ -1,6 +1,6 @@
 package bluevista.fpvracing.mixin;
 
-import bluevista.fpvracing.client.ClientTick;
+import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.options.KeyBinding;
@@ -31,7 +31,7 @@ public class MouseMixin {
             )
     )
     public void changeLookDirection(ClientPlayerEntity player, double cursorDeltaX, double cursorDeltaY) {
-        if (!ClientTick.isInGoggles()) {
+        if (!GogglesItem.isInGoggles()) {
             player.changeLookDirection(cursorDeltaX, cursorDeltaY);
         }
     }
@@ -50,7 +50,7 @@ public class MouseMixin {
             )
     )
     public void setKeyPressed(InputUtil.Key key, boolean pressed) {
-        KeyBinding.setKeyPressed(key, !ClientTick.isInGoggles() && pressed);
+        KeyBinding.setKeyPressed(key, !GogglesItem.isInGoggles() && pressed);
     }
 
     /**
@@ -66,7 +66,7 @@ public class MouseMixin {
             )
     )
     public void onKeyPressed(InputUtil.Key key) {
-        if (!ClientTick.isInGoggles()) {
+        if (!GogglesItem.isInGoggles()) {
             KeyBinding.onKeyPressed(key);
         }
     }

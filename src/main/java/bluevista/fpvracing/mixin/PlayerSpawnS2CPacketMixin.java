@@ -2,6 +2,7 @@ package bluevista.fpvracing.mixin;
 
 import bluevista.fpvracing.server.ServerTick;
 import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.PlayerSpawnS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -31,9 +32,8 @@ public class PlayerSpawnS2CPacketMixin {
      */
     @Inject(method = "<init>(Lnet/minecraft/entity/player/PlayerEntity;)V", at = @At("RETURN"))
     public void init(PlayerEntity player, CallbackInfo info) {
-        if (ServerTick.isInGoggles((ServerPlayerEntity) player)) {
-            Vec3d pos = ((DroneEntity) ((ServerPlayerEntity) player).getCameraEntity()).getPlayerStartPos().get(player);
-
+        if (GogglesItem.isInGoggles((ServerPlayerEntity) player)) {
+            Vec3d pos = ServerTick.playerPositionManager.getPos(player);
             this.x = pos.x;
             this.y = pos.y;
             this.z = pos.z;

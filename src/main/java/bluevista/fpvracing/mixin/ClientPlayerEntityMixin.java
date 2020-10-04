@@ -1,6 +1,6 @@
 package bluevista.fpvracing.mixin;
 
-import bluevista.fpvracing.client.ClientTick;
+import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.util.math.Vec3d;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ClientPlayerEntityMixin {
     @Inject(at = @At("HEAD"), method = "move", cancellable = true)
     public void move(MovementType type, Vec3d movement, CallbackInfo info) {
-        if (ClientTick.isInGoggles()) {
+        if (GogglesItem.isInGoggles()) {
             info.cancel();
         }
     }

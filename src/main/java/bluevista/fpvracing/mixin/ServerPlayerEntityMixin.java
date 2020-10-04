@@ -2,6 +2,7 @@ package bluevista.fpvracing.mixin;
 
 import bluevista.fpvracing.server.ServerTick;
 import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.network.packet.s2c.play.SetCameraEntityS2CPacket;
@@ -37,13 +38,13 @@ public class ServerPlayerEntityMixin {
         if (entity instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity) entity;
 
-            if (ServerTick.isInGoggles(player)) {
+            if (GogglesItem.isInGoggles(player)) {
                 info.cancel();
             }
         }
 
         if (entity instanceof DroneEntity) {
-            if (ServerTick.isInGoggles((ServerPlayerEntity) (Object) this) && !entity.removed) {
+            if (GogglesItem.isInGoggles((ServerPlayerEntity) (Object) this) && !entity.removed) {
                 info.cancel();
             }
         }
@@ -56,7 +57,7 @@ public class ServerPlayerEntityMixin {
      */
     @Inject(at = @At("HEAD"), method = "isInTeleportationState()Z", cancellable = true)
     public void isInTeleportationState(CallbackInfoReturnable<Boolean> info) {
-        if (ServerTick.isInGoggles((ServerPlayerEntity) (Object) this)) {
+        if (GogglesItem.isInGoggles((ServerPlayerEntity) (Object) this)) {
             info.setReturnValue(true);
         }
     }
@@ -71,10 +72,8 @@ public class ServerPlayerEntityMixin {
     public void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
         ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
 
-        if (ServerTick.isInGoggles(player)) {
-            DroneEntity drone = (DroneEntity) player.getCameraEntity();
-
-            if (!player.getPos().equals(drone.getPlayerStartPos().get(player))) {
+        if (GogglesItem.isInGoggles(player)) {
+            if (!player.getPos().equals(ServerTick.playerPositionManager.getPos(player))) {
                 info.setReturnValue(false);
             }
         }
@@ -107,7 +106,7 @@ public class ServerPlayerEntityMixin {
     public void onDisconnect(CallbackInfo info) {
         ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
 
-        if (ServerTick.isInGoggles(player)) {
+        if (GogglesItem.isInGoggles(player)) {
             ServerTick.resetView(player);
         }
     }
@@ -141,7 +140,7 @@ public class ServerPlayerEntityMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;shouldDismount()Z")
     )
     public boolean shouldDismount(ServerPlayerEntity player) {
-        if (ServerTick.isInGoggles(player)) {
+        if (GogglesItem.isInGoggles(player)) {
             return false;
         } else {
             return player.isSneaking();

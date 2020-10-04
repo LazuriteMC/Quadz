@@ -1,10 +1,13 @@
 package bluevista.fpvracing.server.items;
 
+import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.entities.DroneEntity;
 import bluevista.fpvracing.server.items.materials.ArmorMaterials;
 import com.google.common.collect.Multimap;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -12,6 +15,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -75,6 +79,26 @@ public class GogglesItem extends ArmorItem {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Determines whether or not the client
+	 * has a camera entity of type {@link DroneEntity}.
+	 * @return whether or not the player is viewing through a drone entity
+	 */
+	@Environment(EnvType.CLIENT)
+	public static boolean isInGoggles() {
+		return ClientInitializer.client.getCameraEntity() instanceof DroneEntity;
+	}
+
+	/**
+	 * Determines whether or not the given {@link ServerPlayerEntity}
+	 * has a camera entity of type {@link DroneEntity}.
+	 * @param player the given {@link ServerPlayerEntity}
+	 * @return whether or not the camera entity is of type {@link DroneEntity}
+	 */
+	public static boolean isInGoggles(ServerPlayerEntity player) {
+		return player.getCameraEntity() instanceof DroneEntity;
 	}
 
 	public static void setOn(ItemStack itemStack, boolean on) {

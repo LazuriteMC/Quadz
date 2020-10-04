@@ -1,7 +1,7 @@
 package bluevista.fpvracing.mixin;
 
-import bluevista.fpvracing.server.ServerTick;
 import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.Packet;
 import net.minecraft.server.PlayerManager;
@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 
@@ -47,7 +46,7 @@ public class PlayerManagerMixin {
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) this.players.get(i);
 
             if (serverPlayerEntity != player && serverPlayerEntity.world.getRegistryKey() == worldKey) {
-                if(ServerTick.isInGoggles(serverPlayerEntity)) {
+                if(GogglesItem.isInGoggles(serverPlayerEntity)) {
                     DroneEntity drone = (DroneEntity) serverPlayerEntity.getCameraEntity();
 
                     double d = x - drone.getX();

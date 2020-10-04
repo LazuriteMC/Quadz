@@ -51,7 +51,7 @@ public class SummonCommandMixin {
         if (entity2 instanceof DroneEntity) {
             DroneEntity drone = (DroneEntity) entity2;
 
-            drone.setRigidBodyPos(new Vector3f((float) pos.x, (float) pos.y, (float) pos.z));
+            drone.physics.setRigidBodyPos(new Vector3f((float) pos.x, (float) pos.y, (float) pos.z));
             drone.yaw = source.getPlayer().yaw;
 
             DroneSpawnerItem.prepSpawnedDrone(source.getPlayer(), drone);

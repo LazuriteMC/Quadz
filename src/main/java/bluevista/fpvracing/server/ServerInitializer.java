@@ -23,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -32,15 +33,23 @@ import java.util.UUID;
 public class ServerInitializer implements ModInitializer {
 	public static final String MODID = "fpvracing";
 
+	/**The Minecraft Server for use in other classes */
 	public static MinecraftServer server;
 
+	/* Items */
 	public static DroneSpawnerItem DRONE_SPAWNER_ITEM;
 	public static GogglesItem GOGGLES_ITEM;
 	public static TransmitterItem TRANSMITTER_ITEM;
 	public static ItemGroup ITEM_GROUP;
 
+	/* Entities */
 	public static EntityType<Entity> DRONE_ENTITY;
 
+	/*
+	 * Client Information
+	 *     - player configs
+	 *     - player keybindings
+	 */
 	public static final HashMap<UUID, Config> SERVER_PLAYER_CONFIGS = new HashMap<>();
 	public static final HashMap<UUID, String[]> SERVER_PLAYER_KEYS = new HashMap<>();
 

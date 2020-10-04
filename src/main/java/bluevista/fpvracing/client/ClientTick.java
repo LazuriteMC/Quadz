@@ -16,14 +16,6 @@ public class ClientTick {
 
     public static void tick(MinecraftClient client) {
         if (client.player != null && !client.isPaused()) {
-//            Iterable<Entity> entities = client.world.getEntities();
-//
-//            for (Entity entity : entities) {
-//                if (entity instanceof OtherClientPlayerEntity) {
-//                    System.out.println(entity.getPos());
-//                }
-//            }
-
             if (client.cameraEntity instanceof DroneEntity) {
                 droneFOV = ((DroneEntity)client.cameraEntity).getConfigValues(Config.FIELD_OF_VIEW).floatValue();
 
@@ -41,10 +33,6 @@ public class ClientTick {
                 prevFOV = 0.0f;
             }
         }
-    }
-
-    public static boolean isInGoggles() {
-        return ClientInitializer.client.getCameraEntity() instanceof DroneEntity;
     }
 
     public static boolean isPlayerIDClient(int playerID) {
