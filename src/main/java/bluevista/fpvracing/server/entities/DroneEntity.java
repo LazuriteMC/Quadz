@@ -413,7 +413,9 @@ public class DroneEntity extends Entity {
 		setConfigValues(Config.GOD_MODE, tag.getInt(Config.GOD_MODE));
 	}
 
-	// TODO document
+	/**
+	 * Calculates when block collisions damage the {@link DroneEntity}
+	 */
 	private void calculateBlockDamage() {
 		List<Block> damagingBlocks = Arrays.asList(
 				Blocks.WATER,
