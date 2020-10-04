@@ -875,7 +875,9 @@ public class DroneEntity extends Entity {
 		return blocks;
 	}
 
-	// TODO document
+	/**
+	 * Calculates when the {@link DroneEntity} should crash
+	 */
 	protected void calculateCrashConditions() {
 		// drone crash stuff
 		Dispatcher dispatcher = ClientInitializer.physicsWorld.getDynamicsWorld().getDispatcher();
