@@ -15,8 +15,21 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * These mixin methods are for the {@link ClientPlayerEntity}. They're
+ * mainly written to handle movement of the player between the client and
+ * the server.
+ * @author Ethan Johnson
+ */
 @Mixin(ClientPlayerEntity.class)
 public class ClientPlayerEntityMixin {
+    /**
+     * Prevents a player movement packet from being sent by the game when the
+     * player is flying a client-side only drone. This one handles the
+     * {@link net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.PositionOnly} class.
+     * @param networkHandler
+     * @param packet
+     */
     @Redirect(
             method = "sendMovementPackets()V",
             at = @At(
@@ -31,6 +44,13 @@ public class ClientPlayerEntityMixin {
         }
     }
 
+    /**
+     * Prevents a player movement packet from being sent by the game when the
+     * player is flying a client-side only drone. This one handles the
+     * {@link net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.Both} class.
+     * @param networkHandler
+     * @param packet
+     */
     @Redirect(
             method = "sendMovementPackets()V",
             at = @At(
@@ -45,6 +65,12 @@ public class ClientPlayerEntityMixin {
         }
     }
 
+    /**
+     * This mixin prevents the player's position from being changed while they're flying a drone.
+     * @param type
+     * @param movement
+     * @param info required by every mixin injection
+     */
     @Inject(at = @At("HEAD"), method = "move", cancellable = true)
     public void move(MovementType type, Vec3d movement, CallbackInfo info) {
         if (GogglesItem.isInGoggles()) {
