@@ -2,29 +2,41 @@ package bluevista.fpvracing.client;
 
 import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.util.TickTimer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
+import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 
 @Environment(EnvType.CLIENT)
 public class ClientTick {
-    public static boolean shouldRenderPlayer = true;
+    private static final TickTimer positionTickTimer = new TickTimer(20);
+
+    public static boolean isServerModded = false;
+    public static boolean shouldRenderPlayer = false;
 
     private static float droneFOV;
     private static double prevFOV;
 
     public static void tick(MinecraftClient client) {
         if (client.player != null && !client.isPaused()) {
-//            Iterable<Entity> entities = client.world.getEntities();
-//
-//            for (Entity entity : entities) {
-//                if (entity instanceof OtherClientPlayerEntity) {
-//                    System.out.println(entity.getPos());
-//                }
-//            }
+            if (client.getCameraEntity() instanceof DroneEntity) {
+                DroneEntity drone = (DroneEntity) client.getCameraEntity();
 
-            if (client.cameraEntity instanceof DroneEntity) {
+                if (!isServerModded) {
+                    double x = drone.getX();
+                    double y = drone.getY();
+                    double z = drone.getZ();
+                    boolean onGround = drone.isOnGround();
+
+                    client.player.setPos(x, y, z);
+                    if (positionTickTimer.tick()) {
+                        ClientSidePacketRegistry.INSTANCE.sendToServer(new PlayerMoveC2SPacket.PositionOnly(x, y, z, onGround));
+                    }
+                }
+
                 droneFOV = ((DroneEntity)client.cameraEntity).getConfigValues(Config.FIELD_OF_VIEW).floatValue();
 
                 if (droneFOV != 0.0f && client.options.fov != droneFOV) {
@@ -43,8 +55,27 @@ public class ClientTick {
         }
     }
 
-    public static boolean isInGoggles() {
-        return ClientInitializer.client.getCameraEntity() instanceof DroneEntity;
+    public static void createDrone(MinecraftClient client) {
+        if (client.player != null && client.world != null) {
+            client.setCameraEntity(new DroneEntity(client.world, client.player.getPos(), client.player.yaw));
+
+            DroneEntity drone = (DroneEntity) client.getCameraEntity();
+            drone.prepConfig();
+            client.world.addEntity(drone.getEntityId(), drone);
+            client.setCameraEntity(drone);
+        }
+    }
+
+    public static void destroyDrone(MinecraftClient client) {
+        if (isFlyingClientSideDrone(client)) {
+            DroneEntity drone = (DroneEntity) client.getCameraEntity();
+            client.setCameraEntity(client.player);
+            drone.remove();
+        }
+    }
+
+    public static boolean isFlyingClientSideDrone(MinecraftClient client) {
+        return !isServerModded && client.getCameraEntity() instanceof DroneEntity;
     }
 
     public static boolean isPlayerIDClient(int playerID) {

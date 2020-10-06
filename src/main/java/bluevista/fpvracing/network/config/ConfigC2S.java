@@ -1,7 +1,7 @@
 package bluevista.fpvracing.network.config;
 
 import bluevista.fpvracing.config.Config;
-import bluevista.fpvracing.network.PacketHelper;
+import bluevista.fpvracing.util.PacketHelper;
 import bluevista.fpvracing.server.ServerInitializer;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;

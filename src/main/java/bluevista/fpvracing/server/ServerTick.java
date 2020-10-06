@@ -9,11 +9,7 @@ import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ChunkTicketType;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
@@ -24,6 +20,8 @@ import java.util.List;
  * @author Ethan Johnson
  */
 public class ServerTick {
+    public static final PlayerPositionManager playerPositionManager = new PlayerPositionManager();
+
     /**
      * This method is responsible for handling whether or not a
      * {@link ServerPlayerEntity} is viewing a {@link DroneEntity} through their {@link GogglesItem}.
@@ -35,9 +33,9 @@ public class ServerTick {
         for (ServerPlayerEntity player : players) { // For every player in the server...
 
             // If the player is already viewing a DroneEntity...
-            if (isInGoggles(player)) {
+            if (GogglesItem.isInGoggles(player)) {
                 DroneEntity drone = (DroneEntity) player.getCameraEntity();
-                Vec3d pos = drone.getPlayerStartPos().get(player);
+                Vec3d pos = playerPositionManager.getPos(player);
 
                 // If the drone is in range of where the player started...
                 if (Math.sqrt(drone.squaredDistanceTo(pos)) < DroneEntity.PSEUDO_TRACKING_RANGE) {
@@ -75,13 +73,13 @@ public class ServerTick {
      * @param drone the {@link DroneEntity} to change the camera to
      */
     public static void setView(ServerPlayerEntity player, DroneEntity drone) {
-        drone.addPlayerStartPos(player);
+        playerPositionManager.addPos(player);
         player.setCameraEntity(drone);
 
         for (int i = 0; i < 9; i++) {
             ItemStack itemStack = player.inventory.getStack(i);
 
-            if (TransmitterItem.isBoundTransmitter(itemStack, drone)) { //&& !player.getMainHandStack().equals(itemStack)) {
+            if (TransmitterItem.isBoundTransmitter(itemStack, drone)) {
                 player.inventory.selectedSlot = i;
                 SelectedSlotS2C.send(player, i);
             }
@@ -101,44 +99,13 @@ public class ServerTick {
      */
     public static void resetView(ServerPlayerEntity player) {
         if (player.getCameraEntity() instanceof DroneEntity) {
-            DroneEntity drone = (DroneEntity) player.getCameraEntity();
-
-            Vec3d pos = drone.getPlayerStartPos().get(player);
-            movePlayer(pos.x, pos.y, pos.z, player);
-            drone.removePlayerStartPos(player);
-
-
-            ShouldRenderPlayerS2C.send(player, true);
+            ShouldRenderPlayerS2C.send(player, false);
             GogglesItem.setOn(player.inventory.armor.get(3), false);
+
+            playerPositionManager.resetPos(player);
             player.setNoGravity(false);
             player.setCameraEntity(player);
         }
-    }
-
-    /**
-     * Moves the {@link ServerPlayerEntity} to the given coordinates.
-     * Most notably, it submits a chunk ticket. Should be used when teleporting
-     * a long distance.
-     * @param x
-     * @param y
-     * @param z
-     * @param player the given {@link ServerPlayerEntity} to teleport
-     */
-    protected static void movePlayer(double x, double y, double z, ServerPlayerEntity player) {
-        ServerWorld world = player.getServerWorld();
-        ChunkPos chunkPos = new ChunkPos(new BlockPos(x, y, z));
-        world.getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getEntityId());
-        player.networkHandler.requestTeleport(x, y, z, player.yaw, player.pitch);
-    }
-
-    /**
-     * Determines whether or not the given {@link ServerPlayerEntity}
-     * has a camera entity of type {@link DroneEntity}.
-     * @param player the given {@link ServerPlayerEntity}
-     * @return whether or not the camera entity is of type {@link DroneEntity}
-     */
-    public static boolean isInGoggles(ServerPlayerEntity player) {
-        return player.getCameraEntity() instanceof DroneEntity;
     }
 
     /**
@@ -146,5 +113,15 @@ public class ServerTick {
      */
     public static void register() {
         ServerTickCallback.EVENT.register(ServerTick::tick);
+    }
+
+    /**
+     * Determines whether or not the given player entity has
+     * the FPV Drone Racing mod.
+     * @param player the player to check for in the list of configs
+     * @return whether or not the player is in the list of configs
+     */
+    public static boolean playerHasMod(ServerPlayerEntity player) {
+        return ServerInitializer.SERVER_PLAYER_CONFIGS.containsKey(player.getUuid());
     }
 }

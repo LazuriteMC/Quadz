@@ -1,6 +1,6 @@
 package bluevista.fpvracing.mixin;
 
-import bluevista.fpvracing.client.math.Matrix4fInject;
+import bluevista.fpvracing.util.Matrix4fInject;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;

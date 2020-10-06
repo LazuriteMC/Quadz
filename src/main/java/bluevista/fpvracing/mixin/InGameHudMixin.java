@@ -1,6 +1,6 @@
 package bluevista.fpvracing.mixin;
 
-import bluevista.fpvracing.client.ClientTick;
+import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
@@ -39,7 +39,7 @@ public class InGameHudMixin {
      */
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     private void renderCrosshair(MatrixStack matrices, CallbackInfo info) {
-        if (ClientTick.isInGoggles()) {
+        if (GogglesItem.isInGoggles()) {
             info.cancel();
         }
     }
@@ -54,7 +54,7 @@ public class InGameHudMixin {
      */
     @Inject(method = "renderExperienceBar", at = @At("HEAD"), cancellable = true)
     public void renderExperienceBar(MatrixStack matrices, int x, CallbackInfo info) {
-        if (ClientTick.isInGoggles()) {
+        if (GogglesItem.isInGoggles()) {
             info.cancel();
         }
     }

@@ -36,7 +36,7 @@ public class DroneSpawnerItem extends Item {
 		} else {
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
 				Vec3d pos = new Vec3d(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
-				DroneEntity drone = new DroneEntity(world, user.getEntityId(), pos, user.getHeadYaw());
+				DroneEntity drone = new DroneEntity(world, pos, user.getHeadYaw(), user.getEntityId());
 				prepSpawnedDrone(user, drone);
 				world.spawnEntity(drone);
 			}

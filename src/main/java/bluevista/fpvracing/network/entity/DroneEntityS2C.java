@@ -1,7 +1,7 @@
 package bluevista.fpvracing.network.entity;
 
 import bluevista.fpvracing.config.Config;
-import bluevista.fpvracing.network.PacketHelper;
+import bluevista.fpvracing.util.PacketHelper;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.entities.DroneEntity;
 import io.netty.buffer.Unpooled;
@@ -97,11 +97,11 @@ public class DroneEntityS2C {
 //                drone.setConfigValues(Config.CRASH_MOMENTUM_THRESHOLD, crashMomentumThreshold);
 
                 /* Physics Vectors (orientation, position, velocity, etc.) */
-                if (!drone.isActive()) {
-                    drone.setNetOrientation(orientation);
-                    drone.setRigidBodyPos(position);
-                    drone.getRigidBody().setLinearVelocity(linearVel);
-                    drone.getRigidBody().setAngularVelocity(angularVel);
+                if (!drone.physics.isActive()) {
+                    drone.physics.setNetOrientation(orientation);
+                    drone.physics.setRigidBodyPos(position);
+                    drone.physics.getRigidBody().setLinearVelocity(linearVel);
+                    drone.physics.getRigidBody().setAngularVelocity(angularVel);
                 }
             }
         });
@@ -143,10 +143,10 @@ public class DroneEntityS2C {
 //        buf.writeInt(drone.getConfigValues(Config.CRASH_MOMENTUM_THRESHOLD).intValue());
 
         /* Physics Vectors */
-        PacketHelper.serializeQuaternion(buf, drone.getOrientation());
-        PacketHelper.serializeVector3f(buf, drone.getRigidBody().getCenterOfMassPosition(new Vector3f()));
-        PacketHelper.serializeVector3f(buf, drone.getRigidBody().getLinearVelocity(new Vector3f()));
-        PacketHelper.serializeVector3f(buf, drone.getRigidBody().getAngularVelocity(new Vector3f()));
+        PacketHelper.serializeQuaternion(buf, drone.physics.getOrientation());
+        PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getCenterOfMassPosition(new Vector3f()));
+        PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getLinearVelocity(new Vector3f()));
+        PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getAngularVelocity(new Vector3f()));
 
         Stream<PlayerEntity> watchingPlayers = PlayerStream.watching(drone.getEntityWorld(), new BlockPos(drone.getPos()));
         watchingPlayers.forEach(player -> ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, PACKET_ID, buf));

@@ -3,7 +3,7 @@ package bluevista.fpvracing.client.renderers;
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.client.models.DroneModel;
 import bluevista.fpvracing.config.Config;
-import bluevista.fpvracing.client.math.QuaternionHelper;
+import bluevista.fpvracing.util.math.QuaternionHelper;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;
@@ -33,11 +33,11 @@ public class DroneRenderer extends EntityRenderer<DroneEntity> {
         this.shadowRadius = 0.2F;
 
         matrixStack.push();
-        if (droneEntity.isActive()) {
-            matrixStack.peek().getModel().multiply(QuaternionHelper.quat4fToQuaternion(droneEntity.getOrientation()));
+        if (droneEntity.physics.isActive()) {
+            matrixStack.peek().getModel().multiply(QuaternionHelper.quat4fToQuaternion(droneEntity.physics.getOrientation()));
         } else {
             matrixStack.peek().getModel().multiply(QuaternionHelper.quat4fToQuaternion(
-                    QuaternionHelper.slerp(droneEntity.getPrevOrientation(), droneEntity.getOrientation(), delta)
+                    QuaternionHelper.slerp(droneEntity.physics.getPrevOrientation(), droneEntity.physics.getOrientation(), delta)
             ));
         }
 

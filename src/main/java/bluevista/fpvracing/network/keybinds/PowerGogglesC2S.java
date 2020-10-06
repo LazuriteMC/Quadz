@@ -36,7 +36,7 @@ public class PowerGogglesC2S {
             ServerInitializer.SERVER_PLAYER_KEYS.put(player.getUuid(), keys);
 
             if (hat.getItem() instanceof GogglesItem) {
-                if (on && !ServerTick.isInGoggles(serverPlayer)) {
+                if (on && !GogglesItem.isInGoggles(serverPlayer)) {
                     List<Entity> drones = DroneEntity.getDrones(serverPlayer); // list of all drones
 
                     for (Entity entity : drones) { // For every drone...

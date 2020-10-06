@@ -8,6 +8,7 @@ import bluevista.fpvracing.client.renderers.DroneRenderer;
 import bluevista.fpvracing.client.renderers.DroneSpawnerItemRenderer;
 import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.config.ConfigReader;
+import bluevista.fpvracing.network.ModdedServerS2C;
 import bluevista.fpvracing.network.SelectedSlotS2C;
 import bluevista.fpvracing.network.config.ConfigS2C;
 import bluevista.fpvracing.network.entity.DroneEntityS2C;
@@ -88,6 +89,7 @@ public class ClientInitializer implements ClientModInitializer {
         DroneEntityS2C.register();
         SelectedSlotS2C.register();
         ShouldRenderPlayerS2C.register();
+        ModdedServerS2C.register();
     }
 
     /**

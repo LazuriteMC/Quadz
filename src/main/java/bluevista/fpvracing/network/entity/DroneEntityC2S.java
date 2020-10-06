@@ -1,6 +1,6 @@
 package bluevista.fpvracing.network.entity;
 
-import bluevista.fpvracing.network.PacketHelper;
+import bluevista.fpvracing.util.PacketHelper;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.entities.DroneEntity;
 import io.netty.buffer.Unpooled;
@@ -58,10 +58,10 @@ public class DroneEntityC2S {
                 drone.pitch = pitch;
 
                 /* Physics Vectors (orientation, position, velocity) */
-                drone.setRigidBodyPos(position);
-                drone.setOrientation(orientation);
-                drone.getRigidBody().setLinearVelocity(linearVel);
-                drone.getRigidBody().setAngularVelocity(angularVel);
+                drone.physics.setRigidBodyPos(position);
+                drone.physics.setOrientation(orientation);
+                drone.physics.getRigidBody().setLinearVelocity(linearVel);
+                drone.physics.getRigidBody().setAngularVelocity(angularVel);
             }
         });
     }
@@ -82,10 +82,10 @@ public class DroneEntityC2S {
         buf.writeFloat(drone.pitch);
 
         /* Physics Vectors */
-        PacketHelper.serializeQuaternion(buf, drone.getOrientation());
-        PacketHelper.serializeVector3f(buf, drone.getRigidBody().getCenterOfMassPosition(new Vector3f()));
-        PacketHelper.serializeVector3f(buf, drone.getRigidBody().getLinearVelocity(new Vector3f()));
-        PacketHelper.serializeVector3f(buf, drone.getRigidBody().getAngularVelocity(new Vector3f()));
+        PacketHelper.serializeQuaternion(buf, drone.physics.getOrientation());
+        PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getCenterOfMassPosition(new Vector3f()));
+        PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getLinearVelocity(new Vector3f()));
+        PacketHelper.serializeVector3f(buf, drone.physics.getRigidBody().getAngularVelocity(new Vector3f()));
 
         ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
     }
