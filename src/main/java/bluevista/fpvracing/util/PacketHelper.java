@@ -1,4 +1,4 @@
-package bluevista.fpvracing.network;
+package bluevista.fpvracing.util;
 
 import bluevista.fpvracing.client.input.AxisValues;
 import bluevista.fpvracing.config.Config;

@@ -1,7 +1,7 @@
 package bluevista.fpvracing.network.entity;
 
 import bluevista.fpvracing.config.Config;
-import bluevista.fpvracing.network.PacketHelper;
+import bluevista.fpvracing.util.PacketHelper;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.entities.DroneEntity;
 import io.netty.buffer.Unpooled;

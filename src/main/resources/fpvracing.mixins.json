@@ -23,6 +23,7 @@
     "ItemRendererMixin",
     "InGameHudMixin",
     "MouseMixin",
+    "PlayerEntityRendererMixin",
     "WorldRendererMixin"
   ],
   "injectors": {

@@ -67,11 +67,15 @@ public class ClientTick {
     }
 
     public static void destroyDrone(MinecraftClient client) {
-        if (!isServerModded && client.getCameraEntity() instanceof DroneEntity) {
+        if (isFlyingClientSideDrone(client)) {
             DroneEntity drone = (DroneEntity) client.getCameraEntity();
             client.setCameraEntity(client.player);
             drone.remove();
         }
+    }
+
+    public static boolean isFlyingClientSideDrone(MinecraftClient client) {
+        return !isServerModded && client.getCameraEntity() instanceof DroneEntity;
     }
 
     public static boolean isPlayerIDClient(int playerID) {
