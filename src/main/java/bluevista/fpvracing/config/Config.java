@@ -57,7 +57,6 @@ public class Config {
     public static final String DRAG_COEFFICIENT = "dragCoefficient";
     public static final String BLOCK_RADIUS = "blockRadius";
     public static final String DAMAGE_COEFFICIENT = "damageCoefficient";
-//    public static final String CRASH_MOMENTUM_THRESHOLD = "crashMomentumThreshold";
 
     public static final List<String> INT_KEYS = Arrays.asList(
             CONTROLLER_ID,

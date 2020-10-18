@@ -1,7 +1,7 @@
 package bluevista.fpvracing.mixin;
 
 import bluevista.fpvracing.server.ServerTick;
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.PlayerSpawnS2CPacket;
@@ -26,7 +26,7 @@ public class PlayerSpawnS2CPacketMixin {
     /**
      * This mixin modifies the constructor of {@link PlayerSpawnS2CPacket} in
      * order to keep the player position in the same place when the given {@link PlayerEntity}
-     * is flying a {@link DroneEntity}.
+     * is flying a {@link QuadcopterEntity}.
      * @param player the given {@link PlayerEntity}
      * @param info required by every mixin injection
      */

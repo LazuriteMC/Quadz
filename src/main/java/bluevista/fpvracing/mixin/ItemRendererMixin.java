@@ -1,9 +1,9 @@
 package bluevista.fpvracing.mixin;
 
 import bluevista.fpvracing.client.ClientInitializer;
-import bluevista.fpvracing.client.renderers.DroneSpawnerItemRenderer;
+import bluevista.fpvracing.client.renderers.QuadcopterItemRenderer;
 import bluevista.fpvracing.config.Config;
-import bluevista.fpvracing.server.items.DroneSpawnerItem;
+import bluevista.fpvracing.server.items.QuadcopterItem;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ItemRenderer.class)
 public class ItemRendererMixin {
     /**
-     * Injects item renderer code for {@link bluevista.fpvracing.server.items.DroneSpawnerItem}.
+     * Injects item renderer code for {@link QuadcopterItem}.
      * @param stack
      * @param renderMode
      * @param leftHanded
@@ -51,9 +51,9 @@ public class ItemRendererMixin {
         )
     )
     private void renderItem(ItemStack stack, Mode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, BakedModel model, CallbackInfo info) {
-        if(stack.getItem() instanceof DroneSpawnerItem) {
-            int size = DroneSpawnerItem.getTagValue(stack, Config.SIZE) != null ? DroneSpawnerItem.getTagValue(stack, Config.SIZE).intValue() : ClientInitializer.getConfig().getIntOption(Config.SIZE);
-            DroneSpawnerItemRenderer.render(matrices, vertexConsumers, light, overlay, size);
+        if(stack.getItem() instanceof QuadcopterItem) {
+            int size = QuadcopterItem.getTagValue(stack, Config.SIZE) != null ? QuadcopterItem.getTagValue(stack, Config.SIZE).intValue() : ClientInitializer.getConfig().getIntOption(Config.SIZE);
+            QuadcopterItemRenderer.render(matrices, vertexConsumers, light, overlay, size);
         }
     }
 }

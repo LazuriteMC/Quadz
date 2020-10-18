@@ -2,10 +2,11 @@ package bluevista.fpvracing.util;
 
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3d;
+
+import javax.vecmath.Vector3f;
 
 public interface Matrix4fInject {
-    Vec3d matrixToVector();
+    Vector3f matrixToVector();
     void fromQuaternion(Quaternion q);
 
     @SuppressWarnings("ConstantConditions")

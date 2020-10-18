@@ -2,20 +2,21 @@ package bluevista.fpvracing.server;
 
 import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.network.config.ConfigC2S;
-import bluevista.fpvracing.network.entity.DroneEntityC2S;
+import bluevista.fpvracing.network.entity.EntityPhysicsC2S;
 import bluevista.fpvracing.network.keybinds.EMPC2S;
 import bluevista.fpvracing.network.keybinds.GodModeC2S;
 import bluevista.fpvracing.network.keybinds.NoClipC2S;
 import bluevista.fpvracing.network.keybinds.PowerGogglesC2S;
-import bluevista.fpvracing.server.entities.DroneEntity;
-import bluevista.fpvracing.server.items.DroneSpawnerItem;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
+import bluevista.fpvracing.server.entities.FixedWingEntity;
+import bluevista.fpvracing.server.entities.FlyableEntity;
+import bluevista.fpvracing.server.items.QuadcopterItem;
 import bluevista.fpvracing.server.items.GogglesItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
@@ -23,7 +24,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -37,13 +37,14 @@ public class ServerInitializer implements ModInitializer {
 	public static MinecraftServer server;
 
 	/* Items */
-	public static DroneSpawnerItem DRONE_SPAWNER_ITEM;
+	public static QuadcopterItem DRONE_SPAWNER_ITEM;
 	public static GogglesItem GOGGLES_ITEM;
 	public static TransmitterItem TRANSMITTER_ITEM;
 	public static ItemGroup ITEM_GROUP;
 
 	/* Entities */
-	public static EntityType<Entity> DRONE_ENTITY;
+	public static EntityType<QuadcopterEntity> QUADCOPTER_ENTITY;
+	public static EntityType<FixedWingEntity> FIXED_WING_ENTITY;
 
 	/*
 	 * Client Information
@@ -66,7 +67,7 @@ public class ServerInitializer implements ModInitializer {
 	}
 
 	private void registerNetwork() {
-		DroneEntityC2S.register();
+		EntityPhysicsC2S.register();
 		ConfigC2S.register();
 
 		EMPC2S.register();
@@ -76,7 +77,7 @@ public class ServerInitializer implements ModInitializer {
 	}
 
 	private void registerItems() {
-		DRONE_SPAWNER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "drone_spawner_item"), new DroneSpawnerItem(new Item.Settings().maxCount(1)));
+		DRONE_SPAWNER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "drone_spawner_item"), new QuadcopterItem(new Item.Settings().maxCount(1)));
 		GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
 		TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new TransmitterItem(new Item.Settings().maxCount(1)));
 
@@ -92,10 +93,16 @@ public class ServerInitializer implements ModInitializer {
 	}
 
 	private void registerEntities() {
-		DRONE_ENTITY = Registry.register(
+		QUADCOPTER_ENTITY = Registry.register(
 				Registry.ENTITY_TYPE,
-				new Identifier(MODID, "drone_entity"),
-				FabricEntityTypeBuilder.create(SpawnGroup.MISC, DroneEntity::new).dimensions(EntityDimensions.fixed(0.5F, 0.125F)).trackable(80, 3, true).build()
+				new Identifier(MODID, "quadcopter_entity"),
+				FabricEntityTypeBuilder.create(SpawnGroup.MISC, QuadcopterEntity::new).dimensions(EntityDimensions.fixed(0.5F, 0.125F)).trackable(FlyableEntity.TRACKING_RANGE, 3, true).build()
+		);
+
+		FIXED_WING_ENTITY = Registry.register(
+				Registry.ENTITY_TYPE,
+				new Identifier(MODID, "fixed_wing_entity"),
+				FabricEntityTypeBuilder.create(SpawnGroup.MISC, FixedWingEntity::new).dimensions(EntityDimensions.fixed(0.5F, 0.125F)).trackable(FlyableEntity.TRACKING_RANGE, 3, true).build()
 		);
 	}
 

@@ -3,9 +3,10 @@ package bluevista.fpvracing.mixin;
 import bluevista.fpvracing.util.Matrix4fInject;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+
+import javax.vecmath.Vector3f;
 
 @Mixin(Matrix4f.class)
 public class Matrix4fMixin implements Matrix4fInject {
@@ -13,8 +14,8 @@ public class Matrix4fMixin implements Matrix4fInject {
     @Shadow float a12;
     @Shadow float a22;
 
-    public Vec3d matrixToVector() {
-        return new Vec3d(a02, a12, a22);
+    public Vector3f matrixToVector() {
+        return new Vector3f(a02, a12, a22);
     }
 
     public void fromQuaternion(Quaternion q) {

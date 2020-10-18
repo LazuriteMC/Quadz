@@ -2,9 +2,10 @@ package bluevista.fpvracing.server;
 
 import bluevista.fpvracing.network.SelectedSlotS2C;
 import bluevista.fpvracing.network.ShouldRenderPlayerS2C;
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.server.items.GogglesItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
+import bluevista.fpvracing.util.PlayerPositionManager;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -24,7 +25,7 @@ public class ServerTick {
 
     /**
      * This method is responsible for handling whether or not a
-     * {@link ServerPlayerEntity} is viewing a {@link DroneEntity} through their {@link GogglesItem}.
+     * {@link ServerPlayerEntity} is viewing a {@link FlyableEntity} through their {@link GogglesItem}.
      * @param server the {@link MinecraftServer} object
      */
     public static void tick(MinecraftServer server) {
@@ -34,11 +35,11 @@ public class ServerTick {
 
             // If the player is already viewing a DroneEntity...
             if (GogglesItem.isInGoggles(player)) {
-                DroneEntity drone = (DroneEntity) player.getCameraEntity();
+                FlyableEntity flyable = (FlyableEntity) player.getCameraEntity();
                 Vec3d pos = playerPositionManager.getPos(player);
 
                 // If the drone is in range of where the player started...
-                if (Math.sqrt(drone.squaredDistanceTo(pos)) < DroneEntity.PSEUDO_TRACKING_RANGE) {
+                if (Math.sqrt(flyable.squaredDistanceTo(pos)) < FlyableEntity.PSEUDO_TRACKING_RANGE) {
                     ShouldRenderPlayerS2C.send(player, true);
 
                     if (!player.getPos().equals(pos)) {
@@ -47,17 +48,17 @@ public class ServerTick {
                     }
 
                 // If the drone is nearing the end of it's tracking range...
-                } else if (player.distanceTo(drone) > DroneEntity.PSEUDO_TRACKING_RANGE) {
-                    player.requestTeleport(drone.getX(), drone.getY() + 50, drone.getZ());
+                } else if (player.distanceTo(flyable) > FlyableEntity.PSEUDO_TRACKING_RANGE) {
+                    player.requestTeleport(flyable.getX(), flyable.getY() + 50, flyable.getZ());
                     player.setNoGravity(true);
                     ShouldRenderPlayerS2C.send(player, false);
                 }
             }
 
-            if (player.getCameraEntity() instanceof DroneEntity && (                            // currently viewing through the goggles AND one of the following:
+            if (player.getCameraEntity() instanceof FlyableEntity && (                          // currently viewing through the goggles AND one of the following:
                 !GogglesItem.isWearingGoggles(player) ||                                        // not wearing goggles on head
                 !GogglesItem.isOn(player) ||                                                    // goggles are powered off on head
-                !GogglesItem.isOnSameChannel((DroneEntity) player.getCameraEntity(), player) || // suddenly on wrong channel
+                !GogglesItem.isOnSameChannel((FlyableEntity) player.getCameraEntity(), player) || // suddenly on wrong channel
                 player.getCameraEntity().removed))                                              // camera entity is dead
             {
                     resetView(player);
@@ -67,19 +68,19 @@ public class ServerTick {
 
     /**
      * Changes the camera entity for the given {@link ServerPlayerEntity}
-     * to the given {@link DroneEntity}. It also prints out a message on
+     * to the given {@link FlyableEntity}. It also prints out a message on
      * how to go back to the player view.
      * @param player the {@link ServerPlayerEntity} to change the camera from
-     * @param drone the {@link DroneEntity} to change the camera to
+     * @param entity the {@link FlyableEntity} to change the camera to
      */
-    public static void setView(ServerPlayerEntity player, DroneEntity drone) {
+    public static void setView(ServerPlayerEntity player, FlyableEntity entity) {
         playerPositionManager.addPos(player);
-        player.setCameraEntity(drone);
+        player.setCameraEntity(entity);
 
         for (int i = 0; i < 9; i++) {
             ItemStack itemStack = player.inventory.getStack(i);
 
-            if (TransmitterItem.isBoundTransmitter(itemStack, drone)) {
+            if (TransmitterItem.isBoundTransmitter(itemStack, entity)) {
                 player.inventory.selectedSlot = i;
                 SelectedSlotS2C.send(player, i);
             }
@@ -94,11 +95,11 @@ public class ServerTick {
 
     /**
      * Resets the view of the {@link ServerPlayerEntity} back to
-     * itself from the {@link DroneEntity} it was set to.
+     * itself from the {@link FlyableEntity} it was set to.
      * @param player the {@link ServerPlayerEntity} to change the view of
      */
     public static void resetView(ServerPlayerEntity player) {
-        if (player.getCameraEntity() instanceof DroneEntity) {
+        if (GogglesItem.isInGoggles(player)) {
             ShouldRenderPlayerS2C.send(player, false);
             GogglesItem.setOn(player.inventory.armor.get(3), false);
 

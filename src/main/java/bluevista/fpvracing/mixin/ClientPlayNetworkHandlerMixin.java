@@ -4,20 +4,24 @@ import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.client.ClientTick;
 import bluevista.fpvracing.network.config.ConfigC2S;
 import bluevista.fpvracing.server.ServerInitializer;
-import bluevista.fpvracing.server.entities.DroneEntity;
-import bluevista.fpvracing.client.physics.PhysicsWorld;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
+import bluevista.fpvracing.physics.PhysicsWorld;
+import bluevista.fpvracing.server.entities.FixedWingEntity;
+import bluevista.fpvracing.server.entities.FlyableEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.network.packet.s2c.play.*;
-import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import javax.vecmath.Vector3f;
 
 /**
  * Contains mixins mostly relating to {@link Entity} spawning, movement, and positioning.
@@ -26,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
  */
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
+    @Shadow MinecraftClient client;
     @Shadow ClientWorld world;
 
     /**
@@ -43,7 +48,7 @@ public class ClientPlayNetworkHandlerMixin {
 
     /**
      * This mixin cancels all {@link Entity} position updates from the server if it receives
-     * information for a {@link DroneEntity}.
+     * information for a {@link FlyableEntity}.
      * @param packet
      * @param info required by every mixin injection
      * @param entity the {@link Entity} on which the injection point was originally called
@@ -55,14 +60,14 @@ public class ClientPlayNetworkHandlerMixin {
             locals = LocalCapture.CAPTURE_FAILHARD
     )
     public void onEntityPosition(EntityPositionS2CPacket packet, CallbackInfo info, Entity entity) {
-        if (entity instanceof DroneEntity) {
+        if (entity instanceof FlyableEntity) {
             info.cancel();
         }
     }
 
     /**
      * This mixin cancels all {@link Entity} movement updates from the server if it receives
-     * information for a {@link DroneEntity}.
+     * information for a {@link FlyableEntity}.
      * @param packet
      * @param info required by every mixin injection
      * @param entity the {@link Entity} on which the injection point was originally called
@@ -74,7 +79,7 @@ public class ClientPlayNetworkHandlerMixin {
         locals = LocalCapture.CAPTURE_FAILHARD
     )
     public void onEntityUpdate(EntityS2CPacket packet, CallbackInfo info, Entity entity) {
-        if (entity instanceof DroneEntity) {
+        if (entity instanceof FlyableEntity) {
             info.cancel();
         }
     }
@@ -96,18 +101,17 @@ public class ClientPlayNetworkHandlerMixin {
             locals = LocalCapture.CAPTURE_FAILHARD
     )
     private void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo info, double x, double y, double z, EntityType<?> type) {
-        Entity entity = null;
+        FlyableEntity entity = null;
 
-        if (type == ServerInitializer.DRONE_ENTITY) {
-            float yaw = (float)(packet.getYaw() * 360) / 256.0F;
-            entity = new DroneEntity(world, new Vec3d(x, y, z), yaw);
+        if (type == ServerInitializer.QUADCOPTER_ENTITY) {
+            entity = new QuadcopterEntity(type, world);
+        } else if (type == ServerInitializer.FIXED_WING_ENTITY) {
+            entity = new FixedWingEntity(type, world);
         }
 
         if (entity != null) {
             int i = packet.getId();
-            entity.setVelocity(Vec3d.ZERO);
-            entity.updatePosition(x, y, z);
-            entity.updateTrackedPosition(x, y, z);
+            entity.updatePositionAndAngles(new Vector3f((float) x, (float) y, (float) z), (float)(packet.getYaw() * 360) / 256.0F, 0);
             entity.setEntityId(i);
             entity.setUuid(packet.getUuid());
             this.world.addEntity(i, entity);

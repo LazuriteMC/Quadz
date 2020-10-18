@@ -1,9 +1,10 @@
 package bluevista.fpvracing.server;
 
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.FlyableEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.network.config.ConfigS2C;
 import bluevista.fpvracing.config.Config;
-import bluevista.fpvracing.server.items.DroneSpawnerItem;
+import bluevista.fpvracing.server.items.QuadcopterItem;
 import bluevista.fpvracing.server.items.GogglesItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
 import com.google.gson.JsonObject;
@@ -22,7 +23,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.*;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
@@ -379,22 +379,22 @@ public class Commands {
             Number value = NumberArgumentType.getNumber(context, key);
             final ItemStack stack = player.getMainHandStack();
 
-            if (stack.getItem() instanceof DroneSpawnerItem) {
-                if (value.equals(DroneSpawnerItem.getTagValue(stack, key))) {
+            if (stack.getItem() instanceof QuadcopterItem) {
+                if (value.equals(QuadcopterItem.getTagValue(stack, key))) {
                     getDroneValue(context, key);
                     return 0;
                 } else {
-                    DroneSpawnerItem.setTagValue(stack, key, value);
+                    QuadcopterItem.setTagValue(stack, key, value);
                     getDroneValue(context, key);
                     return 1;
                 }
             } else if (stack.getItem() instanceof TransmitterItem) {
-                DroneEntity drone = TransmitterItem.droneFromTransmitter(stack, player);
-                if (drone == null || value.equals(drone.getConfigValues(key))) {
+                FlyableEntity flyable = TransmitterItem.flyableFromTransmitter(stack, player);
+                if (flyable == null || value.equals(flyable.getConfigValues(key))) {
                     getDroneValue(context, key);
                     return 0;
                 } else {
-                    drone.setConfigValues(key, value);
+                    flyable.setConfigValues(key, value);
                     getDroneValue(context, key);
                     return 1;
                 }
@@ -416,13 +416,13 @@ public class Commands {
             final ServerPlayerEntity player = context.getSource().getPlayer();
             final ItemStack stack = player.getMainHandStack();
 
-            if (stack.getItem() instanceof DroneSpawnerItem) {
-                player.sendMessage(new LiteralText(key + COLON_SPACE + DroneSpawnerItem.getTagValue(stack, key)), false);
+            if (stack.getItem() instanceof QuadcopterItem) {
+                player.sendMessage(new LiteralText(key + COLON_SPACE + QuadcopterItem.getTagValue(stack, key)), false);
                 return 1;
             } else if (stack.getItem() instanceof TransmitterItem) {
-                DroneEntity drone = TransmitterItem.droneFromTransmitter(stack, player);
-                if (drone != null) {
-                    player.sendMessage(new LiteralText(key + COLON_SPACE + drone.getConfigValues(key)), false);
+                FlyableEntity flyable = TransmitterItem.flyableFromTransmitter(stack, player);
+                if (flyable != null) {
+                    player.sendMessage(new LiteralText(key + COLON_SPACE + flyable.getConfigValues(key)), false);
                     return 1;
                 }
             }

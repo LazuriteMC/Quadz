@@ -2,8 +2,9 @@ package bluevista.fpvracing.network.keybinds;
 
 import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.server.ServerInitializer;
-import bluevista.fpvracing.server.entities.DroneEntity;
-import bluevista.fpvracing.server.items.DroneSpawnerItem;
+import bluevista.fpvracing.server.entities.FlyableEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
+import bluevista.fpvracing.server.items.QuadcopterItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
@@ -13,8 +14,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
@@ -32,21 +31,20 @@ public class NoClipC2S {
 
             if (hand.getItem() instanceof TransmitterItem) {
                 if (TransmitterItem.getTagValue(hand, Config.BIND) != null) {
-                    List<Entity> entities = ((ServerWorld) player.getEntityWorld()).getEntitiesByType(ServerInitializer.DRONE_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
-                    DroneEntity drone = null;
+                    List<FlyableEntity> entities = FlyableEntity.getList(player, 500);
+                    FlyableEntity flyable = null;
 
-                    for (Entity entity : entities) {
-                        drone = (DroneEntity) entity;
-
-                        if (drone.getConfigValues(Config.BIND).intValue() == TransmitterItem.getTagValue(hand, Config.BIND).intValue()) {
+                    for (FlyableEntity entity : entities) {
+                        if (entity.getConfigValues(Config.BIND).equals(TransmitterItem.getTagValue(hand, Config.BIND))) {
+                            flyable = entity;
                             break;
                         }
                     }
 
-                    if (drone != null) {
-                        drone.setConfigValues(Config.NO_CLIP, drone.getConfigValues(Config.NO_CLIP).intValue() == 1 ? 0 : 1);
+                    if (flyable != null) {
+                        flyable.setConfigValues(Config.NO_CLIP, flyable.getConfigValues(Config.NO_CLIP).intValue() == 1 ? 0 : 1);
 
-                        if (drone.getConfigValues(Config.NO_CLIP).intValue() == 1) {
+                        if (flyable.getConfigValues(Config.NO_CLIP).intValue() == 1) {
                             t = "No Clip Enabled";
                         } else {
                             t = "No Clip Disabled";
@@ -55,10 +53,10 @@ public class NoClipC2S {
                         player.sendMessage(new TranslatableText(t), false);
                     }
                 }
-            } else if (hand.getItem() instanceof DroneSpawnerItem) {
-                DroneSpawnerItem.setTagValue(hand, Config.NO_CLIP, DroneSpawnerItem.getTagValue(hand, Config.NO_CLIP) != null && DroneSpawnerItem.getTagValue(hand, Config.NO_CLIP).intValue() == 0 ? 1 : 0);
+            } else if (hand.getItem() instanceof QuadcopterItem) {
+                QuadcopterItem.setTagValue(hand, Config.NO_CLIP, QuadcopterItem.getTagValue(hand, Config.NO_CLIP) != null && QuadcopterItem.getTagValue(hand, Config.NO_CLIP).intValue() == 0 ? 1 : 0);
 
-                if (DroneSpawnerItem.getTagValue(hand, Config.NO_CLIP) != null && DroneSpawnerItem.getTagValue(hand, Config.NO_CLIP).intValue() == 1) {
+                if (QuadcopterItem.getTagValue(hand, Config.NO_CLIP) != null && QuadcopterItem.getTagValue(hand, Config.NO_CLIP).intValue() == 1) {
                     t = "No Clip Enabled";
                 } else {
                     t = "No Clip Disabled";

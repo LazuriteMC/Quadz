@@ -1,7 +1,7 @@
 package bluevista.fpvracing.mixin;
 
 import bluevista.fpvracing.network.ModdedServerS2C;
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
@@ -60,7 +60,7 @@ public class PlayerManagerMixin {
 
             if (serverPlayerEntity != player && serverPlayerEntity.world.getRegistryKey() == worldKey) {
                 if(GogglesItem.isInGoggles(serverPlayerEntity)) {
-                    DroneEntity drone = (DroneEntity) serverPlayerEntity.getCameraEntity();
+                    QuadcopterEntity drone = (QuadcopterEntity) serverPlayerEntity.getCameraEntity();
 
                     double d = x - drone.getX();
                     double e = y - drone.getY();

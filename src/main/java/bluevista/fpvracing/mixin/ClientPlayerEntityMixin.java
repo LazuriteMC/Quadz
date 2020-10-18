@@ -2,7 +2,7 @@ package bluevista.fpvracing.mixin;
 
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.client.ClientTick;
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -39,7 +39,7 @@ public class ClientPlayerEntityMixin {
             )
     )
     public void sendPositionOnly(ClientPlayNetworkHandler networkHandler, Packet<?> packet) {
-        if (ClientTick.isServerModded || !(ClientInitializer.client.getCameraEntity() instanceof DroneEntity)) {
+        if (ClientTick.isServerModded || !(ClientInitializer.client.getCameraEntity() instanceof QuadcopterEntity)) {
             networkHandler.sendPacket(packet);
         }
     }
@@ -60,7 +60,7 @@ public class ClientPlayerEntityMixin {
             )
     )
     public void sendBoth(ClientPlayNetworkHandler networkHandler, Packet<?> packet) {
-        if (ClientTick.isServerModded || !(ClientInitializer.client.getCameraEntity() instanceof DroneEntity)) {
+        if (ClientTick.isServerModded || !(ClientInitializer.client.getCameraEntity() instanceof QuadcopterEntity)) {
             networkHandler.sendPacket(packet);
         }
     }

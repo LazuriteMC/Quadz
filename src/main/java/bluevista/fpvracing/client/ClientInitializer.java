@@ -4,18 +4,21 @@ import bluevista.fpvracing.client.input.keybinds.EMPKeybind;
 import bluevista.fpvracing.client.input.keybinds.GodModeKeybind;
 import bluevista.fpvracing.client.input.keybinds.GogglePowerKeybind;
 import bluevista.fpvracing.client.input.keybinds.NoClipKeybind;
-import bluevista.fpvracing.client.renderers.DroneRenderer;
-import bluevista.fpvracing.client.renderers.DroneSpawnerItemRenderer;
+import bluevista.fpvracing.client.renderers.FixedWingRenderer;
+import bluevista.fpvracing.client.renderers.QuadcopterRenderer;
+import bluevista.fpvracing.client.renderers.QuadcopterItemRenderer;
 import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.config.ConfigReader;
 import bluevista.fpvracing.network.ModdedServerS2C;
 import bluevista.fpvracing.network.SelectedSlotS2C;
 import bluevista.fpvracing.network.config.ConfigS2C;
 import bluevista.fpvracing.network.entity.DroneEntityS2C;
-import bluevista.fpvracing.client.physics.PhysicsWorld;
+import bluevista.fpvracing.network.entity.EntityPhysicsS2C;
+import bluevista.fpvracing.network.entity.FlyableEntityS2C;
+import bluevista.fpvracing.physics.PhysicsWorld;
 import bluevista.fpvracing.network.ShouldRenderPlayerS2C;
 import bluevista.fpvracing.server.ServerInitializer;
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -33,7 +36,7 @@ public class ClientInitializer implements ClientModInitializer {
     /** The running instance of the minecraft client. */
     public static final MinecraftClient client = MinecraftClient.getInstance();
 
-    /** The physics world used for {@link DroneEntity} objects. */
+    /** The physics world used for {@link QuadcopterEntity} objects. */
     public static PhysicsWorld physicsWorld;
 
     /** The client player's config which is later sent to the server. */
@@ -48,9 +51,23 @@ public class ClientInitializer implements ClientModInitializer {
 
         ClientTick.register();
         registerConfig();
-        registerKeybinds();
-        registerRenderers();
-        registerNetwork();
+
+        GogglePowerKeybind.register();
+        GodModeKeybind.register();
+        NoClipKeybind.register();
+        EMPKeybind.register();
+
+        EntityPhysicsS2C.register();
+        FlyableEntityS2C.register();
+        DroneEntityS2C.register();
+        SelectedSlotS2C.register();
+        ShouldRenderPlayerS2C.register();
+        ModdedServerS2C.register();
+        ConfigS2C.register();
+
+        EntityRendererRegistry.INSTANCE.register(ServerInitializer.QUADCOPTER_ENTITY, (entityRenderDispatcher, context) -> new QuadcopterRenderer(entityRenderDispatcher));
+        EntityRendererRegistry.INSTANCE.register(ServerInitializer.FIXED_WING_ENTITY, (entityRenderDispatcher, context) -> new FixedWingRenderer(entityRenderDispatcher));
+        QuadcopterItemRenderer.register();
     }
 
     /**
@@ -62,51 +79,10 @@ public class ClientInitializer implements ClientModInitializer {
     }
 
     /**
-     * Registers keybindings such as
-     * god mode, noclip, EMP, etc.
-     */
-    private void registerKeybinds() {
-        GogglePowerKeybind.register();
-        GodModeKeybind.register();
-        NoClipKeybind.register();
-        EMPKeybind.register();
-    }
-
-    /**
-     * Registers the renderers which use {@link bluevista.fpvracing.client.models.DroneModel}.
-     */
-    private void registerRenderers() {
-        EntityRendererRegistry.INSTANCE.register(ServerInitializer.DRONE_ENTITY, (entityRenderDispatcher, context) -> new DroneRenderer(entityRenderDispatcher));
-        DroneSpawnerItemRenderer.register();
-    }
-
-    /**
-     * Registers the network packets which are sent
-     * from the server and received by the client.
-     */
-    private void registerNetwork() {
-        ConfigS2C.register();
-        DroneEntityS2C.register();
-        SelectedSlotS2C.register();
-        ShouldRenderPlayerS2C.register();
-        ModdedServerS2C.register();
-    }
-
-    /**
      * Get the config object created in {@link ClientInitializer#registerConfig()}.
      * @return the {@link Config} object being stored
      */
     public static Config getConfig() {
         return config;
-    }
-
-    /**
-     * Finds out whether or not the player is in the goggles
-     * by checking what the client camera entity is.
-     * @param client the minecraft client to use
-     * @return whether or not the player is in goggles
-     */
-    public static boolean isInGoggles(MinecraftClient client) {
-        return client.getCameraEntity() instanceof DroneEntity;
     }
 }

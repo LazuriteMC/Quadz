@@ -1,6 +1,6 @@
 package bluevista.fpvracing.mixin;
 
-import bluevista.fpvracing.client.ClientInitializer;
+import bluevista.fpvracing.client.ClientTick;
 import bluevista.fpvracing.client.RenderTick;
 import bluevista.fpvracing.client.input.InputTick;
 import net.minecraft.client.MinecraftClient;
@@ -50,7 +50,7 @@ public class GameRendererMixin {
 	 */
 	@Inject(at = @At("HEAD"), method = "renderHand", cancellable = true)
 	public void renderHand(MatrixStack matrices, Camera camera, float tickDelta, CallbackInfo info) {
-		if (ClientInitializer.isInGoggles(client)) info.cancel();
+		if (ClientTick.isInGoggles(client)) info.cancel();
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class GameRendererMixin {
 			)
 	)
 	public void yaw(MatrixStack stack, Quaternion quat) {
-		if (ClientInitializer.isInGoggles(client)) {
+		if (ClientTick.isInGoggles(client)) {
 			stack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180));
 		} else {
 			stack.multiply(quat);
@@ -94,7 +94,7 @@ public class GameRendererMixin {
 			)
 	)
 	public void pitch(MatrixStack stack, Quaternion quat) {
-		if (ClientInitializer.isInGoggles(client)) {
+		if (ClientTick.isInGoggles(client)) {
 			stack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(0));
 		} else {
 			stack.multiply(quat);

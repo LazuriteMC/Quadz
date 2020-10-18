@@ -3,7 +3,7 @@ package bluevista.fpvracing.server.items;
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.server.ServerInitializer;
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.server.items.materials.ArmorMaterials;
 import com.google.common.collect.Multimap;
 import net.fabricmc.api.EnvType;
@@ -83,22 +83,22 @@ public class GogglesItem extends ArmorItem {
 
 	/**
 	 * Determines whether or not the client
-	 * has a camera entity of type {@link DroneEntity}.
-	 * @return whether or not the player is viewing through a drone entity
+	 * has a camera entity of type {@link FlyableEntity}.
+	 * @return whether or not the player is viewing through a flyable entity
 	 */
 	@Environment(EnvType.CLIENT)
 	public static boolean isInGoggles() {
-		return ClientInitializer.client.getCameraEntity() instanceof DroneEntity;
+		return ClientInitializer.client.getCameraEntity() instanceof FlyableEntity;
 	}
 
 	/**
 	 * Determines whether or not the given {@link ServerPlayerEntity}
-	 * has a camera entity of type {@link DroneEntity}.
+	 * has a camera entity of type {@link FlyableEntity}.
 	 * @param player the given {@link ServerPlayerEntity}
-	 * @return whether or not the camera entity is of type {@link DroneEntity}
+	 * @return whether or not the camera entity is of type {@link FlyableEntity}
 	 */
 	public static boolean isInGoggles(ServerPlayerEntity player) {
-		return player.getCameraEntity() instanceof DroneEntity;
+		return player.getCameraEntity() instanceof FlyableEntity;
 	}
 
 	public static void setOn(ItemStack itemStack, boolean on) {
@@ -120,13 +120,13 @@ public class GogglesItem extends ArmorItem {
 		return player.inventory.armor.get(3).getItem() instanceof GogglesItem;
 	}
 
-	public static boolean isOnSameChannel(DroneEntity drone, PlayerEntity player) {
+	public static boolean isOnSameChannel(FlyableEntity flyable, PlayerEntity player) {
 		if (GogglesItem.isWearingGoggles(player)) {
 			ItemStack hat = player.inventory.armor.get(3);
 
 			if (GogglesItem.getTagValue(hat, Config.BAND) != null && GogglesItem.getTagValue(hat, Config.CHANNEL) != null) {
-				return drone.getConfigValues(Config.BAND).equals(GogglesItem.getTagValue(hat, Config.BAND)) &&
-						drone.getConfigValues(Config.CHANNEL).equals(GogglesItem.getTagValue(hat, Config.CHANNEL));
+				return flyable.getConfigValues(Config.BAND).equals(GogglesItem.getTagValue(hat, Config.BAND)) &&
+						flyable.getConfigValues(Config.CHANNEL).equals(GogglesItem.getTagValue(hat, Config.CHANNEL));
 			}
 		}
 		return false;

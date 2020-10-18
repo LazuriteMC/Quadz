@@ -1,4 +1,4 @@
-package bluevista.fpvracing.client.physics;
+package bluevista.fpvracing.physics.block;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

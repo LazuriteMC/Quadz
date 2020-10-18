@@ -1,5 +1,6 @@
 package bluevista.fpvracing.mixin;
 
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -33,7 +34,7 @@ public class InGameHudMixin {
 
     /**
      * This mixin method removes the crosshair from the player's screen whenever
-     * they are flying a {@link bluevista.fpvracing.server.entities.DroneEntity}.
+     * they are flying a {@link QuadcopterEntity}.
      * @param matrices the matrix stack
      * @param info required by every mixin injection
      */
@@ -47,7 +48,7 @@ public class InGameHudMixin {
     /**
      * This mixin method removes the experience bar from the player's screen
      * when in adventure or survival modes
-     * and are flying a {@link bluevista.fpvracing.server.entities.DroneEntity}
+     * and are flying a {@link QuadcopterEntity}
      * @param matrices the matrix stack
      * @param x the x coordinate
      * @param info required by every mixin injection

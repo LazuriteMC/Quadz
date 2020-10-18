@@ -1,7 +1,7 @@
 package bluevista.fpvracing.mixin;
 
-import bluevista.fpvracing.server.entities.DroneEntity;
-import bluevista.fpvracing.server.items.DroneSpawnerItem;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
+import bluevista.fpvracing.server.items.QuadcopterItem;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundTag;
@@ -48,13 +48,13 @@ public class SummonCommandMixin {
             locals = LocalCapture.CAPTURE_FAILHARD
     )
     private static void execute(ServerCommandSource source, Identifier entity, Vec3d pos, CompoundTag nbt, boolean initialize, CallbackInfoReturnable<Integer> info, CompoundTag tag, ServerWorld world, Entity entity2) throws CommandSyntaxException {
-        if (entity2 instanceof DroneEntity) {
-            DroneEntity drone = (DroneEntity) entity2;
+        if (entity2 instanceof QuadcopterEntity) {
+            QuadcopterEntity drone = (QuadcopterEntity) entity2;
 
-            drone.physics.setRigidBodyPos(new Vector3f((float) pos.x, (float) pos.y, (float) pos.z));
+            drone.getPhysics().setPosition(new Vector3f((float) pos.x, (float) pos.y, (float) pos.z));
             drone.yaw = source.getPlayer().yaw;
 
-            DroneSpawnerItem.prepSpawnedDrone(source.getPlayer(), drone);
+            QuadcopterItem.prepSpawnedDrone(source.getPlayer(), drone);
         }
     }
 }

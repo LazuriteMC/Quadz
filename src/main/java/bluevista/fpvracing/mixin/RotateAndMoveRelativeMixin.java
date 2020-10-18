@@ -1,7 +1,7 @@
 package bluevista.fpvracing.mixin;
 
 import bluevista.fpvracing.server.ServerInitializer;
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.EntityS2CPacket;
 import net.minecraft.server.MinecraftServer;
@@ -40,7 +40,7 @@ public class RotateAndMoveRelativeMixin extends EntityS2CPacket {
         if (entity instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity) entity;
 
-            if (player.getCameraEntity() instanceof DroneEntity) {
+            if (player.getCameraEntity() instanceof QuadcopterEntity) {
                 this.deltaX = 0;
                 this.deltaY = 0;
                 this.deltaZ = 0;

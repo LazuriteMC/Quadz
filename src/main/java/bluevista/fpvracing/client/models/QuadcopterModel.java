@@ -1,6 +1,6 @@
 package bluevista.fpvracing.client.models;
 
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.ModelPart;
@@ -9,18 +9,18 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 
 @Environment(EnvType.CLIENT)
-public class DroneModel extends EntityModel<DroneEntity> {
+public class QuadcopterModel extends EntityModel<QuadcopterEntity> {
     private ModelPart base;
     private int size;
 
-    public DroneModel(int size) {
+    public QuadcopterModel(int size) {
         this.size = size;
         this.textureHeight = 16;
         this.textureWidth = 16;
     }
 
     @Override
-    public void setAngles(DroneEntity entity, float limbAngle, float limbDistance, float customAngle, float headYaw, float headPitch) {
+    public void setAngles(QuadcopterEntity entity, float limbAngle, float limbDistance, float customAngle, float headYaw, float headPitch) {
 
     }
 

@@ -1,8 +1,9 @@
 package bluevista.fpvracing.mixin;
 
 import bluevista.fpvracing.config.Config;
-import bluevista.fpvracing.server.entities.DroneEntity;
-import bluevista.fpvracing.server.items.DroneSpawnerItem;
+import bluevista.fpvracing.server.entities.FlyableEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
+import bluevista.fpvracing.server.items.QuadcopterItem;
 import bluevista.fpvracing.server.items.GogglesItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,15 +28,15 @@ public class PlayerInventoryMixin {
             GogglesItem.prepGogglesItem(player, itemStack);
         }
 
-        if (itemStack.getItem() instanceof DroneSpawnerItem && !player.world.isClient()) {
-            DroneSpawnerItem.prepDroneSpawnerItem(player, itemStack);
+        if (itemStack.getItem() instanceof QuadcopterItem && !player.world.isClient()) {
+            QuadcopterItem.prepDroneSpawnerItem(player, itemStack);
         }
 
         if (itemStack.getItem() instanceof TransmitterItem && !player.world.isClient()) {
-            DroneEntity drone = TransmitterItem.droneFromTransmitter(itemStack, player);
+            FlyableEntity flyable = TransmitterItem.flyableFromTransmitter(itemStack, player);
 
-            if (drone != null) {
-                drone.setConfigValues(Config.PLAYER_ID, player.getEntityId());
+            if (flyable != null) {
+                flyable.setConfigValues(Config.PLAYER_ID, player.getEntityId());
             }
         }
     }
@@ -47,8 +48,8 @@ public class PlayerInventoryMixin {
             GogglesItem.prepGogglesItem(player, itemStack);
         }
 
-        if (itemStack.getItem() instanceof DroneSpawnerItem && !player.world.isClient) {
-            DroneSpawnerItem.prepDroneSpawnerItem(player, itemStack);
+        if (itemStack.getItem() instanceof QuadcopterItem && !player.world.isClient) {
+            QuadcopterItem.prepDroneSpawnerItem(player, itemStack);
         }
     }
 }

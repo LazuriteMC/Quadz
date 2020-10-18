@@ -1,7 +1,7 @@
 package bluevista.fpvracing.client;
 
 import bluevista.fpvracing.config.Config;
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.util.TickTimer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,8 +22,8 @@ public class ClientTick {
 
     public static void tick(MinecraftClient client) {
         if (client.player != null && !client.isPaused()) {
-            if (client.getCameraEntity() instanceof DroneEntity) {
-                DroneEntity drone = (DroneEntity) client.getCameraEntity();
+            if (client.getCameraEntity() instanceof QuadcopterEntity) {
+                QuadcopterEntity drone = (QuadcopterEntity) client.getCameraEntity();
 
                 if (!isServerModded) {
                     double x = drone.getX();
@@ -37,7 +37,7 @@ public class ClientTick {
                     }
                 }
 
-                droneFOV = ((DroneEntity)client.cameraEntity).getConfigValues(Config.FIELD_OF_VIEW).floatValue();
+                droneFOV = ((QuadcopterEntity)client.cameraEntity).getConfigValues(Config.FIELD_OF_VIEW).floatValue();
 
                 if (droneFOV != 0.0f && client.options.fov != droneFOV) {
                     prevFOV = client.options.fov;
@@ -55,35 +55,22 @@ public class ClientTick {
         }
     }
 
-    public static void createDrone(MinecraftClient client) {
-        if (client.player != null && client.world != null) {
-            client.setCameraEntity(new DroneEntity(client.world, client.player.getPos(), client.player.yaw));
-
-            DroneEntity drone = (DroneEntity) client.getCameraEntity();
-            drone.prepConfig();
-            client.world.addEntity(drone.getEntityId(), drone);
-            client.setCameraEntity(drone);
-        }
-    }
-
-    public static void destroyDrone(MinecraftClient client) {
-        if (isFlyingClientSideDrone(client)) {
-            DroneEntity drone = (DroneEntity) client.getCameraEntity();
-            client.setCameraEntity(client.player);
-            drone.remove();
-        }
-    }
-
-    public static boolean isFlyingClientSideDrone(MinecraftClient client) {
-        return !isServerModded && client.getCameraEntity() instanceof DroneEntity;
-    }
-
     public static boolean isPlayerIDClient(int playerID) {
         if (ClientInitializer.client.player != null) {
             return playerID == ClientInitializer.client.player.getEntityId();
         } else {
             return false;
         }
+    }
+
+    /**
+     * Finds out whether or not the player is in the goggles
+     * by checking what the client camera entity is.
+     * @param client the minecraft client to use
+     * @return whether or not the player is in goggles
+     */
+    public static boolean isInGoggles(MinecraftClient client) {
+        return client.getCameraEntity() instanceof QuadcopterEntity;
     }
 
     public static void register() {

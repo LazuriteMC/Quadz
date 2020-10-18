@@ -1,7 +1,7 @@
 package bluevista.fpvracing.mixin;
 
 import bluevista.fpvracing.server.ServerTick;
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
@@ -43,11 +43,11 @@ public class ServerPlayerEntityMixin {
             }
         }
 
-        if (entity instanceof DroneEntity) {
-            if (GogglesItem.isInGoggles((ServerPlayerEntity) (Object) this) && !entity.removed) {
-                info.cancel();
-            }
-        }
+//        if (entity instanceof DroneEntity) {
+//            if (GogglesItem.isInGoggles((ServerPlayerEntity) (Object) this) && !entity.removed) {
+//                info.cancel();
+//            }
+//        }
     }
 
     /**
@@ -90,7 +90,7 @@ public class ServerPlayerEntityMixin {
         Entity prevEntity = cameraEntity;
         Entity nextEntity = (Entity) (entity == null ? this : entity);
 
-        if (prevEntity instanceof DroneEntity || nextEntity instanceof DroneEntity) {
+        if (prevEntity instanceof QuadcopterEntity || nextEntity instanceof QuadcopterEntity) {
             networkHandler.sendPacket(new SetCameraEntityS2CPacket(nextEntity));
             cameraEntity = nextEntity;
             // requestTeleport is gone now

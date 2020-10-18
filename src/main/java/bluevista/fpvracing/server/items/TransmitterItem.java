@@ -2,7 +2,8 @@ package bluevista.fpvracing.server.items;
 
 import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.server.ServerInitializer;
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.FlyableEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -45,16 +46,14 @@ public class TransmitterItem extends Item {
         return null;
     }
 
-    public static DroneEntity droneFromTransmitter(ItemStack itemStack, PlayerEntity player) {
+    public static FlyableEntity flyableFromTransmitter(ItemStack itemStack, PlayerEntity player) {
         if (itemStack.getItem() instanceof TransmitterItem) {
             if (TransmitterItem.getTagValue(itemStack, Config.BIND) != null) {
-                List<Entity> entities = ((ServerWorld) player.getEntityWorld()).getEntitiesByType(ServerInitializer.DRONE_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
+                List<FlyableEntity> entities = FlyableEntity.getList(player, 500);
 
-                for (Entity entity : entities) {
-                    DroneEntity drone = (DroneEntity) entity;
-
-                    if (drone.getConfigValues(Config.BIND).intValue() == getTagValue(itemStack, Config.BIND).intValue()) {
-                        return drone;
+                for (FlyableEntity entity : entities) {
+                    if (entity.getConfigValues(Config.BIND).equals(getTagValue(itemStack, Config.BIND))) {
+                        return entity;
                     }
                 }
             }
@@ -63,9 +62,9 @@ public class TransmitterItem extends Item {
         return null;
     }
 
-    public static boolean isBoundTransmitter(ItemStack itemStack, DroneEntity drone) {
+    public static boolean isBoundTransmitter(ItemStack itemStack, FlyableEntity flyable) {
         if (TransmitterItem.getTagValue(itemStack, Config.BIND) != null) {
-            return drone.getConfigValues(Config.BIND).intValue() == TransmitterItem.getTagValue(itemStack, Config.BIND).intValue();
+            return flyable.getConfigValues(Config.BIND).equals(TransmitterItem.getTagValue(itemStack, Config.BIND));
         }
 
         return false;

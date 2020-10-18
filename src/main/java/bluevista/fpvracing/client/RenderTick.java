@@ -1,9 +1,10 @@
 package bluevista.fpvracing.client;
 
-import bluevista.fpvracing.client.physics.PhysicsWorld;
+import bluevista.fpvracing.physics.PhysicsWorld;
 import bluevista.fpvracing.config.Config;
+import bluevista.fpvracing.physics.entity.ClientEntityPhysics;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.util.math.QuaternionHelper;
-import bluevista.fpvracing.server.entities.DroneEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -25,14 +26,15 @@ public class RenderTick {
             else w.clock.reset();
         }
 
-        if (entity instanceof DroneEntity) {
-            DroneEntity drone = (DroneEntity) entity;
+        if (entity instanceof QuadcopterEntity) {
+            QuadcopterEntity drone = (QuadcopterEntity) entity;
 
             Quat4f q;
-            if (drone.physics.isActive()) {
-                q = drone.physics.getOrientation();
+            ClientEntityPhysics physics = (ClientEntityPhysics) drone.getPhysics();
+            if (physics.isActive()) {
+                q = physics.getOrientation();
             } else {
-                q = QuaternionHelper.slerp(drone.physics.getPrevOrientation(), drone.physics.getOrientation(), tickDelta);
+                q = QuaternionHelper.slerp(physics.getPrevOrientation(), physics.getOrientation(), tickDelta);
             }
 
             q.set(q.x, -q.y, q.z, -q.w);

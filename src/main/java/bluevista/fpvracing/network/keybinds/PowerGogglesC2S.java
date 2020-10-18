@@ -2,13 +2,13 @@ package bluevista.fpvracing.network.keybinds;
 
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.ServerTick;
-import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.entities.FlyableEntity;
+import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.server.items.GogglesItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -37,19 +37,14 @@ public class PowerGogglesC2S {
 
             if (hat.getItem() instanceof GogglesItem) {
                 if (on && !GogglesItem.isInGoggles(serverPlayer)) {
-                    List<Entity> drones = DroneEntity.getDrones(serverPlayer); // list of all drones
+                    List<FlyableEntity> flyables = FlyableEntity.getList(serverPlayer, 500);
 
-                    for (Entity entity : drones) { // For every drone...
-                        DroneEntity drone = (DroneEntity) entity;
-
-                        // Make sure drone is within range of player...
-                        if (serverPlayer.distanceTo(drone) > DroneEntity.TRACKING_RANGE) {
+                    for (FlyableEntity entity : flyables) {
+                        if (serverPlayer.distanceTo(entity) > QuadcopterEntity.TRACKING_RANGE) {
                             continue;
-
-                            // Otherwise, see if the drone is on the same channel as the goggles..lie
-                        } else if (GogglesItem.isOnSameChannel(drone, serverPlayer)) {
+                        } else if (GogglesItem.isOnSameChannel(entity, serverPlayer)) {
                             GogglesItem.setOn(hat, true);
-                            ServerTick.setView(serverPlayer, drone);
+                            ServerTick.setView(serverPlayer, entity);
                         }
                     }
                 } else {
