@@ -3,16 +3,12 @@ package bluevista.fpvracing.physics.entity;
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.client.ClientTick;
 import bluevista.fpvracing.client.input.InputTick;
-import bluevista.fpvracing.physics.PhysicsWorld;
 import bluevista.fpvracing.network.entity.EntityPhysicsC2S;
 import bluevista.fpvracing.physics.block.BlockCollisions;
 import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.util.math.QuaternionHelper;
-import bluevista.fpvracing.config.Config;
-import com.bulletphysics.collision.broadphase.Dispatcher;
 import com.bulletphysics.collision.dispatch.CollisionObject;
-import com.bulletphysics.collision.narrowphase.PersistentManifold;
 import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.dynamics.RigidBody;
@@ -30,50 +26,22 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Environment(EnvType.CLIENT)
-public class ClientEntityPhysics extends EntityPhysics {
+public class ClientEntityPhysics implements IEntityPhysics {
     private final Quat4f prevOrientation;
     private final Quat4f netOrientation;
+    private FlyableEntity entity;
     private RigidBody body;
 
     public ClientEntityPhysics(FlyableEntity entity) {
-        super(entity);
-
+        this.entity = entity;
         this.prevOrientation = new Quat4f(0, 1, 0, 0);
         this.netOrientation = new Quat4f(0, 1, 0, 0);
 
         this.createRigidBody();
         ClientInitializer.physicsWorld.add(this);
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (isActive()) {
-            EntityPhysicsC2S.send(this);
-        } else {
-            setPrevOrientation(getOrientation());
-            setOrientation(netOrientation);
-        }
-    }
-
-    @Override
-    public void setConfigValues(String key, Number value) {
-        switch (key) {
-            case Config.MASS:
-                this.setMass(value.floatValue());
-                break;
-            case Config.SIZE:
-                this.setSize(value.intValue());
-                break;
-            default:
-                super.setConfigValues(key, value);
-        }
     }
 
     /**
@@ -82,7 +50,7 @@ public class ClientEntityPhysics extends EntityPhysics {
      * @return whether or not the entity is active
      */
     public boolean isActive() {
-        return entity.age > 1 && ClientTick.isPlayerIDClient(playerID);
+        return entity.age > 1 && ClientTick.isPlayerIDClient(entity.getPlayerID());
     }
 
     /**
@@ -121,6 +89,21 @@ public class ClientEntityPhysics extends EntityPhysics {
      */
     public RigidBody getRigidBody() {
         return this.body;
+    }
+
+    @Override
+    public void sendPackets() {
+        if (isActive()) {
+            EntityPhysicsC2S.send(this);
+        } else {
+            setPrevOrientation(getOrientation());
+            setOrientation(netOrientation);
+        }
+    }
+
+    @Override
+    public FlyableEntity getEntity() {
+        return entity;
     }
 
     /**
@@ -203,32 +186,6 @@ public class ClientEntityPhysics extends EntityPhysics {
      */
     public void setNetOrientation(Quat4f netOrientation) {
         this.netOrientation.set(netOrientation);
-    }
-
-    /**
-     * Sets the mass of the drone. Also refreshes the {@link RigidBody}.
-     * @param mass the new mass
-     */
-    public void setMass(float mass) {
-        float old = this.mass;
-        this.mass = mass;
-
-        if (old != mass) {
-            createRigidBody();
-        }
-    }
-
-    /**
-     * Sets the size of the drone. Also refreshes the {@link RigidBody}.
-     * @param size the new size
-     */
-    public void setSize(int size) {
-        int old = this.size;
-        this.size = size;
-
-        if (old != size) {
-            createRigidBody();
-        }
     }
 
     /**
@@ -320,8 +277,8 @@ public class ClientEntityPhysics extends EntityPhysics {
     /**
      * Creates a new {@link RigidBody} based off of the drone's attributes.
      */
-    private void createRigidBody() {
-        float s = size / 16.0f;
+    public void createRigidBody() {
+        float s = entity.getSize() / 16.0f;
         Box cBox = new Box(-s / 2.0f, -s / 8.0f, -s / 2.0f, s / 2.0f, s / 8.0f, s / 2.0f);
         Vector3f inertia = new Vector3f(0.0F, 0.0F, 0.0F);
         Vector3f box = new Vector3f(
@@ -329,7 +286,7 @@ public class ClientEntityPhysics extends EntityPhysics {
                 ((float) (cBox.maxY - cBox.minY) / 2.0F) + 0.005f,
                 ((float) (cBox.maxZ - cBox.minZ) / 2.0F) + 0.005f);
         CollisionShape shape = new BoxShape(box);
-        shape.calculateLocalInertia(this.mass, inertia);
+        shape.calculateLocalInertia(entity.getMass(), inertia);
 
         Vec3d pos = entity.getPos();
         Vector3f position = new Vector3f((float) pos.x, (float) pos.y + 0.125f, (float) pos.z);
@@ -343,7 +300,7 @@ public class ClientEntityPhysics extends EntityPhysics {
             motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 1, 0, 0), position, 1.0f)));
         }
 
-        RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(this.mass, motionState, shape, inertia);
+        RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(entity.getMass(), motionState, shape, inertia);
         RigidBody body = new RigidBody(ci);
         body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
 

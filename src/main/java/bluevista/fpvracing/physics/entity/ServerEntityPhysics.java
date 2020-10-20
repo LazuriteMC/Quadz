@@ -6,14 +6,15 @@ import bluevista.fpvracing.server.entities.FlyableEntity;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
-public class ServerEntityPhysics extends EntityPhysics {
+public class ServerEntityPhysics implements IEntityPhysics {
+    private final FlyableEntity entity;
     private final Vector3f position;
     private final Vector3f linearVelocity;
     private final Vector3f angularVelocity;
     private final Quat4f orientation;
 
     public ServerEntityPhysics(FlyableEntity entity) {
-        super(entity);
+        this.entity = entity;
 
         position = new Vector3f();
         linearVelocity = new Vector3f();
@@ -22,9 +23,7 @@ public class ServerEntityPhysics extends EntityPhysics {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-
+    public void sendPackets() {
         EntityPhysicsS2C.send(this, false);
     }
 
@@ -67,5 +66,10 @@ public class ServerEntityPhysics extends EntityPhysics {
     @Override
     public Quat4f getOrientation() {
         return this.orientation;
+    }
+
+    @Override
+    public FlyableEntity getEntity() {
+        return entity;
     }
 }

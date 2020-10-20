@@ -389,15 +389,15 @@ public class Commands {
                     return 1;
                 }
             } else if (stack.getItem() instanceof TransmitterItem) {
-                FlyableEntity flyable = TransmitterItem.flyableFromTransmitter(stack, player);
-                if (flyable == null || value.equals(flyable.getConfigValues(key))) {
-                    getDroneValue(context, key);
-                    return 0;
-                } else {
-                    flyable.setConfigValues(key, value);
-                    getDroneValue(context, key);
-                    return 1;
-                }
+//                FlyableEntity flyable = TransmitterItem.flyableFromTransmitter(stack, player);
+//                if (flyable == null || value.equals(flyable.getConfigValues(key))) {
+//                    getDroneValue(context, key);
+//                    return 0;
+//                } else {
+//                    flyable.setConfigValues(key, value);
+//                    getDroneValue(context, key);
+//                    return 1;
+//                }
             }
 
             if (MESSAGES != null) {
@@ -422,7 +422,7 @@ public class Commands {
             } else if (stack.getItem() instanceof TransmitterItem) {
                 FlyableEntity flyable = TransmitterItem.flyableFromTransmitter(stack, player);
                 if (flyable != null) {
-                    player.sendMessage(new LiteralText(key + COLON_SPACE + flyable.getConfigValues(key)), false);
+//                    player.sendMessage(new LiteralText(key + COLON_SPACE + flyable.getConfigValues(key)), false);
                     return 1;
                 }
             }

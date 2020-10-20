@@ -2,6 +2,7 @@ package bluevista.fpvracing.network.keybinds;
 
 import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.server.ServerInitializer;
+import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.server.items.QuadcopterItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
@@ -38,15 +39,15 @@ public class GodModeC2S {
                     for (Entity entity : entities) {
                         quad = (QuadcopterEntity) entity;
 
-                        if (quad.getConfigValues(Config.BIND).intValue() == TransmitterItem.getTagValue(hand, Config.BIND).intValue()) {
+                        if (quad.getDataTracker().get(FlyableEntity.BIND_ID) == TransmitterItem.getTagValue(hand, Config.BIND).intValue()) {
                             break;
                         }
                     }
 
                     if (quad != null) {
-                        quad.setConfigValues(Config.GOD_MODE, quad.getConfigValues(Config.GOD_MODE).intValue() == 1 ? 0 : 1);
+                        quad.getDataTracker().set(FlyableEntity.GOD_MODE, !quad.getDataTracker().get(FlyableEntity.GOD_MODE));
 
-                        if (quad.getConfigValues(Config.GOD_MODE).intValue() == 1) {
+                        if (quad.getDataTracker().get(FlyableEntity.GOD_MODE)) {
                             t = "God Mode Enabled";
                         } else {
                             t = "God Mode Disabled";

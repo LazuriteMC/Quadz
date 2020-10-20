@@ -1,5 +1,7 @@
 package bluevista.fpvracing.util;
 
+import net.minecraft.nbt.CompoundTag;
+
 public class Frequency {
     public static final int CHANNELS = 8;
     public static final char[] BANDS = {'A', 'B', 'E', 'F', 'R'};
@@ -46,6 +48,15 @@ public class Frequency {
 
     public int getChannel() {
         return channel;
+    }
+
+    public void toTag(CompoundTag tag) {
+        tag.putInt("band", getBand());
+        tag.putInt("channel", getChannel());
+    }
+
+    public static Frequency fromTag(CompoundTag tag) {
+        return new Frequency((char) tag.getInt("band"), tag.getInt("channel"));
     }
 
     public static int getFrequency(char band, int channel) {

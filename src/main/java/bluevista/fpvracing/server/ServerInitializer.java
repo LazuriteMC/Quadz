@@ -1,6 +1,7 @@
 package bluevista.fpvracing.server;
 
 import bluevista.fpvracing.config.Config;
+import bluevista.fpvracing.network.FlyableDataHandlerRegistry;
 import bluevista.fpvracing.network.config.ConfigC2S;
 import bluevista.fpvracing.network.entity.EntityPhysicsC2S;
 import bluevista.fpvracing.network.keybinds.EMPC2S;
@@ -20,6 +21,7 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -60,8 +62,9 @@ public class ServerInitializer implements ModInitializer {
 		registerItems();
 		registerNetwork();
 
-		Commands.registerCommands();
+//		Commands.registerCommands();
 		ServerTick.register();
+		TrackedDataHandlerRegistry.register(FlyableDataHandlerRegistry.FREQUENCY);
 
 		ServerStartCallback.EVENT.register(ServerInitializer::start);
 	}

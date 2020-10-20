@@ -125,8 +125,8 @@ public class GogglesItem extends ArmorItem {
 			ItemStack hat = player.inventory.armor.get(3);
 
 			if (GogglesItem.getTagValue(hat, Config.BAND) != null && GogglesItem.getTagValue(hat, Config.CHANNEL) != null) {
-				return flyable.getConfigValues(Config.BAND).equals(GogglesItem.getTagValue(hat, Config.BAND)) &&
-						flyable.getConfigValues(Config.CHANNEL).equals(GogglesItem.getTagValue(hat, Config.CHANNEL));
+				return (GogglesItem.getTagValue(hat, Config.BAND)).equals((int) flyable.getDataTracker().get(FlyableEntity.FREQUENCY).getBand()) &&
+						(GogglesItem.getTagValue(hat, Config.CHANNEL).equals(flyable.getDataTracker().get(FlyableEntity.FREQUENCY).getChannel()));
 			}
 		}
 		return false;

@@ -41,7 +41,7 @@ public class QuadcopterRenderer extends EntityRenderer<QuadcopterEntity> {
             ));
         }
 
-        this.model.setSize(quadcopterEntity.getConfigValues(Config.SIZE).intValue());
+        this.model.setSize(quadcopterEntity.getSize());
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(model.getLayer(this.getTexture(quadcopterEntity)));
         model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.pop();

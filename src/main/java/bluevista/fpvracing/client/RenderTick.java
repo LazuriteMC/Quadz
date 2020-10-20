@@ -8,6 +8,7 @@ import bluevista.fpvracing.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientAdvancementManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Matrix4f;
@@ -38,7 +39,7 @@ public class RenderTick {
             }
 
             q.set(q.x, -q.y, q.z, -q.w);
-            QuaternionHelper.rotateX(q, drone.getConfigValues(Config.CAMERA_ANGLE).intValue());
+            QuaternionHelper.rotateX(q, drone.getDataTracker().get(QuadcopterEntity.CAMERA_ANGLE));
 
             Matrix4f newMat = new Matrix4f(QuaternionHelper.quat4fToQuaternion(q));
             newMat.transpose();

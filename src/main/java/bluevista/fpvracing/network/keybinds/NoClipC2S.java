@@ -35,16 +35,16 @@ public class NoClipC2S {
                     FlyableEntity flyable = null;
 
                     for (FlyableEntity entity : entities) {
-                        if (entity.getConfigValues(Config.BIND).equals(TransmitterItem.getTagValue(hand, Config.BIND))) {
+                        if (entity.getDataTracker().get(FlyableEntity.BIND_ID).equals(TransmitterItem.getTagValue(hand, Config.BIND))) {
                             flyable = entity;
                             break;
                         }
                     }
 
                     if (flyable != null) {
-                        flyable.setConfigValues(Config.NO_CLIP, flyable.getConfigValues(Config.NO_CLIP).intValue() == 1 ? 0 : 1);
+                        flyable.noClip = !flyable.noClip;
 
-                        if (flyable.getConfigValues(Config.NO_CLIP).intValue() == 1) {
+                        if (flyable.noClip) {
                             t = "No Clip Enabled";
                         } else {
                             t = "No Clip Disabled";

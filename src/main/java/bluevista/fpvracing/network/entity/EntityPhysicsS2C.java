@@ -1,8 +1,7 @@
 package bluevista.fpvracing.network.entity;
 
-import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.physics.entity.ClientEntityPhysics;
-import bluevista.fpvracing.physics.entity.EntityPhysics;
+import bluevista.fpvracing.physics.entity.IEntityPhysics;
 import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.util.PacketHelper;
 import bluevista.fpvracing.server.ServerInitializer;
@@ -37,18 +36,7 @@ public class EntityPhysicsS2C {
         PlayerEntity player = context.getPlayer();
 
         boolean force = buf.readBoolean();
-
         int entityID = buf.readInt();
-        int playerID = buf.readInt();
-
-        int noClip = buf.readInt();
-        int godMode = buf.readInt();
-
-        float mass = buf.readFloat();
-        int size = buf.readInt();
-        float thrust = buf.readFloat();
-        float thrustCurve = buf.readFloat();
-        float dragCoefficient = buf.readFloat();
 
         Vector3f position = PacketHelper.deserializeVector3f(buf);
         Vector3f linearVel = PacketHelper.deserializeVector3f(buf);
@@ -65,18 +53,6 @@ public class EntityPhysicsS2C {
                 if (entity != null) {
                     physics = (ClientEntityPhysics) entity.getPhysics();
 
-                    /* Misc Attributes */
-                    physics.setConfigValues(Config.NO_CLIP, noClip);
-                    physics.setConfigValues(Config.GOD_MODE, godMode);
-                    physics.setConfigValues(Config.PLAYER_ID, playerID);
-
-                    /* Physics Settings */
-                    physics.setConfigValues(Config.MASS, mass);
-                    physics.setConfigValues(Config.SIZE, size);
-                    physics.setConfigValues(Config.THRUST, thrust);
-                    physics.setConfigValues(Config.THRUST_CURVE, thrustCurve);
-                    physics.setConfigValues(Config.DRAG_COEFFICIENT, dragCoefficient);
-
                     /* Physics Vectors (orientation, position, velocity, etc.) */
                     if (force || !physics.isActive()) {
                         physics.setPosition(position);
@@ -92,27 +68,13 @@ public class EntityPhysicsS2C {
     /**
      * The method that send the drone information from the server to the client. Contains all
      * server-side values such as camera settings, physics settings, and rate settings.
-     * @param physics the {@link bluevista.fpvracing.physics.entity.EntityPhysics} to send
+     * @param physics the {@link IEntityPhysics} to send
      */
-    public static void send(EntityPhysics physics, boolean force) {
+    public static void send(IEntityPhysics physics, boolean force) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 
         buf.writeBoolean(force);
-
-        /* Identifiers */
         buf.writeInt(physics.getEntity().getEntityId());
-        buf.writeInt(physics.getConfigValues(Config.PLAYER_ID).intValue());
-
-        /* Misc Attributes */
-        buf.writeInt(physics.getConfigValues(Config.NO_CLIP).intValue());
-        buf.writeInt(physics.getConfigValues(Config.GOD_MODE).intValue());
-
-        /* Physics Settings */
-        buf.writeFloat(physics.getConfigValues(Config.MASS).floatValue());
-        buf.writeInt(physics.getConfigValues(Config.SIZE).intValue());
-        buf.writeFloat(physics.getConfigValues(Config.THRUST).floatValue());
-        buf.writeFloat(physics.getConfigValues(Config.THRUST_CURVE).floatValue());
-        buf.writeFloat(physics.getConfigValues(Config.DRAG_COEFFICIENT).floatValue());
 
         /* Physics Vectors */
         PacketHelper.serializeVector3f(buf, physics.getPosition());

@@ -71,7 +71,7 @@ public class PhysicsWorld {
                     }
 
                     /* Load in block collisions */
-                    if (physics.getConfigValues(Config.NO_CLIP).equals(0)) {
+                    if (physics.getEntity().noClip == false) {
                         this.blockCollisions.load(physics.getEntity(), world);
                     }
                 } else {

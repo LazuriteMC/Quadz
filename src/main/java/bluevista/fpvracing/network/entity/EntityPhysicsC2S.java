@@ -1,7 +1,7 @@
 package bluevista.fpvracing.network.entity;
 
 import bluevista.fpvracing.physics.entity.ClientEntityPhysics;
-import bluevista.fpvracing.physics.entity.EntityPhysics;
+import bluevista.fpvracing.physics.entity.IEntityPhysics;
 import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.util.PacketHelper;
 import bluevista.fpvracing.server.ServerInitializer;
@@ -60,7 +60,7 @@ public class EntityPhysicsC2S {
      * camera rotation (yaw, pitch).
      * @param physics the {@link ClientEntityPhysics} to send
      */
-    public static void send(EntityPhysics physics) {
+    public static void send(IEntityPhysics physics) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeInt(physics.getEntity().getEntityId());
 

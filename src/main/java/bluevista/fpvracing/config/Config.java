@@ -73,7 +73,6 @@ public class Config {
             BAND,
             CHANNEL,
             BLOCK_RADIUS,
-//            CRASH_MOMENTUM_THRESHOLD,
             SIZE
     );
 

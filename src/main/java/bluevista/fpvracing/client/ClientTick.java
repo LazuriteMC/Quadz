@@ -1,6 +1,6 @@
 package bluevista.fpvracing.client;
 
-import bluevista.fpvracing.config.Config;
+import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.util.TickTimer;
 import net.fabricmc.api.EnvType;
@@ -25,19 +25,19 @@ public class ClientTick {
             if (client.getCameraEntity() instanceof QuadcopterEntity) {
                 QuadcopterEntity drone = (QuadcopterEntity) client.getCameraEntity();
 
-                if (!isServerModded) {
-                    double x = drone.getX();
-                    double y = drone.getY();
-                    double z = drone.getZ();
-                    boolean onGround = drone.isOnGround();
+//                if (!isServerModded) {
+//                    double x = drone.getX();
+//                    double y = drone.getY();
+//                    double z = drone.getZ();
+//                    boolean onGround = drone.isOnGround();
+//
+//                    client.player.setPos(x, y, z);
+//                    if (positionTickTimer.tick()) {
+//                        ClientSidePacketRegistry.INSTANCE.sendToServer(new PlayerMoveC2SPacket.PositionOnly(x, y, z, onGround));
+//                    }
+//                }
 
-                    client.player.setPos(x, y, z);
-                    if (positionTickTimer.tick()) {
-                        ClientSidePacketRegistry.INSTANCE.sendToServer(new PlayerMoveC2SPacket.PositionOnly(x, y, z, onGround));
-                    }
-                }
-
-                droneFOV = ((QuadcopterEntity)client.cameraEntity).getConfigValues(Config.FIELD_OF_VIEW).floatValue();
+                droneFOV = client.cameraEntity.getDataTracker().get(FlyableEntity.FIELD_OF_VIEW);
 
                 if (droneFOV != 0.0f && client.options.fov != droneFOV) {
                     prevFOV = client.options.fov;

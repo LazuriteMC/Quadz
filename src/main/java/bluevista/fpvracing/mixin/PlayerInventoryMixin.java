@@ -1,8 +1,6 @@
 package bluevista.fpvracing.mixin;
 
-import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.server.entities.FlyableEntity;
-import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.server.items.QuadcopterItem;
 import bluevista.fpvracing.server.items.GogglesItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
@@ -36,7 +34,7 @@ public class PlayerInventoryMixin {
             FlyableEntity flyable = TransmitterItem.flyableFromTransmitter(itemStack, player);
 
             if (flyable != null) {
-                flyable.setConfigValues(Config.PLAYER_ID, player.getEntityId());
+                flyable.setPlayerID(player.getEntityId());
             }
         }
     }

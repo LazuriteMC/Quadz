@@ -2,6 +2,7 @@ package bluevista.fpvracing.physics.thrust;
 
 import bluevista.fpvracing.client.input.InputTick;
 import bluevista.fpvracing.config.Config;
+import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.util.Matrix4fInject;
 import bluevista.fpvracing.util.math.BetaflightHelper;
@@ -24,10 +25,10 @@ public class QuadcopterThrust implements IThrust {
      */
     public Vector3f getForce() {
         Vector3f thrustVec = getVector();
-        thrustVec.scale(calculateCurve() * quad.getConfigValues(Config.THRUST).floatValue());
+        thrustVec.scale(calculateCurve() * quad.getDataTracker().get(QuadcopterEntity.THRUST));
 
         Vector3f yawVec = getVector();
-        yawVec.scale((float) Math.abs(BetaflightHelper.calculateRates(InputTick.axisValues.currY, quad.getConfigValues(Config.RATE).floatValue(), quad.getConfigValues(Config.EXPO).floatValue(), quad.getConfigValues(Config.SUPER_RATE).floatValue(), 1.0f)));
+        yawVec.scale((float) Math.abs(BetaflightHelper.calculateRates(InputTick.axisValues.currY, quad.getDataTracker().get(QuadcopterEntity.RATE), quad.getDataTracker().get(QuadcopterEntity.EXPO), quad.getDataTracker().get(QuadcopterEntity.SUPER_RATE), 1.0f)));
 
         Vector3f out = new Vector3f();
         out.add(thrustVec, yawVec);
@@ -53,7 +54,7 @@ public class QuadcopterThrust implements IThrust {
      * @return a point on the thrust curve
      */
     public float calculateCurve() {
-        return (float) (Math.pow(InputTick.axisValues.currT, quad.getConfigValues(Config.THRUST_CURVE).floatValue()));
+        return (float) (Math.pow(InputTick.axisValues.currT, quad.getDataTracker().get(QuadcopterEntity.THRUST_CURVE)));
     }
 
 }

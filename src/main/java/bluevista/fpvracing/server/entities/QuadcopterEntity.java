@@ -3,7 +3,6 @@ package bluevista.fpvracing.server.entities;
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.client.ClientTick;
 import bluevista.fpvracing.client.input.InputTick;
-import bluevista.fpvracing.network.entity.DroneEntityS2C;
 import bluevista.fpvracing.physics.thrust.QuadcopterThrust;
 import bluevista.fpvracing.physics.entity.ClientEntityPhysics;
 import bluevista.fpvracing.config.Config;
@@ -12,11 +11,15 @@ import bluevista.fpvracing.server.items.QuadcopterItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
 import bluevista.fpvracing.util.math.BetaflightHelper;
 import bluevista.fpvracing.util.math.QuaternionHelper;
+import com.bulletphysics.dynamics.RigidBody;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -30,15 +33,15 @@ import javax.vecmath.Quat4f;
  * @author Patrick Hofmann
  */
 public class QuadcopterEntity extends FlyableEntity {
+	public static final TrackedData<Float> RATE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
+	public static final TrackedData<Float> SUPER_RATE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
+	public static final TrackedData<Float> EXPO = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
-	/* Controller Settings */
-	protected float rate;
-	protected float superRate;
-	protected float expo;
+	public static final TrackedData<Integer> CAMERA_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
+	public static final TrackedData<Float> DAMAGE_COEFFICIENT = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
-	/* Misc */
-	protected float damageCoefficient;
-	protected int cameraAngle;
+	public static final TrackedData<Float> THRUST = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
+	public static final TrackedData<Float> THRUST_CURVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
 	/**
 	 * The constructor called by the Fabric API in {@link ServerInitializer}. Invokes the main constructor.
@@ -47,15 +50,6 @@ public class QuadcopterEntity extends FlyableEntity {
 	 */
 	public QuadcopterEntity(EntityType<?> type, World world) {
 		super(type, world);
-	}
-
-	@Override
-	public void tick() {
-		super.tick();
-
-		if (!world.isClient()) {
-			DroneEntityS2C.send(this);
-		}
 	}
 
 	@Environment(EnvType.CLIENT)
@@ -69,9 +63,9 @@ public class QuadcopterEntity extends FlyableEntity {
 		physics.calculateBlockDamage();
 
 		if (!ClientTick.isServerModded || TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
-			float deltaX = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currX, getConfigValues(Config.RATE).floatValue(), getConfigValues(Config.EXPO).floatValue(), getConfigValues(Config.SUPER_RATE).floatValue(), delta);
-			float deltaY = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currY, getConfigValues(Config.RATE).floatValue(), getConfigValues(Config.EXPO).floatValue(), getConfigValues(Config.SUPER_RATE).floatValue(), delta);
-			float deltaZ = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currZ, getConfigValues(Config.RATE).floatValue(), getConfigValues(Config.EXPO).floatValue(), getConfigValues(Config.SUPER_RATE).floatValue(), delta);
+			float deltaX = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currX, dataTracker.get(RATE), dataTracker.get(EXPO), dataTracker.get(SUPER_RATE), delta);
+			float deltaY = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currY, dataTracker.get(RATE), dataTracker.get(EXPO), dataTracker.get(SUPER_RATE), delta);
+			float deltaZ = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currZ, dataTracker.get(RATE), dataTracker.get(EXPO), dataTracker.get(SUPER_RATE), delta);
 
 			physics.rotateX(deltaX);
 			physics.rotateY(deltaY);
@@ -81,88 +75,10 @@ public class QuadcopterEntity extends FlyableEntity {
 		}
 	}
 
-	/**
-	 * The main config value setter for the {@link QuadcopterEntity}.
-	 * @param key the {@link Config} key to set
-	 * @param value the {@link Number} value to set
-	 */
-	@Override
-	public void setConfigValues(String key, Number value) {
-		switch (key) {
-			case Config.CAMERA_ANGLE:
-				this.cameraAngle = value.intValue();
-				break;
-			case Config.RATE:
-				this.rate = value.floatValue();
-				break;
-			case Config.SUPER_RATE:
-				this.superRate = value.floatValue();
-				break;
-			case Config.EXPO:
-				this.expo = value.floatValue();
-				break;
-			case Config.DAMAGE_COEFFICIENT:
-				this.damageCoefficient = value.floatValue();
-				break;
-			default:
-				super.setConfigValues(key, value);
-		}
-	}
-
-	/**
-	 * The main config value getter for the {@link QuadcopterEntity}.
-	 * @param key the {@link Config} key to get
-	 * @return the {@link Number} value based off of the {@link Config} key
-	 */
-	@Override
-	public Number getConfigValues(String key) {
-		switch (key) {
-			case Config.CAMERA_ANGLE:
-				return this.cameraAngle;
-			case Config.RATE:
-				return this.rate;
-			case Config.SUPER_RATE:
-				return this.superRate;
-			case Config.EXPO:
-				return this.expo;
-			case Config.DAMAGE_COEFFICIENT:
-				return this.damageCoefficient;
-			default:
-				return super.getConfigValues(key);
-		}
-	}
-
-//	@Environment(EnvType.CLIENT)
-//	public void prepConfig() {
-//		String[] CLIENT_KEYS = {
-//				Config.CAMERA_ANGLE,
-//				Config.FIELD_OF_VIEW,
-//				Config.RATE,
-//				Config.SUPER_RATE,
-//				Config.EXPO,
-//				Config.THRUST,
-//				Config.THRUST_CURVE,
-//				Config.DAMAGE_COEFFICIENT,
-//				Config.MASS,
-//				Config.SIZE,
-//				Config.DRAG_COEFFICIENT
-//		};
-//
-//		Config config = ClientInitializer.getConfig();
-//
-//		for (String key : CLIENT_KEYS) {
-//			if (Config.FLOAT_KEYS.contains(key)) {
-//				this.setConfigValues(key, config.getFloatOption(key));
-//			} else if (Config.INT_KEYS.contains(key)){
-//				this.setConfigValues(key, config.getIntOption(key));
-//			}
-//		}
-//	}
-
 	@Override
 	public void updateEulerRotations() {
 		Quat4f cameraPitch = physics.getOrientation();
-		QuaternionHelper.rotateX(cameraPitch, -getConfigValues(Config.CAMERA_ANGLE).intValue());
+		QuaternionHelper.rotateX(cameraPitch, -dataTracker.get(CAMERA_ANGLE));
 		pitch = QuaternionHelper.getPitch(cameraPitch);
 
 		super.updateEulerRotations();
@@ -175,7 +91,7 @@ public class QuadcopterEntity extends FlyableEntity {
 	 */
 	@Override
 	public boolean isKillable() {
-		return !(getConfigValues(Config.GOD_MODE).intValue() == 1 || getConfigValues(Config.NO_CLIP).intValue() == 1);
+		return !(dataTracker.get(GOD_MODE) || noClip);
 	}
 
 	/**
@@ -187,12 +103,15 @@ public class QuadcopterEntity extends FlyableEntity {
 	protected void writeCustomDataToTag(CompoundTag tag) {
 		super.writeCustomDataToTag(tag);
 
-		tag.putFloat(Config.RATE, getConfigValues(Config.RATE).floatValue());
-		tag.putFloat(Config.SUPER_RATE, getConfigValues(Config.SUPER_RATE).floatValue());
-		tag.putFloat(Config.EXPO, getConfigValues(Config.EXPO).floatValue());
+		tag.putFloat("rate", this.dataTracker.get(RATE));
+		tag.putFloat("super_rate", this.dataTracker.get(SUPER_RATE));
+		tag.putFloat("expo", this.dataTracker.get(EXPO));
 
-		tag.putFloat(Config.DAMAGE_COEFFICIENT, getConfigValues(Config.DAMAGE_COEFFICIENT).floatValue());
-		tag.putInt(Config.CAMERA_ANGLE, getConfigValues(Config.CAMERA_ANGLE).intValue());
+		tag.putInt("camera_angle", this.dataTracker.get(CAMERA_ANGLE));
+		tag.putFloat("damageCoefficient", this.dataTracker.get(DAMAGE_COEFFICIENT));
+
+		tag.putFloat("thrust", this.dataTracker.get(THRUST));
+		tag.putFloat("thrust_curve", this.dataTracker.get(THRUST_CURVE));
 	}
 
 	/**
@@ -204,12 +123,15 @@ public class QuadcopterEntity extends FlyableEntity {
 	protected void readCustomDataFromTag(CompoundTag tag) {
 		super.readCustomDataFromTag(tag);
 
-		setConfigValues(Config.RATE, tag.getFloat(Config.RATE));
-		setConfigValues(Config.SUPER_RATE, tag.getFloat(Config.SUPER_RATE));
-		setConfigValues(Config.EXPO, tag.getFloat(Config.EXPO));
+		this.dataTracker.set(RATE, tag.getFloat("rate"));
+		this.dataTracker.set(SUPER_RATE, tag.getFloat("super_rate"));
+		this.dataTracker.set(EXPO, tag.getFloat("expo"));
 
-		setConfigValues(Config.DAMAGE_COEFFICIENT, tag.getFloat(Config.DAMAGE_COEFFICIENT));
-		setConfigValues(Config.CAMERA_ANGLE, tag.getInt(Config.CAMERA_ANGLE));
+		this.dataTracker.set(CAMERA_ANGLE, tag.getInt("camera_angle"));
+		this.dataTracker.set(DAMAGE_COEFFICIENT, tag.getFloat("damage_coefficient"));
+
+		this.dataTracker.set(THRUST, tag.getFloat("thrust"));
+		this.dataTracker.set(THRUST_CURVE, tag.getFloat("thrust_curve"));
 	}
 
 	/**
@@ -259,16 +181,15 @@ public class QuadcopterEntity extends FlyableEntity {
 
 	@Override
 	protected void initDataTracker() {
+		super.initDataTracker();
+		this.dataTracker.startTracking(RATE, 0.0f);
+		this.dataTracker.startTracking(SUPER_RATE, 0.0f);
+		this.dataTracker.startTracking(EXPO, 0.0f);
 
-	}
+		this.dataTracker.startTracking(CAMERA_ANGLE, 0);
+		this.dataTracker.startTracking(DAMAGE_COEFFICIENT, 0.0f);
 
-	@Override
-	public boolean isGlowing() {
-		return false;
-	}
-
-	@Override
-	public boolean collides() {
-		return true;
+		this.dataTracker.startTracking(THRUST, 0.0f);
+		this.dataTracker.startTracking(THRUST_CURVE, 0.0f);
 	}
 }

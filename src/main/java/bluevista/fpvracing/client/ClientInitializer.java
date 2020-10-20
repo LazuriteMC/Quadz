@@ -12,9 +12,7 @@ import bluevista.fpvracing.config.ConfigReader;
 import bluevista.fpvracing.network.ModdedServerS2C;
 import bluevista.fpvracing.network.SelectedSlotS2C;
 import bluevista.fpvracing.network.config.ConfigS2C;
-import bluevista.fpvracing.network.entity.DroneEntityS2C;
 import bluevista.fpvracing.network.entity.EntityPhysicsS2C;
-import bluevista.fpvracing.network.entity.FlyableEntityS2C;
 import bluevista.fpvracing.physics.PhysicsWorld;
 import bluevista.fpvracing.network.ShouldRenderPlayerS2C;
 import bluevista.fpvracing.server.ServerInitializer;
@@ -58,8 +56,6 @@ public class ClientInitializer implements ClientModInitializer {
         EMPKeybind.register();
 
         EntityPhysicsS2C.register();
-        FlyableEntityS2C.register();
-        DroneEntityS2C.register();
         SelectedSlotS2C.register();
         ShouldRenderPlayerS2C.register();
         ModdedServerS2C.register();
