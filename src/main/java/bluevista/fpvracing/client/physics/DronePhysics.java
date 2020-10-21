@@ -368,7 +368,7 @@ public class DronePhysics {
      */
     protected Vector3f getThrustForce() {
         Vector3f thrust = VectorHelper.vec3dToVector3f(getThrustVector().multiply(calculateThrustCurve()).multiply(this.thrust));
-        Vector3f yaw = VectorHelper.vec3dToVector3f(getThrustVector().multiply(Math.abs(BetaflightHelper.calculateRates(InputTick.axisValues.currY, drone.getConfigValues(Config.RATE).intValue(), drone.getConfigValues(Config.EXPO).intValue(), drone.getConfigValues(Config.SUPER_RATE).intValue(), 1.0f))));
+        Vector3f yaw = VectorHelper.vec3dToVector3f(getThrustVector().multiply(Math.abs(BetaflightHelper.calculateRates(InputTick.axisValues.currY, drone.getConfigValues(Config.RATE).floatValue(), drone.getConfigValues(Config.EXPO).floatValue(), drone.getConfigValues(Config.SUPER_RATE).floatValue(), 0.01f))));
 
         Vector3f out = new Vector3f();
         out.add(thrust, yaw);
