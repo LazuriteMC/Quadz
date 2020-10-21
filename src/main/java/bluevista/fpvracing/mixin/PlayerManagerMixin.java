@@ -1,8 +1,10 @@
 package bluevista.fpvracing.mixin;
 
-import bluevista.fpvracing.server.ServerTick;
+import bluevista.fpvracing.network.ModdedServerS2C;
 import bluevista.fpvracing.server.entities.DroneEntity;
+import bluevista.fpvracing.server.items.GogglesItem;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -14,7 +16,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 
@@ -28,6 +29,17 @@ import java.util.List;
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
     @Shadow @Final List<ServerPlayerEntity> players;
+
+    /**
+     * This method allows the server to tell the client that it is modded upon player connect.
+     * @param connection
+     * @param player
+     * @param info required by every mixin injection
+     */
+    @Inject(at = @At("TAIL"), method = "onPlayerConnect")
+    public void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo info) {
+        ModdedServerS2C.send(player);
+    }
 
     /**
      * This mixin method recalculates the distance between the {@link ServerPlayerEntity} and the entity
@@ -47,7 +59,7 @@ public class PlayerManagerMixin {
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) this.players.get(i);
 
             if (serverPlayerEntity != player && serverPlayerEntity.world.getRegistryKey() == worldKey) {
-                if(ServerTick.isInGoggles(serverPlayerEntity)) {
+                if(GogglesItem.isInGoggles(serverPlayerEntity)) {
                     DroneEntity drone = (DroneEntity) serverPlayerEntity.getCameraEntity();
 
                     double d = x - drone.getX();

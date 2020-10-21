@@ -43,7 +43,7 @@ public class PhysicsWorld {
     public int blockRadius;
 
     public final Clock clock;
-    public final List<DroneEntity> droneEntities;
+    public final List<DronePhysics> entities;
     public final Map<Entity, RigidBody> collisionEntities;
     public final Map<BlockPos, RigidBody> collisionBlocks;
 
@@ -52,7 +52,7 @@ public class PhysicsWorld {
     private final List<Entity> toKeepEntities;
 
     public PhysicsWorld() {
-        this.droneEntities = new ArrayList<>();
+        this.entities = new ArrayList<>();
         this.collisionEntities = new HashMap<>();
         this.collisionBlocks = new HashMap<>();
         this.toKeepBlocks = new ArrayList<>();
@@ -74,37 +74,42 @@ public class PhysicsWorld {
     public void stepWorld() {
         ClientWorld world = ClientInitializer.client.world;
 
-        float d = clock.getTimeMicroseconds() / 1000000F;
+        float delta = clock.getTimeMicroseconds() / 1000000F;
         float maxSubSteps = 5.0f;
         clock.reset();
 
-        List<DroneEntity> toRemove = new ArrayList<>();
+        List<DronePhysics> toRemove = new ArrayList<>();
 
-        this.droneEntities.forEach(drone -> {
-            if (drone.removed) {
-                toRemove.add(drone);
+        this.entities.forEach(physics -> {
+            if (physics.getDrone().removed) {
+                toRemove.add(physics);
             }
 
             if (world != null) {
-                if (drone.isActive()) {
-                    if (drone.getConfigValues(Config.NO_CLIP).equals(0)) {
-                        loadBlockCollisions(drone, world);
+                if (physics.isActive()) {
+                    /* Add the rigid body to the world if it isn't already there */
+                    if (!physics.getRigidBody().isInWorld()) {
+                        this.dynamicsWorld.addRigidBody(physics.getRigidBody());
                     }
 
-                    if (!drone.getRigidBody().isInWorld()) {
-                        this.dynamicsWorld.addRigidBody(drone.getRigidBody());
+                    /* Load in block collisions */
+                    if (physics.getDrone().getConfigValues(Config.NO_CLIP).equals(0)) {
+                        loadBlockCollisions(physics.getDrone(), world);
                     }
-                } else if (drone.getRigidBody().isInWorld()) {
-                    this.dynamicsWorld.removeRigidBody(drone.getRigidBody());
+                } else {
+                    /* Remove the rigid body if it is in the world */
+                    if (physics.getRigidBody().isInWorld()) {
+                        this.dynamicsWorld.removeRigidBody(physics.getRigidBody());
+                    }
                 }
 
-                drone.stepPhysics(d);
+                physics.step(delta);
             }
         });
 
         unloadBlockCollisions();
-        toRemove.forEach(droneEntities::remove);
-        this.dynamicsWorld.stepSimulation(d, (int) maxSubSteps, d/maxSubSteps);
+        toRemove.forEach(entities::remove);
+        this.dynamicsWorld.stepSimulation(delta, (int) maxSubSteps, delta/maxSubSteps);
     }
 
     public void loadBlockCollisions(DroneEntity drone, ClientWorld world) {
@@ -238,13 +243,13 @@ public class PhysicsWorld {
         }
     }
 
-    public void add(DroneEntity drone) {
-        this.droneEntities.add(drone);
+    public void add(DronePhysics physics) {
+        this.entities.add(physics);
     }
 
-    public void remove(DroneEntity drone) {
-        this.dynamicsWorld.removeRigidBody(drone.getRigidBody());
-        this.droneEntities.remove(drone);
+    public void remove(DronePhysics physics) {
+        this.dynamicsWorld.removeRigidBody(physics.getRigidBody());
+        this.entities.remove(physics);
     }
 
     public void addRigidBody(RigidBody body) {
@@ -256,9 +261,9 @@ public class PhysicsWorld {
     }
 
     public List<RigidBody> getRigidBodies() {
-        List<RigidBody> bodies = new ArrayList();
+        List<RigidBody> bodies = new ArrayList<>();
 
-        droneEntities.forEach(drone -> bodies.add(drone.getRigidBody()));
+        entities.forEach(physics -> bodies.add(physics.getRigidBody()));
         bodies.addAll(collisionEntities.values());
         bodies.addAll(collisionBlocks.values());
 

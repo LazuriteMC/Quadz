@@ -1,6 +1,7 @@
 package bluevista.fpvracing.mixin;
 
 import bluevista.fpvracing.client.ClientInitializer;
+import bluevista.fpvracing.client.ClientTick;
 import bluevista.fpvracing.network.config.ConfigC2S;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.entities.DroneEntity;
@@ -35,6 +36,7 @@ public class ClientPlayNetworkHandlerMixin {
      */
     @Inject(at = @At("TAIL"), method = "onGameJoin")
     public void onGameJoin(GameJoinS2CPacket packet, CallbackInfo info) {
+        ClientTick.isServerModded = false;
         ConfigC2S.send(ClientInitializer.getConfig());
         ClientInitializer.physicsWorld = new PhysicsWorld();
     }
@@ -98,8 +100,7 @@ public class ClientPlayNetworkHandlerMixin {
 
         if (type == ServerInitializer.DRONE_ENTITY) {
             float yaw = (float)(packet.getYaw() * 360) / 256.0F;
-            entity = new DroneEntity(world, 0, new Vec3d(x, y, z), yaw);
-            world.spawnEntity(entity);
+            entity = new DroneEntity(world, new Vec3d(x, y, z), yaw);
         }
 
         if (entity != null) {

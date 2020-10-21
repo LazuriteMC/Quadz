@@ -8,10 +8,12 @@ import bluevista.fpvracing.client.renderers.DroneRenderer;
 import bluevista.fpvracing.client.renderers.DroneSpawnerItemRenderer;
 import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.config.ConfigReader;
+import bluevista.fpvracing.network.ModdedServerS2C;
+import bluevista.fpvracing.network.SelectedSlotS2C;
 import bluevista.fpvracing.network.config.ConfigS2C;
 import bluevista.fpvracing.network.entity.DroneEntityS2C;
 import bluevista.fpvracing.client.physics.PhysicsWorld;
-import bluevista.fpvracing.network.entity.ShouldRenderPlayerS2C;
+import bluevista.fpvracing.network.ShouldRenderPlayerS2C;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.entities.DroneEntity;
 import net.fabricmc.api.ClientModInitializer;
@@ -83,9 +85,11 @@ public class ClientInitializer implements ClientModInitializer {
      * from the server and received by the client.
      */
     private void registerNetwork() {
-        DroneEntityS2C.register();
-        ShouldRenderPlayerS2C.register();
         ConfigS2C.register();
+        DroneEntityS2C.register();
+        SelectedSlotS2C.register();
+        ShouldRenderPlayerS2C.register();
+        ModdedServerS2C.register();
     }
 
     /**

@@ -61,7 +61,7 @@ public class ConfigReader {
                         String value = line.split("=")[1].trim();
 
                         try {
-                            values.put(key, NumberFormat.getInstance().parse(value));
+                            values.put(key, NumberFormat.getInstance(Locale.ENGLISH).parse(value));
                         } catch (ParseException e) {
                             values.put(key, 0); // default
                         }

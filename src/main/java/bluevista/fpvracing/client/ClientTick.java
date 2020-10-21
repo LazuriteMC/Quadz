@@ -9,22 +9,15 @@ import net.minecraft.client.MinecraftClient;
 
 @Environment(EnvType.CLIENT)
 public class ClientTick {
-    public static boolean shouldRenderPlayer = true;
+    public static boolean isServerModded = false;
+    public static boolean shouldRenderPlayer = false;
 
     private static float droneFOV;
     private static double prevFOV;
 
     public static void tick(MinecraftClient client) {
         if (client.player != null && !client.isPaused()) {
-//            Iterable<Entity> entities = client.world.getEntities();
-//
-//            for (Entity entity : entities) {
-//                if (entity instanceof OtherClientPlayerEntity) {
-//                    System.out.println(entity.getPos());
-//                }
-//            }
-
-            if (client.cameraEntity instanceof DroneEntity) {
+            if (client.getCameraEntity() instanceof DroneEntity) {
                 droneFOV = ((DroneEntity)client.cameraEntity).getConfigValues(Config.FIELD_OF_VIEW).floatValue();
 
                 if (droneFOV != 0.0f && client.options.fov != droneFOV) {
@@ -41,10 +34,6 @@ public class ClientTick {
                 prevFOV = 0.0f;
             }
         }
-    }
-
-    public static boolean isInGoggles() {
-        return ClientInitializer.client.getCameraEntity() instanceof DroneEntity;
     }
 
     public static boolean isPlayerIDClient(int playerID) {
