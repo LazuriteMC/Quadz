@@ -330,22 +330,16 @@ public class DroneEntity extends Entity {
 	 */
 	@Override
 	public void kill() {
-		if (this.world.isClient()) {
-			if (!ClientTick.isServerModded) {
-				ClientTick.destroyDrone(ClientInitializer.client);
-			} else {
-				this.remove();
-			}
-		} else {
+		if (!this.world.isClient()) {
 			if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
 				ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
 				DroneSpawnerItem.prepDestroyedDrone(this, itemStack);
 
 				this.dropStack(itemStack);
 			}
-
-			this.remove();
 		}
+
+		this.remove();
 	}
 
 	/**

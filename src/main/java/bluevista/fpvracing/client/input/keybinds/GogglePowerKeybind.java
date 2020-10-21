@@ -33,12 +33,6 @@ public class GogglePowerKeybind {
                     if (GogglesItem.isWearingGoggles(client.player)) {
                         PowerGogglesC2S.send(!GogglesItem.isOn(client.player), keyNames);
                     }
-                } else {
-                    if (client.getCameraEntity() instanceof DroneEntity) {
-                        ClientTick.destroyDrone(ClientInitializer.client);
-                    } else {
-                        ClientTick.createDrone(ClientInitializer.client);
-                    }
                 }
             }
 
@@ -46,10 +40,6 @@ public class GogglePowerKeybind {
                 if (ClientTick.isServerModded) {
                     if (GogglesItem.isWearingGoggles(client.player)) {
                         PowerGogglesC2S.send(false, keyNames);
-                    }
-                } else {
-                    if (client.getCameraEntity() instanceof DroneEntity) {
-                        ClientTick.destroyDrone(ClientInitializer.client);
                     }
                 }
             }
