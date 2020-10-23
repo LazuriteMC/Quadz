@@ -47,9 +47,9 @@ public class GodModeC2S {
                         drone.setConfigValues(Config.GOD_MODE, drone.getConfigValues(Config.GOD_MODE).intValue() == 1 ? 0 : 1);
 
                         if (drone.getConfigValues(Config.GOD_MODE).intValue() == 1) {
-                            t = "God Mode Enabled";
+                            t = "message.fpvracing.godmode_on";
                         } else {
-                            t = "God Mode Disabled";
+                            t = "message.fpvracing.godmode_off";
                         }
 
                         player.sendMessage(new TranslatableText(t), false);
@@ -59,9 +59,9 @@ public class GodModeC2S {
                 DroneSpawnerItem.setTagValue(hand, Config.GOD_MODE, DroneSpawnerItem.getTagValue(hand, Config.GOD_MODE) != null && DroneSpawnerItem.getTagValue(hand, Config.GOD_MODE).intValue() == 0 ? 1 : 0);
 
                 if (DroneSpawnerItem.getTagValue(hand, Config.GOD_MODE) != null && DroneSpawnerItem.getTagValue(hand, Config.GOD_MODE).intValue() == 1) {
-                    t = "God Mode Enabled";
+                    t = "message.fpvracing.godmode_on";
                 } else {
-                    t = "God Mode Disabled";
+                    t = "message.fpvracing.godmode_off";
                 }
 
                 player.sendMessage(new TranslatableText(t), false);

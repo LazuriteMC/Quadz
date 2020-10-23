@@ -47,9 +47,9 @@ public class NoClipC2S {
                         drone.setConfigValues(Config.NO_CLIP, drone.getConfigValues(Config.NO_CLIP).intValue() == 1 ? 0 : 1);
 
                         if (drone.getConfigValues(Config.NO_CLIP).intValue() == 1) {
-                            t = "No Clip Enabled";
+                            t = "message.fpvracing.noclip_on";
                         } else {
-                            t = "No Clip Disabled";
+                            t = "message.fpvracing.noclip_off";
                         }
 
                         player.sendMessage(new TranslatableText(t), false);
@@ -59,9 +59,9 @@ public class NoClipC2S {
                 DroneSpawnerItem.setTagValue(hand, Config.NO_CLIP, DroneSpawnerItem.getTagValue(hand, Config.NO_CLIP) != null && DroneSpawnerItem.getTagValue(hand, Config.NO_CLIP).intValue() == 0 ? 1 : 0);
 
                 if (DroneSpawnerItem.getTagValue(hand, Config.NO_CLIP) != null && DroneSpawnerItem.getTagValue(hand, Config.NO_CLIP).intValue() == 1) {
-                    t = "No Clip Enabled";
+                    t = "message.fpvracing.noclip_on";
                 } else {
-                    t = "No Clip Disabled";
+                    t = "message.fpvracing.noclip_off";
                 }
 
                 player.sendMessage(new TranslatableText(t), false);

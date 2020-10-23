@@ -8,5 +8,11 @@
   "entity.fpvracing.drone_entity":"Drone",
   "item.fpvracing.drone_spawner_item":"Drone Spawner",
   "item.fpvracing.goggles_item":"Goggles",
-  "item.fpvracing.transmitter_item":"Transmitter"
+  "item.fpvracing.transmitter_item":"Transmitter",
+  "message.fpvracing.emp":"Destroyed drone",
+  "message.fpvracing.godmode_on":"God mode enabled",
+  "message.fpvracing.godmode_off":"God mode disabled",
+  "message.fpvracing.noclip_on":"No clip enabled",
+  "message.fpvracing.noclip_off":"No clip disabled",
+  "message.fpvracing.goggles_on":"Press %1$s or %2$s to power off goggles"
 }

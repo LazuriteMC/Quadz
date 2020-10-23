@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -46,10 +47,12 @@ public class PowerGogglesC2S {
                         if (serverPlayer.distanceTo(drone) > DroneEntity.TRACKING_RANGE) {
                             continue;
 
-                            // Otherwise, see if the drone is on the same channel as the goggles..lie
+                        // Otherwise, see if the drone is on the same channel as the goggles..lie
                         } else if (GogglesItem.isOnSameChannel(drone, serverPlayer)) {
                             GogglesItem.setOn(hat, true);
                             ServerTick.setView(serverPlayer, drone);
+
+                            player.sendMessage(new TranslatableText("message.fpvracing.goggles_on", (Object[]) keys), true);
                         }
                     }
                 } else {

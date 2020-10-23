@@ -42,7 +42,7 @@ public class EMPC2S {
                     drone.kill();
                     serverPlayerEntity.getServerWorld().removeEntity(drone);
                     ServerTick.resetView(serverPlayerEntity);
-                    serverPlayerEntity.sendMessage(new TranslatableText("Destroyed drone"), false);
+                    serverPlayerEntity.sendMessage(new TranslatableText("message.fpvracing.emp"), false);
                 }
             }
         });
