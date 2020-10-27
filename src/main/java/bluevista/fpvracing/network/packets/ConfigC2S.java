@@ -1,4 +1,4 @@
-package bluevista.fpvracing.network.config;
+package bluevista.fpvracing.network.packets;
 
 import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.util.PacketHelper;
@@ -13,26 +13,20 @@ import net.minecraft.util.Identifier;
 import java.util.UUID;
 
 public class ConfigC2S {
-    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "client_config_server_packet");
+    public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "config_c2s");
 
-    // sends the entire config from the client to the server
     public static void accept(PacketContext context, PacketByteBuf buf) {
-
         UUID uuid = context.getPlayer().getUuid();
-        Config config = PacketHelper.deserializeConfig(buf);
+        Config config = new Config(PacketHelper.deserializeProperties(buf));
 
         context.getTaskQueue().execute(() -> {
-            ServerInitializer.SERVER_PLAYER_CONFIGS.remove(uuid);
             ServerInitializer.SERVER_PLAYER_CONFIGS.put(uuid, config);
         });
     }
 
     public static void send(Config config) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-
-        buf.writeString(Config.ALL);
-        PacketHelper.serializeConfig(buf, config);
-
+        PacketHelper.serializeProperties(buf, config.getProperties());
         ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
     }
 

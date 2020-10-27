@@ -92,4 +92,11 @@ public class Frequency {
 
         return -1;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Frequency)
+            return ((Frequency) obj).getFrequency() == this.getFrequency();
+        else return false;
+    }
 }

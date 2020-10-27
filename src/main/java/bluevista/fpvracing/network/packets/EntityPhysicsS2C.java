@@ -1,4 +1,4 @@
-package bluevista.fpvracing.network.entity;
+package bluevista.fpvracing.network.packets;
 
 import bluevista.fpvracing.physics.entity.ClientEntityPhysics;
 import bluevista.fpvracing.physics.entity.IEntityPhysics;

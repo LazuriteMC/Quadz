@@ -1,7 +1,7 @@
 package bluevista.fpvracing.server;
 
-import bluevista.fpvracing.network.SelectedSlotS2C;
-import bluevista.fpvracing.network.ShouldRenderPlayerS2C;
+import bluevista.fpvracing.network.packets.SelectedSlotS2C;
+import bluevista.fpvracing.network.packets.ShouldRenderPlayerS2C;
 import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.server.items.GogglesItem;
 import bluevista.fpvracing.server.items.TransmitterItem;

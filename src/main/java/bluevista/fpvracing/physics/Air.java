@@ -21,7 +21,7 @@ public class Air {
         // TODO Get size based on model shape in direction of movement (ask peyon)
 
         Vec3d velocity = VectorHelper.vector3fToVec3d(direction);
-        float k = (ClientInitializer.physicsWorld.getConfigValues(Config.AIR_DENSITY).floatValue() * dragCoefficient * (float) Math.pow(size / 16f, 2)) / 2.0f;
+        float k = (ClientInitializer.physicsWorld.getAirDensity() * dragCoefficient * (float) Math.pow(size / 16f, 2)) / 2.0f;
 
         Vec3d airVec3d = velocity.multiply(k).multiply(velocity.lengthSquared()).negate();
         return new Vector3f((float) airVec3d.x, (float) airVec3d.y, (float) airVec3d.z);

@@ -10,43 +10,57 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 
 @Environment(EnvType.CLIENT)
 public class InputTick {
+    public static final String CONTROLLER_ID = "controllerID";
+    public static final String THROTTLE = "throttle";
+    public static final String PITCH = "pitch";
+    public static final String YAW = "yaw";
+    public static final String ROLL = "roll";
+    public static final String DEADZONE = "deadzone";
+    public static final String THROTTLE_CENTER_POSITION = "throttleCenterPosition";
+    public static final String INVERT_THROTTLE = "invertThrottle";
+    public static final String INVERT_PITCH = "invertPitch";
+    public static final String INVERT_YAW = "invertYaw";
+    public static final String INVERT_ROLL = "invertRoll";
+
     public static final AxisValues axisValues = new AxisValues();
 
     public static void tick() {
         MinecraftClient client = MinecraftClient.getInstance();
+        Config config = ClientInitializer.getConfig();
 
         if (!client.isPaused() && controllerExists()) {
-            axisValues.currT = glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.THROTTLE));
-            axisValues.currX = glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.PITCH));
-            axisValues.currY = glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.YAW));
-            axisValues.currZ = glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get(ClientInitializer.getConfig().getIntOption(Config.ROLL));
+            int id = config.getInt(CONTROLLER_ID);
+            axisValues.currT = glfwGetJoystickAxes(id).get(config.getInt(THROTTLE));
+            axisValues.currT = glfwGetJoystickAxes(id).get(config.getInt(PITCH));
+            axisValues.currT = glfwGetJoystickAxes(id).get(config.getInt(YAW));
+            axisValues.currT = glfwGetJoystickAxes(id).get(config.getInt(ROLL));
 
-            if (ClientInitializer.getConfig().getIntOption(Config.INVERT_THROTTLE) == 1) {
+            if (config.getBool(INVERT_THROTTLE)) {
                 axisValues.currT *= -1;
             }
 
-            if (ClientInitializer.getConfig().getIntOption(Config.THROTTLE_CENTER_POSITION) == 1) {
+            if (config.getBool(THROTTLE_CENTER_POSITION)) {
                 if (axisValues.currT < 0) {
                     axisValues.currT = 0;
                 }
-            } else if (ClientInitializer.getConfig().getIntOption(Config.THROTTLE_CENTER_POSITION) == 0) {
+            } else if (config.getBool(THROTTLE_CENTER_POSITION)) {
                 axisValues.currT = (axisValues.currT + 1) / 2.0f;
             }
 
-            if (ClientInitializer.getConfig().getIntOption(Config.INVERT_PITCH) == 1) {
+            if (config.getBool(INVERT_PITCH)) {
                 axisValues.currX *= -1;
             }
 
-            if (ClientInitializer.getConfig().getIntOption(Config.INVERT_YAW) == 1) {
+            if (config.getBool(INVERT_YAW)) {
                 axisValues.currY *= -1;
             }
 
-            if (ClientInitializer.getConfig().getIntOption(Config.INVERT_ROLL) == 1) {
+            if (config.getBool(INVERT_ROLL)) {
                 axisValues.currZ *= -1;
             }
 
-            if (ClientInitializer.getConfig().getFloatOption(Config.DEADZONE) != 0.0F) {
-                float halfDeadzone = ClientInitializer.getConfig().getFloatOption(Config.DEADZONE) / 2.0f;
+            if (config.getFloat(DEADZONE) != 0.0F) {
+                float halfDeadzone = config.getFloat(DEADZONE) / 2.0f;
 
                 if (axisValues.currX < halfDeadzone && axisValues.currX > -halfDeadzone) {
                     axisValues.currX = 0.0f;
@@ -65,7 +79,7 @@ public class InputTick {
 
     public static boolean controllerExists() {
         try {
-            glfwGetJoystickAxes(ClientInitializer.getConfig().getIntOption(Config.CONTROLLER_ID)).get();
+            glfwGetJoystickAxes(ClientInitializer.getConfig().getInt(CONTROLLER_ID)).get();
             return true;
         } catch (NullPointerException e) {
             return false;

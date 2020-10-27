@@ -1,6 +1,6 @@
 package bluevista.fpvracing.physics.entity;
 
-import bluevista.fpvracing.network.entity.EntityPhysicsS2C;
+import bluevista.fpvracing.network.packets.EntityPhysicsS2C;
 import bluevista.fpvracing.server.entities.FlyableEntity;
 
 import javax.vecmath.Quat4f;

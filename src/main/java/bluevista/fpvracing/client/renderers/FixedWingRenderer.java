@@ -4,6 +4,7 @@ import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.entities.FixedWingEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -18,6 +19,10 @@ public class FixedWingRenderer extends EntityRenderer<FixedWingEntity> {
     public FixedWingRenderer(EntityRenderDispatcher dispatcher) {
         super(dispatcher);
         this.shadowRadius = 0.2F;
+    }
+
+    public static void register() {
+        EntityRendererRegistry.INSTANCE.register(ServerInitializer.FIXED_WING_ENTITY, (entityRenderDispatcher, context) -> new FixedWingRenderer(entityRenderDispatcher));
     }
 
     public void render(FixedWingEntity fixedWingEntity, float yaw, float delta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {

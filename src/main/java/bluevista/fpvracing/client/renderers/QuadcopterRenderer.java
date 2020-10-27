@@ -2,13 +2,14 @@ package bluevista.fpvracing.client.renderers;
 
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.client.models.QuadcopterModel;
-import bluevista.fpvracing.config.Config;
+import bluevista.fpvracing.network.datatracker.FlyableTrackerRegistry;
 import bluevista.fpvracing.physics.entity.ClientEntityPhysics;
 import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.util.math.QuaternionHelper;
 import bluevista.fpvracing.server.ServerInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
@@ -22,12 +23,18 @@ import net.minecraft.util.math.BlockPos;
 @Environment(EnvType.CLIENT)
 public class QuadcopterRenderer extends EntityRenderer<QuadcopterEntity> {
     public static final Identifier quadTexture = new Identifier(ServerInitializer.MODID, "textures/entity/drone.png");
-    private QuadcopterModel model;
+    private final QuadcopterModel model;
 
     public QuadcopterRenderer(EntityRenderDispatcher dispatcher) {
         super(dispatcher);
         this.shadowRadius = 0.2F;
-        this.model = new QuadcopterModel(ClientInitializer.getConfig().getIntOption(Config.SIZE));
+
+        int size = FlyableTrackerRegistry.SIZE.getDataType().fromConfig(ClientInitializer.getConfig(), FlyableTrackerRegistry.SIZE.getName());
+        this.model = new QuadcopterModel(size);
+    }
+
+    public static void register() {
+        EntityRendererRegistry.INSTANCE.register(ServerInitializer.QUADCOPTER_ENTITY,(entityRenderDispatcher,context)->new QuadcopterRenderer(entityRenderDispatcher));
     }
 
     public void render(QuadcopterEntity quadcopterEntity, float yaw, float delta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
@@ -41,7 +48,11 @@ public class QuadcopterRenderer extends EntityRenderer<QuadcopterEntity> {
             ));
         }
 
-        this.model.setSize(quadcopterEntity.getSize());
+        if (quadcopterEntity.getValue(FlyableTrackerRegistry.SIZE) != null) {
+            this.model.setSize(quadcopterEntity.getValue(FlyableTrackerRegistry.SIZE));
+        } else {
+            this.model.setSize(FlyableTrackerRegistry.SIZE.getDataType().fromConfig(ClientInitializer.getConfig(), FlyableTrackerRegistry.SIZE.getName()));
+        }
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(model.getLayer(this.getTexture(quadcopterEntity)));
         model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.pop();

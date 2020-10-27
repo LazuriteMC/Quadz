@@ -3,7 +3,8 @@ package bluevista.fpvracing.physics.entity;
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.client.ClientTick;
 import bluevista.fpvracing.client.input.InputTick;
-import bluevista.fpvracing.network.entity.EntityPhysicsC2S;
+import bluevista.fpvracing.network.packets.EntityPhysicsC2S;
+import bluevista.fpvracing.network.datatracker.FlyableTrackerRegistry;
 import bluevista.fpvracing.physics.block.BlockCollisions;
 import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.server.entities.QuadcopterEntity;
@@ -50,7 +51,7 @@ public class ClientEntityPhysics implements IEntityPhysics {
      * @return whether or not the entity is active
      */
     public boolean isActive() {
-        return entity.age > 1 && ClientTick.isPlayerIDClient(entity.getPlayerID());
+        return entity.age > 1 && ClientTick.isPlayerIDClient(entity.getValue(FlyableTrackerRegistry.PLAYER_ID));
     }
 
     /**
@@ -278,7 +279,7 @@ public class ClientEntityPhysics implements IEntityPhysics {
      * Creates a new {@link RigidBody} based off of the drone's attributes.
      */
     public void createRigidBody() {
-        float s = entity.getSize() / 16.0f;
+        float s = entity.getValue(FlyableTrackerRegistry.SIZE) / 16.0f;
         Box cBox = new Box(-s / 2.0f, -s / 8.0f, -s / 2.0f, s / 2.0f, s / 8.0f, s / 2.0f);
         Vector3f inertia = new Vector3f(0.0F, 0.0F, 0.0F);
         Vector3f box = new Vector3f(
@@ -286,7 +287,7 @@ public class ClientEntityPhysics implements IEntityPhysics {
                 ((float) (cBox.maxY - cBox.minY) / 2.0F) + 0.005f,
                 ((float) (cBox.maxZ - cBox.minZ) / 2.0F) + 0.005f);
         CollisionShape shape = new BoxShape(box);
-        shape.calculateLocalInertia(entity.getMass(), inertia);
+        shape.calculateLocalInertia(entity.getValue(FlyableTrackerRegistry.MASS), inertia);
 
         Vec3d pos = entity.getPos();
         Vector3f position = new Vector3f((float) pos.x, (float) pos.y + 0.125f, (float) pos.z);
@@ -300,7 +301,7 @@ public class ClientEntityPhysics implements IEntityPhysics {
             motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 1, 0, 0), position, 1.0f)));
         }
 
-        RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(entity.getMass(), motionState, shape, inertia);
+        RigidBodyConstructionInfo ci = new RigidBodyConstructionInfo(entity.getValue(FlyableTrackerRegistry.MASS), motionState, shape, inertia);
         RigidBody body = new RigidBody(ci);
         body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
 

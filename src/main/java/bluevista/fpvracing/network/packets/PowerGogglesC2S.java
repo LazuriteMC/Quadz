@@ -1,4 +1,4 @@
-package bluevista.fpvracing.network.keybinds;
+package bluevista.fpvracing.network.packets;
 
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.ServerTick;

@@ -2,7 +2,8 @@ package bluevista.fpvracing.mixin;
 
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.client.renderers.QuadcopterItemRenderer;
-import bluevista.fpvracing.config.Config;
+import bluevista.fpvracing.network.datatracker.FlyableTrackerRegistry;
+import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.items.QuadcopterItem;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -10,6 +11,7 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformation.Mode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -52,7 +54,9 @@ public class ItemRendererMixin {
     )
     private void renderItem(ItemStack stack, Mode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, BakedModel model, CallbackInfo info) {
         if(stack.getItem() instanceof QuadcopterItem) {
-            int size = QuadcopterItem.getTagValue(stack, Config.SIZE) != null ? QuadcopterItem.getTagValue(stack, Config.SIZE).intValue() : ClientInitializer.getConfig().getIntOption(Config.SIZE);
+            CompoundTag tag = stack.getOrCreateSubTag(ServerInitializer.MODID);
+            FlyableTrackerRegistry.Entry<Integer> entry = FlyableTrackerRegistry.SIZE;
+            int size = entry.getDataType().fromTag(tag, entry.getName());
             QuadcopterItemRenderer.render(matrices, vertexConsumers, light, overlay, size);
         }
     }

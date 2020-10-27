@@ -2,7 +2,7 @@ package bluevista.fpvracing.client.renderers;
 
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.client.models.QuadcopterModel;
-import bluevista.fpvracing.config.Config;
+import bluevista.fpvracing.network.datatracker.FlyableTrackerRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
@@ -11,7 +11,8 @@ public class QuadcopterItemRenderer {
     private static QuadcopterModel model;
 
     public static void register() {
-        model = new QuadcopterModel(ClientInitializer.getConfig().getIntOption(Config.SIZE));
+        int size = FlyableTrackerRegistry.SIZE.getDataType().fromConfig(ClientInitializer.getConfig(), FlyableTrackerRegistry.SIZE.getName());
+        model = new QuadcopterModel(size);
     }
 
     public static void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, int size) {

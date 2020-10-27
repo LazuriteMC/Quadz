@@ -8,19 +8,13 @@ import bluevista.fpvracing.client.renderers.FixedWingRenderer;
 import bluevista.fpvracing.client.renderers.QuadcopterRenderer;
 import bluevista.fpvracing.client.renderers.QuadcopterItemRenderer;
 import bluevista.fpvracing.config.Config;
-import bluevista.fpvracing.config.ConfigReader;
-import bluevista.fpvracing.network.ModdedServerS2C;
-import bluevista.fpvracing.network.SelectedSlotS2C;
-import bluevista.fpvracing.network.config.ConfigS2C;
-import bluevista.fpvracing.network.entity.EntityPhysicsS2C;
+import bluevista.fpvracing.network.packets.*;
 import bluevista.fpvracing.physics.PhysicsWorld;
-import bluevista.fpvracing.network.ShouldRenderPlayerS2C;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 
@@ -38,6 +32,7 @@ public class ClientInitializer implements ClientModInitializer {
     public static PhysicsWorld physicsWorld;
 
     /** The client player's config which is later sent to the server. */
+    public static final String CONFIG_NAME = ServerInitializer.MODID + ".properties";
     private static Config config;
 
     /**
@@ -47,8 +42,8 @@ public class ClientInitializer implements ClientModInitializer {
     public void onInitializeClient() {
         GLFW.glfwInit(); // forcefully initializes GLFW
 
+        config = new Config(CONFIG_NAME);
         ClientTick.register();
-        registerConfig();
 
         GogglePowerKeybind.register();
         GodModeKeybind.register();
@@ -59,23 +54,16 @@ public class ClientInitializer implements ClientModInitializer {
         SelectedSlotS2C.register();
         ShouldRenderPlayerS2C.register();
         ModdedServerS2C.register();
-        ConfigS2C.register();
+        ConfigValueS2C.register();
+        RevertConfigS2C.register();
 
-        EntityRendererRegistry.INSTANCE.register(ServerInitializer.QUADCOPTER_ENTITY, (entityRenderDispatcher, context) -> new QuadcopterRenderer(entityRenderDispatcher));
-        EntityRendererRegistry.INSTANCE.register(ServerInitializer.FIXED_WING_ENTITY, (entityRenderDispatcher, context) -> new FixedWingRenderer(entityRenderDispatcher));
         QuadcopterItemRenderer.register();
+        QuadcopterRenderer.register();
+        FixedWingRenderer.register();
     }
 
     /**
-     * Loads the player's config from disk.
-     */
-    public static void registerConfig() {
-        config = new Config(new ConfigReader());
-        config.loadConfig();
-    }
-
-    /**
-     * Get the config object created in {@link ClientInitializer#registerConfig()}.
+     * Get the config object.
      * @return the {@link Config} object being stored
      */
     public static Config getConfig() {

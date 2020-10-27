@@ -21,20 +21,22 @@ public class PlayerInventoryMixin {
 
     // used when picking a stack off the ground (including /give)
     @Inject(at = @At("HEAD"), method = "addStack(ILnet/minecraft/item/ItemStack;)I")
-    private void addStack(int slot, ItemStack itemStack, CallbackInfoReturnable info) {
-        if (itemStack.getItem() instanceof GogglesItem && !player.world.isClient()) {
-            GogglesItem.prepGogglesItem(player, itemStack);
-        }
+    private void addStack(int slot, ItemStack itemStack, CallbackInfoReturnable<Integer> info) {
+        if (!player.world.isClient()) {
+            if (itemStack.getItem() instanceof GogglesItem) {
+                GogglesItem.writeToTag(itemStack, player);
+            }
 
-        if (itemStack.getItem() instanceof QuadcopterItem && !player.world.isClient()) {
-            QuadcopterItem.prepDroneSpawnerItem(player, itemStack);
-        }
+            if (itemStack.getItem() instanceof QuadcopterItem) {
+                QuadcopterItem.writeToTag(itemStack, player);
+            }
 
-        if (itemStack.getItem() instanceof TransmitterItem && !player.world.isClient()) {
-            FlyableEntity flyable = TransmitterItem.flyableFromTransmitter(itemStack, player);
+            if (itemStack.getItem() instanceof TransmitterItem) {
+                FlyableEntity flyable = TransmitterItem.flyableEntityFromTransmitter(itemStack, player);
 
-            if (flyable != null) {
-                flyable.setPlayerID(player.getEntityId());
+                if (flyable != null) {
+                    flyable.setPlayerID(player.getEntityId());
+                }
             }
         }
     }
@@ -42,12 +44,14 @@ public class PlayerInventoryMixin {
     // used when adding a stack to your inventory from the creative tab
     @Inject(at = @At("HEAD"), method = "setStack(ILnet/minecraft/item/ItemStack;)V")
     public void setStack(int slot, ItemStack itemStack, CallbackInfo info) {
-        if (itemStack.getItem() instanceof GogglesItem && !player.world.isClient) {
-            GogglesItem.prepGogglesItem(player, itemStack);
-        }
+        if (!player.world.isClient()) {
+            if (itemStack.getItem() instanceof GogglesItem) {
+                GogglesItem.writeToTag(itemStack, player);
+            }
 
-        if (itemStack.getItem() instanceof QuadcopterItem && !player.world.isClient) {
-            QuadcopterItem.prepDroneSpawnerItem(player, itemStack);
+            if (itemStack.getItem() instanceof QuadcopterItem) {
+                QuadcopterItem.writeToTag(itemStack, player);
+            }
         }
     }
 }

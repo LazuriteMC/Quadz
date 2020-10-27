@@ -3,7 +3,6 @@ package bluevista.fpvracing.physics;
 import bluevista.fpvracing.physics.block.BlockCollisions;
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.physics.entity.ClientEntityPhysics;
-import bluevista.fpvracing.config.Config;
 import com.bulletphysics.collision.broadphase.BroadphaseInterface;
 import com.bulletphysics.collision.broadphase.DbvtBroadphase;
 import com.bulletphysics.collision.dispatch.CollisionConfiguration;
@@ -22,6 +21,10 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class PhysicsWorld {
+    public static final String GRAVITY = "gravity";
+    public static final String AIR_DENSITY = "airDensity";
+    public static final String BLOCK_RADIUS = "blockRadius";
+
     private float gravity;
     private float airDensity;
     private int blockRadius;
@@ -35,10 +38,7 @@ public class PhysicsWorld {
         this.entities = new ArrayList<>();
         this.blockCollisions = new BlockCollisions(this);
         this.clock = new Clock();
-
-        blockRadius = ClientInitializer.getConfig().getIntOption(Config.BLOCK_RADIUS);
-        gravity = ClientInitializer.getConfig().getFloatOption(Config.GRAVITY);
-        airDensity = ClientInitializer.getConfig().getFloatOption(Config.AIR_DENSITY);
+        this.readFromConfig();
 
         BroadphaseInterface broadphase = new DbvtBroadphase();
         CollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
@@ -46,6 +46,13 @@ public class PhysicsWorld {
         SequentialImpulseConstraintSolver solver = new SequentialImpulseConstraintSolver();
         dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
         dynamicsWorld.setGravity(new Vector3f(0, gravity, 0));
+    }
+
+    public void readFromConfig() {
+        blockRadius = Integer.parseInt(ClientInitializer.getConfig().getProperties().getProperty(BLOCK_RADIUS));
+        gravity = Float.parseFloat(ClientInitializer.getConfig().getProperties().getProperty(GRAVITY));
+        airDensity = Float.parseFloat(ClientInitializer.getConfig().getProperties().getProperty(AIR_DENSITY));
+        if (dynamicsWorld != null) setGravity();
     }
 
     public void stepWorld() {
@@ -88,34 +95,20 @@ public class PhysicsWorld {
         this.dynamicsWorld.stepSimulation(delta, (int) maxSubSteps, delta/maxSubSteps);
     }
 
-    public void setConfigValues(String key, Number value) {
-        switch (key) {
-            case Config.GRAVITY:
-                this.gravity = value.floatValue();
-                this.dynamicsWorld.setGravity(new Vector3f(0, this.gravity, 0));
-                break;
-            case Config.AIR_DENSITY:
-                this.airDensity = value.floatValue();
-                break;
-            case Config.BLOCK_RADIUS:
-                this.blockRadius = value.intValue();
-                break;
-            default:
-                break;
-        }
+    public void setGravity() {
+        dynamicsWorld.setGravity(new Vector3f(0, gravity, 0));
     }
 
-    public Number getConfigValues(String key) {
-        switch (key) {
-            case Config.GRAVITY:
-                return this.gravity;
-            case Config.AIR_DENSITY:
-                return this.airDensity;
-            case Config.BLOCK_RADIUS:
-                return this.blockRadius;
-            default:
-                return null;
-        }
+    public float getGravity() {
+        return gravity;
+    }
+
+    public float getAirDensity() {
+        return airDensity;
+    }
+
+    public int getBlockRadius() {
+        return blockRadius;
     }
 
     public void add(ClientEntityPhysics physics) {

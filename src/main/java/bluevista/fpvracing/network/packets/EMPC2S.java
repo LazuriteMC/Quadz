@@ -1,4 +1,4 @@
-package bluevista.fpvracing.network.keybinds;
+package bluevista.fpvracing.network.packets;
 
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.ServerTick;
@@ -36,7 +36,7 @@ public class EMPC2S {
             ItemStack itemStack = serverPlayerEntity.getMainHandStack();
 
             if (itemStack.getItem() instanceof TransmitterItem) {
-                FlyableEntity flyable = TransmitterItem.flyableFromTransmitter(itemStack, serverPlayerEntity);
+                FlyableEntity flyable = TransmitterItem.flyableEntityFromTransmitter(itemStack, serverPlayerEntity);
 
                 if (flyable != null) {
                     flyable.kill();

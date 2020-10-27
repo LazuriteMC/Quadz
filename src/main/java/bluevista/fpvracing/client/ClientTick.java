@@ -1,43 +1,24 @@
 package bluevista.fpvracing.client;
 
+import bluevista.fpvracing.network.datatracker.FlyableTrackerRegistry;
 import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.server.entities.QuadcopterEntity;
-import bluevista.fpvracing.util.TickTimer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 
 @Environment(EnvType.CLIENT)
 public class ClientTick {
-    private static final TickTimer positionTickTimer = new TickTimer(20);
-
     public static boolean isServerModded = false;
     public static boolean shouldRenderPlayer = false;
-
-    private static float droneFOV;
     private static double prevFOV;
 
     public static void tick(MinecraftClient client) {
         if (client.player != null && !client.isPaused()) {
-            if (client.getCameraEntity() instanceof QuadcopterEntity) {
-                QuadcopterEntity drone = (QuadcopterEntity) client.getCameraEntity();
-
-//                if (!isServerModded) {
-//                    double x = drone.getX();
-//                    double y = drone.getY();
-//                    double z = drone.getZ();
-//                    boolean onGround = drone.isOnGround();
-//
-//                    client.player.setPos(x, y, z);
-//                    if (positionTickTimer.tick()) {
-//                        ClientSidePacketRegistry.INSTANCE.sendToServer(new PlayerMoveC2SPacket.PositionOnly(x, y, z, onGround));
-//                    }
-//                }
-
-                droneFOV = client.cameraEntity.getDataTracker().get(FlyableEntity.FIELD_OF_VIEW);
+            if (client.getCameraEntity() instanceof FlyableEntity) {
+                FlyableEntity flyable = (FlyableEntity) client.getCameraEntity();
+                float droneFOV = flyable.getValue(FlyableTrackerRegistry.FIELD_OF_VIEW);
 
                 if (droneFOV != 0.0f && client.options.fov != droneFOV) {
                     prevFOV = client.options.fov;

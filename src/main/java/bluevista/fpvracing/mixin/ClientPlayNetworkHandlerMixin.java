@@ -2,13 +2,12 @@ package bluevista.fpvracing.mixin;
 
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.client.ClientTick;
-import bluevista.fpvracing.network.config.ConfigC2S;
+import bluevista.fpvracing.network.packets.ConfigC2S;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.physics.PhysicsWorld;
 import bluevista.fpvracing.server.entities.FixedWingEntity;
 import bluevista.fpvracing.server.entities.FlyableEntity;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -30,7 +29,6 @@ import javax.vecmath.Vector3f;
  */
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
-    @Shadow MinecraftClient client;
     @Shadow ClientWorld world;
 
     /**

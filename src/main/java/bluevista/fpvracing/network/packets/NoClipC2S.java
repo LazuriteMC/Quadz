@@ -1,20 +1,19 @@
-package bluevista.fpvracing.network.keybinds;
+package bluevista.fpvracing.network.packets;
 
-import bluevista.fpvracing.config.Config;
+import bluevista.fpvracing.network.datatracker.FlyableTrackerRegistry;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.entities.FlyableEntity;
-import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.server.items.QuadcopterItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -27,42 +26,33 @@ public class NoClipC2S {
         ItemStack hand = player.getMainHandStack();
 
         context.getTaskQueue().execute(() -> {
-            String t;
+            FlyableTrackerRegistry.Entry<Boolean> noClip = FlyableTrackerRegistry.NO_CLIP;
+            FlyableTrackerRegistry.Entry<Integer> bind = FlyableTrackerRegistry.BIND_ID;
+            CompoundTag tag = hand.getOrCreateSubTag(ServerInitializer.MODID);
 
             if (hand.getItem() instanceof TransmitterItem) {
-                if (TransmitterItem.getTagValue(hand, Config.BIND) != null) {
+                if (bind.getDataType().fromTag(tag, bind.getName()) != null) {
                     List<FlyableEntity> entities = FlyableEntity.getList(player, 500);
-                    FlyableEntity flyable = null;
 
                     for (FlyableEntity entity : entities) {
-                        if (entity.getDataTracker().get(FlyableEntity.BIND_ID).equals(TransmitterItem.getTagValue(hand, Config.BIND))) {
-                            flyable = entity;
+                        if (entity.getValue(FlyableTrackerRegistry.BIND_ID).equals(bind.getDataType().fromTag(tag, bind.getName()))) {
+                            entity.noClip = !entity.noClip;
+
+                            if (entity.noClip) player.sendMessage(new LiteralText("No Clip Enabled"), false);
+                            else player.sendMessage(new LiteralText("No Clip Disabled"), false);
+
                             break;
                         }
                     }
-
-                    if (flyable != null) {
-                        flyable.noClip = !flyable.noClip;
-
-                        if (flyable.noClip) {
-                            t = "No Clip Enabled";
-                        } else {
-                            t = "No Clip Disabled";
-                        }
-
-                        player.sendMessage(new TranslatableText(t), false);
-                    }
                 }
             } else if (hand.getItem() instanceof QuadcopterItem) {
-                QuadcopterItem.setTagValue(hand, Config.NO_CLIP, QuadcopterItem.getTagValue(hand, Config.NO_CLIP) != null && QuadcopterItem.getTagValue(hand, Config.NO_CLIP).intValue() == 0 ? 1 : 0);
-
-                if (QuadcopterItem.getTagValue(hand, Config.NO_CLIP) != null && QuadcopterItem.getTagValue(hand, Config.NO_CLIP).intValue() == 1) {
-                    t = "No Clip Enabled";
+                boolean noclip = noClip.getDataType().fromTag(tag, noClip.getName());
+                noClip.getDataType().toTag(tag, noClip.getName(), !noclip);
+                if (noclip) {
+                    player.sendMessage(new LiteralText("No Clip Disabled"), false);
                 } else {
-                    t = "No Clip Disabled";
+                    player.sendMessage(new LiteralText("No Clip Enabled"), false);
                 }
-
-                player.sendMessage(new TranslatableText(t), false);
             }
         });
     }

@@ -53,8 +53,7 @@ public class SummonCommandMixin {
 
             drone.getPhysics().setPosition(new Vector3f((float) pos.x, (float) pos.y, (float) pos.z));
             drone.yaw = source.getPlayer().yaw;
-
-            QuadcopterItem.prepSpawnedDrone(source.getPlayer(), drone);
+            drone.readTagFromSpawner(source.getPlayer().getMainHandStack(), source.getPlayer());
         }
     }
 }

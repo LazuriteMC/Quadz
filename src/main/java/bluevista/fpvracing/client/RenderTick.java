@@ -1,14 +1,14 @@
 package bluevista.fpvracing.client;
 
+import bluevista.fpvracing.network.datatracker.FlyableTrackerRegistry;
 import bluevista.fpvracing.physics.PhysicsWorld;
-import bluevista.fpvracing.config.Config;
 import bluevista.fpvracing.physics.entity.ClientEntityPhysics;
+import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientAdvancementManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Matrix4f;
@@ -27,11 +27,11 @@ public class RenderTick {
             else w.clock.reset();
         }
 
-        if (entity instanceof QuadcopterEntity) {
-            QuadcopterEntity drone = (QuadcopterEntity) entity;
+        if (entity instanceof FlyableEntity) {
+            FlyableEntity flyable = (FlyableEntity) entity;
 
             Quat4f q;
-            ClientEntityPhysics physics = (ClientEntityPhysics) drone.getPhysics();
+            ClientEntityPhysics physics = (ClientEntityPhysics) flyable.getPhysics();
             if (physics.isActive()) {
                 q = physics.getOrientation();
             } else {
@@ -39,7 +39,9 @@ public class RenderTick {
             }
 
             q.set(q.x, -q.y, q.z, -q.w);
-            QuaternionHelper.rotateX(q, drone.getDataTracker().get(QuadcopterEntity.CAMERA_ANGLE));
+            if (flyable instanceof QuadcopterEntity) {
+                QuaternionHelper.rotateX(q, flyable.getValue(FlyableTrackerRegistry.CAMERA_ANGLE));
+            }
 
             Matrix4f newMat = new Matrix4f(QuaternionHelper.quat4fToQuaternion(q));
             newMat.transpose();

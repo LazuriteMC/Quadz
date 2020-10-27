@@ -1,6 +1,6 @@
 package bluevista.fpvracing.client.input.keybinds;
 
-import bluevista.fpvracing.network.keybinds.NoClipC2S;
+import bluevista.fpvracing.network.packets.NoClipC2S;
 import bluevista.fpvracing.server.ServerInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

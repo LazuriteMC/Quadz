@@ -1,8 +1,7 @@
-package bluevista.fpvracing.network.keybinds;
+package bluevista.fpvracing.network.packets;
 
-import bluevista.fpvracing.config.Config;
+import bluevista.fpvracing.network.datatracker.FlyableTrackerRegistry;
 import bluevista.fpvracing.server.ServerInitializer;
-import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.server.items.QuadcopterItem;
 import bluevista.fpvracing.server.items.TransmitterItem;
@@ -13,10 +12,11 @@ import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -29,43 +29,38 @@ public class GodModeC2S {
         ItemStack hand = player.getMainHandStack();
 
         context.getTaskQueue().execute(() -> {
-            String t;
+            CompoundTag tag = hand.getOrCreateSubTag(ServerInitializer.MODID);
+            FlyableTrackerRegistry.Entry<Integer> bind = FlyableTrackerRegistry.BIND_ID;
+            FlyableTrackerRegistry.Entry<Boolean> god = FlyableTrackerRegistry.GOD_MODE;
 
             if (hand.getItem() instanceof TransmitterItem) {
-                if (TransmitterItem.getTagValue(hand, Config.BIND) != null) {
+                if (bind.getDataType().fromTag(tag, bind.getName()) != null) {
                     List<Entity> entities = ((ServerWorld) player.getEntityWorld()).getEntitiesByType(ServerInitializer.QUADCOPTER_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
-                    QuadcopterEntity quad = null;
 
                     for (Entity entity : entities) {
-                        quad = (QuadcopterEntity) entity;
+                        QuadcopterEntity quad = (QuadcopterEntity) entity;
 
-                        if (quad.getDataTracker().get(FlyableEntity.BIND_ID) == TransmitterItem.getTagValue(hand, Config.BIND).intValue()) {
+                        if (quad.getValue(bind).equals(bind.getDataType().fromTag(tag, bind.getName()))) {
+                            quad.setValue(god, !quad.getValue(FlyableTrackerRegistry.GOD_MODE));
+
+                            if (quad.getValue(FlyableTrackerRegistry.GOD_MODE)) {
+                                player.sendMessage(new LiteralText("God Mode Enabled"), false);
+                            } else {
+                                player.sendMessage(new LiteralText("God Mode Disabled"), false);
+                            }
+
                             break;
                         }
                     }
-
-                    if (quad != null) {
-                        quad.getDataTracker().set(FlyableEntity.GOD_MODE, !quad.getDataTracker().get(FlyableEntity.GOD_MODE));
-
-                        if (quad.getDataTracker().get(FlyableEntity.GOD_MODE)) {
-                            t = "God Mode Enabled";
-                        } else {
-                            t = "God Mode Disabled";
-                        }
-
-                        player.sendMessage(new TranslatableText(t), false);
-                    }
                 }
             } else if (hand.getItem() instanceof QuadcopterItem) {
-                QuadcopterItem.setTagValue(hand, Config.GOD_MODE, QuadcopterItem.getTagValue(hand, Config.GOD_MODE) != null && QuadcopterItem.getTagValue(hand, Config.GOD_MODE).intValue() == 0 ? 1 : 0);
-
-                if (QuadcopterItem.getTagValue(hand, Config.GOD_MODE) != null && QuadcopterItem.getTagValue(hand, Config.GOD_MODE).intValue() == 1) {
-                    t = "God Mode Enabled";
+                boolean godmode = god.getDataType().fromTag(tag, god.getName());
+                god.getDataType().toTag(tag, god.getName(), !godmode);
+                if (godmode) {
+                    player.sendMessage(new LiteralText("God Mode Disabled"), false);
                 } else {
-                    t = "God Mode Disabled";
+                    player.sendMessage(new LiteralText("God Mode Enabled"), false);
                 }
-
-                player.sendMessage(new TranslatableText(t), false);
             }
         });
     }

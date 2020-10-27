@@ -2,9 +2,11 @@ package bluevista.fpvracing.server.items;
 
 import bluevista.fpvracing.client.ClientInitializer;
 import bluevista.fpvracing.config.Config;
+import bluevista.fpvracing.network.datatracker.FlyableTrackerRegistry;
 import bluevista.fpvracing.server.ServerInitializer;
 import bluevista.fpvracing.server.entities.FlyableEntity;
 import bluevista.fpvracing.server.items.materials.ArmorMaterials;
+import bluevista.fpvracing.util.Frequency;
 import com.google.common.collect.Multimap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -20,7 +22,12 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
+/**
+ * @author Ethan Johnson
+ * @author Patrick Hofmann
+ */
 public class GogglesItem extends ArmorItem {
+
 	public GogglesItem(Item.Settings settings) {
 		super(ArmorMaterials.GOGGLE, EquipmentSlot.HEAD, settings);
 	}
@@ -47,40 +54,6 @@ public class GogglesItem extends ArmorItem {
 		}
 	}
 
-	public static void setTagValue(ItemStack itemStack, String key, Number value) {
-		if (value != null) {
-			switch (key) {
-				case Config.BAND:
-					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putInt(Config.BAND, value.intValue());
-					break;
-				case Config.CHANNEL:
-					itemStack.getOrCreateSubTag(ServerInitializer.MODID).putInt(Config.CHANNEL, value.intValue());
-					break;
-				default:
-					break;
-			}
-
-		} else {
-			setTagValue(itemStack, key, 0);
-		}
-	}
-
-	public static Number getTagValue(ItemStack itemStack, String key) {
-		if (itemStack.getSubTag(ServerInitializer.MODID) != null && itemStack.getSubTag(ServerInitializer.MODID).contains(key)) {
-			CompoundTag tag = itemStack.getSubTag(ServerInitializer.MODID);
-			switch (key) {
-				case Config.BAND:
-					return tag.getInt(Config.BAND);
-				case Config.CHANNEL:
-					return tag.getInt(Config.CHANNEL);
-				default:
-					return null;
-			}
-		}
-
-		return null;
-	}
-
 	/**
 	 * Determines whether or not the client
 	 * has a camera entity of type {@link FlyableEntity}.
@@ -102,45 +75,48 @@ public class GogglesItem extends ArmorItem {
 	}
 
 	public static void setOn(ItemStack itemStack, boolean on) {
-		itemStack.getOrCreateSubTag(ServerInitializer.MODID).putBoolean(Config.ON, on);
-	}
-
-	public static boolean isOn(PlayerEntity player) {
-		if (GogglesItem.isWearingGoggles(player)) {
-			ItemStack hat = player.inventory.armor.get(3);
-
-			if (hat.getSubTag(ServerInitializer.MODID) != null && hat.getSubTag(ServerInitializer.MODID).contains(Config.ON)) {
-				return hat.getSubTag(ServerInitializer.MODID).getBoolean(Config.ON);
-			}
-		}
-		return false;
+		itemStack.getOrCreateSubTag(ServerInitializer.MODID).putBoolean("on", on);
 	}
 
 	public static boolean isWearingGoggles(PlayerEntity player) {
 		return player.inventory.armor.get(3).getItem() instanceof GogglesItem;
 	}
 
-	public static boolean isOnSameChannel(FlyableEntity flyable, PlayerEntity player) {
-		if (GogglesItem.isWearingGoggles(player)) {
+	public static boolean isOn(PlayerEntity player) {
+		if (isWearingGoggles(player)) {
 			ItemStack hat = player.inventory.armor.get(3);
 
-			if (GogglesItem.getTagValue(hat, Config.BAND) != null && GogglesItem.getTagValue(hat, Config.CHANNEL) != null) {
-				return (GogglesItem.getTagValue(hat, Config.BAND)).equals((int) flyable.getDataTracker().get(FlyableEntity.FREQUENCY).getBand()) &&
-						(GogglesItem.getTagValue(hat, Config.CHANNEL).equals(flyable.getDataTracker().get(FlyableEntity.FREQUENCY).getChannel()));
+			if (hat.getSubTag(ServerInitializer.MODID) != null && hat.getSubTag(ServerInitializer.MODID).contains("on")) {
+				return hat.getSubTag(ServerInitializer.MODID).getBoolean("on");
 			}
 		}
+
 		return false;
 	}
 
-	public static void prepGogglesItem(PlayerEntity user, ItemStack itemStack) {
-		Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid());
+	public static boolean isOnSameChannel(FlyableEntity flyable, PlayerEntity player) {
+		if (GogglesItem.isWearingGoggles(player)) {
+			ItemStack hat = player.inventory.armor.get(3);
+			CompoundTag tag = hat.getOrCreateSubTag(ServerInitializer.MODID);
+			FlyableTrackerRegistry.Entry<Frequency> entry = FlyableTrackerRegistry.FREQUENCY;
 
-		String[] keys = {Config.BAND, Config.CHANNEL};
-
-		for (String key : keys) {
-			if (GogglesItem.getTagValue(itemStack, key) == null) {
-				GogglesItem.setTagValue(itemStack, key, config.getOption(key));
+			if (entry.getDataType().fromTag(tag, entry.getName()) != null) {
+				return flyable.getValue(entry)
+						.equals(entry.getDataType().fromTag(tag, entry.getName()));
 			}
+		}
+
+		return false;
+	}
+
+	public static void writeToTag(ItemStack itemStack, PlayerEntity user) {
+		Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid());
+		CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
+		FlyableTrackerRegistry.Entry<Frequency> entry = FlyableTrackerRegistry.FREQUENCY;
+
+		if (entry.getDataType().fromTag(tag, entry.getName()) == null) {
+			Frequency freq = entry.getDataType().fromConfig(config, entry.getName());
+			entry.getDataType().toTag(tag, entry.getName(), freq);
 		}
 	}
 }

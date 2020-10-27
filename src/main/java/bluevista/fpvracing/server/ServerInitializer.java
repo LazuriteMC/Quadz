@@ -1,13 +1,13 @@
 package bluevista.fpvracing.server;
 
 import bluevista.fpvracing.config.Config;
-import bluevista.fpvracing.network.FlyableDataHandlerRegistry;
-import bluevista.fpvracing.network.config.ConfigC2S;
-import bluevista.fpvracing.network.entity.EntityPhysicsC2S;
-import bluevista.fpvracing.network.keybinds.EMPC2S;
-import bluevista.fpvracing.network.keybinds.GodModeC2S;
-import bluevista.fpvracing.network.keybinds.NoClipC2S;
-import bluevista.fpvracing.network.keybinds.PowerGogglesC2S;
+import bluevista.fpvracing.network.packets.ConfigC2S;
+import bluevista.fpvracing.network.packets.EntityPhysicsC2S;
+import bluevista.fpvracing.network.packets.EMPC2S;
+import bluevista.fpvracing.network.packets.GodModeC2S;
+import bluevista.fpvracing.network.packets.NoClipC2S;
+import bluevista.fpvracing.network.packets.PowerGogglesC2S;
+import bluevista.fpvracing.network.datatracker.datatype.FlyableDataTypeRegistry;
 import bluevista.fpvracing.server.entities.QuadcopterEntity;
 import bluevista.fpvracing.server.entities.FixedWingEntity;
 import bluevista.fpvracing.server.entities.FlyableEntity;
@@ -21,7 +21,6 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -64,8 +63,7 @@ public class ServerInitializer implements ModInitializer {
 
 //		Commands.registerCommands();
 		ServerTick.register();
-		TrackedDataHandlerRegistry.register(FlyableDataHandlerRegistry.FREQUENCY);
-
+		FlyableDataTypeRegistry.register();
 		ServerStartCallback.EVENT.register(ServerInitializer::start);
 	}
 

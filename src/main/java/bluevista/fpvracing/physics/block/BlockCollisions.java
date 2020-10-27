@@ -42,7 +42,7 @@ public class BlockCollisions {
     }
 
     public void load(Entity entity, ClientWorld world) {
-        Box area = new Box(new BlockPos(entity.getPos())).expand(physicsWorld.getConfigValues(Config.BLOCK_RADIUS).intValue());
+        Box area = new Box(new BlockPos(entity.getPos())).expand(physicsWorld.getBlockRadius());
         Map<BlockPos, BlockState> blockList = BlockHelper.getBlockList(world, area);
         BlockView blockView = world.getChunkManager().getChunk(entity.chunkX, entity.chunkZ);
 
