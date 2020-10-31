@@ -18,10 +18,7 @@ public class ConfigC2S {
     public static void accept(PacketContext context, PacketByteBuf buf) {
         UUID uuid = context.getPlayer().getUuid();
         Config config = PacketHelper.deserializeConfig(buf);
-
-        context.getTaskQueue().execute(() -> {
-            ServerInitializer.SERVER_PLAYER_CONFIGS.put(uuid, config);
-        });
+        context.getTaskQueue().execute(() -> ServerInitializer.SERVER_PLAYER_CONFIGS.put(uuid, config));
     }
 
     public static void send(Config config) {
