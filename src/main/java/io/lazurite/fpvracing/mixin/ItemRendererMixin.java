@@ -1,5 +1,6 @@
 package io.lazurite.fpvracing.mixin;
 
+import io.lazurite.fpvracing.client.ClientInitializer;
 import io.lazurite.fpvracing.client.renderer.QuadcopterItemRenderer;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
 import io.lazurite.fpvracing.server.entity.PhysicsEntity;
@@ -57,6 +58,11 @@ public class ItemRendererMixin {
             CompoundTag tag = stack.getOrCreateSubTag(ServerInitializer.MODID);
             GenericDataTrackerRegistry.Entry<Integer> entry = PhysicsEntity.SIZE;
             int size = entry.getKey().getType().fromTag(tag, entry.getKey().getName());
+
+            if (size == 0) {
+                size = ClientInitializer.getConfig().getValue(entry.getKey());
+            }
+
             QuadcopterItemRenderer.render(matrices, vertexConsumers, light, overlay, size);
         }
     }

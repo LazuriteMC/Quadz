@@ -40,9 +40,9 @@ public class QuadcopterItem extends Item {
 		} else {
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
 				QuadcopterEntity drone = new QuadcopterEntity(ServerInitializer.QUADCOPTER_ENTITY, world);
-				drone.updatePositionAndAngles(new Vector3f((float) hitResult.getPos().x, (float) hitResult.getPos().y + 1.0f, (float) hitResult.getPos().z), user.yaw, 0);
 				drone.readTagFromSpawner(user.getMainHandStack(), user);
 				world.spawnEntity(drone);
+				drone.updatePositionAndAngles(new Vector3f((float) hitResult.getPos().x, (float) hitResult.getPos().y + 1.0f, (float) hitResult.getPos().z), user.yaw, 0);
 			}
 
 			itemStack.decrement(1);

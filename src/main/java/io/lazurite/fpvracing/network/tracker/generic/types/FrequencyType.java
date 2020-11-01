@@ -17,8 +17,8 @@ public class FrequencyType implements GenericType<Frequency> {
         return PacketHelper.deserializeFrequency(buf);
     }
 
-    public Frequency copy(Frequency object) {
-        return null;
+    public Frequency copy(Frequency frequency) {
+        return frequency;
     }
 
     public void toTag(CompoundTag tag, String key, Frequency value) {

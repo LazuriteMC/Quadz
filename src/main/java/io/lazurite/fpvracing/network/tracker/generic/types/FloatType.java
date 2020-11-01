@@ -14,8 +14,8 @@ public class FloatType implements GenericType<Float> {
         return buf.readFloat();
     }
 
-    public Float copy(Float object) {
-        return null;
+    public Float copy(Float fl) {
+        return fl;
     }
 
     public void toTag(CompoundTag tag, String key, Float value) {

@@ -14,8 +14,8 @@ public class IntegerType implements GenericType<Integer> {
         return buf.readInt();
     }
 
-    public Integer copy(Integer object) {
-        return null;
+    public Integer copy(Integer integer) {
+        return integer;
     }
 
     public void toTag(CompoundTag tag, String key, Integer value) {

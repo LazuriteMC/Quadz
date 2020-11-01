@@ -14,8 +14,8 @@ public class BooleanType implements GenericType<Boolean> {
         return buf.readBoolean();
     }
 
-    public Boolean copy(Boolean object) {
-        return null;
+    public Boolean copy(Boolean bool) {
+        return bool;
     }
 
     public void toTag(CompoundTag tag, String key, Boolean value) {

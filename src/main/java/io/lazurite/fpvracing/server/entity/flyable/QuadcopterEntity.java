@@ -63,11 +63,11 @@ public class QuadcopterEntity extends FlyableEntity {
 			float deltaY = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currY, getValue(RATE), getValue(EXPO), getValue(SUPER_RATE), delta);
 			float deltaZ = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currZ, getValue(RATE), getValue(EXPO), getValue(SUPER_RATE), delta);
 
-			physics.rotateX(deltaX);
-			physics.rotateY(deltaY);
-			physics.rotateZ(deltaZ);
-
-			physics.applyForce(thrust.getForce());
+//			physics.rotateX(deltaX);
+//			physics.rotateY(deltaY);
+//			physics.rotateZ(deltaZ);
+//
+//			physics.applyForce(thrust.getForce());
 		}
 	}
 

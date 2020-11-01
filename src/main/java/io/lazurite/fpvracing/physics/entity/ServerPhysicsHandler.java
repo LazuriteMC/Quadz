@@ -24,7 +24,6 @@ public class ServerPhysicsHandler implements PhysicsHandler {
     @Override
     public void setPosition(Vector3f position) {
         this.position.set(position);
-        this.entity.updatePosition(position.x, position.y, position.z);
     }
 
     @Override

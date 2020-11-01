@@ -28,8 +28,8 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
 
     protected PhysicsHandler physics;
 
-    private int prevSize;
-    private float prevMass;
+    private int prevSize = -1;
+    private float prevMass = -1;
 
     public PhysicsEntity(EntityType<?> type, World world) {
         super(type, world);
@@ -50,8 +50,12 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
         updatePosition();
         updateEulerRotations();
 
-        if (getValue(PLAYER_ID) != -1 && getEntityWorld().getEntityById(getValue(PLAYER_ID)) == null) {
-            kill();
+        System.out.println(getPos());
+
+        if (!world.isClient()) {
+            if (getValue(PLAYER_ID) != -1 && getEntityWorld().getEntityById(getValue(PLAYER_ID)) == null) {
+                kill();
+            }
         }
     }
 
@@ -115,7 +119,6 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
      * @param playerID the player ID
      */
     public void setPlayerID(int playerID) {
-        System.out.println("PlayerID: " + playerID);
         PlayerEntity player = (PlayerEntity) getEntityWorld().getEntityById(playerID);
         if (player != null) {
             setCustomName(new LiteralText(player.getGameProfile().getName()));

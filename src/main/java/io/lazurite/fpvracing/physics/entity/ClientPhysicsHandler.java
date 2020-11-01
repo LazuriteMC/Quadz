@@ -25,7 +25,7 @@ import javax.vecmath.Vector3f;
 public class ClientPhysicsHandler implements PhysicsHandler {
     private final Quat4f prevOrientation;
     private final Quat4f netOrientation;
-    private PhysicsEntity entity;
+    private final PhysicsEntity entity;
     private RigidBody body;
 
     public ClientPhysicsHandler(PhysicsEntity entity) {
@@ -179,7 +179,6 @@ public class ClientPhysicsHandler implements PhysicsHandler {
         out.set(netOrientation);
         return out;
     }
-
 
     /**
      * Apply a list of forces. Mostly a convenience method.
