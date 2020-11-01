@@ -1,6 +1,6 @@
 package io.lazurite.fpvracing.mixin;
 
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundTag;

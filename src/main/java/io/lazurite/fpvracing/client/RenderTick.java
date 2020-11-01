@@ -2,8 +2,8 @@ package io.lazurite.fpvracing.client;
 
 import io.lazurite.fpvracing.physics.PhysicsWorld;
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import io.lazurite.fpvracing.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

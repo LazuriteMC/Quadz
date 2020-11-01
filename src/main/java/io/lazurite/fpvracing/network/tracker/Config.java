@@ -1,12 +1,10 @@
 package io.lazurite.fpvracing.network.tracker;
 
 import io.lazurite.fpvracing.network.tracker.generic.GenericType;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -24,66 +22,35 @@ public class Config extends Properties {
     }
 
     /**
-     * The client-side config creation constructor. This
-     * will read in the config from the file when called.
-     * @param filename
+     * Get a value from the config using a {@link Key} object.
+     * @param key the key from the config
+     * @param <T> the type of the key
+     * @return the value returned from the key
      */
-    @Environment(EnvType.CLIENT)
-    public Config(String filename) {
-        this();
-        this.readConfig(filename);
+    public <T> T getValue(Key<T> key) {
+        return key.getType().fromConfig(this, key.getName());
     }
 
-    public <T> void put(String key, GenericType<T> type, T value) {
-        if (type.fromConfig(this, key) == null) {
-            type.toConfig(this, key, value);
+    /**
+     * A class that represents a key in the config file.
+     * Stores the name and the type of the key.
+     * @param <T> the type of the key
+     */
+    public static class Key<T> {
+        private final String name;
+        private final GenericType<T> type;
+
+        public Key(String key, GenericType<T> type) {
+            this.name = key;
+            this.type = type;
         }
-    }
 
-    /**
-     * Read a boolean from the config.
-     * @param key the key to get
-     * @return a boolean value
-     */
-    public boolean getBool(String key) {
-        return Boolean.parseBoolean(getProperty(key));
-    }
-
-    /**
-     * Read an integer from the config.
-     * @param key the key to get
-     * @return an int value
-     */
-    public int getInt(String key) {
-        return Integer.parseInt(getProperty(key));
-    }
-
-    /**
-     * Read a float from the config.
-     * @param key the key to get
-     * @return a float value
-     */
-    public float getFloat(String key) {
-        return Float.parseFloat(getProperty(key));
-    }
-
-    @Environment(EnvType.CLIENT)
-    public void readConfig(String filename) {
-        try {
-            load(new FileInputStream("config/" + filename));
-        } catch (IOException e) {
-            System.err.println("Error reading " + filename);
-            e.printStackTrace();
+        public String getName() {
+            return this.name;
         }
-    }
 
-    @Environment(EnvType.CLIENT)
-    public void writeConfig(String filename) {
-        try {
-            store(new FileOutputStream("config/" + filename), "");
-        } catch (IOException e) {
-            System.err.println("Error reading " + filename);
-            e.printStackTrace();
+        public GenericType<T> getType() {
+            return this.type;
         }
     }
 }

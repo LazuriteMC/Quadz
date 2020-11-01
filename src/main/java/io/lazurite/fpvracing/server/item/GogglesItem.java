@@ -1,11 +1,11 @@
-package io.lazurite.fpvracing.server.items;
+package io.lazurite.fpvracing.server.item;
 
 import io.lazurite.fpvracing.client.ClientInitializer;
 import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
 import io.lazurite.fpvracing.server.ServerInitializer;
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
-import io.lazurite.fpvracing.server.items.materials.ArmorMaterials;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
+import io.lazurite.fpvracing.server.item.material.ArmorMaterials;
 import io.lazurite.fpvracing.util.Frequency;
 import com.google.common.collect.Multimap;
 import net.fabricmc.api.EnvType;
@@ -100,9 +100,9 @@ public class GogglesItem extends ArmorItem {
 			CompoundTag tag = hat.getOrCreateSubTag(ServerInitializer.MODID);
 			GenericDataTrackerRegistry.Entry<Frequency> entry = FlyableEntity.FREQUENCY;
 
-			if (entry.getDataType().fromTag(tag, entry.getName()) != null) {
+			if (entry.getKey().getType().fromTag(tag, entry.getKey().getName()) != null) {
 				return flyable.getValue(entry)
-						.equals(entry.getDataType().fromTag(tag, entry.getName()));
+						.equals(entry.getKey().getType().fromTag(tag, entry.getKey().getName()));
 			}
 		}
 
@@ -114,9 +114,9 @@ public class GogglesItem extends ArmorItem {
 		CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
 		GenericDataTrackerRegistry.Entry<Frequency> entry = FlyableEntity.FREQUENCY;
 
-		if (entry.getDataType().fromTag(tag, entry.getName()) == null) {
-			Frequency freq = entry.getDataType().fromConfig(config, entry.getName());
-			entry.getDataType().toTag(tag, entry.getName(), freq);
+		if (entry.getKey().getType().fromTag(tag, entry.getKey().getName()) == null) {
+			Frequency freq = entry.getKey().getType().fromConfig(config, entry.getKey().getName());
+			entry.getKey().getType().toTag(tag, entry.getKey().getName(), freq);
 		}
 	}
 }

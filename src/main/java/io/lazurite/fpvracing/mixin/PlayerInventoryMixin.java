@@ -1,9 +1,9 @@
 package io.lazurite.fpvracing.mixin;
 
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
-import io.lazurite.fpvracing.server.items.QuadcopterItem;
-import io.lazurite.fpvracing.server.items.GogglesItem;
-import io.lazurite.fpvracing.server.items.TransmitterItem;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
+import io.lazurite.fpvracing.server.item.QuadcopterItem;
+import io.lazurite.fpvracing.server.item.GogglesItem;
+import io.lazurite.fpvracing.server.item.TransmitterItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;

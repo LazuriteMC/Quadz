@@ -1,13 +1,14 @@
-package io.lazurite.fpvracing.server.entities;
+package io.lazurite.fpvracing.server.entity;
 
 import io.lazurite.fpvracing.client.ClientInitializer;
 import io.lazurite.fpvracing.client.input.InputTick;
+import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
-import io.lazurite.fpvracing.physics.collisions.BlockCollisions;
+import io.lazurite.fpvracing.physics.collision.BlockCollisions;
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
-import io.lazurite.fpvracing.physics.entity.PhysicsEntity;
 import io.lazurite.fpvracing.server.ServerInitializer;
-import io.lazurite.fpvracing.server.items.TransmitterItem;
+import io.lazurite.fpvracing.server.item.ChannelWandItem;
+import io.lazurite.fpvracing.server.item.TransmitterItem;
 import io.lazurite.fpvracing.util.Frequency;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,10 +17,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Packet;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
@@ -34,11 +34,11 @@ import java.util.List;
 import java.util.Random;
 
 public abstract class FlyableEntity extends PhysicsEntity {
-    public static final GenericDataTrackerRegistry.Entry<Integer> BIND_ID = GenericDataTrackerRegistry.register("bindID",   -1, ServerInitializer.INTEGER_TYPE, FlyableEntity.class);
-    public static final GenericDataTrackerRegistry.Entry<Boolean> GOD_MODE = GenericDataTrackerRegistry.register("godMode", false, ServerInitializer.BOOLEAN_TYPE, FlyableEntity.class);
-    public static final GenericDataTrackerRegistry.Entry<Boolean> NO_CLIP = GenericDataTrackerRegistry.register("noClip", false, ServerInitializer.BOOLEAN_TYPE, FlyableEntity.class);
-    public static final GenericDataTrackerRegistry.Entry<Integer> FIELD_OF_VIEW = GenericDataTrackerRegistry.register("fieldOfView", 120, ServerInitializer.INTEGER_TYPE, FlyableEntity.class);
-    public static final GenericDataTrackerRegistry.Entry<Frequency> FREQUENCY = GenericDataTrackerRegistry.register("frequency", new Frequency('R', 1), ServerInitializer.FREQUENCY_TYPE, FlyableEntity.class);
+    public static final GenericDataTrackerRegistry.Entry<Integer> BIND_ID = GenericDataTrackerRegistry.register(new Config.Key<>("bindID", ServerInitializer.INTEGER_TYPE), -1, FlyableEntity.class);
+    public static final GenericDataTrackerRegistry.Entry<Boolean> GOD_MODE = GenericDataTrackerRegistry.register(new Config.Key<>("godMode", ServerInitializer.BOOLEAN_TYPE), false, FlyableEntity.class);
+    public static final GenericDataTrackerRegistry.Entry<Boolean> NO_CLIP = GenericDataTrackerRegistry.register(new Config.Key<>("noClip", ServerInitializer.BOOLEAN_TYPE), false, FlyableEntity.class);
+    public static final GenericDataTrackerRegistry.Entry<Integer> FIELD_OF_VIEW = GenericDataTrackerRegistry.register(new Config.Key<>("fieldOfView", ServerInitializer.INTEGER_TYPE),  120, FlyableEntity.class);
+    public static final GenericDataTrackerRegistry.Entry<Frequency> FREQUENCY = GenericDataTrackerRegistry.register(new Config.Key<>("frequency", ServerInitializer.FREQUENCY_TYPE), new Frequency('R', 1), FlyableEntity.class);
 
     public static final int TRACKING_RANGE = 80;
     public static final int PSEUDO_TRACKING_RANGE = TRACKING_RANGE / 2;
@@ -46,23 +46,6 @@ public abstract class FlyableEntity extends PhysicsEntity {
     public FlyableEntity(EntityType<?> type, World world) {
         super(type, world);
         this.ignoreCameraFrustum = true;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-//        updatePosition(getPosition().x, getPosition().y, getPosition().z);
-        if (world.isClient()) {
-            updateEulerRotations();
-        }
-
-//        setSize(getValue(FlyableDataRegistry.SIZE));
-//        setMass(getValue(FlyableDataRegistry.MASS));
-
-//        if (playerID != -1 && entity.world.getEntityById(playerID) == null) {
-//            entity.kill();
-//        }
     }
 
     @Override
@@ -82,36 +65,6 @@ public abstract class FlyableEntity extends PhysicsEntity {
         return world.getEntitiesByClass(FlyableEntity.class, new Box(entity.getBlockPos()).expand(r), EntityPredicates.VALID_ENTITY);
     }
 
-    @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    protected void writeCustomDataToTag(CompoundTag tag) {
-        GenericDataTrackerRegistry.getAll(FlyableEntity.class).forEach(entry -> GenericDataTrackerRegistry.writeToTag(tag, (GenericDataTrackerRegistry.Entry) entry, getValue(entry)));
-        GenericDataTrackerRegistry.getAll(getClass()).forEach(entry -> GenericDataTrackerRegistry.writeToTag(tag, (GenericDataTrackerRegistry.Entry) entry, getValue(entry)));
-    }
-
-    @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    protected void readCustomDataFromTag(CompoundTag tag) {
-        GenericDataTrackerRegistry.getAll(FlyableEntity.class).forEach(entry -> setValue((GenericDataTrackerRegistry.Entry) entry, GenericDataTrackerRegistry.readFromTag(tag, entry)));
-        GenericDataTrackerRegistry.getAll(getClass()).forEach(entry -> setValue((GenericDataTrackerRegistry.Entry) entry, GenericDataTrackerRegistry.readFromTag(tag, entry)));
-    }
-
-    @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    protected void initDataTracker() {
-        GenericDataTrackerRegistry.getAll().forEach(entry -> getDataTracker().startTracking(((GenericDataTrackerRegistry.Entry) entry).getTrackedData(), entry.getFallback()));
-    }
-
-    public void writeTagToSpawner(ItemStack itemStack) {
-        CompoundTag tag = itemStack.getSubTag(ServerInitializer.MODID);
-        writeCustomDataToTag(tag);
-    }
-
-    public void readTagFromSpawner(ItemStack itemStack, PlayerEntity user) {
-        CompoundTag tag = itemStack.getSubTag(ServerInitializer.MODID);
-        readCustomDataFromTag(tag);
-    }
-
     /**
      * If the {@link PlayerEntity} is holding a {@link TransmitterItem} when they right
      * click on the {@link FlyableEntity}, bind it using a new random ID.
@@ -122,13 +75,21 @@ public abstract class FlyableEntity extends PhysicsEntity {
     @Override
     public ActionResult interact(PlayerEntity player, Hand hand) {
         if (!player.world.isClient()) {
-            if (player.inventory.getMainHandStack().getItem() instanceof TransmitterItem) {
+            Item handItem = player.inventory.getMainHandStack().getItem();
+
+            if (handItem instanceof TransmitterItem) {
                 Random rand = new Random();
+
                 setValue(BIND_ID, rand.nextInt());
                 setPlayerID(player.getEntityId());
                 player.getMainHandStack().getOrCreateSubTag(ServerInitializer.MODID)
-                        .putInt(BIND_ID.getName(), getValue(BIND_ID));
+                        .putInt(BIND_ID.getKey().getName(), getValue(BIND_ID));
+
                 player.sendMessage(new LiteralText("Transmitter bound"), false);
+            } else if (handItem instanceof ChannelWandItem) {
+                char band = getValue(FREQUENCY).getBand();
+                int channel = getValue(FREQUENCY).getChannel();
+                player.sendMessage(new LiteralText("Band: " + band + ", Channel: " + channel), false);
             }
         } else if (!InputTick.controllerExists()) {
             player.sendMessage(new LiteralText("Controller not found"), false);
@@ -148,18 +109,19 @@ public abstract class FlyableEntity extends PhysicsEntity {
         return distance < Math.pow(ClientInitializer.client.options.viewDistance * 16, 2);
     }
 
-    @Override
-    public Packet<?> createSpawnPacket() {
-        return new EntitySpawnS2CPacket(this);
-    }
-
-//    @Override
-//    public boolean isGlowing() {
-//        return false;
-//    }
-
     public boolean isKillable() {
         return false;
+    }
+
+    public void writeTagToSpawner(ItemStack itemStack) {
+        CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
+        writeCustomDataToTag(tag);
+    }
+
+    public void readTagFromSpawner(ItemStack itemStack, PlayerEntity user) {
+        CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
+        readCustomDataFromTag(tag);
+        setValue(PLAYER_ID, user.getEntityId());
     }
 
     /**

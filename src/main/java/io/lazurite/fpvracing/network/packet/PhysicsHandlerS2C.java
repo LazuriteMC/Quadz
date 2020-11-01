@@ -1,8 +1,8 @@
 package io.lazurite.fpvracing.network.packet;
 
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
-import io.lazurite.fpvracing.physics.entity.IPhysicsHandler;
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
+import io.lazurite.fpvracing.physics.entity.PhysicsHandler;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
 import io.lazurite.fpvracing.util.PacketHelper;
 import io.lazurite.fpvracing.server.ServerInitializer;
 import io.lazurite.fpvracing.client.ClientInitializer;
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
  * The packet responsible for sending entity physics information from the server to the client.
  * @author Ethan Johnson
  */
-public class EntityPhysicsS2C {
+public class PhysicsHandlerS2C {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "entity_physics_s2c");
 
     /**
@@ -69,9 +69,9 @@ public class EntityPhysicsS2C {
     /**
      * The method that send the drone information from the server to the client. Contains all
      * server-side values such as camera settings, physics settings, and rate settings.
-     * @param physics the {@link IPhysicsHandler} to send
+     * @param physics the {@link PhysicsHandler} to send
      */
-    public static void send(IPhysicsHandler physics, boolean force) {
+    public static void send(PhysicsHandler physics, boolean force) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 
         buf.writeBoolean(force);
@@ -91,6 +91,6 @@ public class EntityPhysicsS2C {
      * Registers the packet in {@link ClientInitializer}.
      */
     public static void register() {
-        ClientSidePacketRegistry.INSTANCE.register(PACKET_ID, EntityPhysicsS2C::accept);
+        ClientSidePacketRegistry.INSTANCE.register(PACKET_ID, PhysicsHandlerS2C::accept);
     }
 }

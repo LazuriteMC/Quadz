@@ -1,9 +1,11 @@
 package io.lazurite.fpvracing.physics.entity;
 
+import io.lazurite.fpvracing.server.entity.PhysicsEntity;
+
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
-public interface IPhysicsHandler {
+public interface PhysicsHandler {
     Vector3f getPosition();
     Vector3f getLinearVelocity();
     Vector3f getAngularVelocity();

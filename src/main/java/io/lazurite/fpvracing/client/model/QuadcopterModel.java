@@ -1,6 +1,6 @@
-package io.lazurite.fpvracing.client.models;
+package io.lazurite.fpvracing.client.model;
 
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.ModelPart;

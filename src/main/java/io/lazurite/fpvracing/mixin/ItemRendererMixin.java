@@ -1,10 +1,10 @@
 package io.lazurite.fpvracing.mixin;
 
-import io.lazurite.fpvracing.client.renderers.QuadcopterItemRenderer;
+import io.lazurite.fpvracing.client.renderer.QuadcopterItemRenderer;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
-import io.lazurite.fpvracing.physics.entity.PhysicsEntity;
+import io.lazurite.fpvracing.server.entity.PhysicsEntity;
 import io.lazurite.fpvracing.server.ServerInitializer;
-import io.lazurite.fpvracing.server.items.QuadcopterItem;
+import io.lazurite.fpvracing.server.item.QuadcopterItem;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
@@ -56,7 +56,7 @@ public class ItemRendererMixin {
         if(stack.getItem() instanceof QuadcopterItem) {
             CompoundTag tag = stack.getOrCreateSubTag(ServerInitializer.MODID);
             GenericDataTrackerRegistry.Entry<Integer> entry = PhysicsEntity.SIZE;
-            int size = entry.getDataType().fromTag(tag, entry.getName());
+            int size = entry.getKey().getType().fromTag(tag, entry.getKey().getName());
             QuadcopterItemRenderer.render(matrices, vertexConsumers, light, overlay, size);
         }
     }

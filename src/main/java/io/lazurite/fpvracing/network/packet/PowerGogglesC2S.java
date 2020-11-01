@@ -2,9 +2,9 @@ package io.lazurite.fpvracing.network.packet;
 
 import io.lazurite.fpvracing.server.ServerInitializer;
 import io.lazurite.fpvracing.server.ServerTick;
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
-import io.lazurite.fpvracing.server.items.GogglesItem;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
+import io.lazurite.fpvracing.server.item.GogglesItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;

@@ -2,10 +2,12 @@ package io.lazurite.fpvracing.util;
 
 import io.lazurite.fpvracing.client.input.AxisValues;
 import io.lazurite.fpvracing.network.tracker.Config;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import net.minecraft.network.PacketByteBuf;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
+import java.util.Map;
 
 public class PacketHelper {
     public static void serializeVector3f(PacketByteBuf buf, Vector3f vec) {
@@ -40,9 +42,10 @@ public class PacketHelper {
 
     public static void serializeConfig(PacketByteBuf buf, Config config) {
         buf.writeInt(config.size());
+
         config.forEach((key, value) -> {
-            buf.writeString((String) key);
-            buf.writeString((String) value);
+            buf.writeString((String) key, 200);
+            buf.writeString((String) value, 200);
         });
     }
 
@@ -50,8 +53,9 @@ public class PacketHelper {
         Config config = new Config();
 
         int size = buf.readInt();
-        for (int i = 0; i < size; i++)
-        config.setProperty(buf.readString(32767), buf.readString(32767));
+        for (int i = 0; i < size; i++) {
+            config.setProperty(buf.readString(200), buf.readString(200));
+        }
 
         return config;
     }

@@ -4,14 +4,15 @@ import io.lazurite.fpvracing.client.input.keybinds.EMPKeybind;
 import io.lazurite.fpvracing.client.input.keybinds.GodModeKeybind;
 import io.lazurite.fpvracing.client.input.keybinds.GogglePowerKeybind;
 import io.lazurite.fpvracing.client.input.keybinds.NoClipKeybind;
-import io.lazurite.fpvracing.client.renderers.FixedWingRenderer;
-import io.lazurite.fpvracing.client.renderers.QuadcopterRenderer;
-import io.lazurite.fpvracing.client.renderers.QuadcopterItemRenderer;
+import io.lazurite.fpvracing.client.renderer.FixedWingRenderer;
+import io.lazurite.fpvracing.client.renderer.QuadcopterRenderer;
+import io.lazurite.fpvracing.client.renderer.QuadcopterItemRenderer;
 import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.packet.*;
+import io.lazurite.fpvracing.network.tracker.ConfigFile;
 import io.lazurite.fpvracing.physics.PhysicsWorld;
 import io.lazurite.fpvracing.server.ServerInitializer;
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -33,7 +34,7 @@ public class ClientInitializer implements ClientModInitializer {
 
     /** The client player's config which is later sent to the server. */
     public static final String CONFIG_NAME = ServerInitializer.MODID + ".properties";
-    private static Config config;
+    public static Config config;
 
     /**
      * Initializes all of the registries and loads the player config.
@@ -42,7 +43,7 @@ public class ClientInitializer implements ClientModInitializer {
     public void onInitializeClient() {
         GLFW.glfwInit(); // forcefully initializes GLFW
 
-        config = new Config(CONFIG_NAME);
+        config = ConfigFile.readConfig(CONFIG_NAME);
         ClientTick.register();
 
         GogglePowerKeybind.register();
@@ -50,7 +51,7 @@ public class ClientInitializer implements ClientModInitializer {
         NoClipKeybind.register();
         EMPKeybind.register();
 
-        EntityPhysicsS2C.register();
+        PhysicsHandlerS2C.register();
         SelectedSlotS2C.register();
         ShouldRenderPlayerS2C.register();
         ModdedServerS2C.register();

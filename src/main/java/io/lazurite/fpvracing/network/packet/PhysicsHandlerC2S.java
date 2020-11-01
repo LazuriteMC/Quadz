@@ -1,8 +1,8 @@
 package io.lazurite.fpvracing.network.packet;
 
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
-import io.lazurite.fpvracing.physics.entity.IPhysicsHandler;
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
+import io.lazurite.fpvracing.physics.entity.PhysicsHandler;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
 import io.lazurite.fpvracing.util.PacketHelper;
 import io.lazurite.fpvracing.server.ServerInitializer;
 import io.netty.buffer.Unpooled;
@@ -19,10 +19,10 @@ import javax.vecmath.Vector3f;
 /**
  * The packet responsible for sending physics information from the client to the server. This packet is sent
  * exclusively by the client which is responsible for the entity's physics. The server, after it receives the info,
- * disperses it to the rest of the clients using {@link EntityPhysicsS2C}.
+ * disperses it to the rest of the clients using {@link PhysicsHandlerS2C}.
  * @author Ethan Johnson
  */
-public class EntityPhysicsC2S {
+public class PhysicsHandlerC2S {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "entity_physics_c2s");
 
     /**
@@ -60,7 +60,7 @@ public class EntityPhysicsC2S {
      * camera rotation (yaw, pitch).
      * @param physics the {@link ClientPhysicsHandler} to send
      */
-    public static void send(IPhysicsHandler physics) {
+    public static void send(PhysicsHandler physics) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeInt(physics.getEntity().getEntityId());
 
@@ -77,6 +77,6 @@ public class EntityPhysicsC2S {
      * Registers the packet in {@link ServerInitializer}.
      */
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, EntityPhysicsC2S::accept);
+        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, PhysicsHandlerC2S::accept);
     }
 }

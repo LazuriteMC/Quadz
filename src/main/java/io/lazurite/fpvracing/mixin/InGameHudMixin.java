@@ -1,7 +1,7 @@
 package io.lazurite.fpvracing.mixin;
 
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
-import io.lazurite.fpvracing.server.items.GogglesItem;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
+import io.lazurite.fpvracing.server.item.GogglesItem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;

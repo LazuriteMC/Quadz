@@ -2,7 +2,7 @@ package io.lazurite.fpvracing.server;
 
 import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.packet.ConfigC2S;
-import io.lazurite.fpvracing.network.packet.EntityPhysicsC2S;
+import io.lazurite.fpvracing.network.packet.PhysicsHandlerC2S;
 import io.lazurite.fpvracing.network.packet.EMPC2S;
 import io.lazurite.fpvracing.network.packet.GodModeC2S;
 import io.lazurite.fpvracing.network.packet.NoClipC2S;
@@ -12,12 +12,13 @@ import io.lazurite.fpvracing.network.tracker.generic.types.BooleanType;
 import io.lazurite.fpvracing.network.tracker.generic.types.FloatType;
 import io.lazurite.fpvracing.network.tracker.generic.types.FrequencyType;
 import io.lazurite.fpvracing.network.tracker.generic.types.IntegerType;
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
-import io.lazurite.fpvracing.server.entities.FixedWingEntity;
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
-import io.lazurite.fpvracing.server.items.QuadcopterItem;
-import io.lazurite.fpvracing.server.items.GogglesItem;
-import io.lazurite.fpvracing.server.items.TransmitterItem;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
+import io.lazurite.fpvracing.server.entity.flyable.FixedWingEntity;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
+import io.lazurite.fpvracing.server.item.ChannelWandItem;
+import io.lazurite.fpvracing.server.item.QuadcopterItem;
+import io.lazurite.fpvracing.server.item.GogglesItem;
+import io.lazurite.fpvracing.server.item.TransmitterItem;
 import io.lazurite.fpvracing.util.Frequency;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -47,6 +48,7 @@ public class ServerInitializer implements ModInitializer {
 	public static QuadcopterItem DRONE_SPAWNER_ITEM;
 	public static GogglesItem GOGGLES_ITEM;
 	public static TransmitterItem TRANSMITTER_ITEM;
+	public static ChannelWandItem CHANNEL_WAND_ITEM;
 	public static ItemGroup ITEM_GROUP;
 
 	/* Entities */
@@ -80,7 +82,7 @@ public class ServerInitializer implements ModInitializer {
 	}
 
 	private void registerNetwork() {
-		EntityPhysicsC2S.register();
+		PhysicsHandlerC2S.register();
 		ConfigC2S.register();
 
 		EMPC2S.register();
@@ -93,6 +95,7 @@ public class ServerInitializer implements ModInitializer {
 		DRONE_SPAWNER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "drone_spawner_item"), new QuadcopterItem(new Item.Settings().maxCount(1)));
 		GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
 		TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new TransmitterItem(new Item.Settings().maxCount(1)));
+		CHANNEL_WAND_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "channel_wand_item"), new ChannelWandItem(new Item.Settings().maxCount(1)));
 
 		ITEM_GROUP = FabricItemGroupBuilder
 				.create(new Identifier(MODID, "items"))
@@ -101,6 +104,7 @@ public class ServerInitializer implements ModInitializer {
 					stack.add(new ItemStack(DRONE_SPAWNER_ITEM));
 					stack.add(new ItemStack(GOGGLES_ITEM));
 					stack.add(new ItemStack(TRANSMITTER_ITEM));
+					stack.add(new ItemStack(CHANNEL_WAND_ITEM));
 				})
 				.build();
 	}

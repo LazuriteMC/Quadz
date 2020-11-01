@@ -1,8 +1,8 @@
-package io.lazurite.fpvracing.client.renderers;
+package io.lazurite.fpvracing.client.renderer;
 
 import io.lazurite.fpvracing.client.ClientInitializer;
-import io.lazurite.fpvracing.client.models.QuadcopterModel;
-import io.lazurite.fpvracing.physics.entity.PhysicsEntity;
+import io.lazurite.fpvracing.client.model.QuadcopterModel;
+import io.lazurite.fpvracing.server.entity.PhysicsEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
@@ -11,7 +11,7 @@ public class QuadcopterItemRenderer {
     private static QuadcopterModel model;
 
     public static void register() {
-        int size = PhysicsEntity.SIZE.getDataType().fromConfig(ClientInitializer.getConfig(), PhysicsEntity.SIZE.getName());
+        int size = PhysicsEntity.SIZE.getKey().getType().fromConfig(ClientInitializer.getConfig(), PhysicsEntity.SIZE.getKey().getName());
         model = new QuadcopterModel(size);
     }
 

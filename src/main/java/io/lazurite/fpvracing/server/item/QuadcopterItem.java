@@ -1,10 +1,11 @@
-package io.lazurite.fpvracing.server.items;
+package io.lazurite.fpvracing.server.item;
 
 import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
 import io.lazurite.fpvracing.server.ServerInitializer;
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
+import io.lazurite.fpvracing.server.entity.PhysicsEntity;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -54,8 +55,8 @@ public class QuadcopterItem extends Item {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static void writeToTag(ItemStack itemStack, PlayerEntity user) {
 		Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid());
+
 		CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
-		GenericDataTrackerRegistry.getAll(FlyableEntity.class).forEach(entry -> GenericDataTrackerRegistry.writeToTag(tag, (GenericDataTrackerRegistry.Entry) entry, entry.getDataType().fromConfig(config, entry.getName())));
-		GenericDataTrackerRegistry.getAll(QuadcopterEntity.class).forEach(entry -> GenericDataTrackerRegistry.writeToTag(tag, (GenericDataTrackerRegistry.Entry) entry, entry.getDataType().fromConfig(config, entry.getName())));
+		GenericDataTrackerRegistry.getAll(QuadcopterEntity.class).forEach(entry -> GenericDataTrackerRegistry.writeToTag(tag, (GenericDataTrackerRegistry.Entry) entry, entry.getKey().getType().fromConfig(config, entry.getKey().getName())));
 	}
 }

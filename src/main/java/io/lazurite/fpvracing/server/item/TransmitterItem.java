@@ -1,8 +1,8 @@
-package io.lazurite.fpvracing.server.items;
+package io.lazurite.fpvracing.server.item;
 
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
 import io.lazurite.fpvracing.server.ServerInitializer;
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -25,12 +25,12 @@ public class TransmitterItem extends Item {
             CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
             GenericDataTrackerRegistry.Entry<Integer> entry = FlyableEntity.BIND_ID;
 
-            if (entry.getDataType().fromTag(tag, entry.getName()) != null) {
+            if (entry.getKey().getType().fromTag(tag, entry.getKey().getName()) != null) {
                 List<FlyableEntity> entities = FlyableEntity.getList(player, 500);
 
                 for (FlyableEntity entity : entities) {
                     if (entity.getValue(entry)
-                            .equals(entry.getDataType().fromTag(tag, entry.getName()))) {
+                            .equals(entry.getKey().getType().fromTag(tag, entry.getKey().getName()))) {
                         return entity;
                     }
                 }
@@ -44,9 +44,9 @@ public class TransmitterItem extends Item {
         CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
         GenericDataTrackerRegistry.Entry<Integer> entry = FlyableEntity.BIND_ID;
 
-        if (entry.getDataType().fromTag(tag, entry.getName()) != null) {
+        if (entry.getKey().getType().fromTag(tag, entry.getKey().getName()) != null) {
             return flyable.getValue(entry)
-                    .equals(entry.getDataType().fromTag(tag, entry.getName()));
+                    .equals(entry.getKey().getType().fromTag(tag, entry.getKey().getName()));
         }
 
         return false;

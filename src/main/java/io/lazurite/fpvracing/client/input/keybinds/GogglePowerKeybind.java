@@ -2,7 +2,7 @@ package io.lazurite.fpvracing.client.input.keybinds;
 
 import io.lazurite.fpvracing.network.packet.PowerGogglesC2S;
 import io.lazurite.fpvracing.server.ServerInitializer;
-import io.lazurite.fpvracing.server.items.GogglesItem;
+import io.lazurite.fpvracing.server.item.GogglesItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;

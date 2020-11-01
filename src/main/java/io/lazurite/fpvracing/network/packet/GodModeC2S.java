@@ -2,10 +2,10 @@ package io.lazurite.fpvracing.network.packet;
 
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
 import io.lazurite.fpvracing.server.ServerInitializer;
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
-import io.lazurite.fpvracing.server.items.QuadcopterItem;
-import io.lazurite.fpvracing.server.items.TransmitterItem;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
+import io.lazurite.fpvracing.server.item.QuadcopterItem;
+import io.lazurite.fpvracing.server.item.TransmitterItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
@@ -35,13 +35,13 @@ public class GodModeC2S {
             GenericDataTrackerRegistry.Entry<Boolean> god = FlyableEntity.GOD_MODE;
 
             if (hand.getItem() instanceof TransmitterItem) {
-                if (bind.getDataType().fromTag(tag, bind.getName()) != null) {
+                if (bind.getKey().getType().fromTag(tag, bind.getKey().getName()) != null) {
                     List<Entity> entities = ((ServerWorld) player.getEntityWorld()).getEntitiesByType(ServerInitializer.QUADCOPTER_ENTITY, EntityPredicates.EXCEPT_SPECTATOR);
 
                     for (Entity entity : entities) {
                         QuadcopterEntity quad = (QuadcopterEntity) entity;
 
-                        if (quad.getValue(bind).equals(bind.getDataType().fromTag(tag, bind.getName()))) {
+                        if (quad.getValue(bind).equals(bind.getKey().getType().fromTag(tag, bind.getKey().getName()))) {
                             quad.setValue(god, !quad.getValue(FlyableEntity.GOD_MODE));
 
                             if (quad.getValue(FlyableEntity.GOD_MODE)) {
@@ -55,8 +55,8 @@ public class GodModeC2S {
                     }
                 }
             } else if (hand.getItem() instanceof QuadcopterItem) {
-                boolean godmode = god.getDataType().fromTag(tag, god.getName());
-                god.getDataType().toTag(tag, god.getName(), !godmode);
+                boolean godmode = god.getKey().getType().fromTag(tag, god.getKey().getName());
+                god.getKey().getType().toTag(tag, god.getKey().getName(), !godmode);
                 if (godmode) {
                     player.sendMessage(new LiteralText("God Mode Disabled"), false);
                 } else {

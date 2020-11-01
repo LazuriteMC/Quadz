@@ -1,7 +1,7 @@
 package io.lazurite.fpvracing.physics.thrust;
 
 import io.lazurite.fpvracing.client.input.InputTick;
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import io.lazurite.fpvracing.util.Matrix4fInject;
 import io.lazurite.fpvracing.util.math.BetaflightHelper;
 import io.lazurite.fpvracing.util.math.QuaternionHelper;
@@ -10,7 +10,7 @@ import net.minecraft.util.math.Vec3d;
 
 import javax.vecmath.Vector3f;
 
-public class QuadcopterThrust implements IThrust {
+public class QuadcopterThrust implements Thrust {
     private QuadcopterEntity quad;
 
     public QuadcopterThrust(QuadcopterEntity quad) {

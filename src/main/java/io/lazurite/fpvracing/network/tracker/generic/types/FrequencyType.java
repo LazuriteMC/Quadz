@@ -2,7 +2,7 @@ package io.lazurite.fpvracing.network.tracker.generic.types;
 
 import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.tracker.generic.GenericType;
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
 import io.lazurite.fpvracing.util.Frequency;
 import io.lazurite.fpvracing.util.PacketHelper;
 import net.minecraft.nbt.CompoundTag;

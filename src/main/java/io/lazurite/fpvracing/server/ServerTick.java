@@ -2,9 +2,9 @@ package io.lazurite.fpvracing.server;
 
 import io.lazurite.fpvracing.network.packet.SelectedSlotS2C;
 import io.lazurite.fpvracing.network.packet.ShouldRenderPlayerS2C;
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
-import io.lazurite.fpvracing.server.items.GogglesItem;
-import io.lazurite.fpvracing.server.items.TransmitterItem;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
+import io.lazurite.fpvracing.server.item.GogglesItem;
+import io.lazurite.fpvracing.server.item.TransmitterItem;
 import io.lazurite.fpvracing.util.PlayerPositionManager;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.item.ItemStack;

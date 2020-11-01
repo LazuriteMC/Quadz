@@ -1,9 +1,11 @@
 package io.lazurite.fpvracing.physics.entity;
 
+import io.lazurite.fpvracing.server.entity.PhysicsEntity;
+
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
-public class ServerPhysicsHandler implements IPhysicsHandler {
+public class ServerPhysicsHandler implements PhysicsHandler {
     private final PhysicsEntity entity;
     private final Vector3f position;
     private final Vector3f linearVelocity;
@@ -18,11 +20,6 @@ public class ServerPhysicsHandler implements IPhysicsHandler {
         angularVelocity = new Vector3f();
         orientation = new Quat4f();
     }
-
-//    @Override
-//    public void sendPackets() {
-//        EntityPhysicsS2C.send(this, false);
-//    }
 
     @Override
     public void setPosition(Vector3f position) {

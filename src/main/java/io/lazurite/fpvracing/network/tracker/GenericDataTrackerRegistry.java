@@ -1,28 +1,35 @@
 package io.lazurite.fpvracing.network.tracker;
 
 import io.lazurite.fpvracing.network.tracker.generic.GenericType;
-import io.lazurite.fpvracing.physics.entity.PhysicsEntity;
+import io.lazurite.fpvracing.server.entity.NetworkSyncedEntity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public class GenericDataTrackerRegistry {
     private static final List<Entry<?>> entries = new LinkedList<>();
 
-    public static <T> Entry<T> register(String name, T fallback, GenericType<T> dataType, Class<? extends PhysicsEntity> classType) {
-        Entry<T> entry = new Entry<>(name, fallback, dataType, classType);
+    public static <T> Entry<T> register(Config.Key<T> key, T fallback, Class<? extends NetworkSyncedEntity> classType) {
+        Entry<T> entry = new Entry<>(key, fallback, classType);
+        entries.add(entry);
+        return entry;
+    }
+
+    public static <T> Entry<T> register(Config.Key<T> key, T fallback, Class<? extends NetworkSyncedEntity> classType, BiConsumer<NetworkSyncedEntity, T> consumer) {
+        Entry<T> entry = new Entry<>(key, fallback,  classType, consumer);
         entries.add(entry);
         return entry;
     }
 
     public static <T> void writeToTag(CompoundTag tag, Entry<T> entry, T value) {
-        entry.getDataType().toTag(tag, entry.getName(), value);
+        entry.getKey().getType().toTag(tag, entry.getKey().getName(), value);
     }
 
     public static <T> T readFromTag(CompoundTag tag, Entry<T> entry) {
-        return entry.getDataType().fromTag(tag, entry.getName());
+        return entry.getKey().getType().fromTag(tag, entry.getKey().getName());
     }
 
     public static List<Entry<?>> getAll() {
@@ -33,7 +40,7 @@ public class GenericDataTrackerRegistry {
         List<Entry<?>> out = new LinkedList<>();
 
         entries.forEach(entry -> {
-            if (entry.getEntityType() == classType) {
+            if (entry.getEntityType().isAssignableFrom(classType)) {
                 out.add(entry);
             }
         });
@@ -46,7 +53,7 @@ public class GenericDataTrackerRegistry {
         List<Entry<T>> out = new LinkedList<>();
 
         entries.forEach(entry ->  {
-            if (entry.getEntityType() == entityType && entry.getDataType() == dataType) {
+            if (entry.getEntityType().isAssignableFrom(entityType) && entry.getKey().getType() == dataType) {
                 out.add((Entry<T>) entry);
             }
         });
@@ -55,22 +62,26 @@ public class GenericDataTrackerRegistry {
     }
 
     public static class Entry<T> {
-        private final String name;
-        private final TrackedData<T> trackedData;
-        private final GenericType<T> dataType;
-        private final Class<? extends PhysicsEntity> entityType;
+        private final Config.Key<T> key;
         private final T fallback;
+        private final Class<? extends NetworkSyncedEntity> entityType;
+        private final TrackedData<T> trackedData;
+        private BiConsumer<NetworkSyncedEntity, T> consumer;
 
-        public Entry(String name, T fallback, GenericType<T> dataType, Class<? extends PhysicsEntity> entityType) {
-            this.name = name;
+        public Entry(Config.Key<T> key, T fallback, Class<? extends NetworkSyncedEntity> entityType) {
+            this.key = key;
             this.fallback = fallback;
-            this.dataType = dataType;
             this.entityType = entityType;
-            this.trackedData = DataTracker.registerData(entityType, dataType);
+            this.trackedData = DataTracker.registerData(entityType, key.getType());
         }
 
-        public String getName() {
-            return this.name;
+        public Entry(Config.Key<T> key, T fallback, Class<? extends NetworkSyncedEntity> entityType, BiConsumer<NetworkSyncedEntity, T> consumer) {
+            this(key, fallback, entityType);
+            this.consumer = consumer;
+        }
+
+        public Config.Key<T> getKey() {
+            return this.key;
         }
 
         public T getFallback() {
@@ -81,12 +92,12 @@ public class GenericDataTrackerRegistry {
             return this.trackedData;
         }
 
-        public GenericType<T> getDataType() {
-            return this.dataType;
+        public Class<? extends NetworkSyncedEntity> getEntityType() {
+            return this.entityType;
         }
 
-        public Class<? extends PhysicsEntity> getEntityType() {
-            return this.entityType;
+        public BiConsumer<NetworkSyncedEntity, T> getConsumer() {
+            return this.consumer;
         }
     }
 }

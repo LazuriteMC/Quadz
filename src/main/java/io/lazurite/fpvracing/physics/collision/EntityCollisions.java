@@ -1,4 +1,4 @@
-package io.lazurite.fpvracing.physics.collisions;
+package io.lazurite.fpvracing.physics.collision;
 
 import net.minecraft.entity.*;
 

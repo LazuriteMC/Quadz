@@ -1,7 +1,7 @@
 package io.lazurite.fpvracing.mixin;
 
 import io.lazurite.fpvracing.server.ServerInitializer;
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.EntityS2CPacket;
 import net.minecraft.server.MinecraftServer;

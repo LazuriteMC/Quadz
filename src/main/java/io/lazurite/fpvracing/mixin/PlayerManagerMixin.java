@@ -1,8 +1,8 @@
 package io.lazurite.fpvracing.mixin;
 
 import io.lazurite.fpvracing.network.packet.ModdedServerS2C;
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
-import io.lazurite.fpvracing.server.items.GogglesItem;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
+import io.lazurite.fpvracing.server.item.GogglesItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;

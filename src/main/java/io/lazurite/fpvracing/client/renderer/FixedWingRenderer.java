@@ -1,7 +1,7 @@
-package io.lazurite.fpvracing.client.renderers;
+package io.lazurite.fpvracing.client.renderer;
 
 import io.lazurite.fpvracing.server.ServerInitializer;
-import io.lazurite.fpvracing.server.entities.FixedWingEntity;
+import io.lazurite.fpvracing.server.entity.flyable.FixedWingEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;

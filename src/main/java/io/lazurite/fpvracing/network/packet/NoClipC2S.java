@@ -2,9 +2,9 @@ package io.lazurite.fpvracing.network.packet;
 
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
 import io.lazurite.fpvracing.server.ServerInitializer;
-import io.lazurite.fpvracing.server.entities.FlyableEntity;
-import io.lazurite.fpvracing.server.items.QuadcopterItem;
-import io.lazurite.fpvracing.server.items.TransmitterItem;
+import io.lazurite.fpvracing.server.entity.FlyableEntity;
+import io.lazurite.fpvracing.server.item.QuadcopterItem;
+import io.lazurite.fpvracing.server.item.TransmitterItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
@@ -31,11 +31,11 @@ public class NoClipC2S {
             CompoundTag tag = hand.getOrCreateSubTag(ServerInitializer.MODID);
 
             if (hand.getItem() instanceof TransmitterItem) {
-                if (bind.getDataType().fromTag(tag, bind.getName()) != null) {
+                if (bind.getKey().getType().fromTag(tag, bind.getKey().getName()) != null) {
                     List<FlyableEntity> entities = FlyableEntity.getList(player, 500);
 
                     for (FlyableEntity entity : entities) {
-                        if (entity.getValue(FlyableEntity.BIND_ID).equals(bind.getDataType().fromTag(tag, bind.getName()))) {
+                        if (entity.getValue(FlyableEntity.BIND_ID).equals(bind.getKey().getType().fromTag(tag, bind.getKey().getName()))) {
                             entity.noClip = !entity.noClip;
 
                             if (entity.noClip) player.sendMessage(new LiteralText("No Clip Enabled"), false);
@@ -46,8 +46,8 @@ public class NoClipC2S {
                     }
                 }
             } else if (hand.getItem() instanceof QuadcopterItem) {
-                boolean noclip = noClip.getDataType().fromTag(tag, noClip.getName());
-                noClip.getDataType().toTag(tag, noClip.getName(), !noclip);
+                boolean noclip = noClip.getKey().getType().fromTag(tag, noClip.getKey().getName());
+                noClip.getKey().getType().toTag(tag, noClip.getKey().getName(), !noclip);
                 if (noclip) {
                     player.sendMessage(new LiteralText("No Clip Disabled"), false);
                 } else {

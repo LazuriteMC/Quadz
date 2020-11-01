@@ -2,9 +2,9 @@ package io.lazurite.fpvracing.physics.entity;
 
 import io.lazurite.fpvracing.client.ClientInitializer;
 import io.lazurite.fpvracing.client.ClientTick;
-import io.lazurite.fpvracing.client.input.InputTick;
 import io.lazurite.fpvracing.physics.PhysicsWorld;
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
+import io.lazurite.fpvracing.server.entity.PhysicsEntity;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import io.lazurite.fpvracing.util.math.QuaternionHelper;
 import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.shapes.BoxShape;
@@ -20,10 +20,9 @@ import net.minecraft.util.math.*;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
-import java.util.List;
 
 @Environment(EnvType.CLIENT)
-public class ClientPhysicsHandler implements IPhysicsHandler {
+public class ClientPhysicsHandler implements PhysicsHandler {
     private final Quat4f prevOrientation;
     private final Quat4f netOrientation;
     private PhysicsEntity entity;
@@ -84,16 +83,6 @@ public class ClientPhysicsHandler implements IPhysicsHandler {
     public RigidBody getRigidBody() {
         return this.body;
     }
-
-//    @Override
-//    public void sendPackets() {
-//        if (isActive()) {
-//            EntityPhysicsC2S.send(this);
-//        } else {
-//            setPrevOrientation(getOrientation());
-//            setOrientation(netOrientation);
-//        }
-//    }
 
     @Override
     public PhysicsEntity getEntity() {
@@ -183,6 +172,16 @@ public class ClientPhysicsHandler implements IPhysicsHandler {
     }
 
     /**
+     * Gets the orientation received over the network.
+     */
+    public Quat4f getNetOrientation() {
+        Quat4f out = new Quat4f();
+        out.set(netOrientation);
+        return out;
+    }
+
+
+    /**
      * Apply a list of forces. Mostly a convenience method.
      * @param forces an array of forces to apply to the {@link RigidBody}
      */
@@ -191,38 +190,6 @@ public class ClientPhysicsHandler implements IPhysicsHandler {
             getRigidBody().applyCentralForce(force);
         }
     }
-
-    public void decreaseAngularVelocity() {
-        List<RigidBody> bodies = ClientInitializer.physicsWorld.getRigidBodies();
-        boolean mightCollide = false;
-        float t = 0.25f;
-
-        for (RigidBody body : bodies) {
-            if (body != getRigidBody()) {
-                Vector3f dist = body.getCenterOfMassPosition(new Vector3f());
-                dist.sub(getRigidBody().getCenterOfMassPosition(new Vector3f()));
-
-                if (dist.length() < 1.0f) {
-                    mightCollide = true;
-                    break;
-                }
-            }
-        }
-
-        if (!mightCollide) {
-            getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
-        } else {
-            float it = 1 - InputTick.axisValues.currT;
-
-            if (Math.abs(InputTick.axisValues.currX) * it > t ||
-                    Math.abs(InputTick.axisValues.currY) * it > t ||
-                    Math.abs(InputTick.axisValues.currZ) * it > t) {
-                getRigidBody().setAngularVelocity(new Vector3f(0, 0, 0));
-            }
-        }
-    }
-
-
 
     /**
      * Creates a new {@link RigidBody} based off of the drone's attributes.

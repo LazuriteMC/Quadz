@@ -1,6 +1,7 @@
 package io.lazurite.fpvracing.physics;
 
-import io.lazurite.fpvracing.physics.collisions.BlockCollisions;
+import io.lazurite.fpvracing.network.tracker.Config;
+import io.lazurite.fpvracing.physics.collision.BlockCollisions;
 import io.lazurite.fpvracing.client.ClientInitializer;
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
 import com.bulletphysics.collision.broadphase.BroadphaseInterface;
@@ -12,24 +13,23 @@ import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
 import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
 import com.bulletphysics.linearmath.Clock;
+import io.lazurite.fpvracing.server.ServerInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.world.ClientWorld;
+
 import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class PhysicsWorld {
-    public static final String GRAVITY = "gravity";
-    public static final String AIR_DENSITY = "airDensity";
-    public static final String BLOCK_RADIUS = "blockRadius";
-
-    private float gravity;
-    private float airDensity;
-    private int blockRadius;
+    public static final Config.Key<Integer> BLOCK_RADIUS = new Config.Key<>("blockRadius", ServerInitializer.INTEGER_TYPE);
+    public static final Config.Key<Float> AIR_DENSITY = new Config.Key<>("airDensity", ServerInitializer.FLOAT_TYPE);
+    public static final Config.Key<Float> GRAVITY = new Config.Key<>("gravity", ServerInitializer.FLOAT_TYPE);
 
     public final Clock clock;
+    public final Config config;
     public final List<ClientPhysicsHandler> entities;
     public final BlockCollisions blockCollisions;
     private final DiscreteDynamicsWorld dynamicsWorld;
@@ -38,21 +38,14 @@ public class PhysicsWorld {
         this.entities = new ArrayList<>();
         this.blockCollisions = new BlockCollisions(this);
         this.clock = new Clock();
-        this.readFromConfig();
+        this.config = ClientInitializer.getConfig();
 
         BroadphaseInterface broadphase = new DbvtBroadphase();
         CollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
         CollisionDispatcher dispatcher = new CollisionDispatcher(collisionConfiguration);
         SequentialImpulseConstraintSolver solver = new SequentialImpulseConstraintSolver();
         dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-        dynamicsWorld.setGravity(new Vector3f(0, gravity, 0));
-    }
-
-    public void readFromConfig() {
-        blockRadius = Integer.parseInt(ClientInitializer.getConfig().getProperty(BLOCK_RADIUS));
-        gravity = Float.parseFloat(ClientInitializer.getConfig().getProperty(GRAVITY));
-        airDensity = Float.parseFloat(ClientInitializer.getConfig().getProperty(AIR_DENSITY));
-        if (dynamicsWorld != null) setGravity();
+        dynamicsWorld.setGravity(new Vector3f(0, config.getValue(GRAVITY), 0));
     }
 
     public void stepWorld() {
@@ -96,19 +89,15 @@ public class PhysicsWorld {
     }
 
     public void setGravity() {
-        dynamicsWorld.setGravity(new Vector3f(0, gravity, 0));
-    }
-
-    public float getGravity() {
-        return gravity;
+        dynamicsWorld.setGravity(new Vector3f(0, config.getValue(GRAVITY), 0));
     }
 
     public float getAirDensity() {
-        return airDensity;
+        return config.getValue(AIR_DENSITY);
     }
 
     public int getBlockRadius() {
-        return blockRadius;
+        return config.getValue(BLOCK_RADIUS);
     }
 
     public void add(ClientPhysicsHandler physics) {

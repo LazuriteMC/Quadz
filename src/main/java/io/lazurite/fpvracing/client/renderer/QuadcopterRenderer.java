@@ -1,10 +1,10 @@
-package io.lazurite.fpvracing.client.renderers;
+package io.lazurite.fpvracing.client.renderer;
 
 import io.lazurite.fpvracing.client.ClientInitializer;
-import io.lazurite.fpvracing.client.models.QuadcopterModel;
+import io.lazurite.fpvracing.client.model.QuadcopterModel;
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
-import io.lazurite.fpvracing.physics.entity.PhysicsEntity;
-import io.lazurite.fpvracing.server.entities.QuadcopterEntity;
+import io.lazurite.fpvracing.server.entity.PhysicsEntity;
+import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import io.lazurite.fpvracing.util.math.QuaternionHelper;
 import io.lazurite.fpvracing.server.ServerInitializer;
 import net.fabricmc.api.EnvType;
@@ -29,7 +29,7 @@ public class QuadcopterRenderer extends EntityRenderer<QuadcopterEntity> {
         super(dispatcher);
         this.shadowRadius = 0.2F;
 
-        int size = PhysicsEntity.SIZE.getDataType().fromConfig(ClientInitializer.getConfig(), PhysicsEntity.SIZE.getName());
+        int size = PhysicsEntity.SIZE.getKey().getType().fromConfig(ClientInitializer.getConfig(), PhysicsEntity.SIZE.getKey().getName());
         this.model = new QuadcopterModel(size);
     }
 
@@ -51,7 +51,7 @@ public class QuadcopterRenderer extends EntityRenderer<QuadcopterEntity> {
         if (quadcopterEntity.getValue(PhysicsEntity.SIZE) != null) {
             this.model.setSize(quadcopterEntity.getValue(PhysicsEntity.SIZE));
         } else {
-            this.model.setSize(PhysicsEntity.SIZE.getDataType().fromConfig(ClientInitializer.getConfig(), PhysicsEntity.SIZE.getName()));
+            this.model.setSize(PhysicsEntity.SIZE.getKey().getType().fromConfig(ClientInitializer.getConfig(), PhysicsEntity.SIZE.getKey().getName()));
         }
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(model.getLayer(this.getTexture(quadcopterEntity)));
         model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);

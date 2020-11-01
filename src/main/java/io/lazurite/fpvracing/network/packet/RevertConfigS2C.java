@@ -1,6 +1,7 @@
 package io.lazurite.fpvracing.network.packet;
 
 import io.lazurite.fpvracing.client.ClientInitializer;
+import io.lazurite.fpvracing.network.tracker.ConfigFile;
 import io.lazurite.fpvracing.server.ServerInitializer;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
@@ -15,8 +16,7 @@ public class RevertConfigS2C {
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
         context.getTaskQueue().execute(() -> {
-            ClientInitializer.getConfig().readConfig(ClientInitializer.CONFIG_NAME);
-            ClientInitializer.physicsWorld.readFromConfig();
+            ClientInitializer.config = ConfigFile.readConfig(ClientInitializer.CONFIG_NAME);
             ConfigC2S.send(ClientInitializer.getConfig());
         });
     }

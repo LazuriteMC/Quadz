@@ -1,10 +1,10 @@
-package io.lazurite.fpvracing.physics.collisions;
+package io.lazurite.fpvracing.physics.collision;
 
 import io.lazurite.fpvracing.client.ClientInitializer;
 import io.lazurite.fpvracing.physics.PhysicsWorld;
 import io.lazurite.fpvracing.physics.BlockHelper;
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
-import io.lazurite.fpvracing.physics.entity.PhysicsEntity;
+import io.lazurite.fpvracing.server.entity.PhysicsEntity;
 import com.bulletphysics.collision.broadphase.Dispatcher;
 import com.bulletphysics.collision.narrowphase.PersistentManifold;
 import com.bulletphysics.collision.shapes.BoxShape;

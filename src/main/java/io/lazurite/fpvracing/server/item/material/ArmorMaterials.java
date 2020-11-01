@@ -1,4 +1,4 @@
-package io.lazurite.fpvracing.server.items.materials;
+package io.lazurite.fpvracing.server.item.material;
 
 import io.lazurite.fpvracing.server.ServerInitializer;
 import net.fabricmc.api.EnvType;
