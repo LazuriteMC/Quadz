@@ -63,7 +63,7 @@ public class PhysicsWorld {
 
             if (world != null) {
                 if (physics.isActive()) {
-                    physics.getEntity().step(physics, delta);
+                    physics.getEntity().step(delta);
 
                     /* Add the rigid body to the world if it isn't already there */
                     if (!physics.getRigidBody().isInWorld()) {

@@ -1,7 +1,5 @@
 package io.lazurite.fpvracing.server.entity.flyable;
 
-import com.bulletphysics.dynamics.RigidBody;
-import io.lazurite.fpvracing.client.ClientInitializer;
 import io.lazurite.fpvracing.client.input.InputTick;
 import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
@@ -10,7 +8,6 @@ import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
 import io.lazurite.fpvracing.server.ServerInitializer;
 import io.lazurite.fpvracing.server.entity.FlyableEntity;
 import io.lazurite.fpvracing.server.item.QuadcopterItem;
-import io.lazurite.fpvracing.server.item.TransmitterItem;
 import io.lazurite.fpvracing.util.math.BetaflightHelper;
 import io.lazurite.fpvracing.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
@@ -24,8 +21,6 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
 import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
-import java.util.List;
 
 /**
  * @author Ethan Johnson
@@ -48,34 +43,28 @@ public class QuadcopterEntity extends FlyableEntity {
 		thrust = new QuadcopterThrust(this);
 	}
 
+	@Override
 	@Environment(EnvType.CLIENT)
-	public void step(ClientPhysicsHandler physics, float delta) {
-		super.step(physics, delta);
-		decreaseAngularVelocity();
+	public void stepInput(float delta) {
+		ClientPhysicsHandler physics = (ClientPhysicsHandler) getPhysics();
+		float deltaX = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currX, getValue(RATE), getValue(EXPO), getValue(SUPER_RATE), delta);
+		float deltaY = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currY, getValue(RATE), getValue(EXPO), getValue(SUPER_RATE), delta);
+		float deltaZ = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currZ, getValue(RATE), getValue(EXPO), getValue(SUPER_RATE), delta);
 
-		/*
-		 * Change rotation of the quad using controller input.
-		 */
-		if (TransmitterItem.isBoundTransmitter(ClientInitializer.client.player.getMainHandStack(), this)) {
-			float deltaX = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currX, getValue(RATE), getValue(EXPO), getValue(SUPER_RATE), delta);
-			float deltaY = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currY, getValue(RATE), getValue(EXPO), getValue(SUPER_RATE), delta);
-			float deltaZ = (float) BetaflightHelper.calculateRates(InputTick.axisValues.currZ, getValue(RATE), getValue(EXPO), getValue(SUPER_RATE), delta);
+		physics.rotateX(deltaX);
+		physics.rotateY(deltaY);
+		physics.rotateZ(deltaZ);
 
-			physics.rotateX(deltaX);
-			physics.rotateY(deltaY);
-			physics.rotateZ(deltaZ);
-
-			physics.applyForce(thrust.getForce());
-		}
+		physics.applyForce(thrust.getForce());
 	}
 
 	@Override
 	public void updateEulerRotations() {
+		super.updateEulerRotations();
+
 		Quat4f cameraPitch = physics.getOrientation();
 		QuaternionHelper.rotateX(cameraPitch, -getValue(CAMERA_ANGLE));
 		pitch = QuaternionHelper.getPitch(cameraPitch);
-
-		super.updateEulerRotations();
 	}
 
 	/**
@@ -87,38 +76,6 @@ public class QuadcopterEntity extends FlyableEntity {
 	@Override
 	public boolean isKillable() {
 		return !(getValue(FlyableEntity.GOD_MODE) || noClip);
-	}
-
-	@Environment(EnvType.CLIENT)
-	public void decreaseAngularVelocity() {
-		List<RigidBody> bodies = ClientInitializer.physicsWorld.getRigidBodies();
-		RigidBody rigidBody = ((ClientPhysicsHandler) getPhysics()).getRigidBody();
-		boolean mightCollide = false;
-		float t = 0.25f;
-
-		for (RigidBody body : bodies) {
-			if (body != rigidBody) {
-				Vector3f dist = body.getCenterOfMassPosition(new Vector3f());
-				dist.sub(rigidBody.getCenterOfMassPosition(new Vector3f()));
-
-				if (dist.length() < 1.0f) {
-					mightCollide = true;
-					break;
-				}
-			}
-		}
-
-		if (!mightCollide) {
-			rigidBody.setAngularVelocity(new Vector3f(0, 0, 0));
-		} else {
-			float it = 1 - InputTick.axisValues.currT;
-
-			if (Math.abs(InputTick.axisValues.currX) * it > t ||
-					Math.abs(InputTick.axisValues.currY) * it > t ||
-					Math.abs(InputTick.axisValues.currZ) * it > t) {
-				rigidBody.setAngularVelocity(new Vector3f(0, 0, 0));
-			}
-		}
 	}
 
 	/**

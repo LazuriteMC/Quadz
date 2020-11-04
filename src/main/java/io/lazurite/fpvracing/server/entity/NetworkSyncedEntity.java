@@ -31,10 +31,6 @@ public abstract class NetworkSyncedEntity extends Entity {
     public <T> void setValue(GenericDataTrackerRegistry.Entry<T> entry, T value) {
         this.getDataTracker().set(entry.getTrackedData(), value);
 
-        if (entry == PhysicsEntity.MASS) {
-            System.out.println("MASS: " + value);
-        }
-
         if (entry.getConsumer() != null) {
             entry.getConsumer().accept(this, value);
         }

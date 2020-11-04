@@ -1,10 +1,12 @@
 package io.lazurite.fpvracing.server.entity;
 
+import com.bulletphysics.dynamics.RigidBody;
 import io.lazurite.fpvracing.client.ClientInitializer;
 import io.lazurite.fpvracing.client.input.InputTick;
 import io.lazurite.fpvracing.network.packet.AmDeadC2S;
 import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
+import io.lazurite.fpvracing.network.tracker.generic.GenericType;
 import io.lazurite.fpvracing.physics.collision.BlockCollisions;
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
 import io.lazurite.fpvracing.physics.thrust.Thrust;
@@ -33,6 +35,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
+import javax.vecmath.Vector3f;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -55,10 +58,21 @@ public abstract class FlyableEntity extends PhysicsEntity {
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void step(ClientPhysicsHandler physics, float delta) {
-        super.step(physics, delta);
+    public void step(float delta) {
+        super.step(delta);
         calculateBlockDamage();
+        decreaseAngularVelocity();
+
+        PlayerEntity player = ClientInitializer.client.player;
+        if (player != null) {
+            if (TransmitterItem.isBoundTransmitter(player.getMainHandStack(), this)) {
+                stepInput(delta);
+            }
+        }
     }
+
+    @Environment(EnvType.CLIENT)
+    public abstract void stepInput(float delta);
 
     /**
      * Finds all instances of {@link FlyableEntity} within range of the given {@link Entity}.
@@ -84,11 +98,13 @@ public abstract class FlyableEntity extends PhysicsEntity {
 
             if (handItem instanceof TransmitterItem) {
                 Random rand = new Random();
+                String name = FlyableEntity.BIND_ID.getKey().getName();
 
-                setValue(BIND_ID, rand.nextInt());
-                setPlayerID(player.getEntityId());
+                setValue(BIND_ID, rand.nextInt(10000));
+                setValue(PLAYER_ID, player.getEntityId());
+                System.out.println(getValue(BIND_ID));
                 player.getMainHandStack().getOrCreateSubTag(ServerInitializer.MODID)
-                        .putInt(BIND_ID.getKey().getName(), getValue(BIND_ID));
+                        .putInt(name, getValue(BIND_ID));
 
                 player.sendMessage(new LiteralText("Transmitter bound"), false);
             } else if (handItem instanceof ChannelWandItem) {
@@ -187,6 +203,38 @@ public abstract class FlyableEntity extends PhysicsEntity {
                     kill();
                     return;
                 }
+            }
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    public void decreaseAngularVelocity() {
+        List<RigidBody> bodies = ClientInitializer.physicsWorld.getRigidBodies();
+        RigidBody rigidBody = ((ClientPhysicsHandler) getPhysics()).getRigidBody();
+        boolean mightCollide = false;
+        float t = 0.25f;
+
+        for (RigidBody body : bodies) {
+            if (body != rigidBody) {
+                Vector3f dist = body.getCenterOfMassPosition(new Vector3f());
+                dist.sub(rigidBody.getCenterOfMassPosition(new Vector3f()));
+
+                if (dist.length() < 1.0f) {
+                    mightCollide = true;
+                    break;
+                }
+            }
+        }
+
+        if (!mightCollide) {
+            rigidBody.setAngularVelocity(new Vector3f(0, 0, 0));
+        } else {
+            float it = 1 - InputTick.axisValues.currT;
+
+            if (Math.abs(InputTick.axisValues.currX) * it > t ||
+                    Math.abs(InputTick.axisValues.currY) * it > t ||
+                    Math.abs(InputTick.axisValues.currZ) * it > t) {
+                rigidBody.setAngularVelocity(new Vector3f(0, 0, 0));
             }
         }
     }

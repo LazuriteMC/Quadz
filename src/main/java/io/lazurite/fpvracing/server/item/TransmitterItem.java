@@ -1,6 +1,7 @@
 package io.lazurite.fpvracing.server.item;
 
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
+import io.lazurite.fpvracing.network.tracker.generic.GenericType;
 import io.lazurite.fpvracing.server.ServerInitializer;
 import io.lazurite.fpvracing.server.entity.FlyableEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,14 +24,14 @@ public class TransmitterItem extends Item {
     public static FlyableEntity flyableEntityFromTransmitter(ItemStack itemStack, PlayerEntity player) {
         if (itemStack.getItem() instanceof TransmitterItem) {
             CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
-            GenericDataTrackerRegistry.Entry<Integer> entry = FlyableEntity.BIND_ID;
+            GenericType<?> type = FlyableEntity.BIND_ID.getKey().getType();
+            String name = FlyableEntity.BIND_ID.getKey().getName();
 
-            if (entry.getKey().getType().fromTag(tag, entry.getKey().getName()) != null) {
+            if (type.fromTag(tag, name) != null) {
                 List<FlyableEntity> entities = FlyableEntity.getList(player, FlyableEntity.class, 500);
 
                 for (FlyableEntity entity : entities) {
-                    if (entity.getValue(entry)
-                            .equals(entry.getKey().getType().fromTag(tag, entry.getKey().getName()))) {
+                    if (entity.getValue(FlyableEntity.BIND_ID).equals(type.fromTag(tag, name))) {
                         return entity;
                     }
                 }
@@ -42,11 +43,11 @@ public class TransmitterItem extends Item {
 
     public static boolean isBoundTransmitter(ItemStack itemStack, FlyableEntity flyable) {
         CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
-        GenericDataTrackerRegistry.Entry<Integer> entry = FlyableEntity.BIND_ID;
+        GenericType<?> type = FlyableEntity.BIND_ID.getKey().getType();
+        String name = FlyableEntity.BIND_ID.getKey().getName();
 
-        if (entry.getKey().getType().fromTag(tag, entry.getKey().getName()) != null) {
-            return flyable.getValue(entry)
-                    .equals(entry.getKey().getType().fromTag(tag, entry.getKey().getName()));
+        if (type.fromTag(tag, name) != null) {
+            return flyable.getValue(FlyableEntity.BIND_ID).equals(type.fromTag(tag, name));
         }
 
         return false;

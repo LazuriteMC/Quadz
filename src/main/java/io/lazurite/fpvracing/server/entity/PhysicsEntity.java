@@ -63,9 +63,9 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
     }
 
     @Environment(EnvType.CLIENT)
-    public void step(ClientPhysicsHandler physics, float delta) {
+    public void step(float delta) {
         if (age > 2) {
-            physics.applyForce(Air.getResistanceForce(
+            ((ClientPhysicsHandler) getPhysics()).applyForce(Air.getResistanceForce(
                     physics.getLinearVelocity(),
                     getValue(SIZE),
                     getValue(DRAG_COEFFICIENT)
