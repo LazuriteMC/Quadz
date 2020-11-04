@@ -6,7 +6,6 @@ import io.lazurite.fpvracing.client.input.InputTick;
 import io.lazurite.fpvracing.network.packet.AmDeadC2S;
 import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
-import io.lazurite.fpvracing.network.tracker.generic.GenericType;
 import io.lazurite.fpvracing.physics.collision.BlockCollisions;
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
 import io.lazurite.fpvracing.physics.thrust.Thrust;
@@ -40,6 +39,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * This class is the base class for any flying entity in the FPV racing mod.
+ * @author Ethan Johnson
+ */
 public abstract class FlyableEntity extends PhysicsEntity {
     public static final GenericDataTrackerRegistry.Entry<Integer> BIND_ID = GenericDataTrackerRegistry.register(new Config.Key<>("bindID", ServerInitializer.INTEGER_TYPE), -1, FlyableEntity.class);
     public static final GenericDataTrackerRegistry.Entry<Boolean> GOD_MODE = GenericDataTrackerRegistry.register(new Config.Key<>("godMode", ServerInitializer.BOOLEAN_TYPE), false, FlyableEntity.class);
@@ -51,11 +54,20 @@ public abstract class FlyableEntity extends PhysicsEntity {
 
     protected Thrust thrust;
 
+    /**
+     * The main constructor. Doesn't do a whole lot.
+     * @param type
+     * @param world
+     */
     public FlyableEntity(EntityType<?> type, World world) {
         super(type, world);
         this.ignoreCameraFrustum = true;
     }
 
+    /**
+     * This method is directly related to updating the physics side of things.
+     * @param delta delta time
+     */
     @Override
     @Environment(EnvType.CLIENT)
     public void step(float delta) {
@@ -71,6 +83,11 @@ public abstract class FlyableEntity extends PhysicsEntity {
         }
     }
 
+    /**
+     * Used by any subclass of FlyableEntity, this method is for updating the entity
+     * based on the user's controller input.
+     * @param delta delta time
+     */
     @Environment(EnvType.CLIENT)
     public abstract void stepInput(float delta);
 
@@ -131,15 +148,28 @@ public abstract class FlyableEntity extends PhysicsEntity {
         return distance < Math.pow(ClientInitializer.client.options.viewDistance * 16, 2);
     }
 
+    /**
+     * Controls if the flyable entity can be killed (used for god mode).
+     * @return whether or not the flyable entity is killable
+     */
     public boolean isKillable() {
         return false;
     }
 
+    /**
+     * Writes the tag to the spawner item.
+     * @param itemStack the spawner item
+     */
     public void writeTagToSpawner(ItemStack itemStack) {
         CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
         writeCustomDataToTag(tag);
     }
 
+    /**
+     * Reads the tag from the spawner item.
+     * @param itemStack the spawner item
+     * @param user the player to set the flyable's name to
+     */
     public void readTagFromSpawner(ItemStack itemStack, PlayerEntity user) {
         CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
         readCustomDataFromTag(tag);
@@ -207,6 +237,9 @@ public abstract class FlyableEntity extends PhysicsEntity {
         }
     }
 
+    /**
+     * Decrease the angular velocity of the flyable when it isn't near the ground.
+     */
     @Environment(EnvType.CLIENT)
     public void decreaseAngularVelocity() {
         List<RigidBody> bodies = ClientInitializer.physicsWorld.getRigidBodies();
