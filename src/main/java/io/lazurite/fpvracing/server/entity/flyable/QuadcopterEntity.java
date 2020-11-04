@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import javax.vecmath.Quat4f;
 
 /**
+ * Originally called DroneEntity, this class is the main entity used in this mod.
  * @author Ethan Johnson
  * @author Patrick Hofmann
  */
@@ -35,8 +36,9 @@ public class QuadcopterEntity extends FlyableEntity {
 	public static final GenericDataTrackerRegistry.Entry<Integer> CAMERA_ANGLE = GenericDataTrackerRegistry.register(new Config.Key<>("cameraAngle", ServerInitializer.INTEGER_TYPE), 0, QuadcopterEntity.class);
 
 	/**
-	 * @param type  the {@link EntityType}
-	 * @param world the {@link World} that the {@link QuadcopterEntity} will be spawned in
+	 * The main constructor. Doesn't do a whole lot.
+	 * @param type
+	 * @param world
 	 */
 	public QuadcopterEntity(EntityType<?> type, World world) {
 		super(type, world);
@@ -67,12 +69,6 @@ public class QuadcopterEntity extends FlyableEntity {
 		pitch = QuaternionHelper.getPitch(cameraPitch);
 	}
 
-	/**
-	 * Gets whether the {@link QuadcopterEntity} can be killed
-	 * by conventional means (e.g. punched, rained on, set on fire, etc.)
-	 *
-	 * @return whether or not the {@link QuadcopterEntity} is killable
-	 */
 	@Override
 	public boolean isKillable() {
 		return !(getValue(FlyableEntity.GOD_MODE) || noClip);

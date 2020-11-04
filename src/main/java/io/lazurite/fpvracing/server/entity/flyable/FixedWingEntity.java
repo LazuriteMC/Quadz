@@ -7,6 +7,12 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
 
 public class FixedWingEntity extends FlyableEntity {
+
+    /**
+     * The main constructor. Doesn't do a whole lot.
+     * @param type
+     * @param world
+     */
     public FixedWingEntity(EntityType<?> type, World world) {
         super(type, world);
     }
