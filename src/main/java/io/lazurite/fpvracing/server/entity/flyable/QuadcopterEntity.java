@@ -2,11 +2,9 @@ package io.lazurite.fpvracing.server.entity.flyable;
 
 import com.bulletphysics.dynamics.RigidBody;
 import io.lazurite.fpvracing.client.ClientInitializer;
-import io.lazurite.fpvracing.client.ClientTick;
 import io.lazurite.fpvracing.client.input.InputTick;
 import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
-import io.lazurite.fpvracing.physics.Air;
 import io.lazurite.fpvracing.physics.thrust.QuadcopterThrust;
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
 import io.lazurite.fpvracing.server.ServerInitializer;
@@ -41,19 +39,19 @@ public class QuadcopterEntity extends FlyableEntity {
 	public static final GenericDataTrackerRegistry.Entry<Integer> THRUST = GenericDataTrackerRegistry.register(new Config.Key<>("thrust", ServerInitializer.INTEGER_TYPE), 50, QuadcopterEntity.class);
 	public static final GenericDataTrackerRegistry.Entry<Integer> CAMERA_ANGLE = GenericDataTrackerRegistry.register(new Config.Key<>("cameraAngle", ServerInitializer.INTEGER_TYPE), 0, QuadcopterEntity.class);
 
-	private final QuadcopterThrust thrust = new QuadcopterThrust(this);
-
 	/**
 	 * @param type  the {@link EntityType}
 	 * @param world the {@link World} that the {@link QuadcopterEntity} will be spawned in
 	 */
 	public QuadcopterEntity(EntityType<?> type, World world) {
 		super(type, world);
+		thrust = new QuadcopterThrust(this);
 	}
 
 	@Environment(EnvType.CLIENT)
 	public void step(ClientPhysicsHandler physics, float delta) {
 		super.step(physics, delta);
+		decreaseAngularVelocity();
 
 		/*
 		 * Change rotation of the quad using controller input.
@@ -69,8 +67,6 @@ public class QuadcopterEntity extends FlyableEntity {
 
 			physics.applyForce(thrust.getForce());
 		}
-
-		decreaseAngularVelocity();
 	}
 
 	@Override
@@ -146,27 +142,12 @@ public class QuadcopterEntity extends FlyableEntity {
 	 */
 	@Override
 	public void kill() {
+		super.kill();
+
 		if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
 			ItemStack itemStack = new ItemStack(ServerInitializer.DRONE_SPAWNER_ITEM);
 			writeTagToSpawner(itemStack);
 			dropStack(itemStack);
 		}
-
-		remove();
 	}
-
-//	/**
-//	 * Whenever the {@link DroneEntity} is killed or
-//	 * otherwise not supposed to be there, this is called.
-//	 */
-//	@Override
-//	public void remove() {
-//		super.remove();
-//
-//		if (world.isClient()) {
-//			if (physics.isActive() && ClientTick.isServerModded) {
-//				EntityPhysicsC2S.send(this);
-//			}
-//		}
-//	}
 }

@@ -2,10 +2,12 @@ package io.lazurite.fpvracing.server.entity;
 
 import io.lazurite.fpvracing.client.ClientInitializer;
 import io.lazurite.fpvracing.client.input.InputTick;
+import io.lazurite.fpvracing.network.packet.AmDeadC2S;
 import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
 import io.lazurite.fpvracing.physics.collision.BlockCollisions;
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
+import io.lazurite.fpvracing.physics.thrust.Thrust;
 import io.lazurite.fpvracing.server.ServerInitializer;
 import io.lazurite.fpvracing.server.item.ChannelWandItem;
 import io.lazurite.fpvracing.server.item.TransmitterItem;
@@ -43,6 +45,8 @@ public abstract class FlyableEntity extends PhysicsEntity {
 
     public static final int TRACKING_RANGE = 80;
     public static final int PSEUDO_TRACKING_RANGE = TRACKING_RANGE / 2;
+
+    protected Thrust thrust;
 
     public FlyableEntity(EntityType<?> type, World world) {
         super(type, world);
@@ -129,6 +133,15 @@ public abstract class FlyableEntity extends PhysicsEntity {
     @Override
     public Packet<?> createSpawnPacket() {
         return new EntitySpawnS2CPacket(this);
+    }
+
+    @Override
+    public void kill() {
+        super.kill();
+
+        if (getEntityWorld().isClient()) {
+            AmDeadC2S.send(this);
+        }
     }
 
     /**

@@ -1,12 +1,7 @@
 package io.lazurite.fpvracing.server;
 
+import io.lazurite.fpvracing.network.packet.*;
 import io.lazurite.fpvracing.network.tracker.Config;
-import io.lazurite.fpvracing.network.packet.ConfigC2S;
-import io.lazurite.fpvracing.network.packet.PhysicsHandlerC2S;
-import io.lazurite.fpvracing.network.packet.EMPC2S;
-import io.lazurite.fpvracing.network.packet.GodModeC2S;
-import io.lazurite.fpvracing.network.packet.NoClipC2S;
-import io.lazurite.fpvracing.network.packet.PowerGogglesC2S;
 import io.lazurite.fpvracing.network.tracker.generic.GenericType;
 import io.lazurite.fpvracing.network.tracker.generic.types.BooleanType;
 import io.lazurite.fpvracing.network.tracker.generic.types.FloatType;
@@ -73,7 +68,7 @@ public class ServerInitializer implements ModInitializer {
 	public void onInitialize() {
 		registerEntities();
 		registerItems();
-		registerNetwork();
+		registerPackets();
 		registerGenericTypes();
 
 //		Commands.registerCommands();
@@ -81,9 +76,10 @@ public class ServerInitializer implements ModInitializer {
 		ServerStartCallback.EVENT.register(ServerInitializer::start);
 	}
 
-	private void registerNetwork() {
+	private void registerPackets() {
 		PhysicsHandlerC2S.register();
 		ConfigC2S.register();
+		AmDeadC2S.register();
 
 		EMPC2S.register();
 		NoClipC2S.register();

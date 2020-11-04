@@ -54,11 +54,12 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
             physics.setSize(getValue(SIZE));
         }
 
-//        if (!world.isClient()) {
-//            if (getValue(PLAYER_ID) != -1 && getEntityWorld().getEntityById(getValue(PLAYER_ID)) == null) {
-//                kill();
-//            }
-//        }
+        // kil
+        if (!world.isClient()) {
+            if (getValue(PLAYER_ID) != -1 && getEntityWorld().getEntityById(getValue(PLAYER_ID)) == null) {
+                kill();
+            }
+        }
     }
 
     @Environment(EnvType.CLIENT)
