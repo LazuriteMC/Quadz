@@ -35,7 +35,7 @@ public class PlayerInventoryMixin {
                 FlyableEntity flyable = TransmitterItem.flyableEntityFromTransmitter(itemStack, player);
 
                 if (flyable != null) {
-                    flyable.setPlayerID(player.getEntityId());
+                    flyable.setValue(FlyableEntity.PLAYER_ID, player.getEntityId());
                 }
             }
         }

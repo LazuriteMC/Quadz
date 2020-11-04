@@ -5,8 +5,6 @@ import io.lazurite.fpvracing.util.TickTimer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Packet;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.world.World;
 
 public abstract class NetworkSyncedEntity extends Entity {
@@ -21,8 +19,6 @@ public abstract class NetworkSyncedEntity extends Entity {
         this(type, world, 5);
     }
 
-    public abstract void sendNetworkPacket();
-
     @Override
     public void tick() {
         super.tick();
@@ -34,6 +30,10 @@ public abstract class NetworkSyncedEntity extends Entity {
 
     public <T> void setValue(GenericDataTrackerRegistry.Entry<T> entry, T value) {
         this.getDataTracker().set(entry.getTrackedData(), value);
+
+        if (entry == PhysicsEntity.MASS) {
+            System.out.println("MASS: " + value);
+        }
 
         if (entry.getConsumer() != null) {
             entry.getConsumer().accept(this, value);
@@ -49,6 +49,8 @@ public abstract class NetworkSyncedEntity extends Entity {
 
         return data;
     }
+
+    protected abstract void sendNetworkPacket();
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -66,10 +68,5 @@ public abstract class NetworkSyncedEntity extends Entity {
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected void initDataTracker() {
         GenericDataTrackerRegistry.getAll(getClass()).forEach(entry -> getDataTracker().startTracking(((GenericDataTrackerRegistry.Entry) entry).getTrackedData(), entry.getFallback()));
-    }
-
-    @Override
-    public Packet<?> createSpawnPacket() {
-        return new EntitySpawnS2CPacket(this);
     }
 }

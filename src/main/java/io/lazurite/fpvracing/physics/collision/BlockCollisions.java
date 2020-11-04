@@ -92,7 +92,7 @@ public class BlockCollisions {
 
         this.collisionBlocks.forEach((pos, body) -> {
             if (!toKeepBlocks.contains(pos)) {
-                this.physicsWorld.removeRigidBody(collisionBlocks.get(pos));
+                this.physicsWorld.removeRigidBody(body);
                 toRemove.add(pos);
             }
         });
@@ -102,7 +102,7 @@ public class BlockCollisions {
     }
 
     public boolean contains(RigidBody body) {
-        return this.collisionBlocks.containsKey(body);
+        return this.collisionBlocks.containsValue(body);
     }
 
     public Collection<RigidBody> getRigidBodies() {

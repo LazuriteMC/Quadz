@@ -32,7 +32,7 @@ public class NoClipC2S {
 
             if (hand.getItem() instanceof TransmitterItem) {
                 if (bind.getKey().getType().fromTag(tag, bind.getKey().getName()) != null) {
-                    List<FlyableEntity> entities = FlyableEntity.getList(player, 500);
+                    List<FlyableEntity> entities = FlyableEntity.getList(player, FlyableEntity.class, 500);
 
                     for (FlyableEntity entity : entities) {
                         if (entity.getValue(FlyableEntity.BIND_ID).equals(bind.getKey().getType().fromTag(tag, bind.getKey().getName()))) {

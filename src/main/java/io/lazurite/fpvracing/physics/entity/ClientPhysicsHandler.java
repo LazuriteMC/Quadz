@@ -28,6 +28,9 @@ public class ClientPhysicsHandler implements PhysicsHandler {
     private final PhysicsEntity entity;
     private RigidBody body;
 
+    private int prevSize = -1;
+    private float prevMass = -1;
+
     public ClientPhysicsHandler(PhysicsEntity entity) {
         this.entity = entity;
         this.prevOrientation = new Quat4f(0, 1, 0, 0);
@@ -181,6 +184,30 @@ public class ClientPhysicsHandler implements PhysicsHandler {
     }
 
     /**
+     * Sets the mass of the physics entity. Also refreshes the {@link RigidBody}.
+     * @param mass the new mass
+     */
+    public void setMass(float mass) {
+        if (prevMass != mass) {
+            createRigidBody();
+        }
+
+        prevMass = mass;
+    }
+
+    /**
+     * Sets the size of the physics entity. Also refreshes the {@link RigidBody}.
+     * @param size the new size
+     */
+    public void setSize(int size) {
+        if (prevSize != size) {
+           createRigidBody();
+        }
+
+        prevSize = size;
+    }
+
+    /**
      * Apply a list of forces. Mostly a convenience method.
      * @param forces an array of forces to apply to the {@link RigidBody}
      */
@@ -194,6 +221,7 @@ public class ClientPhysicsHandler implements PhysicsHandler {
      * Creates a new {@link RigidBody} based off of the drone's attributes.
      */
     public void createRigidBody() {
+        System.out.println("CREATE: " + entity.getValue(PhysicsEntity.MASS));
         float s = entity.getValue(PhysicsEntity.SIZE) / 16.0f;
         Box cBox = new Box(-s / 2.0f, -s / 8.0f, -s / 2.0f, s / 2.0f, s / 8.0f, s / 2.0f);
         Vector3f inertia = new Vector3f(0.0F, 0.0F, 0.0F);

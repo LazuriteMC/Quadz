@@ -1,10 +1,9 @@
 package io.lazurite.fpvracing.server.entity;
 
-import com.bulletphysics.dynamics.RigidBody;
 import io.lazurite.fpvracing.network.packet.PhysicsHandlerC2S;
+import io.lazurite.fpvracing.network.packet.PhysicsHandlerS2C;
 import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
-import io.lazurite.fpvracing.network.packet.PhysicsHandlerS2C;
 import io.lazurite.fpvracing.physics.Air;
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
 import io.lazurite.fpvracing.physics.entity.PhysicsHandler;
@@ -22,17 +21,16 @@ import javax.vecmath.Vector3f;
 
 public abstract class PhysicsEntity extends NetworkSyncedEntity {
     public static final GenericDataTrackerRegistry.Entry<Integer> PLAYER_ID = GenericDataTrackerRegistry.register(new Config.Key<>("playerId", ServerInitializer.INTEGER_TYPE), -1, PhysicsEntity.class, (entity, value) -> ((PhysicsEntity) entity).setPlayerID(value));
-    public static final GenericDataTrackerRegistry.Entry<Integer> SIZE = GenericDataTrackerRegistry.register(new Config.Key<>("size", ServerInitializer.INTEGER_TYPE), 8, PhysicsEntity.class, (entity, value) -> ((PhysicsEntity) entity).setSize(value));
-    public static final GenericDataTrackerRegistry.Entry<Float> MASS = GenericDataTrackerRegistry.register(new Config.Key<>("mass", ServerInitializer.FLOAT_TYPE), 10.0f, PhysicsEntity.class, (entity, value) -> ((PhysicsEntity) entity).setMass(value));
+    public static final GenericDataTrackerRegistry.Entry<Integer> SIZE = GenericDataTrackerRegistry.register(new Config.Key<>("size", ServerInitializer.INTEGER_TYPE), 2, PhysicsEntity.class);
+    public static final GenericDataTrackerRegistry.Entry<Float> MASS = GenericDataTrackerRegistry.register(new Config.Key<>("mass", ServerInitializer.FLOAT_TYPE), 10.0f, PhysicsEntity.class);
     public static final GenericDataTrackerRegistry.Entry<Float> DRAG_COEFFICIENT = GenericDataTrackerRegistry.register(new Config.Key<>("dragCoefficient", ServerInitializer.FLOAT_TYPE), 0.5F, PhysicsEntity.class);
+    public static final GenericDataTrackerRegistry.Entry<Boolean> NO_CLIP = GenericDataTrackerRegistry.register(new Config.Key<>("noClip", ServerInitializer.BOOLEAN_TYPE), false, PhysicsEntity.class);
 
     protected PhysicsHandler physics;
 
-    private int prevSize = -1;
-    private float prevMass = -1;
-
     public PhysicsEntity(EntityType<?> type, World world) {
         super(type, world);
+        this.noClip = false;
         this.physics = createPhysicsHandler(this);
     }
 
@@ -50,7 +48,11 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
         updatePosition();
         updateEulerRotations();
 
-        System.out.println(getPos());
+        if (world.isClient()) {
+            ClientPhysicsHandler physics = (ClientPhysicsHandler) this.physics;
+            physics.setMass(getValue(MASS));
+            physics.setSize(getValue(SIZE));
+        }
 
 //        if (!world.isClient()) {
 //            if (getValue(PLAYER_ID) != -1 && getEntityWorld().getEntityById(getValue(PLAYER_ID)) == null) {
@@ -63,20 +65,24 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
     public void step(ClientPhysicsHandler physics, float delta) {
         Vector3f direction = physics.getLinearVelocity();
         direction.normalize();
-//        physics.applyForce(Air.getResistanceForce(
-//                direction,
-//                getValue(SIZE),
-//                getValue(DRAG_COEFFICIENT)
-//        ));
-        System.out.println(Air.getResistanceForce(
-                direction,
-                getValue(SIZE),
-                getValue(DRAG_COEFFICIENT)
-        ));
+
+        if (age > 20) {
+            physics.applyForce(Air.getResistanceForce(
+                    direction,
+                    getValue(SIZE),
+                    getValue(DRAG_COEFFICIENT)
+            ));
+        }
+    }
+
+    public void updatePositionAndAngles(Vector3f position, float yaw, float pitch) {
+        this.updatePositionAndAngles(position.x, position.y, position.z, yaw, pitch);
+        physics.setPosition(position);
+        setYaw(yaw);
     }
 
     @Override
-    public void sendNetworkPacket() {
+    protected void sendNetworkPacket() {
         if (getEntityWorld().isClient()) {
             ClientPhysicsHandler physics = (ClientPhysicsHandler) getPhysics();
 
@@ -87,43 +93,15 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
                 physics.setOrientation(physics.getNetOrientation());
             }
         } else {
-            PhysicsHandlerS2C.send(getPhysics(), false);
+            PhysicsHandlerS2C.send(getPhysics());
         }
-    }
-
-    public PhysicsHandler getPhysics() {
-        return physics;
-    }
-
-    /**
-     * Sets the mass of the physics entity. Also refreshes the {@link RigidBody}.
-     * @param mass the new mass
-     */
-    public void setMass(float mass) {
-        if (prevMass != mass && world.isClient()) {
-            ((ClientPhysicsHandler) physics).createRigidBody();
-        }
-
-        prevMass = mass;
-    }
-
-    /**
-     * Sets the size of the physics entity. Also refreshes the {@link RigidBody}.
-     * @param size the new size
-     */
-    public void setSize(int size) {
-        if (prevSize != size && world.isClient()) {
-            ((ClientPhysicsHandler) physics).createRigidBody();
-        }
-
-        prevSize = size;
     }
 
     /**
      * Sets the player ID used by the physics entity.
      * @param playerID the player ID
      */
-    public void setPlayerID(int playerID) {
+    protected void setPlayerID(int playerID) {
         PlayerEntity player = (PlayerEntity) getEntityWorld().getEntityById(playerID);
         if (player != null) {
             setCustomName(new LiteralText(player.getGameProfile().getName()));
@@ -131,17 +109,7 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
         }
     }
 
-    public void updatePositionAndAngles(Vector3f position, float yaw, float pitch) {
-        this.updatePositionAndAngles(position.x, position.y, position.z, yaw, pitch);
-        physics.setPosition(position);
-        setYaw(yaw);
-
-//        if (!world.isClient()) {
-//            PhysicsHandlerS2C.send(physics, true);
-//        }
-    }
-
-    public void updatePosition() {
+    protected void updatePosition() {
         updatePosition(
                 getPhysics().getPosition().x,
                 getPhysics().getPosition().y,
@@ -149,7 +117,7 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
         );
     }
 
-    public void updateEulerRotations() {
+    protected void updateEulerRotations() {
         prevYaw = yaw;
         yaw = QuaternionHelper.getYaw(physics.getOrientation());
 
@@ -170,5 +138,14 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
 
         this.prevYaw = this.yaw;
         this.yaw = yaw;
+    }
+
+    @Override
+    public boolean collides() {
+        return true;
+    }
+
+    public PhysicsHandler getPhysics() {
+        return physics;
     }
 }

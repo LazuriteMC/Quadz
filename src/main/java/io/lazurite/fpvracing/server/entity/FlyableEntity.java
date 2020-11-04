@@ -20,6 +20,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Packet;
+import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
@@ -36,7 +38,6 @@ import java.util.Random;
 public abstract class FlyableEntity extends PhysicsEntity {
     public static final GenericDataTrackerRegistry.Entry<Integer> BIND_ID = GenericDataTrackerRegistry.register(new Config.Key<>("bindID", ServerInitializer.INTEGER_TYPE), -1, FlyableEntity.class);
     public static final GenericDataTrackerRegistry.Entry<Boolean> GOD_MODE = GenericDataTrackerRegistry.register(new Config.Key<>("godMode", ServerInitializer.BOOLEAN_TYPE), false, FlyableEntity.class);
-    public static final GenericDataTrackerRegistry.Entry<Boolean> NO_CLIP = GenericDataTrackerRegistry.register(new Config.Key<>("noClip", ServerInitializer.BOOLEAN_TYPE), false, FlyableEntity.class);
     public static final GenericDataTrackerRegistry.Entry<Integer> FIELD_OF_VIEW = GenericDataTrackerRegistry.register(new Config.Key<>("fieldOfView", ServerInitializer.INTEGER_TYPE),  120, FlyableEntity.class);
     public static final GenericDataTrackerRegistry.Entry<Frequency> FREQUENCY = GenericDataTrackerRegistry.register(new Config.Key<>("frequency", ServerInitializer.FREQUENCY_TYPE), new Frequency('R', 1), FlyableEntity.class);
 
@@ -57,12 +58,12 @@ public abstract class FlyableEntity extends PhysicsEntity {
 
     /**
      * Finds all instances of {@link FlyableEntity} within range of the given {@link Entity}.
-     * @param entity the {@link Entity} as the origin
+     * @param origin the {@link Entity} as the origin
      * @return a {@link List} of type {@link FlyableEntity}
      */
-    public static List<FlyableEntity> getList(Entity entity, int r) {
-        ServerWorld world = (ServerWorld) entity.getEntityWorld();
-        return world.getEntitiesByClass(FlyableEntity.class, new Box(entity.getBlockPos()).expand(r), EntityPredicates.VALID_ENTITY);
+    public static List<FlyableEntity> getList(Entity origin, Class<? extends FlyableEntity> type, int r) {
+        ServerWorld world = (ServerWorld) origin.getEntityWorld();
+        return world.getEntitiesByClass(type, new Box(origin.getBlockPos()).expand(r), EntityPredicates.VALID_ENTITY);
     }
 
     /**
@@ -87,9 +88,10 @@ public abstract class FlyableEntity extends PhysicsEntity {
 
                 player.sendMessage(new LiteralText("Transmitter bound"), false);
             } else if (handItem instanceof ChannelWandItem) {
+                int frequency = getValue(FREQUENCY).getFrequency();
                 char band = getValue(FREQUENCY).getBand();
                 int channel = getValue(FREQUENCY).getChannel();
-                player.sendMessage(new LiteralText("Band: " + band + ", Channel: " + channel), false);
+                player.sendMessage(new LiteralText("Frequency: " + frequency + " (Band: " + band + " Channel: " + channel + ")"), false);
             }
         } else if (!InputTick.controllerExists()) {
             player.sendMessage(new LiteralText("Controller not found"), false);
@@ -122,6 +124,11 @@ public abstract class FlyableEntity extends PhysicsEntity {
         CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
         readCustomDataFromTag(tag);
         setValue(PLAYER_ID, user.getEntityId());
+    }
+
+    @Override
+    public Packet<?> createSpawnPacket() {
+        return new EntitySpawnS2CPacket(this);
     }
 
     /**

@@ -8,10 +8,11 @@ import io.lazurite.fpvracing.util.math.QuaternionHelper;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
 
+import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 public class QuadcopterThrust implements Thrust {
-    private QuadcopterEntity quad;
+    private final QuadcopterEntity quad;
 
     public QuadcopterThrust(QuadcopterEntity quad) {
         this.quad = quad;
@@ -26,10 +27,11 @@ public class QuadcopterThrust implements Thrust {
         thrustVec.scale(calculateCurve() * quad.getValue(QuadcopterEntity.THRUST));
 
         Vector3f yawVec = getVector();
-        yawVec.scale((float) BetaflightHelper.calculateRates(InputTick.axisValues.currY, quad.getValue(QuadcopterEntity.RATE), quad.getValue(QuadcopterEntity.EXPO), quad.getValue(QuadcopterEntity.SUPER_RATE), 0.01f));
+        yawVec.scale((float) Math.abs(BetaflightHelper.calculateRates(InputTick.axisValues.currY, quad.getValue(QuadcopterEntity.RATE), quad.getValue(QuadcopterEntity.EXPO), quad.getValue(QuadcopterEntity.SUPER_RATE), 0.01f)));
 
         Vector3f out = new Vector3f();
         out.add(thrustVec, yawVec);
+        out.negate();
         return out;
     }
 
@@ -38,13 +40,12 @@ public class QuadcopterThrust implements Thrust {
      * @return {@link Vec3d} containing thrust direction
      */
     public Vector3f getVector() {
-        QuaternionHelper.rotateX(quad.getPhysics().getOrientation(), 90);
+        Quat4f orientation = quad.getPhysics().getOrientation();
+        QuaternionHelper.rotateX(orientation, 90);
         Matrix4f mat = new Matrix4f();
-        Matrix4fInject.from(mat).fromQuaternion(QuaternionHelper.quat4fToQuaternion(quad.getPhysics().getOrientation()));
+        Matrix4fInject.from(mat).fromQuaternion(QuaternionHelper.quat4fToQuaternion(orientation));
 
-        Vector3f out = Matrix4fInject.from(mat).matrixToVector();
-        out.scale(-1);
-        return out;
+        return Matrix4fInject.from(mat).matrixToVector();
     }
 
     /**
@@ -54,5 +55,4 @@ public class QuadcopterThrust implements Thrust {
     public float calculateCurve() {
         return (float) (Math.pow(InputTick.axisValues.currT, quad.getValue(QuadcopterEntity.THRUST_CURVE)));
     }
-
 }

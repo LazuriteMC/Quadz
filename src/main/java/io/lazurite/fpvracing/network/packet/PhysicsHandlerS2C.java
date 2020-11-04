@@ -35,8 +35,6 @@ public class PhysicsHandlerS2C {
      */
     public static void accept(PacketContext context, PacketByteBuf buf) {
         PlayerEntity player = context.getPlayer();
-
-        boolean force = buf.readBoolean();
         int entityID = buf.readInt();
 
         Vector3f position = PacketHelper.deserializeVector3f(buf);
@@ -55,7 +53,7 @@ public class PhysicsHandlerS2C {
                     physics = (ClientPhysicsHandler) entity.getPhysics();
 
                     /* Physics Vectors (orientation, position, velocity, etc.) */
-                    if (force || !physics.isActive()) {
+                    if (!physics.isActive() && entity.age > 10) {
                         physics.setPosition(position);
                         physics.getRigidBody().setLinearVelocity(linearVel);
                         physics.getRigidBody().setAngularVelocity(angularVel);
@@ -71,10 +69,8 @@ public class PhysicsHandlerS2C {
      * server-side values such as camera settings, physics settings, and rate settings.
      * @param physics the {@link PhysicsHandler} to send
      */
-    public static void send(PhysicsHandler physics, boolean force) {
+    public static void send(PhysicsHandler physics) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-
-        buf.writeBoolean(force);
         buf.writeInt(physics.getEntity().getEntityId());
 
         /* Physics Vectors */

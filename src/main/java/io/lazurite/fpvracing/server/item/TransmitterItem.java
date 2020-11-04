@@ -26,7 +26,7 @@ public class TransmitterItem extends Item {
             GenericDataTrackerRegistry.Entry<Integer> entry = FlyableEntity.BIND_ID;
 
             if (entry.getKey().getType().fromTag(tag, entry.getKey().getName()) != null) {
-                List<FlyableEntity> entities = FlyableEntity.getList(player, 500);
+                List<FlyableEntity> entities = FlyableEntity.getList(player, FlyableEntity.class, 500);
 
                 for (FlyableEntity entity : entities) {
                     if (entity.getValue(entry)

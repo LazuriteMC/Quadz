@@ -99,4 +99,9 @@ public class Frequency {
             return ((Frequency) obj).getFrequency() == this.getFrequency();
         else return false;
     }
+
+    @Override
+    public String toString() {
+        return "Frequency: " + getFrequency();
+    }
 }

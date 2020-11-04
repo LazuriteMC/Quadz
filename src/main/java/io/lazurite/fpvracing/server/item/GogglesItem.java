@@ -114,7 +114,7 @@ public class GogglesItem extends ArmorItem {
 		CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
 		GenericDataTrackerRegistry.Entry<Frequency> entry = FlyableEntity.FREQUENCY;
 
-		if (entry.getKey().getType().fromTag(tag, entry.getKey().getName()) == null) {
+		if (entry.getKey().getType().fromTag(tag, entry.getKey().getName()).getFrequency() == -1) {
 			Frequency freq = entry.getKey().getType().fromConfig(config, entry.getKey().getName());
 			entry.getKey().getType().toTag(tag, entry.getKey().getName(), freq);
 		}

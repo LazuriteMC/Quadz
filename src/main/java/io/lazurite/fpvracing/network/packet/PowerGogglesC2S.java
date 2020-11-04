@@ -37,7 +37,7 @@ public class PowerGogglesC2S {
 
             if (hat.getItem() instanceof GogglesItem) {
                 if (on && !GogglesItem.isInGoggles(serverPlayer)) {
-                    List<FlyableEntity> flyables = FlyableEntity.getList(serverPlayer, 500);
+                    List<FlyableEntity> flyables = FlyableEntity.getList(serverPlayer, FlyableEntity.class, 500);
 
                     for (FlyableEntity entity : flyables) {
                         if (serverPlayer.distanceTo(entity) > QuadcopterEntity.TRACKING_RANGE) {
