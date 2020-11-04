@@ -63,12 +63,9 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
 
     @Environment(EnvType.CLIENT)
     public void step(ClientPhysicsHandler physics, float delta) {
-        Vector3f direction = physics.getLinearVelocity();
-        direction.normalize();
-
-        if (age > 20) {
+        if (age > 2) {
             physics.applyForce(Air.getResistanceForce(
-                    direction,
+                    physics.getLinearVelocity(),
                     getValue(SIZE),
                     getValue(DRAG_COEFFICIENT)
             ));

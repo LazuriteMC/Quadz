@@ -8,6 +8,8 @@
       "rotation": [-45, 0, 0],
       "translation": [-9, 3, 0],
       "scale": [1, 1, 1]
+    },
+    "firstperson_lefthand": {
     }
   }
 }

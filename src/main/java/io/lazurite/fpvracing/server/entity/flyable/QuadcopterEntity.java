@@ -6,6 +6,7 @@ import io.lazurite.fpvracing.client.ClientTick;
 import io.lazurite.fpvracing.client.input.InputTick;
 import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
+import io.lazurite.fpvracing.physics.Air;
 import io.lazurite.fpvracing.physics.thrust.QuadcopterThrust;
 import io.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
 import io.lazurite.fpvracing.server.ServerInitializer;
@@ -53,7 +54,6 @@ public class QuadcopterEntity extends FlyableEntity {
 	@Environment(EnvType.CLIENT)
 	public void step(ClientPhysicsHandler physics, float delta) {
 		super.step(physics, delta);
-		decreaseAngularVelocity();
 
 		/*
 		 * Change rotation of the quad using controller input.
@@ -69,6 +69,8 @@ public class QuadcopterEntity extends FlyableEntity {
 
 			physics.applyForce(thrust.getForce());
 		}
+
+		decreaseAngularVelocity();
 	}
 
 	@Override
