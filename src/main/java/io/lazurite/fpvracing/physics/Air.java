@@ -23,7 +23,7 @@ public class Air {
         float k = (ClientInitializer.physicsWorld.getAirDensity() * dragCoefficient * (float) Math.pow(size / 16f, 2)) / 2.0f;
 
         Vec3d airVec3d = velocity.multiply(k).multiply(velocity.lengthSquared()).negate();
-        return new Vector3f((float) airVec3d.x, (float) airVec3d.y, (float) airVec3d.z);
+        return VectorHelper.vec3dToVector3f(airVec3d);
     }
 
     public static Vector3f getRandomWindVector() {

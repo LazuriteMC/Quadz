@@ -52,18 +52,23 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
 
         System.out.println(getPos());
 
-        if (!world.isClient()) {
-            if (getValue(PLAYER_ID) != -1 && getEntityWorld().getEntityById(getValue(PLAYER_ID)) == null) {
-                kill();
-            }
-        }
+//        if (!world.isClient()) {
+//            if (getValue(PLAYER_ID) != -1 && getEntityWorld().getEntityById(getValue(PLAYER_ID)) == null) {
+//                kill();
+//            }
+//        }
     }
 
     @Environment(EnvType.CLIENT)
     public void step(ClientPhysicsHandler physics, float delta) {
         Vector3f direction = physics.getLinearVelocity();
         direction.normalize();
-        physics.applyForce(Air.getResistanceForce(
+//        physics.applyForce(Air.getResistanceForce(
+//                direction,
+//                getValue(SIZE),
+//                getValue(DRAG_COEFFICIENT)
+//        ));
+        System.out.println(Air.getResistanceForce(
                 direction,
                 getValue(SIZE),
                 getValue(DRAG_COEFFICIENT)
@@ -131,9 +136,9 @@ public abstract class PhysicsEntity extends NetworkSyncedEntity {
         physics.setPosition(position);
         setYaw(yaw);
 
-        if (!world.isClient()) {
-            PhysicsHandlerS2C.send(physics, true);
-        }
+//        if (!world.isClient()) {
+//            PhysicsHandlerS2C.send(physics, true);
+//        }
     }
 
     public void updatePosition() {

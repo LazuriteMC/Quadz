@@ -1,9 +1,6 @@
 package io.lazurite.fpvracing.network.tracker;
 
 import io.lazurite.fpvracing.network.tracker.generic.GenericType;
-import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 import java.util.Properties;
 

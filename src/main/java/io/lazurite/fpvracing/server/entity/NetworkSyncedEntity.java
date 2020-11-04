@@ -1,7 +1,6 @@
 package io.lazurite.fpvracing.server.entity;
 
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
-import io.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import io.lazurite.fpvracing.util.TickTimer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
