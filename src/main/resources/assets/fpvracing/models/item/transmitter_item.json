@@ -1,6 +1,15 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "fpvracing:item/transmitter_item_32"
+    "layer0": "fpvracing:item/transmitter_item"
+  },
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [-45, 0, 0],
+      "translation": [-9, 3, 0],
+      "scale": [1, 1, 1]
+    },
+    "firstperson_lefthand": {
+    }
   }
 }

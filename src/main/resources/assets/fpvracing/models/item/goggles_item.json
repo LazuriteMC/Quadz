@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "fpvracing:item/goggles_item_32"
+    "layer0": "fpvracing:item/goggles_item"
   }
 }
 

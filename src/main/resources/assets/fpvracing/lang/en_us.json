@@ -1,12 +1,13 @@
 {
   "itemGroup.fpvracing.items":"FPV Racing",
-  "category.fpvracing.keys":"FPV Racing Keybinds",
+  "category.fpvracing.keys":"FPV Racing Keybindings",
   "key.fpvracing.emp":"EMP",
   "key.fpvracing.noclip":"No Clip",
   "key.fpvracing.godmode":"God Mode",
   "key.fpvracing.powergoggles":"Goggle Power",
   "entity.fpvracing.drone_entity":"Drone",
-  "item.fpvracing.drone_spawner_item":"Drone Spawner",
+  "item.fpvracing.drone_spawner_item":"Drone",
   "item.fpvracing.goggles_item":"Goggles",
-  "item.fpvracing.transmitter_item":"Transmitter"
+  "item.fpvracing.transmitter_item":"Transmitter",
+  "item.fpvracing.channel_wand_item":"Channel Wand"
 }
