@@ -696,7 +696,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "translate" : "help.fpvracing.description.goggle_band",
+        "translate" : "help.fpvracing.description.band",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -708,7 +708,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "translate" : "help.fpvracing.description.goggle_channel",
+        "translate" : "help.fpvracing.description.channel",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
