@@ -10,4 +10,6 @@ public interface GenericType<T> extends TrackedDataHandler<T> {
 
     void toConfig(Config config, String key, T value);
     T fromConfig(Config config, String key);
+
+    Class<T> getClassType();
 }

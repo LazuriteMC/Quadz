@@ -14,15 +14,15 @@ public class ConfigValueS2C {
     public static final Identifier PACKET_ID = new Identifier(ServerInitializer.MODID, "config_value_s2c");
 
     public static void accept(PacketContext context, PacketByteBuf buf) {
-        String key = buf.readString(32767);
-        String value = buf.readString(32767);
+        String key = buf.readString(200);
+        String value = buf.readString(200);
         context.getTaskQueue().execute(() -> ClientInitializer.getConfig().setProperty(key, value));
     }
 
     public static void send(PlayerEntity player, String key, String value) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeString(key);
-        buf.writeString(value);
+        buf.writeString(key, 200);
+        buf.writeString(value, 200);
         ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, PACKET_ID, buf);
     }
 

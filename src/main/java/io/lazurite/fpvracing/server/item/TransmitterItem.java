@@ -1,6 +1,5 @@
 package io.lazurite.fpvracing.server.item;
 
-import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
 import io.lazurite.fpvracing.network.tracker.generic.GenericType;
 import io.lazurite.fpvracing.server.ServerInitializer;
 import io.lazurite.fpvracing.server.entity.FlyableEntity;

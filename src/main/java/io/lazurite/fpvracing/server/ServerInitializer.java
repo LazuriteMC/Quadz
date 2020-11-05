@@ -71,7 +71,7 @@ public class ServerInitializer implements ModInitializer {
 		registerPackets();
 		registerGenericTypes();
 
-//		Commands.registerCommands();
+		Commands.register();
 		ServerTick.register();
 		ServerStartCallback.EVENT.register(ServerInitializer::start);
 	}

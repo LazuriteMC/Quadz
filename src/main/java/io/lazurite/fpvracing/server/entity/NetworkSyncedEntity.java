@@ -1,5 +1,6 @@
 package io.lazurite.fpvracing.server.entity;
 
+import io.lazurite.fpvracing.network.tracker.Config;
 import io.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
 import io.lazurite.fpvracing.util.TickTimer;
 import net.minecraft.entity.Entity;
@@ -36,6 +37,13 @@ public abstract class NetworkSyncedEntity extends Entity {
         }
     }
 
+    public <T> void setValue (Config.Key<T> key, T value) {
+        for (GenericDataTrackerRegistry.Entry<T> entry : GenericDataTrackerRegistry.getAll(getClass(), key.getType())) {
+            if (entry.getKey().equals(key)) {
+                setValue(entry, value);
+            }
+        }
+    }
     public <T> T getValue(GenericDataTrackerRegistry.Entry<T> entry) {
         T data = getDataTracker().get(entry.getTrackedData());
 
@@ -44,6 +52,16 @@ public abstract class NetworkSyncedEntity extends Entity {
         }
 
         return data;
+    }
+
+    public <T> T getValue(Config.Key<T> key) {
+        for (GenericDataTrackerRegistry.Entry<T> entry : GenericDataTrackerRegistry.getAll(getClass(), key.getType())) {
+            if (entry.getKey().equals(key)) {
+                return getValue(entry);
+            }
+        }
+
+        return null;
     }
 
     protected abstract void sendNetworkPacket();

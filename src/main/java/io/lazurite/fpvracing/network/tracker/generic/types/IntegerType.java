@@ -33,4 +33,8 @@ public class IntegerType implements GenericType<Integer> {
     public Integer fromConfig(Config config, String key) {
         return Integer.parseInt(config.getProperty(key, "0"));
     }
+
+    public Class<Integer> getClassType() {
+        return int.class;
+    }
 }

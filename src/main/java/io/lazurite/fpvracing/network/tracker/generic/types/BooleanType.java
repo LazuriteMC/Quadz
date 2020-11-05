@@ -33,4 +33,8 @@ public class BooleanType implements GenericType<Boolean> {
     public Boolean fromConfig(Config config, String key) {
         return Boolean.parseBoolean(config.getProperty(key, "false"));
     }
+
+    public Class<Boolean> getClassType() {
+        return boolean.class;
+    }
 }

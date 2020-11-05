@@ -55,8 +55,8 @@ public class ClientInitializer implements ClientModInitializer {
         SelectedSlotS2C.register();
         ShouldRenderPlayerS2C.register();
         ModdedServerS2C.register();
+        ConfigCommandS2C.register();
         ConfigValueS2C.register();
-        RevertConfigS2C.register();
 
         QuadcopterItemRenderer.register();
         QuadcopterRenderer.register();

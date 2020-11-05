@@ -42,4 +42,8 @@ public class FrequencyType implements GenericType<Frequency> {
                 Integer.parseInt(config.getProperty("channel", String.valueOf(fallback.getChannel())))
         );
     }
+
+    public Class<Frequency> getClassType() {
+        return Frequency.class;
+    }
 }

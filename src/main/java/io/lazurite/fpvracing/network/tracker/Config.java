@@ -28,6 +28,10 @@ public class Config extends Properties {
         return key.getType().fromConfig(this, key.getName());
     }
 
+    public <T> void setValue(Key<T> key, T value) {
+        key.getType().toConfig(this, key.getName(), value);
+    }
+
     /**
      * A class that represents a key in the config file.
      * Stores the name and the type of the key.
@@ -48,6 +52,16 @@ public class Config extends Properties {
 
         public GenericType<T> getType() {
             return this.type;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof Config.Key<?>) {
+                Config.Key<?> key = (Config.Key<?>) obj;
+                return getName().equals(key.getName()) && getType().equals(key.getType());
+            }
+
+            return false;
         }
     }
 }

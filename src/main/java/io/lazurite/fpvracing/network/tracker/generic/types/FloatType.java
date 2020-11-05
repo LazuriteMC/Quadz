@@ -33,4 +33,8 @@ public class FloatType implements GenericType<Float> {
     public Float fromConfig(Config config, String key) {
         return Float.parseFloat(config.getProperty(key, "0.0"));
     }
+
+    public Class<Float> getClassType() {
+        return float.class;
+    }
 }
