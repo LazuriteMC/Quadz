@@ -20,10 +20,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.lazurite.fpvracing.server.ServerInitializer"
+      "dev.lazurite.fpvracing.server.ServerInitializer"
     ],
     "client": [
-      "io.lazurite.fpvracing.client.ClientInitializer"
+      "dev.lazurite.fpvracing.client.ClientInitializer"
     ]
   },
   "mixins": [
