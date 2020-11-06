@@ -20,8 +20,10 @@
     "ClientPlayNetworkHandlerMixin",
     "ClientWorldMixin",
     "GameRendererMixin",
+    "HeldItemRendererMixin",
     "ItemRendererMixin",
     "InGameHudMixin",
+    "MatrixStackMixin",
     "MouseMixin",
     "PlayerEntityRendererMixin",
     "WorldRendererMixin"
