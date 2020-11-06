@@ -22,7 +22,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 	@Shadow @Final private MinecraftClient client;
-//	@Shadow private boolean renderHand;
 
 	/**
 	 * Mainly for calling the {@link RenderTick#tick(MinecraftClient, MatrixStack, float)} and
@@ -36,6 +35,5 @@ public class GameRendererMixin {
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
 		RenderTick.tick(client, matrix, tickDelta);
 		InputTick.tick();
-//		renderHand = !ClientInitializer.isInGoggles(client);
 	}
 }
