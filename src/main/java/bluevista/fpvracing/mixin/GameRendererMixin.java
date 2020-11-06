@@ -7,13 +7,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.util.math.Quaternion;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
@@ -51,53 +48,5 @@ public class GameRendererMixin {
 	@Inject(at = @At("HEAD"), method = "renderHand", cancellable = true)
 	public void renderHand(MatrixStack matrices, Camera camera, float tickDelta, CallbackInfo info) {
 		if (ClientInitializer.isInGoggles(client)) info.cancel();
-	}
-
-	/**
-	 * This mixin redirects the {@link MatrixStack#multiply(Quaternion)} method called in
-	 * {@link GameRenderer#renderWorld(float, long, MatrixStack)}. If the player is flying
-	 * a drone, this method will lock the screens yaw to 0 degrees. Otherwise, it will pass
-	 * through like normal.
-	 * @param stack the matrix stack
-	 * @param quat the quaternion to rotate by
-	 */
-	@Redirect(
-			method = "renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lnet/minecraft/util/math/Quaternion;)V",
-					ordinal = 3
-			)
-	)
-	public void yaw(MatrixStack stack, Quaternion quat) {
-		if (ClientInitializer.isInGoggles(client)) {
-			stack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180));
-		} else {
-			stack.multiply(quat);
-		}
-	}
-
-	/**
-	 * This mixin redirects the {@link MatrixStack#multiply(Quaternion)} method called in
-	 * {@link GameRenderer#renderWorld(float, long, MatrixStack)}. If the player is flying
-	 * a drone, this method will lock the screens pitch to 0 degrees. Otherwise, it will pass
-	 * through like normal.
-	 * @param stack the matrix stack
-	 * @param quat the quaternion to rotate by
-	 */
-	@Redirect(
-			method = "renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lnet/minecraft/util/math/Quaternion;)V",
-					ordinal = 2
-			)
-	)
-	public void pitch(MatrixStack stack, Quaternion quat) {
-		if (ClientInitializer.isInGoggles(client)) {
-			stack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(0));
-		} else {
-			stack.multiply(quat);
-		}
 	}
 }

@@ -22,6 +22,7 @@
     "GameRendererMixin",
     "ItemRendererMixin",
     "InGameHudMixin",
+    "MatrixStackMixin",
     "MouseMixin",
     "PlayerEntityRendererMixin",
     "WorldRendererMixin"
