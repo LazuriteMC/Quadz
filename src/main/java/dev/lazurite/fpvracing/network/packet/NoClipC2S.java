@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -38,8 +39,11 @@ public class NoClipC2S {
                         if (entity.getValue(FlyableEntity.BIND_ID).equals(bind.getKey().getType().fromTag(tag, bind.getKey().getName()))) {
                             entity.noClip = !entity.noClip;
 
-                            if (entity.noClip) player.sendMessage(new LiteralText("No Clip Enabled"), false);
-                            else player.sendMessage(new LiteralText("No Clip Disabled"), false);
+                            if (entity.noClip) {
+                                player.sendMessage(new TranslatableText("message.fpvracing.noclip_on"), false);
+                            } else {
+                                player.sendMessage(new TranslatableText("message.fpvracing.noclip_off"), false);
+                            }
 
                             break;
                         }
@@ -49,9 +53,9 @@ public class NoClipC2S {
                 boolean noclip = noClip.getKey().getType().fromTag(tag, noClip.getKey().getName());
                 noClip.getKey().getType().toTag(tag, noClip.getKey().getName(), !noclip);
                 if (noclip) {
-                    player.sendMessage(new LiteralText("No Clip Disabled"), false);
+                    player.sendMessage(new TranslatableText("message.fpvracing.noclip_off"), false);
                 } else {
-                    player.sendMessage(new LiteralText("No Clip Enabled"), false);
+                    player.sendMessage(new TranslatableText("message.fpvracing.noclip_on"), false);
                 }
             }
         });

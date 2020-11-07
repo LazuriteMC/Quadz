@@ -357,9 +357,7 @@ public class Commands {
                 }
             }
 
-            if (MESSAGES != null) {
-                player.sendMessage(Text.Serializer.fromJson(MESSAGES.getAsJsonObject(ERROR).getAsJsonObject(DRONE).toString()), false);
-            }
+            player.sendMessage(new TranslatableText("message.fpvracing.drone_error"), false);
             return -1;
 
         } catch (CommandSyntaxException e) {
@@ -386,9 +384,7 @@ public class Commands {
                 }
             }
 
-            if (MESSAGES != null) {
-                player.sendMessage(Text.Serializer.fromJson(MESSAGES.getAsJsonObject(ERROR).getAsJsonObject(DRONE).toString()), false);
-            }
+            player.sendMessage(new TranslatableText("message.fpvracing.drone_error"), false);
             return -1;
 
         } catch (CommandSyntaxException e) {
@@ -428,6 +424,7 @@ public class Commands {
                 }
             }
 
+            player.sendMessage(new TranslatableText("message.fpvracing.goggles_error"), false);
             return 0;
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
@@ -451,9 +448,7 @@ public class Commands {
                 return 1;
             }
 
-            if (MESSAGES != null) {
-                player.sendMessage(Text.Serializer.fromJson(MESSAGES.getAsJsonObject(ERROR).getAsJsonObject(GOGGLES).toString()), false);
-            }
+            player.sendMessage(new TranslatableText("message.fpvracing.goggles_error"), false);
             return -1;
 
         } catch (CommandSyntaxException e) {
@@ -467,9 +462,7 @@ public class Commands {
             final ServerPlayerEntity player = context.getSource().getPlayer();
             ConfigCommandS2C.send(player, key);
 
-            if (MESSAGES != null) {
-                player.sendMessage(Text.Serializer.fromJson(MESSAGES.getAsJsonObject(SUCCESS).getAsJsonObject(key).toString()), false);
-            }
+            player.sendMessage(new TranslatableText("message.fpvracing." + key), false);
             return 1;
         } catch (CommandSyntaxException e) {
             e.printStackTrace();

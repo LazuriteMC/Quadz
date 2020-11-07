@@ -86,11 +86,6 @@ public class ServerTick {
             }
         }
 
-        String[] keys = ServerInitializer.SERVER_PLAYER_KEYS.get(player.getUuid());
-        if (keys != null) {
-            String subString = keys[0] + " or " + keys[1];
-            player.sendMessage(new LiteralText("Press " + subString + " power off goggles"), true);
-        }
     }
 
     /**

@@ -2,14 +2,14 @@
   "help" : {
     "config" : [
       {
-        "text" : "FPV Racing Config Commands: \n",
+        "translate" : "help.fpvracing.title.config_commands",
         "bold" : true,
         "italic" : false,
         "color" : "white"
       },
 
       {
-        "text" : "\nController Setup: \n",
+        "translate" : "help.fpvracing.subtitle.controller_setup",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -21,7 +21,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The controller's identifier.\n",
+        "translate" : "help.fpvracing.description.controllerID",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -33,7 +33,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The controller's input deadzone.\n",
+        "translate" : "help.fpvracing.description.deadzone",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -45,7 +45,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The controller's pitch channel.\n",
+        "translate" : "help.fpvracing.description.pitch",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -57,7 +57,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The controller's roll channel.\n",
+        "translate" : "help.fpvracing.description.roll",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -69,7 +69,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The controller's throttle channel.\n",
+        "translate" : "help.fpvracing.description.throttle",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -81,7 +81,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "\n",
+        "translate" : "help.fpvracing.description.throttleCenterPosition",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -93,14 +93,14 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The controller's yaw channel.\n",
+        "translate" : "help.fpvracing.description.yaw",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
       },
 
       {
-        "text" : "\nRate Setup: \n",
+        "translate" : "help.fpvracing.subtitle.rate_setup",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -112,7 +112,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's betaflight rate value.\n",
+        "translate" : "help.fpvracing.description.rate",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -124,7 +124,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's betaflight superRate value.\n",
+        "translate" : "help.fpvracing.description.rate",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -136,14 +136,14 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's betaflight expo value.\n",
+        "translate" : "help.fpvracing.description.expo",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
       },
 
       {
-        "text" : "\nInvert Controls: \n",
+        "translate" : "help.fpvracing.subtitle.invert_controls",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -155,7 +155,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Inverts the controller's pitch input.\n",
+        "translate" : "help.fpvracing.description.invertPitch",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -167,7 +167,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Inverts the controller's roll input.\n",
+        "translate" : "help.fpvracing.description.invertRoll",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -179,7 +179,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Inverts the controller's throttle input.\n",
+        "translate" : "help.fpvracing.description.invertThrottle",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -191,14 +191,14 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Inverts the controller's yaw input.\n",
+        "translate" : "help.fpvracing.description.invertYaw",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
       },
 
       {
-        "text" : "\nCamera Settings: \n",
+        "translate" : "help.fpvracing.subtitle.camera_settings",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -210,7 +210,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's camera angle. Measured in degrees.\n",
+        "translate" : "help.fpvracing.description.cameraAngle",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -222,14 +222,14 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's field of view. Measured in degrees.\n",
+        "translate" : "help.fpvracing.description.fieldOfView",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
       },
 
       {
-        "text" : "\nVideo Settings: \n",
+        "translate" : "help.fpvracing.subtitle.video_settings",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -241,7 +241,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's video frequency band.\n",
+        "translate" : "help.fpvracing.description.band",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -253,14 +253,14 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's video frequency channel.\n",
+        "translate" : "help.fpvracing.description.channel",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
       },
 
       {
-        "text" : "\nPhysics Settings: \n",
+        "translate" : "help.fpvracing.subtitle.physics_settings",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -272,7 +272,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Determines drone's damage to entities.\n",
+        "translate" : "help.fpvracing.description.damageCoefficient",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -284,7 +284,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's drag coefficient.\n",
+        "translate" : "help.fpvracing.description.dragCoefficient",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -296,7 +296,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's mass. Measured in kg.\n",
+        "translate" : "help.fpvracing.description.mass",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -308,7 +308,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's size. Measured in pixels.\n",
+        "translate" : "The drone's size. Measured in pixels.\n",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -320,7 +320,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's thrust. Measured in Newtons.\n",
+        "translate" : "help.fpvracing.description.thrust",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -332,14 +332,14 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Curves the drone's thrust. Value range: 0-1.\n",
+        "translate" : "help.fpvracing.description.thrustCurve",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
       },
 
       {
-        "text" : "\nGlobal Physics Settings: \n",
+        "translate" : "help.fpvracing.subtitle.global_physics_settings",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -351,7 +351,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's air density. Measured in kg/m^3.\n",
+        "translate" : "help.fpvracing.description.airDensity",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -363,7 +363,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's block radius for collisions.\n",
+        "translate" : "help.fpvracing.description.blockRadius",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -375,14 +375,14 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's gravity. Measured in m/s^2.\n",
+        "translate" : "help.fpvracing.description.gravity",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
       },
 
       {
-        "text" : "\nMiscellaneous Settings: \n",
+        "translate" : "help.fpvracing.subtitle.miscellaneous_settings",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -394,7 +394,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Reverts the loaded config with the config file's values.\n",
+        "translate" : "help.fpvracing.description.revert",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -406,7 +406,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Writes the loaded config to the config file.\n",
+        "translate" : "help.fpvracing.description.write",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -415,14 +415,14 @@
 
     "drone" : [
       {
-        "text" : "FPV Racing Drone Commands: \n",
+        "translate" : "help.fpvracing.title.drone_commands",
         "bold" : true,
         "italic" : false,
         "color" : "white"
       },
 
       {
-        "text" : "\nRate Setup: \n",
+        "translate" : "help.fpvracing.subtitle.rate_setup",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -434,7 +434,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's betaflight rate value.\n",
+        "translate" : "help.fpvracing.description.rate",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -446,7 +446,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's betaflight superRate value.\n",
+        "translate" : "help.fpvracing.description.superRate",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -458,14 +458,14 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's betaflight expo value.\n",
+        "translate" : "help.fpvracing.description.expo",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
       },
 
       {
-        "text" : "\nCamera Settings: \n",
+        "translate" : "help.fpvracing.subtitle.camera_settings",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -477,7 +477,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's camera angle. Measured in degrees.\n",
+        "translate" : "help.fpvracing.description.cameraAngle",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -489,14 +489,14 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's field of view. Measured in degrees.\n",
+        "translate" : "help.fpvracing.description.fieldOfView",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
       },
 
       {
-        "text" : "\nVideo Settings: \n",
+        "translate" : "help.fpvracing.subtitle.video_settings",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -508,7 +508,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's video frequency band.\n",
+        "translate" : "help.fpvracing.description.band",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -520,14 +520,14 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's video frequency channel.\n",
+        "translate" : "help.fpvracing.description.channel",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
       },
 
       {
-        "text" : "\nPhysics Settings: \n",
+        "translate" : "help.fpvracing.subtitle.physics_settings",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -539,7 +539,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Determines drone's damage to entities.\n",
+        "translate" : "help.fpvracing.description.damageCoefficient",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -551,7 +551,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's drag coefficient.\n",
+        "translate" : "help.fpvracing.description.dragCoefficient",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -563,7 +563,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's mass. Measured in kg.\n",
+        "translate" : "help.fpvracing.description.mass",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -575,7 +575,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's size. Measured in pixels.\n",
+        "translate" : "help.fpvracing.description.size",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -587,7 +587,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The drone's thrust. Measured in Newtons.\n",
+        "translate" : "help.fpvracing.description.thrust",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -599,14 +599,14 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Curves the drone's thrust. Value range: 0-1.\n",
+        "translate" : "help.fpvracing.description.thrustCurve",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
       },
 
       {
-        "text" : "\nMiscellaneous Settings: \n",
+        "translate" : "help.fpvracing.subtitle.miscellaneous_settings",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -618,7 +618,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Disables drone dying to certain damage sources.\n",
+        "translate" : "help.fpvracing.description.godMode",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -630,7 +630,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Disables drone collisions.\n",
+        "translate" : "help.fpvracing.description.noClip",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -639,7 +639,7 @@
 
     "fpvracing" : [
       {
-        "text" : "FPV Racing Commands: \n\n",
+        "translate" : "help.fpvracing.title.fpvracing_commands",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -651,7 +651,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Config settings.\n",
+        "translate" : "help.fpvracing.description.config",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -663,7 +663,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Drone settings.\n",
+        "translate" : "help.fpvracing.description.drone",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -675,7 +675,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "Goggle settings.\n",
+        "translate" : "help.fpvracing.description.goggles",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -684,7 +684,7 @@
 
     "goggles" : [
       {
-        "text" : "FPV Racing Goggles Commands: \n\n",
+        "translate" : "help.fpvracing.title.goggles_commands",
         "bold" : true,
         "italic" : false,
         "color" : "white"
@@ -696,7 +696,7 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The goggle's video frequency band.\n",
+        "translate" : "help.fpvracing.description.band",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
@@ -708,31 +708,11 @@
         "italic" : true,
         "color" : "white"
       }, {
-        "text" : "The goggle's video frequency channel.\n",
+        "translate" : "help.fpvracing.description.channel",
         "bold" : false,
         "italic" : false,
         "color" : "gray"
       }
     ]
-  },
-
-  "error" : {
-    "drone" : {
-      "text" : "Must be holding a Drone Spawner or a bound Transmitter."
-    },
-
-    "goggles" : {
-      "text" : "Must be holding or wearing Goggles."
-    }
-  },
-
-  "success" : {
-    "revert" : {
-      "text" : "Successfully reverted config."
-    },
-
-    "write" : {
-      "text" : "successfully wrote config."
-    }
   }
 }

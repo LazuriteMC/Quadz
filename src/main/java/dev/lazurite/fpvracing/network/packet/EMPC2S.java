@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 /**
@@ -42,7 +43,7 @@ public class EMPC2S {
                     flyable.kill();
                     serverPlayerEntity.getServerWorld().removeEntity(flyable);
                     ServerTick.resetView(serverPlayerEntity);
-                    serverPlayerEntity.sendMessage(new LiteralText("Destroyed entity"), false);
+                    serverPlayerEntity.sendMessage(new TranslatableText("message.fpvracing.emp"), false);
                 }
             }
         });

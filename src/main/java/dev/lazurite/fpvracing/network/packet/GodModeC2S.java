@@ -18,6 +18,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -45,9 +46,9 @@ public class GodModeC2S {
                             quad.setValue(god, !quad.getValue(FlyableEntity.GOD_MODE));
 
                             if (quad.getValue(FlyableEntity.GOD_MODE)) {
-                                player.sendMessage(new LiteralText("God Mode Enabled"), false);
+                                player.sendMessage(new TranslatableText("message.fpvracing.godmode_on"), false);
                             } else {
-                                player.sendMessage(new LiteralText("God Mode Disabled"), false);
+                                player.sendMessage(new TranslatableText("message.fpvracing.godmode_off"), false);
                             }
 
                             break;
@@ -58,9 +59,9 @@ public class GodModeC2S {
                 boolean godmode = god.getKey().getType().fromTag(tag, god.getKey().getName());
                 god.getKey().getType().toTag(tag, god.getKey().getName(), !godmode);
                 if (godmode) {
-                    player.sendMessage(new LiteralText("God Mode Disabled"), false);
+                    player.sendMessage(new TranslatableText("message.fpvracing.godmode_off"), false);
                 } else {
-                    player.sendMessage(new LiteralText("God Mode Enabled"), false);
+                    player.sendMessage(new TranslatableText("message.fpvracing.godmode_on"), false);
                 }
             }
         });

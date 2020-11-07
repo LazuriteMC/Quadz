@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -40,11 +41,10 @@ public class PowerGogglesC2S {
                     List<FlyableEntity> flyables = FlyableEntity.getList(serverPlayer, FlyableEntity.class, 500);
 
                     for (FlyableEntity entity : flyables) {
-                        if (serverPlayer.distanceTo(entity) > QuadcopterEntity.TRACKING_RANGE) {
-                            continue;
-                        } else if (GogglesItem.isOnSameChannel(entity, serverPlayer)) {
+                        if (serverPlayer.distanceTo(entity) < QuadcopterEntity.TRACKING_RANGE && GogglesItem.isOnSameChannel(entity, serverPlayer)) {
                             GogglesItem.setOn(hat, true);
                             ServerTick.setView(serverPlayer, entity);
+                            player.sendMessage(new TranslatableText("message.fpvracing.goggles_on", (Object[]) keys), true);
                         }
                     }
                 } else {
