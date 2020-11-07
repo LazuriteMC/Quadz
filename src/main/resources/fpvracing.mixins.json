@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "io.lazurite.fpvracing.mixin",
+  "package": "dev.lazurite.fpvracing.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "EntityPositionS2CPacketMixin",
@@ -20,8 +20,10 @@
     "ClientPlayNetworkHandlerMixin",
     "ClientWorldMixin",
     "GameRendererMixin",
+    "HeldItemRendererMixin",
     "ItemRendererMixin",
     "InGameHudMixin",
+    "MatrixStackMixin",
     "MouseMixin",
     "PlayerEntityRendererMixin",
     "WorldRendererMixin"
