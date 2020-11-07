@@ -9,18 +9,17 @@
   "item.fpvracing.drone_spawner_item": "Spawner \u00e0 Drone",
   "item.fpvracing.goggles_item": "Lunettes FPV",
   "item.fpvracing.transmitter_item": "T\u00e9l\u00e9commande",
+  "item.fpvracing.channel_wand_item": "Channel Wand",
   "message.fpvracing.drone_error": "Vous devez avoir en main un Spawner \u00e0 Drone ou une t\u00e9l\u00e9commande li\u00e9.",
   "message.fpvracing.goggles_error": "Vous devez tenir en main ou porter des lunettes FPV.",
   "message.fpvracing.revert": "Configuration r\u00e9tablie avec succ\u00e8s.",
   "message.fpvracing.write": "\u00c9criture de la configuration effectu\u00e9e avec succ\u00e8ss.",
-
   "message.fpvracing.emp": "Destroyed drone.",
   "message.fpvracing.godmode_on": "God mode enabled.",
   "message.fpvracing.godmode_off": "God mode disabled.",
   "message.fpvracing.noclip_on": "No clip enabled.",
   "message.fpvracing.noclip_off": "No clip disabled.",
   "message.fpvracing.goggles_on": "Press %1$s or %2$s to power off goggles.",
-
   "help.fpvracing.title.config_commands": "Commandes de configuration FPV:\n",
   "help.fpvracing.subtitle.controller_setup": "\nParam\u00e8tres de la t\u00e9l\u00e9commande:\n",
   "help.fpvracing.description.controllerID": "Identifiant de la t\u00e9l\u00e9commande.\n",
@@ -28,9 +27,7 @@
   "help.fpvracing.description.pitch": "Canal du tangage de la t\u00e9l\u00e9commande.\n",
   "help.fpvracing.description.roll": "Canal du roulis de la t\u00e9l\u00e9commande.\n",
   "help.fpvracing.description.throttle": "Canal des gaz de la t\u00e9l\u00e9commande.\n",
-
   "help.fpvracing.description.throttleCenterPosition": "Sets throttle input to start at 0.5 instead of 0.0.\n",
-
   "help.fpvracing.description.yaw": "Canal du lacet de la t\u00e9l\u00e9commande.\n",
   "help.fpvracing.subtitle.rate_setup": "\nParam\u00e8tres des Rates:\n",
   "help.fpvracing.description.rate": "Valeurs betaflight du drone.\n",
