@@ -48,7 +48,7 @@ public class GogglesItem extends ArmorItem {
 			itemStack.setCount(0);
 			itemStack = new ItemStack(Items.AIR);
 
-			return TypedActionResult.method_29237(itemStack, world.isClient());
+			return TypedActionResult.success(itemStack, world.isClient());
 		} else {
 			return TypedActionResult.fail(itemStack);
 		}
