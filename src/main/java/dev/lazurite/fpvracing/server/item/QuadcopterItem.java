@@ -55,6 +55,10 @@ public class QuadcopterItem extends Item {
 		Config config = ServerInitializer.SERVER_PLAYER_CONFIGS.get(user.getUuid());
 
 		CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
-		GenericDataTrackerRegistry.getAll(QuadcopterEntity.class).forEach(entry -> GenericDataTrackerRegistry.writeToTag(tag, (GenericDataTrackerRegistry.Entry) entry, entry.getKey().getType().fromConfig(config, entry.getKey().getName())));
+		GenericDataTrackerRegistry.getAll(QuadcopterEntity.class).forEach(entry -> {
+			if (!tag.contains(entry.getKey().getName())) {
+				GenericDataTrackerRegistry.writeToTag(tag, (GenericDataTrackerRegistry.Entry) entry, entry.getKey().getType().fromConfig(config, entry.getKey().getName()));
+			}
+		});
 	}
 }

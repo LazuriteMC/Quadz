@@ -69,11 +69,6 @@ public class QuadcopterEntity extends FlyableEntity {
 		pitch = QuaternionHelper.getPitch(cameraPitch);
 	}
 
-	@Override
-	public boolean isKillable() {
-		return !(getValue(FlyableEntity.GOD_MODE) || noClip);
-	}
-
 	/**
 	 * Break the {@link QuadcopterEntity} when it's shot or otherwise damaged in some way.
 	 *

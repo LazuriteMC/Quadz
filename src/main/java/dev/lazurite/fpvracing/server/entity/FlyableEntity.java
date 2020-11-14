@@ -153,7 +153,7 @@ public abstract class FlyableEntity extends PhysicsEntity {
      * @return whether or not the flyable entity is killable
      */
     public boolean isKillable() {
-        return false;
+        return !(getValue(FlyableEntity.GOD_MODE) || noClip);
     }
 
     /**
