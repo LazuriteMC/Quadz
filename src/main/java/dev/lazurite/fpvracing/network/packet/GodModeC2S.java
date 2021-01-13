@@ -1,6 +1,5 @@
 package dev.lazurite.fpvracing.network.packet;
 
-import dev.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
 import dev.lazurite.fpvracing.server.ServerInitializer;
 import dev.lazurite.fpvracing.server.entity.FlyableEntity;
 import dev.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
@@ -17,7 +16,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 

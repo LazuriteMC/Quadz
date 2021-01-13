@@ -17,7 +17,7 @@ public class ClientTick {
         if (client.player != null && !client.isPaused()) {
             if (client.getCameraEntity() instanceof FlyableEntity) {
                 FlyableEntity flyable = (FlyableEntity) client.getCameraEntity();
-                float droneFOV = flyable.getValue(FlyableEntity.FIELD_OF_VIEW);
+                float droneFOV = 0; //flyable.getValue(FlyableEntity.FIELD_OF_VIEW);
 
                 if (droneFOV != 0.0f && client.options.fov != droneFOV) {
                     prevFOV = client.options.fov;
@@ -32,14 +32,6 @@ public class ClientTick {
                 client.options.fov = prevFOV;
                 prevFOV = 0.0f;
             }
-        }
-    }
-
-    public static boolean isPlayerIDClient(int playerID) {
-        if (ClientInitializer.client.player != null) {
-            return playerID == ClientInitializer.client.player.getEntityId();
-        } else {
-            return false;
         }
     }
 

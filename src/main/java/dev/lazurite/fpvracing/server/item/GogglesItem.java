@@ -2,14 +2,13 @@ package dev.lazurite.fpvracing.server.item;
 
 import dev.lazurite.fpvracing.server.entity.FlyableEntity;
 import dev.lazurite.fpvracing.client.ClientInitializer;
-import dev.lazurite.fpvracing.network.tracker.Config;
-import dev.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
 import dev.lazurite.fpvracing.server.ServerInitializer;
 import dev.lazurite.fpvracing.server.item.material.ArmorMaterials;
 import dev.lazurite.fpvracing.util.Frequency;
 import com.google.common.collect.Multimap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -22,12 +21,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-/**
- * @author Ethan Johnson
- * @author Patrick Hofmann
- */
 public class GogglesItem extends ArmorItem {
-
 	public GogglesItem(Item.Settings settings) {
 		super(ArmorMaterials.GOGGLE, EquipmentSlot.HEAD, settings);
 	}
@@ -61,7 +55,7 @@ public class GogglesItem extends ArmorItem {
 	 */
 	@Environment(EnvType.CLIENT)
 	public static boolean isInGoggles() {
-		return ClientInitializer.client.getCameraEntity() instanceof FlyableEntity;
+		return MinecraftClient.getInstance().getCameraEntity() instanceof FlyableEntity;
 	}
 
 	/**

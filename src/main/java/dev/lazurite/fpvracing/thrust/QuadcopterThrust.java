@@ -1,9 +1,9 @@
-package dev.lazurite.fpvracing.physics.thrust;
+package dev.lazurite.fpvracing.thrust;
 
 import dev.lazurite.fpvracing.client.input.InputTick;
 import dev.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import dev.lazurite.fpvracing.util.Matrix4fInject;
-import dev.lazurite.fpvracing.util.math.BetaflightHelper;
+import dev.lazurite.fpvracing.util.BetaflightHelper;
 import dev.lazurite.fpvracing.util.math.QuaternionHelper;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;

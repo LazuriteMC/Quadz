@@ -1,18 +1,12 @@
 package dev.lazurite.fpvracing.server.entity;
 
-import com.bulletphysics.dynamics.RigidBody;
 import dev.lazurite.fpvracing.client.ClientInitializer;
 import dev.lazurite.fpvracing.client.input.InputTick;
-import dev.lazurite.fpvracing.network.packet.AmDeadC2S;
-import dev.lazurite.fpvracing.network.tracker.Config;
-import dev.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
-import dev.lazurite.fpvracing.physics.collision.BlockCollisions;
-import dev.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
-import dev.lazurite.fpvracing.physics.thrust.Thrust;
+import dev.lazurite.fpvracing.thrust.Thrust;
 import dev.lazurite.fpvracing.server.ServerInitializer;
 import dev.lazurite.fpvracing.server.item.ChannelWandItem;
 import dev.lazurite.fpvracing.server.item.TransmitterItem;
-import dev.lazurite.fpvracing.util.Frequency;
+import dev.lazurite.rayon.api.packet.RayonSpawnS2CPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -24,7 +18,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
@@ -34,44 +27,27 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-import javax.vecmath.Vector3f;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-/**
- * This class is the base class for any flying entity in the FPV racing mod.
- * @author Ethan Johnson
- */
-public abstract class FlyableEntity extends PhysicsEntity {
-    public static final GenericDataTrackerRegistry.Entry<Integer> BIND_ID = GenericDataTrackerRegistry.register(new Config.Key<>("bindID", ServerInitializer.INTEGER_TYPE), -1, FlyableEntity.class);
-    public static final GenericDataTrackerRegistry.Entry<Boolean> GOD_MODE = GenericDataTrackerRegistry.register(new Config.Key<>("godMode", ServerInitializer.BOOLEAN_TYPE), false, FlyableEntity.class);
-    public static final GenericDataTrackerRegistry.Entry<Integer> FIELD_OF_VIEW = GenericDataTrackerRegistry.register(new Config.Key<>("fieldOfView", ServerInitializer.INTEGER_TYPE),  120, FlyableEntity.class);
-    public static final GenericDataTrackerRegistry.Entry<Frequency> FREQUENCY = GenericDataTrackerRegistry.register(new Config.Key<>("frequency", ServerInitializer.FREQUENCY_TYPE), new Frequency('R', 1), FlyableEntity.class);
+public abstract class FlyableEntity extends Entity {
+//    public static final GenericDataTrackerRegistry.Entry<Integer> BIND_ID = GenericDataTrackerRegistry.register(new Config.Key<>("bindID", ServerInitializer.INTEGER_TYPE), -1, FlyableEntity.class);
+//    public static final GenericDataTrackerRegistry.Entry<Boolean> GOD_MODE = GenericDataTrackerRegistry.register(new Config.Key<>("godMode", ServerInitializer.BOOLEAN_TYPE), false, FlyableEntity.class);
+//    public static final GenericDataTrackerRegistry.Entry<Integer> FIELD_OF_VIEW = GenericDataTrackerRegistry.register(new Config.Key<>("fieldOfView", ServerInitializer.INTEGER_TYPE),  120, FlyableEntity.class);
+//    public static final GenericDataTrackerRegistry.Entry<Frequency> FREQUENCY = GenericDataTrackerRegistry.register(new Config.Key<>("frequency", ServerInitializer.FREQUENCY_TYPE), new Frequency('R', 1), FlyableEntity.class);
 
     public static final int TRACKING_RANGE = 80;
     public static final int PSEUDO_TRACKING_RANGE = TRACKING_RANGE / 2;
 
     protected Thrust thrust;
 
-    /**
-     * The main constructor. Doesn't do a whole lot.
-     * @param type
-     * @param world
-     */
     public FlyableEntity(EntityType<?> type, World world) {
         super(type, world);
         this.ignoreCameraFrustum = true;
     }
 
-    /**
-     * This method is directly related to updating the physics side of things.
-     * @param delta delta time
-     */
-    @Override
-    @Environment(EnvType.CLIENT)
     public void step(float delta) {
-        super.step(delta);
         calculateBlockDamage();
         decreaseAngularVelocity();
 
@@ -173,27 +149,13 @@ public abstract class FlyableEntity extends PhysicsEntity {
     public void readTagFromSpawner(ItemStack itemStack, PlayerEntity user) {
         CompoundTag tag = itemStack.getOrCreateSubTag(ServerInitializer.MODID);
         readCustomDataFromTag(tag);
-        setValue(PLAYER_ID, user.getEntityId());
     }
 
     @Override
     public Packet<?> createSpawnPacket() {
-        return new EntitySpawnS2CPacket(this);
+        return RayonSpawnS2CPacket.get(this);
     }
 
-    @Override
-    public void kill() {
-        super.kill();
-
-        if (getEntityWorld().isClient()) {
-            AmDeadC2S.send(this);
-        }
-    }
-
-    /**
-     * Calculates when block collisions damage the {@link Entity}
-     */
-    @Environment(EnvType.CLIENT)
     public void calculateBlockDamage() {
         List<Block> damagingBlocks = Arrays.asList(
                 Blocks.WATER,
@@ -240,7 +202,6 @@ public abstract class FlyableEntity extends PhysicsEntity {
     /**
      * Decrease the angular velocity of the flyable when it isn't near the ground.
      */
-    @Environment(EnvType.CLIENT)
     public void decreaseAngularVelocity() {
         List<RigidBody> bodies = ClientInitializer.physicsWorld.getRigidBodies();
         RigidBody rigidBody = ((ClientPhysicsHandler) getPhysics()).getRigidBody();

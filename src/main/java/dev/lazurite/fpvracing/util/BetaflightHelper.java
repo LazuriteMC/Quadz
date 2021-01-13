@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.util.math;
+package dev.lazurite.fpvracing.util;
 
 public class BetaflightHelper {
 	public static double calculateRates(double rcCommand, double rcRate, double expo, double superRate, double delta) {

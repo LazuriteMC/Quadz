@@ -102,6 +102,6 @@ public class Frequency {
 
     @Override
     public String toString() {
-        return "Frequency: " + getFrequency();
+        return "freq: " + getFrequency();
     }
 }

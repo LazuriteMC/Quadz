@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.physics.thrust;
+package dev.lazurite.fpvracing.thrust;
 
 import javax.vecmath.Vector3f;
 
