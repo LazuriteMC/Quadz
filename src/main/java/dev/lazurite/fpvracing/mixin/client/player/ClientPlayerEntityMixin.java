@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.mixin;
+package dev.lazurite.fpvracing.mixin.client.player;
 
 import dev.lazurite.fpvracing.client.ClientInitializer;
 import dev.lazurite.fpvracing.client.ClientTick;

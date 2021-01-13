@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.mixin;
+package dev.lazurite.fpvracing.mixin.common.player;
 
 import dev.lazurite.fpvracing.server.ServerTick;
 import dev.lazurite.fpvracing.server.item.GogglesItem;
@@ -17,15 +17,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/**
- * A mixin class for {@link ServerPlayerEntity} which
- * serves multiple purposes.
- * @author Ethan Johnson
- */
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerEntityMixin {
-    @Shadow ServerPlayNetworkHandler networkHandler;
-    @Shadow Entity cameraEntity;
+    @Shadow public ServerPlayNetworkHandler networkHandler;
+    @Shadow private Entity cameraEntity;
 
     /**
      * Designed to prevent a server player who is flying a drone from

@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.mixin;
+package dev.lazurite.fpvracing.mixin.client.input;
 
 import dev.lazurite.fpvracing.server.item.GogglesItem;
 import net.minecraft.client.Mouse;
@@ -9,11 +9,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-/**
- * This mixin class disables most functionality of the mouse
- * in-game when the player is flying a drone.
- * @author Ethan Johnson
- */
 @Mixin(Mouse.class)
 public class MouseMixin {
     /**

@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.mixin;
+package dev.lazurite.fpvracing.mixin.client.render;
 
 import dev.lazurite.fpvracing.server.entity.FlyableEntity;
 import net.minecraft.client.MinecraftClient;
@@ -16,19 +16,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Deque;
 
 /**
- * This mixin mainly modifies the multiply method.
- * @author Ethan Johnson
+ * This mixin prevents the screen from rotating while the player is using goggles
+ * to fly or watch somebody fly a drone.
  */
 @Mixin(MatrixStack.class)
 public abstract class MatrixStackMixin {
     @Shadow @Final private Deque<MatrixStack.Entry> stack;
 
-    /**
-     * This mixin prevents the screen from rotating while the player is using goggles
-     * to fly or watch somebody fly a drone.
-     * @param quaternion the input quaternion
-     * @param info required by every mixin injection
-     */
     @Inject(at = @At("HEAD"), method = "multiply", cancellable = true)
     public void multiply(Quaternion quaternion, CallbackInfo info) {
         Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();

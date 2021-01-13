@@ -1,13 +1,10 @@
-package dev.lazurite.fpvracing.mixin;
+package dev.lazurite.fpvracing.mixin.client.render;
 
 import dev.lazurite.fpvracing.server.item.GogglesItem;
 import dev.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,12 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * This mixin class modifies the behavior of the on-screen HUD. For instance,
  * the {@link InGameHudMixin#renderCrosshair(MatrixStack, CallbackInfo)} injection
  * prevents the crosshair from rendering while the player is flying a drone.
- * @author Patrick Hofmann
  */
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
-    @Shadow @Final MinecraftClient client;
-
     @Inject(
             method = "render",
             at = @At(
