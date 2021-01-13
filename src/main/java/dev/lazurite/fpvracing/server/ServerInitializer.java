@@ -9,6 +9,10 @@ import dev.lazurite.fpvracing.server.item.TransmitterItem;
 import dev.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
 import dev.lazurite.rayon.api.registry.DynamicEntityRegistry;
 import dev.lazurite.rayon.api.shape.provider.BoundingBoxShapeProvider;
+import dev.onyxstudios.cca.api.v3.item.ItemComponentFactoryRegistry;
+import dev.onyxstudios.cca.api.v3.item.ItemComponentInitializer;
+import io.github.prospector.modmenu.api.ConfigScreenFactory;
+import io.github.prospector.modmenu.api.ModMenuApi;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -24,7 +28,7 @@ import net.minecraft.util.registry.Registry;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class ServerInitializer implements ModInitializer {
+public class ServerInitializer implements ModInitializer, ItemComponentInitializer, ModMenuApi {
 	public static final String MODID = "fpvracing";
 	public static final String VERSION = "1.0.0";
 	public static final String URL = "https://github.com/LazuriteMC/FPV-Racing-Mod-Fabric/releases";
@@ -69,9 +73,23 @@ public class ServerInitializer implements ModInitializer {
 		QUADCOPTER_ENTITY = Registry.register(
 				Registry.ENTITY_TYPE,
 				new Identifier(MODID, "quadcopter_entity"),
-				FabricEntityTypeBuilder.create(SpawnGroup.MISC, QuadcopterEntity::new).dimensions(EntityDimensions.fixed(0.5F, 0.125F)).trackable(FlyableEntity.TRACKING_RANGE, 3, true).build()
-		);
+				FabricEntityTypeBuilder.create(SpawnGroup.MISC, QuadcopterEntity::new)
+						.dimensions(EntityDimensions.fixed(0.5F, 0.125F))
+						.trackedUpdateRate(3)
+						.trackRangeBlocks(80)
+						.forceTrackedVelocityUpdates(true)
+						.build());
 
 		DynamicEntityRegistry.INSTANCE.register(FlyableEntity.class, BoundingBoxShapeProvider::get, 1.0f, 0.05f);
+	}
+
+	@Override
+	public void registerItemComponentFactories(ItemComponentFactoryRegistry registry) {
+
+	}
+
+	@Override
+	public ConfigScreenFactory<?> getModConfigScreenFactory() {
+		return null;
 	}
 }

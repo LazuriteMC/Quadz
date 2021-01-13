@@ -27,6 +27,10 @@ dependencies {
 	modImplementation "com.github.LazuriteMC:Rayon:${project.rayon_version}"
 	include "com.github.LazuriteMC:Rayon:${project.rayon_version}"
 
+	// Cardinal Components
+	modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-item:${project.cca_version}"
+	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-item:${project.cca_version}"
+
 	modImplementation "com.github.joaoh1:OkZoomer:4.0.0-alpha.4.1.16.1"
 }
 

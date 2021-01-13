@@ -6,13 +6,11 @@
   "mixins": [
     "EntityPositionS2CPacketMixin",
     "Matrix4fMixin",
-    "MoveRelativeMixin",
     "PlayerInventoryMixin",
     "common.player.PlayerManagerMixin",
     "PlayerSpawnS2CPacketMixin",
     "RotateAndMoveRelativeMixin",
     "common.player.ServerPlayerEntityMixin",
-    "SummonCommandMixin"
   ],
   "client": [
     "client.world.ClientChunkManagerMixin",
@@ -25,7 +23,6 @@
     "client.render.InGameHudMixin",
     "client.render.MatrixStackMixin",
     "client.input.MouseMixin",
-    "PlayerEntityRendererMixin",
     "WorldRendererMixin"
   ],
   "injectors": {

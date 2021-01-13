@@ -5,37 +5,39 @@
 
   "name": "FPV Racing Mod",
   "description": "This mod adds FPV racing drones to Minecraft.",
-  "authors": [
-    "Ethan Johnson",
-    "Patrick Hofmann"
-  ],
+  "authors": [ "The Lazurite Team" ],
   "contact": {
-    "homepage": "",
-    "sources": "https://github.com/ethanejohnsons/fpv-racing-mod-fabric"
+    "homepage": "https://lazurite.dev",
+    "sources": "https://github.com/lazuritemc/fpv-racing-mod-fabric",
+    "issues": "https://github.com/lazuritemc/fpv-racing-mod-fabric/issues"
   },
 
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/fpvracing/icon.png",
 
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "dev.lazurite.fpvracing.server.ServerInitializer"
-    ],
-    "client": [
-      "dev.lazurite.fpvracing.client.ClientInitializer"
-    ]
+    "main": [ "dev.lazurite.fpvracing.server.ServerInitializer" ],
+    "client": [ "dev.lazurite.fpvracing.client.ClientInitializer" ],
+    "cardinal-components-item": [ "dev.lazurite.fpvracing.server.ServerInitializer" ],
+    "modmenu": [ "dev.lazurite.fpvracing.server.ServerInitializer" ]
   },
-  "mixins": [
-    "fpvracing.mixins.json"
-  ],
+
+  "mixins": [ "fpvracing.mixins.json" ],
 
   "depends": {
     "fabricloader": ">=0.7.4",
     "fabric": "*",
     "minecraft": "1.16.x"
   },
+
   "suggests": {
     "flamingo": "*"
+  },
+
+  "custom": {
+    "cardinal-components": [
+      "fpvracing:frequency_item"
+    ]
   }
 }
