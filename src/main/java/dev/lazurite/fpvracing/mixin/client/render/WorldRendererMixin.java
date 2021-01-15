@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.mixin.client.render;
 
-import dev.lazurite.fpvracing.common.util.config.Config;
+import dev.lazurite.fpvracing.client.config.Config;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;

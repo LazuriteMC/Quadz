@@ -1,79 +1,69 @@
 package dev.lazurite.fpvracing.client.input;
 
-import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.client.ClientInitializer;
-import dev.lazurite.fpvracing.network.tracker.Config;
+import dev.lazurite.fpvracing.client.config.Config;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
+
+import java.nio.FloatBuffer;
+import java.util.function.BooleanSupplier;
 
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 
+/**
+ * This class is responsible for polling the user's controller each
+ * time the class is ticked. It dynamically values stored in {@link Config}.
+ * @see Config
+ */
 @Environment(EnvType.CLIENT)
-public class InputTick {
-    public static final Config.Key<Integer> CONTROLLER_ID = new Config.Key<>("controllerID", FPVRacing.INTEGER_TYPE);
+public final class InputTick {
+    public static final InputTick INSTANCE = new InputTick();
+    private final InputFrame frame = new InputFrame();
 
-    public static final Config.Key<Integer> THROTTLE = new Config.Key<>("throttle", FPVRacing.INTEGER_TYPE);
-    public static final Config.Key<Integer> PITCH = new Config.Key<>("pitch", FPVRacing.INTEGER_TYPE);
-    public static final Config.Key<Integer> YAW = new Config.Key<>("yaw", FPVRacing.INTEGER_TYPE);
-    public static final Config.Key<Integer> ROLL = new Config.Key<>("roll", FPVRacing.INTEGER_TYPE);
-    public static final Config.Key<Float> DEADZONE = new Config.Key<>("deadzone", FPVRacing.FLOAT_TYPE);
+    private InputTick() {
+    }
 
-    public static final Config.Key<Boolean> THROTTLE_CENTER_POSITION = new Config.Key<>("throttleCenterPosition", FPVRacing.BOOLEAN_TYPE);
-    public static final Config.Key<Boolean> INVERT_THROTTLE = new Config.Key<>("invertThrottle", FPVRacing.BOOLEAN_TYPE);
-    public static final Config.Key<Boolean> INVERT_PITCH = new Config.Key<>("invertPitch", FPVRacing.BOOLEAN_TYPE);
-    public static final Config.Key<Boolean> INVERT_YAW = new Config.Key<>("invertYaw", FPVRacing.BOOLEAN_TYPE);
-    public static final Config.Key<Boolean> INVERT_ROLL = new Config.Key<>("invertRoll", FPVRacing.BOOLEAN_TYPE);
+    public void tick(BooleanSupplier shouldTick) {
+        if (shouldTick.getAsBoolean() && controllerExists()) {
+            FloatBuffer buffer = glfwGetJoystickAxes(Config.INSTANCE.controllerId);
+            frame.set(buffer.get(Config.INSTANCE.throttle), buffer.get(Config.INSTANCE.pitch), buffer.get(Config.INSTANCE.roll), buffer.get(Config.INSTANCE.yaw));
 
-    public static final AxisValues axisValues = new AxisValues();
-
-    public static void tick() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        Config config = ClientInitializer.getConfig();
-
-        if (!client.isPaused() && controllerExists()) {
-            axisValues.currT = glfwGetJoystickAxes(config.getValue(CONTROLLER_ID)).get(config.getValue(THROTTLE));
-            axisValues.currX = glfwGetJoystickAxes(config.getValue(CONTROLLER_ID)).get(config.getValue(PITCH));
-            axisValues.currY = glfwGetJoystickAxes(config.getValue(CONTROLLER_ID)).get(config.getValue(YAW));
-            axisValues.currZ = glfwGetJoystickAxes(config.getValue(CONTROLLER_ID)).get(config.getValue(ROLL));
-
-            if (config.getValue(INVERT_THROTTLE)) {
-                axisValues.currT *= -1;
+            if (Config.INSTANCE.invertThrottle) {
+                frame.setT(-frame.getT());
             }
 
-            if (config.getValue(THROTTLE_CENTER_POSITION)) {
-                if (axisValues.currT < 0) {
-                    axisValues.currT = 0;
+            if (Config.INSTANCE.invertPitch) {
+                frame.setX(-frame.getX());
+            }
+
+            if (Config.INSTANCE.invertRoll) {
+                frame.setZ(-frame.getZ());
+            }
+
+            if (Config.INSTANCE.invertYaw) {
+                frame.setY(-frame.getY());
+            }
+
+            if (Config.INSTANCE.throttleInCenter) {
+                if (frame.getT() < 0) {
+                    frame.setT(0);
                 }
             } else {
-                axisValues.currT = (axisValues.currT + 1) / 2.0f;
+                frame.setT((frame.getT() + 1) / 2.0f);
             }
 
-            if (config.getValue(INVERT_PITCH)) {
-                axisValues.currX *= -1;
-            }
+            if (Config.INSTANCE.deadzone != 0.0f) {
+                float halfDeadzone = Config.INSTANCE.deadzone / 2.0f;
 
-            if (config.getValue(INVERT_YAW)) {
-                axisValues.currY *= -1;
-            }
-
-            if (config.getValue(INVERT_ROLL)) {
-                axisValues.currZ *= -1;
-            }
-
-            if (config.getValue(DEADZONE) != 0.0F) {
-                float halfDeadzone = config.getValue(DEADZONE) / 2.0f;
-
-                if (axisValues.currX < halfDeadzone && axisValues.currX > -halfDeadzone) {
-                    axisValues.currX = 0.0f;
+                if (frame.getX() < halfDeadzone && frame.getX() > -halfDeadzone) {
+                    frame.setX(0);
                 }
 
-                if (axisValues.currY < halfDeadzone && axisValues.currY > -halfDeadzone) {
-                    axisValues.currY = 0.0f;
+                if (frame.getY() < halfDeadzone && frame.getY() > -halfDeadzone) {
+                    frame.setY(0);
                 }
 
-                if (axisValues.currZ < halfDeadzone && axisValues.currZ > -halfDeadzone) {
-                    axisValues.currZ = 0.0f;
+                if (frame.getZ() < halfDeadzone && frame.getZ() > -halfDeadzone) {
+                    frame.setZ(0);
                 }
             }
         }
@@ -81,7 +71,7 @@ public class InputTick {
 
     public static boolean controllerExists() {
         try {
-            glfwGetJoystickAxes(ClientInitializer.getConfig().getValue(CONTROLLER_ID)).get();
+            glfwGetJoystickAxes(Config.INSTANCE.controllerId).get();
             return true;
         } catch (NullPointerException e) {
             return false;
