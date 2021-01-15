@@ -5,12 +5,12 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "EntityPositionS2CPacketMixin",
-    "Matrix4fMixin",
-    "PlayerInventoryMixin",
+    "common.math.Matrix4fMixin",
+    "common.player.PlayerInventoryMixin",
     "common.player.PlayerManagerMixin",
     "PlayerSpawnS2CPacketMixin",
     "RotateAndMoveRelativeMixin",
-    "common.player.ServerPlayerEntityMixin",
+    "common.player.ServerPlayerEntityMixin"
   ],
   "client": [
     "client.world.ClientChunkManagerMixin",
@@ -18,12 +18,12 @@
     "client.network.ClientPlayNetworkHandlerMixin",
     "client.world.ClientWorldMixin",
     "client.render.GameRendererMixin",
-    "HeldItemRendererMixin",
+    "client.render.HeldItemRendererMixin",
     "client.render.ItemRendererMixin",
     "client.render.InGameHudMixin",
-    "client.render.MatrixStackMixin",
+    "common.math.MatrixStackMixin",
     "client.input.MouseMixin",
-    "WorldRendererMixin"
+    "client.render.WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

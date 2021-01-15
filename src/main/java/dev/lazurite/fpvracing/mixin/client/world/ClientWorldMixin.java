@@ -3,7 +3,7 @@ package dev.lazurite.fpvracing.mixin.client.world;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.world.ClientWorld;
-import dev.lazurite.fpvracing.server.entity.FlyableEntity;
+import dev.lazurite.fpvracing.common.entity.FlyableEntity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

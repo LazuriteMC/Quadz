@@ -1,7 +1,7 @@
 package dev.lazurite.fpvracing.mixin.client.render;
 
-import dev.lazurite.fpvracing.client.renderer.QuadcopterItemRenderer;
-import dev.lazurite.fpvracing.server.item.QuadcopterItem;
+import dev.lazurite.fpvracing.client.render.QuadcopterItemRenderer;
+import dev.lazurite.fpvracing.common.item.QuadcopterItem;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;

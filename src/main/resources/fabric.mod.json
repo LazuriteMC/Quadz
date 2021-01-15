@@ -17,10 +17,16 @@
 
   "environment": "*",
   "entrypoints": {
-    "main": [ "dev.lazurite.fpvracing.server.ServerInitializer" ],
+    "main": [
+      "dev.lazurite.fpvracing.FPVRacing"
+    ],
     "client": [ "dev.lazurite.fpvracing.client.ClientInitializer" ],
-    "cardinal-components-item": [ "dev.lazurite.fpvracing.server.ServerInitializer" ],
-    "modmenu": [ "dev.lazurite.fpvracing.server.ServerInitializer" ]
+    "cardinal-components-item": [
+      "dev.lazurite.fpvracing.FPVRacing"
+    ],
+    "modmenu": [
+      "dev.lazurite.fpvracing.FPVRacing"
+    ]
   },
 
   "mixins": [ "fpvracing.mixins.json" ],

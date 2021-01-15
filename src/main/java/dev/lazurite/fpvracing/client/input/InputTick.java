@@ -1,8 +1,8 @@
 package dev.lazurite.fpvracing.client.input;
 
+import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.client.ClientInitializer;
 import dev.lazurite.fpvracing.network.tracker.Config;
-import dev.lazurite.fpvracing.server.ServerInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -11,19 +11,19 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 
 @Environment(EnvType.CLIENT)
 public class InputTick {
-    public static final Config.Key<Integer> CONTROLLER_ID = new Config.Key<>("controllerID", ServerInitializer.INTEGER_TYPE);
+    public static final Config.Key<Integer> CONTROLLER_ID = new Config.Key<>("controllerID", FPVRacing.INTEGER_TYPE);
 
-    public static final Config.Key<Integer> THROTTLE = new Config.Key<>("throttle", ServerInitializer.INTEGER_TYPE);
-    public static final Config.Key<Integer> PITCH = new Config.Key<>("pitch", ServerInitializer.INTEGER_TYPE);
-    public static final Config.Key<Integer> YAW = new Config.Key<>("yaw", ServerInitializer.INTEGER_TYPE);
-    public static final Config.Key<Integer> ROLL = new Config.Key<>("roll", ServerInitializer.INTEGER_TYPE);
-    public static final Config.Key<Float> DEADZONE = new Config.Key<>("deadzone", ServerInitializer.FLOAT_TYPE);
+    public static final Config.Key<Integer> THROTTLE = new Config.Key<>("throttle", FPVRacing.INTEGER_TYPE);
+    public static final Config.Key<Integer> PITCH = new Config.Key<>("pitch", FPVRacing.INTEGER_TYPE);
+    public static final Config.Key<Integer> YAW = new Config.Key<>("yaw", FPVRacing.INTEGER_TYPE);
+    public static final Config.Key<Integer> ROLL = new Config.Key<>("roll", FPVRacing.INTEGER_TYPE);
+    public static final Config.Key<Float> DEADZONE = new Config.Key<>("deadzone", FPVRacing.FLOAT_TYPE);
 
-    public static final Config.Key<Boolean> THROTTLE_CENTER_POSITION = new Config.Key<>("throttleCenterPosition", ServerInitializer.BOOLEAN_TYPE);
-    public static final Config.Key<Boolean> INVERT_THROTTLE = new Config.Key<>("invertThrottle", ServerInitializer.BOOLEAN_TYPE);
-    public static final Config.Key<Boolean> INVERT_PITCH = new Config.Key<>("invertPitch", ServerInitializer.BOOLEAN_TYPE);
-    public static final Config.Key<Boolean> INVERT_YAW = new Config.Key<>("invertYaw", ServerInitializer.BOOLEAN_TYPE);
-    public static final Config.Key<Boolean> INVERT_ROLL = new Config.Key<>("invertRoll", ServerInitializer.BOOLEAN_TYPE);
+    public static final Config.Key<Boolean> THROTTLE_CENTER_POSITION = new Config.Key<>("throttleCenterPosition", FPVRacing.BOOLEAN_TYPE);
+    public static final Config.Key<Boolean> INVERT_THROTTLE = new Config.Key<>("invertThrottle", FPVRacing.BOOLEAN_TYPE);
+    public static final Config.Key<Boolean> INVERT_PITCH = new Config.Key<>("invertPitch", FPVRacing.BOOLEAN_TYPE);
+    public static final Config.Key<Boolean> INVERT_YAW = new Config.Key<>("invertYaw", FPVRacing.BOOLEAN_TYPE);
+    public static final Config.Key<Boolean> INVERT_ROLL = new Config.Key<>("invertRoll", FPVRacing.BOOLEAN_TYPE);
 
     public static final AxisValues axisValues = new AxisValues();
 

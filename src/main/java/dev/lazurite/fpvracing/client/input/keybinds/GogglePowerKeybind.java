@@ -1,8 +1,8 @@
 package dev.lazurite.fpvracing.client.input.keybinds;
 
-import dev.lazurite.fpvracing.server.ServerInitializer;
-import dev.lazurite.fpvracing.server.item.GogglesItem;
-import dev.lazurite.fpvracing.network.packet.PowerGogglesC2S;
+import dev.lazurite.fpvracing.FPVRacing;
+import dev.lazurite.fpvracing.common.item.GogglesItem;
+import dev.lazurite.fpvracing.client.packet.PowerGogglesC2S;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -40,10 +40,10 @@ public class GogglePowerKeybind {
 
     public static void register() {
         key = new KeyBinding(
-                "key." + ServerInitializer.MODID + ".powergoggles",
+                "key." + FPVRacing.MODID + ".powergoggles",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_G,
-                "category." + ServerInitializer.MODID + ".keys"
+                "category." + FPVRacing.MODID + ".keys"
         );
 
         KeyBindingHelper.registerKeyBinding(key);

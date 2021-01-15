@@ -1,7 +1,7 @@
 package dev.lazurite.fpvracing.mixin.common.player;
 
-import dev.lazurite.fpvracing.server.entity.FlyableEntity;
-import dev.lazurite.fpvracing.server.item.GogglesItem;
+import dev.lazurite.fpvracing.common.entity.FlyableEntity;
+import dev.lazurite.fpvracing.common.item.GogglesItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.Packet;
 import net.minecraft.server.PlayerManager;

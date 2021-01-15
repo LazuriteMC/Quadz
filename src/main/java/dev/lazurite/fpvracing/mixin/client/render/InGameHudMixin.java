@@ -1,7 +1,8 @@
 package dev.lazurite.fpvracing.mixin.client.render;
 
-import dev.lazurite.fpvracing.server.item.GogglesItem;
-import dev.lazurite.fpvracing.server.entity.flyable.QuadcopterEntity;
+import dev.lazurite.fpvracing.common.item.GogglesItem;
+import dev.lazurite.fpvracing.common.entity.FlyableEntity;
+import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,19 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
-    @Inject(
-            method = "render",
-            at = @At(
-                    value = "INVOKE_ASSIGN",
-                    target = "Lnet/minecraft/entity/player/PlayerInventory;getArmorStack(I)Lnet/minecraft/item/ItemStack;"
-            )
-    )
-    public void render(MatrixStack matrices, float tickDelta, CallbackInfo info) {
-    }
-
     /**
      * This mixin method removes the crosshair from the player's screen whenever
-     * they are flying a {@link QuadcopterEntity}.
+     * they are flying a {@link FlyableEntity}.
      * @param matrices the matrix stack
      * @param info required by every mixin injection
      */

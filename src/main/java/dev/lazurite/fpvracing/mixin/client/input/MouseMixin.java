@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.mixin.client.input;
 
-import dev.lazurite.fpvracing.server.item.GogglesItem;
+import dev.lazurite.fpvracing.common.item.GogglesItem;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.options.KeyBinding;

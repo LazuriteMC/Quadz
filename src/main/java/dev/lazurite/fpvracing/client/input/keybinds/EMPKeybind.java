@@ -2,7 +2,7 @@ package dev.lazurite.fpvracing.client.input.keybinds;
 
 import dev.lazurite.fpvracing.client.ClientInitializer;
 import dev.lazurite.fpvracing.network.packet.EMPC2S;
-import dev.lazurite.fpvracing.server.ServerInitializer;
+import dev.lazurite.fpvracing.FPVRacing;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -37,10 +37,10 @@ public class EMPKeybind {
      */
     public static void register() {
         key = new KeyBinding(
-                "key." + ServerInitializer.MODID + ".emp",
+                "key." + FPVRacing.MODID + ".emp",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_O,
-                "category." + ServerInitializer.MODID + ".keys"
+                "category." + FPVRacing.MODID + ".keys"
         );
 
         KeyBindingHelper.registerKeyBinding(key);

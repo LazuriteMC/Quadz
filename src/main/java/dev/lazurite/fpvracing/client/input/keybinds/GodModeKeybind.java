@@ -1,7 +1,7 @@
 package dev.lazurite.fpvracing.client.input.keybinds;
 
-import dev.lazurite.fpvracing.network.packet.GodModeC2S;
-import dev.lazurite.fpvracing.server.ServerInitializer;
+import dev.lazurite.fpvracing.client.packet.GodModeC2S;
+import dev.lazurite.fpvracing.FPVRacing;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -21,10 +21,10 @@ public class GodModeKeybind {
 
     public static void register() {
         key = new KeyBinding(
-                "key." + ServerInitializer.MODID + ".godmode",
+                "key." + FPVRacing.MODID + ".godmode",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_M,
-                "category." + ServerInitializer.MODID + ".keys"
+                "category." + FPVRacing.MODID + ".keys"
         );
 
         KeyBindingHelper.registerKeyBinding(key);
