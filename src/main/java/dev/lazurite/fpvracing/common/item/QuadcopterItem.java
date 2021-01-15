@@ -3,7 +3,7 @@ package dev.lazurite.fpvracing.common.item;
 import dev.lazurite.fpvracing.network.tracker.Config;
 import dev.lazurite.fpvracing.network.tracker.GenericDataTrackerRegistry;
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
+import dev.lazurite.fpvracing.common.entity.quadcopter.QuadcopterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

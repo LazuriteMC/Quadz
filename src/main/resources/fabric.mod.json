@@ -17,16 +17,11 @@
 
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "dev.lazurite.fpvracing.FPVRacing"
-    ],
-    "client": [ "dev.lazurite.fpvracing.client.ClientInitializer" ],
-    "cardinal-components-item": [
-      "dev.lazurite.fpvracing.FPVRacing"
-    ],
-    "modmenu": [
-      "dev.lazurite.fpvracing.FPVRacing"
-    ]
+    "main": [ "dev.lazurite.fpvracing.FPVRacing" ],
+    "client": [ "dev.lazurite.fpvracing.FPVRacing" ],
+    "cardinal-components-item": [ "dev.lazurite.fpvracing.FPVRacing" ],
+    "cardinal-components-entity": [ "dev.lazurite.fpvracing.FPVRacing" ],
+    "modmenu": [ "dev.lazurite.fpvracing.FPVRacing" ]
   },
 
   "mixins": [ "fpvracing.mixins.json" ],
@@ -43,7 +38,9 @@
 
   "custom": {
     "cardinal-components": [
-      "fpvracing:frequency_item"
+      "fpvracing:viewer_item",
+      "fpvracing:viewable_entity",
+      "fpvracing:flyable_entity"
     ]
   }
 }

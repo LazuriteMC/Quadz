@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.client.render.model;
 
-import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
+import dev.lazurite.fpvracing.common.entity.quadcopter.QuadcopterEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.ModelPart;

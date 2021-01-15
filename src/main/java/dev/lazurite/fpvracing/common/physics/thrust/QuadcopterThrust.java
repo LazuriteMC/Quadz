@@ -1,7 +1,7 @@
 package dev.lazurite.fpvracing.common.physics.thrust;
 
 import dev.lazurite.fpvracing.client.input.InputTick;
-import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
+import dev.lazurite.fpvracing.common.entity.quadcopter.QuadcopterEntity;
 import dev.lazurite.fpvracing.access.Matrix4fAccess;
 import dev.lazurite.fpvracing.common.util.BetaflightHelper;
 import dev.lazurite.fpvracing.common.util.math.QuaternionHelper;

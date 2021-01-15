@@ -2,7 +2,7 @@ package dev.lazurite.fpvracing.client.packet;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.FlyableEntity;
-import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
+import dev.lazurite.fpvracing.common.entity.quadcopter.QuadcopterEntity;
 import dev.lazurite.fpvracing.common.item.QuadcopterItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import io.netty.buffer.Unpooled;

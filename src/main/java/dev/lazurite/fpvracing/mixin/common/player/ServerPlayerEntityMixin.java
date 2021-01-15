@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import dev.lazurite.fpvracing.access.ServerPlayerAccess;
 import dev.lazurite.fpvracing.common.entity.FlyableEntity;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
-import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
+import dev.lazurite.fpvracing.common.entity.quadcopter.QuadcopterEntity;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.packet.SelectedSlotS2C;
 import dev.lazurite.fpvracing.common.packet.ShouldRenderPlayerS2C;

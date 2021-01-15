@@ -69,6 +69,10 @@ public final class InputTick {
         }
     }
 
+    public InputFrame getFrame() {
+        return this.frame;
+    }
+
     public static boolean controllerExists() {
         try {
             glfwGetJoystickAxes(Config.INSTANCE.controllerId).get();
