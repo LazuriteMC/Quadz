@@ -7,6 +7,7 @@ import dev.lazurite.fpvracing.client.input.keybinds.NoClipKeybind;
 import dev.lazurite.fpvracing.client.packet.GodModeC2S;
 import dev.lazurite.fpvracing.client.packet.NoClipC2S;
 import dev.lazurite.fpvracing.client.packet.PowerGogglesC2S;
+import dev.lazurite.fpvracing.common.packet.ElectromagneticPulseS2C;
 import dev.lazurite.fpvracing.common.packet.SelectedSlotS2C;
 import dev.lazurite.fpvracing.common.packet.ShouldRenderPlayerS2C;
 import dev.lazurite.fpvracing.common.entity.FlyableEntity;
@@ -60,6 +61,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		NoClipC2S.register();
 		GodModeC2S.register();
 		PowerGogglesC2S.register();
+		ElectromagneticPulseS2C.register();
 
 		DRONE_SPAWNER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "drone_spawner_item"), new QuadcopterItem(new Item.Settings().maxCount(1)));
 		GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));

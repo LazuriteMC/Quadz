@@ -4,6 +4,7 @@ import dev.lazurite.fpvracing.client.packet.GodModeC2S;
 import dev.lazurite.fpvracing.FPVRacing;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.minecraft.client.MinecraftClient;
@@ -28,6 +29,6 @@ public class GodModeKeybind {
         );
 
         KeyBindingHelper.registerKeyBinding(key);
-        ClientTickCallback.EVENT.register(GodModeKeybind::callback);
+        ClientTickEvents.END_CLIENT_TICK.register(GodModeKeybind::callback);
     }
 }

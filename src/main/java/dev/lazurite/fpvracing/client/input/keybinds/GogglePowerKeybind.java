@@ -1,12 +1,13 @@
 package dev.lazurite.fpvracing.client.input.keybinds;
 
 import dev.lazurite.fpvracing.FPVRacing;
+import dev.lazurite.fpvracing.access.PlayerAccess;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
 import dev.lazurite.fpvracing.client.packet.PowerGogglesC2S;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -25,13 +26,13 @@ public class GogglePowerKeybind {
 
         if (client.player != null) {
             if (key.wasPressed()) {
-                if (GogglesItem.isWearingGoggles(client.player)) {
+                if (((PlayerAccess) client.player).isInGoggles()) {
                     PowerGogglesC2S.send(!GogglesItem.isOn(client.player), keyNames);
                 }
             }
 
             if (client.options.keySneak.wasPressed()) {
-                if (GogglesItem.isWearingGoggles(client.player)) {
+                if (((PlayerAccess) client.player).isInGoggles()) {
                     PowerGogglesC2S.send(false, keyNames);
                 }
             }
@@ -47,7 +48,7 @@ public class GogglePowerKeybind {
         );
 
         KeyBindingHelper.registerKeyBinding(key);
-        ClientTickCallback.EVENT.register(GogglePowerKeybind::callback);
+        ClientTickEvents.END_CLIENT_TICK.register(GogglePowerKeybind::callback);
     }
 }
 
