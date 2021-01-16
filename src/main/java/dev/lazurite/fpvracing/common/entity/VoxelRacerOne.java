@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.common.entity.quadcopter;
+package dev.lazurite.fpvracing.common.entity;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;

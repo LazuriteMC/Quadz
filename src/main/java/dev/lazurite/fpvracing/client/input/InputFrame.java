@@ -1,5 +1,6 @@
 package dev.lazurite.fpvracing.client.input;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 
 /**
@@ -78,6 +79,20 @@ public class InputFrame {
 
     public static InputFrame fromBuffer(PacketByteBuf buf) {
         return new InputFrame(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
+    }
+
+    public void toTag(CompoundTag tag) {
+        CompoundTag sub = new CompoundTag();
+        sub.putFloat("t", t);
+        sub.putFloat("x", x);
+        sub.putFloat("y", y);
+        sub.putFloat("z", z);
+        tag.put("frame", sub);
+    }
+
+    public static InputFrame fromTag(CompoundTag tag) {
+        CompoundTag sub = tag.getCompound("frame");
+        return new InputFrame(sub.getFloat("t"), sub.getFloat("x"), sub.getFloat("y"), sub.getFloat("z"));
     }
 
     @Override

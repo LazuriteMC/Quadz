@@ -7,10 +7,12 @@ import dev.lazurite.fpvracing.client.input.keybinds.NoClipKeybind;
 import dev.lazurite.fpvracing.client.packet.GodModeC2S;
 import dev.lazurite.fpvracing.client.packet.NoClipC2S;
 import dev.lazurite.fpvracing.client.packet.PowerGogglesC2S;
-import dev.lazurite.fpvracing.common.component.FlyableEntity;
-import dev.lazurite.fpvracing.common.component.ViewableEntity;
-import dev.lazurite.fpvracing.common.component.ViewerItem;
-import dev.lazurite.fpvracing.common.entity.quadcopter.VoxelRacerOne;
+import dev.lazurite.fpvracing.common.entity.component.FlightControllerComponent;
+import dev.lazurite.fpvracing.common.entity.component.PropulsionComponent;
+import dev.lazurite.fpvracing.common.entity.component.ReceiverComponent;
+import dev.lazurite.fpvracing.common.entity.component.VideoTransmitterComponent;
+import dev.lazurite.fpvracing.common.item.VideoReceiverComponent;
+import dev.lazurite.fpvracing.common.entity.VoxelRacerOne;
 import dev.lazurite.fpvracing.common.packet.ElectromagneticPulseS2C;
 import dev.lazurite.fpvracing.common.packet.SelectedSlotS2C;
 import dev.lazurite.fpvracing.common.packet.ShouldRenderPlayerS2C;
@@ -18,7 +20,7 @@ import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
 import dev.lazurite.fpvracing.common.item.QuadcopterItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
-import dev.lazurite.fpvracing.common.entity.quadcopter.QuadcopterEntity;
+import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.client.render.QuadcopterRenderer;
 import dev.lazurite.rayon.api.event.EntityBodyStepEvents;
 import dev.lazurite.rayon.api.registry.DynamicEntityRegistry;
@@ -58,9 +60,11 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 	public static ChannelWandItem CHANNEL_WAND_ITEM;
 	public static ItemGroup ITEM_GROUP;
 
-	public static final ComponentKey<ViewableEntity> VIEWABLE_ENTITY = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "viewable_entity"), ViewableEntity.class);
-	public static final ComponentKey<FlyableEntity> FLYABLE_ENTITY = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "flyable_entity"), FlyableEntity.class);
-	public static final ComponentKey<ViewerItem> VIEWER_ITEM = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "viewer_item"), ViewerItem.class);
+	public static final ComponentKey<VideoTransmitterComponent> VIDEO_TRANSMITTER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "video_transmitter"), VideoTransmitterComponent.class);
+	public static final ComponentKey<VideoReceiverComponent> VIDEO_RECEIVER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "video_receiver"), VideoReceiverComponent.class);
+	public static final ComponentKey<ReceiverComponent> RECEIVER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "receiver"), ReceiverComponent.class);
+	public static final ComponentKey<FlightControllerComponent> FLIGHT_CONTROLLER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "flight_controller"), FlightControllerComponent.class);
+	public static final ComponentKey<PropulsionComponent> PROPULSION = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "propulsion"), PropulsionComponent.class);
 
 	public static EntityType<VoxelRacerOne> VOXEL_RACER_ONE;
 
@@ -101,7 +105,11 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 						.build());
 
 		DynamicEntityRegistry.INSTANCE.register(QuadcopterEntity.class, BoundingBoxShapeProvider::get, 1.0f, 0.05f);
-		EntityBodyStepEvents.START_ENTITY_STEP.register(FlyableEntity::step);
+		EntityBodyStepEvents.START_ENTITY_STEP.register((entity, delta) -> {
+			if (ReceiverComponent.is(entity.getEntity())) {
+				ReceiverComponent.get(entity.getEntity()).step(delta);
+			}
+		});
 	}
 
 	@Override
@@ -120,13 +128,15 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 
 	@Override
 	public void registerItemComponentFactories(ItemComponentFactoryRegistry registry) {
-		registry.registerFor(new Identifier(MODID, "goggles_item"), VIEWER_ITEM, ViewerItem::new);
+		registry.registerFor(new Identifier(MODID, "goggles_item"), VIDEO_RECEIVER, VideoReceiverComponent::new);
 	}
 
 	@Override
 	public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-		registry.registerFor(QuadcopterEntity.class, VIEWABLE_ENTITY, ViewableEntity::new);
-		registry.registerFor(QuadcopterEntity.class, FLYABLE_ENTITY, FlyableEntity::new);
+		registry.registerFor(QuadcopterEntity.class, VIDEO_TRANSMITTER, VideoTransmitterComponent::new);
+		registry.registerFor(QuadcopterEntity.class, FLIGHT_CONTROLLER, FlightControllerComponent::new);
+		registry.registerFor(QuadcopterEntity.class, PROPULSION, PropulsionComponent::new);
+		registry.registerFor(QuadcopterEntity.class, RECEIVER, ReceiverComponent::new);
 	}
 
 	@Override

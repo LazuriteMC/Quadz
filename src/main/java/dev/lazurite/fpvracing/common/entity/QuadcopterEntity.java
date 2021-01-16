@@ -1,14 +1,17 @@
-package dev.lazurite.fpvracing.common.entity.quadcopter;
+package dev.lazurite.fpvracing.common.entity;
 
+import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.client.input.InputTick;
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.component.FlyableEntity;
-import dev.lazurite.fpvracing.common.component.ViewableEntity;
+import dev.lazurite.fpvracing.common.entity.component.VideoTransmitterComponent;
 import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.QuadcopterItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
+import dev.lazurite.fpvracing.common.util.BetaflightHelper;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.lazurite.rayon.api.packet.RayonSpawnS2CPacket;
+import dev.lazurite.rayon.physics.body.EntityRigidBody;
+import dev.lazurite.rayon.physics.helper.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.Entity;
@@ -27,17 +30,27 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import physics.javax.vecmath.Quat4f;
+
+import java.util.Random;
 
 public abstract class QuadcopterEntity extends Entity {
-	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(FlyableEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+
+	private float thrust;
+	private float thrustCurve;
 
 	public QuadcopterEntity(EntityType<?> type, World world) {
 		super(type, world);
 	}
 
-	@Override
-	@Environment(EnvType.CLIENT)
-	public void stepInput(float delta) {
+	public void step(float delta) {
+		EntityRigidBody body = EntityRigidBody.get(entity);
+		rotateX((float) BetaflightHelper.calculateRates(getFrame().getX(), getRate(), getExpo(), getSuperRate(), delta));
+		rotateY((float) BetaflightHelper.calculateRates(getFrame().getY(), getRate(), getExpo(), getSuperRate(), delta));
+		rotateZ((float) BetaflightHelper.calculateRates(getFrame().getZ(), getRate(), getExpo(), getSuperRate(), delta));
+//        body.applyForce(thrust.getForce());
+
 
 	}
 
@@ -65,9 +78,14 @@ public abstract class QuadcopterEntity extends Entity {
 		ItemStack stack = player.inventory.getMainHandStack();
 
 		if (stack.getItem() instanceof TransmitterItem) {
-			FlyableEntity.get(this).bind(player, stack);
+			Random rand = new Random();
+
+			// TODO
+			bindId = rand.nextInt(10000);
+
+			player.sendMessage(new LiteralText("Transmitter bound"), false);
 		} else if (stack.getItem() instanceof ChannelWandItem) {
-			Frequency frequency = ViewableEntity.get(this).getFrequency();
+			Frequency frequency = VideoTransmitterComponent.get(this).getFrequency();
 			player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), false);
 		}
 
@@ -113,4 +131,6 @@ public abstract class QuadcopterEntity extends Entity {
 	public Packet<?> createSpawnPacket() {
 		return RayonSpawnS2CPacket.get(this);
 	}
+
+
 }

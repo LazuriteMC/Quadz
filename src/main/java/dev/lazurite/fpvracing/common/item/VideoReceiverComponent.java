@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.common.component;
+package dev.lazurite.fpvracing.common.item;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.access.PlayerAccess;
@@ -11,10 +11,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 
-public class ViewerItem implements ComponentV3 {
+public class VideoReceiverComponent implements ComponentV3 {
     private final ItemStack stack;
 
-    public ViewerItem(ItemStack stack) {
+    public VideoReceiverComponent(ItemStack stack) {
         this.stack = stack;
     }
 

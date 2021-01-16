@@ -4,7 +4,7 @@ import dev.lazurite.fpvracing.client.render.model.QuadcopterModel;
 import dev.lazurite.fpvracing.common.entity.PhysicsEntity;
 import dev.lazurite.fpvracing.client.ClientInitializer;
 import dev.lazurite.fpvracing.physics.entity.ClientPhysicsHandler;
-import dev.lazurite.fpvracing.common.entity.quadcopter.QuadcopterEntity;
+import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.common.util.math.QuaternionHelper;
 import dev.lazurite.fpvracing.FPVRacing;
 import net.fabricmc.api.EnvType;

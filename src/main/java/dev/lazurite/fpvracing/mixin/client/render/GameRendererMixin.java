@@ -1,7 +1,7 @@
 package dev.lazurite.fpvracing.mixin.client.render;
 
 import dev.lazurite.fpvracing.common.entity.FlyableEntity;
-import dev.lazurite.fpvracing.common.entity.quadcopter.QuadcopterEntity;
+import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.rayon.physics.body.EntityRigidBody;
 import dev.lazurite.rayon.physics.helper.math.QuaternionHelper;
 import net.minecraft.client.MinecraftClient;

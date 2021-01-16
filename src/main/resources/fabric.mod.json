@@ -38,9 +38,10 @@
 
   "custom": {
     "cardinal-components": [
-      "fpvracing:viewer_item",
-      "fpvracing:viewable_entity",
-      "fpvracing:flyable_entity"
+      "fpvracing:video_receiver",
+      "fpvracing:video_transmitter",
+      "fpvracing:flight_controller",
+      "fpvracing:receiver"
     ]
   }
 }

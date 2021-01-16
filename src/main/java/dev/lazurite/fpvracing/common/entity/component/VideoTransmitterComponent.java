@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.common.component;
+package dev.lazurite.fpvracing.common.entity.component;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.util.Frequency;
@@ -8,18 +8,18 @@ import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundTag;
 
-public class ViewableEntity implements ComponentV3, CommonTickingComponent, AutoSyncedComponent {
+public class VideoTransmitterComponent implements ComponentV3, CommonTickingComponent, AutoSyncedComponent {
     private final Entity entity;
     private final Frequency frequency;
     private int fieldOfView;
     private int cameraAngle;
 
-    public ViewableEntity(Entity entity) {
+    public VideoTransmitterComponent(Entity entity) {
         this.entity = entity;
         this.frequency = new Frequency();
     }
 
-    public static ViewableEntity get(Entity entity) {
+    public static VideoTransmitterComponent get(Entity entity) {
         try {
             return FPVRacing.VIEWABLE_ENTITY.get(entity);
         } catch (Exception e) {
