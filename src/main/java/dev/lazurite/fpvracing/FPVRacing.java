@@ -23,8 +23,6 @@ import dev.lazurite.rayon.api.registry.DynamicEntityRegistry;
 import dev.lazurite.rayon.api.shape.provider.BoundingBoxShapeProvider;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
-import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
-import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import dev.onyxstudios.cca.api.v3.item.ItemComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.item.ItemComponentInitializer;
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
@@ -46,7 +44,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComponentInitializer, EntityComponentInitializer, ModMenuApi {
+public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComponentInitializer, ModMenuApi {
 	public static final String MODID = "fpvracing";
 
 	/* Items */
@@ -126,15 +124,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 	}
 
 	@Override
-	public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-		registry.registerFor(QuadcopterEntity.class, VIDEO_TRANSMITTER, VideoTransmitterComponent::new);
-		registry.registerFor(QuadcopterEntity.class, FLIGHT_CONTROLLER, FlightControllerComponent::new);
-		registry.registerFor(QuadcopterEntity.class, RECEIVER, ReceiverComponent::new);
-	}
-
-	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {
 		return null;
 	}
-
 }

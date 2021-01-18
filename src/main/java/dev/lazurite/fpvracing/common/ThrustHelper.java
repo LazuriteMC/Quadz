@@ -1,20 +1,19 @@
-package dev.lazurite.fpvracing.common.physics.thrust;
+package dev.lazurite.fpvracing.common;
 
 import dev.lazurite.fpvracing.client.input.InputTick;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.access.Matrix4fAccess;
 import dev.lazurite.fpvracing.common.util.BetaflightHelper;
-import dev.lazurite.fpvracing.common.util.math.QuaternionHelper;
+import dev.lazurite.rayon.physics.helper.math.QuaternionHelper;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
+import physics.javax.vecmath.Quat4f;
+import physics.javax.vecmath.Vector3f;
 
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
-
-public class QuadcopterThrust implements Thrust {
+public class ThrustHelper {
     private final QuadcopterEntity quad;
 
-    public QuadcopterThrust(QuadcopterEntity quad) {
+    public ThrustHelper(QuadcopterEntity quad) {
         this.quad = quad;
     }
 

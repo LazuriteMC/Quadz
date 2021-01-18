@@ -20,7 +20,6 @@
     "main": [ "dev.lazurite.fpvracing.FPVRacing" ],
     "client": [ "dev.lazurite.fpvracing.FPVRacing" ],
     "cardinal-components-item": [ "dev.lazurite.fpvracing.FPVRacing" ],
-    "cardinal-components-entity": [ "dev.lazurite.fpvracing.FPVRacing" ],
     "modmenu": [ "dev.lazurite.fpvracing.FPVRacing" ]
   },
 
@@ -38,10 +37,7 @@
 
   "custom": {
     "cardinal-components": [
-      "fpvracing:video_receiver",
-      "fpvracing:video_transmitter",
-      "fpvracing:flight_controller",
-      "fpvracing:receiver"
+      "fpvracing:video_receiver"
     ]
   }
 }

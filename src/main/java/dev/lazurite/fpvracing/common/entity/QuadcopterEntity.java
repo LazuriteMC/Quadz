@@ -8,10 +8,14 @@ import dev.lazurite.fpvracing.common.entity.component.Thrust;
 import dev.lazurite.fpvracing.common.entity.component.VideoTransmission;
 import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
+import dev.lazurite.fpvracing.common.util.Axis;
 import dev.lazurite.fpvracing.common.util.BetaflightHelper;
 import dev.lazurite.fpvracing.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.lazurite.rayon.api.packet.RayonSpawnS2CPacket;
+import dev.lazurite.rayon.physics.body.EntityRigidBody;
+import dev.lazurite.rayon.physics.helper.math.QuaternionHelper;
+import dev.lazurite.rayon.physics.helper.math.VectorHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.Entity;
@@ -30,11 +34,14 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import physics.javax.vecmath.Quat4f;
+import physics.javax.vecmath.Vector3f;
 
 import java.util.Random;
 
 public abstract class QuadcopterEntity extends Entity implements VideoTransmission, Controllable, Thrust {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+	private static final TrackedData<State> STATE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.STATE);
 
 	/* Controllable Stuff */
 	private static final TrackedData<InputFrame> INPUT_FRAME = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.INPUT_FRAME);
@@ -58,22 +65,68 @@ public abstract class QuadcopterEntity extends Entity implements VideoTransmissi
 	}
 
 	public void step(float delta) {
+		decreaseAngularVelocity();
+
+		// TODO check for bound transmitter
 		if (getEntityWorld().isClient()) {
 			setInputFrame(InputTick.INSTANCE.getFrame());
 		}
 
-		rotateX((float) BetaflightHelper.calculateRates(getInputFrame().getX(), getRate(), getExpo(), getSuperRate(), delta));
-		rotateY((float) BetaflightHelper.calculateRates(getInputFrame().getY(), getRate(), getExpo(), getSuperRate(), delta));
-		rotateZ((float) BetaflightHelper.calculateRates(getInputFrame().getZ(), getRate(), getExpo(), getSuperRate(), delta));
+		rotate(Axis.X, (float) BetaflightHelper.calculateRates(getInputFrame().getX(), getRate(), getExpo(), getSuperRate(), delta));
+		rotate(Axis.Y, (float) BetaflightHelper.calculateRates(getInputFrame().getY(), getRate(), getExpo(), getSuperRate(), delta));
+		rotate(Axis.Z, (float) BetaflightHelper.calculateRates(getInputFrame().getZ(), getRate(), getExpo(), getSuperRate(), delta));
 //        body.applyForce(thrust.getForce());
+	}
+
+	public void rotate(Axis axis, float deg) {
+		EntityRigidBody body = EntityRigidBody.get(this);
+		Quat4f orientation = body.getOrientation(new Quat4f());
+
+		switch(axis) {
+			case X:
+				body.setOrientation(QuaternionHelper.rotateX(orientation, deg));
+				break;
+			case Y:
+				body.setOrientation(QuaternionHelper.rotateY(orientation, deg));
+				break;
+			case Z:
+				body.setOrientation(QuaternionHelper.rotateZ(orientation, deg));
+				break;
+		}
+	}
+
+	public void decreaseAngularVelocity() {
+		EntityRigidBody body = EntityRigidBody.get(this);
+		body.setAngularVelocity(VectorHelper.mul(body.getAngularVelocity(new Vector3f()), 0.5f));
+//		float distance = 0.25f;
+//
+//		for(int manifoldNum = 0; manifoldNum < body.getDynamicsWorld().getDispatcher().getNumManifolds(); ++manifoldNum) {
+//			PersistentManifold manifold = body.getDynamicsWorld().getDispatcher().getManifoldByIndexInternal(manifoldNum);
+//
+//			BlockRigidBody block;
+//			if (manifold.getBody0() instanceof BlockRigidBody && manifold.getBody1().equals(body)) {
+//				block = (BlockRigidBody) manifold.getBody0();
+//			} else if (manifold.getBody0().equals(body) && manifold.getBody1() instanceof BlockRigidBody) {
+//				block = (BlockRigidBody) manifold.getBody1();
+//			}
+//
+//			for(int contactNum = 0; contactNum < manifold.getNumContacts(); ++contactNum) {
+//				if (manifold.getContactPoint(contactNum).getDistance() < distance) {
+//
+//				}
+//			}
+//		}
 	}
 
 	@Override
 	public boolean damage(DamageSource source, float amount) {
-		if (source.getAttacker() instanceof PlayerEntity || (isKillable() && source instanceof ProjectileDamageSource)) {
-			this.kill();
-			return true;
+		if (!isInGodMode()) {
+			if (source.getAttacker() instanceof PlayerEntity || source instanceof ProjectileDamageSource) {
+				this.kill();
+				return true;
+			}
 		}
+
 		return false;
 	}
 
@@ -277,5 +330,30 @@ public abstract class QuadcopterEntity extends Entity implements VideoTransmissi
 	@Override
 	public int getCameraAngle() {
 		return getDataTracker().get(CAMERA_ANGLE);
+	}
+
+	public void setGodMode(boolean godMode) {
+		getDataTracker().set(GOD_MODE, godMode);
+	}
+
+	public boolean isInGodMode() {
+		return getDataTracker().get(GOD_MODE);
+	}
+
+	public void setState(State state) {
+		getDataTracker().set(STATE, state);
+	}
+
+	public State getState() {
+		return getDataTracker().get(STATE);
+	}
+
+	public enum State {
+		ARMED,
+		DISARMED,
+		DISABLED;
+
+		private State() {
+		}
 	}
 }

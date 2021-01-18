@@ -15,8 +15,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
-import java.util.List;
-
 public class PowerGogglesC2S {
     public static final Identifier PACKET_ID = new Identifier(FPVRacing.MODID, "power_goggles_c2s");
 
