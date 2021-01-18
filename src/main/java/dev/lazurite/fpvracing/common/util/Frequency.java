@@ -30,6 +30,11 @@ public class Frequency {
         setChannel(channel);
     }
 
+    public Frequency(Frequency frequency) {
+        setBand(frequency.getBand());
+        setChannel(frequency.getChannel());
+    }
+
     public void setBand(char band) {
         this.band = band;
     }
@@ -48,15 +53,6 @@ public class Frequency {
 
     public int getChannel() {
         return channel;
-    }
-
-    public void toTag(CompoundTag tag) {
-        tag.putInt("band", getBand());
-        tag.putInt("channel", getChannel());
-    }
-
-    public static Frequency fromTag(CompoundTag tag) {
-        return new Frequency((char) tag.getInt("band"), tag.getInt("channel"));
     }
 
     public static int getFrequency(char band, int channel) {

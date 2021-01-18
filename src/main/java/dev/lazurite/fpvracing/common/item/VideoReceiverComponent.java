@@ -2,11 +2,7 @@ package dev.lazurite.fpvracing.common.item;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.access.PlayerAccess;
-import dev.lazurite.fpvracing.common.entity.FlyableEntity;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -16,16 +12,6 @@ public class VideoReceiverComponent implements ComponentV3 {
 
     public VideoReceiverComponent(ItemStack stack) {
         this.stack = stack;
-    }
-
-    /**
-     * Determines whether or not the client
-     * has a camera entity of type {@link dev.lazurite.fpvracing.common.entity.FlyableEntity}.
-     * @return whether or not the player is viewing through a flyable entity
-     */
-    @Environment(EnvType.CLIENT)
-    public static boolean isInGoggles() {
-        return MinecraftClient.getInstance().getCameraEntity() instanceof FlyableEntity;
     }
 
     public static void setOn(ItemStack itemStack, boolean on) {

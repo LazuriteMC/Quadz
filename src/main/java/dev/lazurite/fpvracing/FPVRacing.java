@@ -7,10 +7,6 @@ import dev.lazurite.fpvracing.client.input.keybinds.NoClipKeybind;
 import dev.lazurite.fpvracing.client.packet.GodModeC2S;
 import dev.lazurite.fpvracing.client.packet.NoClipC2S;
 import dev.lazurite.fpvracing.client.packet.PowerGogglesC2S;
-import dev.lazurite.fpvracing.common.entity.component.FlightControllerComponent;
-import dev.lazurite.fpvracing.common.entity.component.PropulsionComponent;
-import dev.lazurite.fpvracing.common.entity.component.ReceiverComponent;
-import dev.lazurite.fpvracing.common.entity.component.VideoTransmitterComponent;
 import dev.lazurite.fpvracing.common.item.VideoReceiverComponent;
 import dev.lazurite.fpvracing.common.entity.VoxelRacerOne;
 import dev.lazurite.fpvracing.common.packet.ElectromagneticPulseS2C;
@@ -60,12 +56,10 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 	public static ChannelWandItem CHANNEL_WAND_ITEM;
 	public static ItemGroup ITEM_GROUP;
 
-	public static final ComponentKey<VideoTransmitterComponent> VIDEO_TRANSMITTER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "video_transmitter"), VideoTransmitterComponent.class);
+	/* Component */
 	public static final ComponentKey<VideoReceiverComponent> VIDEO_RECEIVER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "video_receiver"), VideoReceiverComponent.class);
-	public static final ComponentKey<ReceiverComponent> RECEIVER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "receiver"), ReceiverComponent.class);
-	public static final ComponentKey<FlightControllerComponent> FLIGHT_CONTROLLER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "flight_controller"), FlightControllerComponent.class);
-	public static final ComponentKey<PropulsionComponent> PROPULSION = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "propulsion"), PropulsionComponent.class);
 
+	/* Entity */
 	public static EntityType<VoxelRacerOne> VOXEL_RACER_ONE;
 
 	public static final HashMap<UUID, String[]> SERVER_PLAYER_KEYS = new HashMap<>();
@@ -106,8 +100,8 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 
 		DynamicEntityRegistry.INSTANCE.register(QuadcopterEntity.class, BoundingBoxShapeProvider::get, 1.0f, 0.05f);
 		EntityBodyStepEvents.START_ENTITY_STEP.register((entity, delta) -> {
-			if (ReceiverComponent.is(entity.getEntity())) {
-				ReceiverComponent.get(entity.getEntity()).step(delta);
+			if (entity.getEntity() instanceof QuadcopterEntity) {
+				((QuadcopterEntity) entity.getEntity()).step(delta);
 			}
 		});
 	}
@@ -135,7 +129,6 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 	public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
 		registry.registerFor(QuadcopterEntity.class, VIDEO_TRANSMITTER, VideoTransmitterComponent::new);
 		registry.registerFor(QuadcopterEntity.class, FLIGHT_CONTROLLER, FlightControllerComponent::new);
-		registry.registerFor(QuadcopterEntity.class, PROPULSION, PropulsionComponent::new);
 		registry.registerFor(QuadcopterEntity.class, RECEIVER, ReceiverComponent::new);
 	}
 

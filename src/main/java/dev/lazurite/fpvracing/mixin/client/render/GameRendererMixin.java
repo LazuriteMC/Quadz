@@ -19,9 +19,7 @@ import physics.javax.vecmath.Quat4f;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
-	@Shadow
-	@Final
-	private MinecraftClient client;
+	@Shadow @Final private MinecraftClient client;
 
 	@Inject(at = @At("HEAD"), method = "renderWorld")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
@@ -35,7 +33,7 @@ public class GameRendererMixin {
 
 			/* Camera Angle */
 			if (entity instanceof QuadcopterEntity) {
-//                QuaternionHelper.rotateX(q, flyable.getValue(QuadcopterEntity.CAMERA_ANGLE));
+                QuaternionHelper.rotateX(q, ((QuadcopterEntity) entity).getCameraAngle());
 			}
 
 			Matrix4f newMat = new Matrix4f(QuaternionHelper.quat4fToQuaternion(q));

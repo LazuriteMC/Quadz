@@ -70,17 +70,6 @@ public class InputFrame {
         return this.z;
     }
 
-    public void toBuffer(PacketByteBuf buf) {
-        buf.writeFloat(t);
-        buf.writeFloat(x);
-        buf.writeFloat(y);
-        buf.writeFloat(z);
-    }
-
-    public static InputFrame fromBuffer(PacketByteBuf buf) {
-        return new InputFrame(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
-    }
-
     public void toTag(CompoundTag tag) {
         CompoundTag sub = new CompoundTag();
         sub.putFloat("t", t);
