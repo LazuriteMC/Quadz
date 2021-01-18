@@ -11,7 +11,7 @@ import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.entity.VoxelRacerOne;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
-import dev.lazurite.fpvracing.common.packet.ElectromagneticPulseS2C;
+import dev.lazurite.fpvracing.client.packet.ElectromagneticPulseC2S;
 import dev.lazurite.fpvracing.common.packet.SelectedSlotS2C;
 import dev.lazurite.fpvracing.common.packet.ShouldRenderPlayerS2C;
 import dev.lazurite.fpvracing.common.item.ChannelWandItem;
@@ -66,7 +66,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		NoClipC2S.register();
 		GodModeC2S.register();
 		PowerGogglesC2S.register();
-		ElectromagneticPulseS2C.register();
+		ElectromagneticPulseC2S.register();
 
 		VOXEL_RACER_ONE_SPAWNER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "voxel_racer_one_spawner"), new QuadcopterItem(new Item.Settings().maxCount(1)));
 		GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
@@ -110,6 +110,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		GodModeKeybind.register();
 		NoClipKeybind.register();
 		EMPKeybind.register();
+
 		SelectedSlotS2C.register();
 		ShouldRenderPlayerS2C.register();
 
