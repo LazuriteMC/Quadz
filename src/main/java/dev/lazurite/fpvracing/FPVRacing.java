@@ -7,8 +7,10 @@ import dev.lazurite.fpvracing.client.input.keybinds.NoClipKeybind;
 import dev.lazurite.fpvracing.client.packet.GodModeC2S;
 import dev.lazurite.fpvracing.client.packet.NoClipC2S;
 import dev.lazurite.fpvracing.client.packet.PowerGogglesC2S;
-import dev.lazurite.fpvracing.common.item.VideoReceiverComponent;
+import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.entity.VoxelRacerOne;
+import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
+import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import dev.lazurite.fpvracing.common.packet.ElectromagneticPulseS2C;
 import dev.lazurite.fpvracing.common.packet.SelectedSlotS2C;
 import dev.lazurite.fpvracing.common.packet.ShouldRenderPlayerS2C;
@@ -41,36 +43,32 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComponentInitializer, ModMenuApi {
 	public static final String MODID = "fpvracing";
 
 	/* Items */
-	public static QuadcopterItem DRONE_SPAWNER_ITEM;
+	public static QuadcopterItem VOXEL_RACER_ONE_SPAWNER_ITEM;
 	public static GogglesItem GOGGLES_ITEM;
 	public static TransmitterItem TRANSMITTER_ITEM;
 	public static ChannelWandItem CHANNEL_WAND_ITEM;
 	public static ItemGroup ITEM_GROUP;
 
 	/* Component */
-	public static final ComponentKey<VideoReceiverComponent> VIDEO_RECEIVER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "video_receiver"), VideoReceiverComponent.class);
+	public static final ComponentKey<GogglesContainer> GOGGLES_CONTAINER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "goggles_container"), GogglesContainer.class);
+	public static final ComponentKey<TransmitterContainer> TRANSMITTER_CONTAINER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "transmitter_container"), TransmitterContainer.class);
+	public static final ComponentKey<QuadcopterContainer> QUADCOPTER_CONTAINER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "quadcopter_container"), QuadcopterContainer.class);
 
 	/* Entity */
 	public static EntityType<VoxelRacerOne> VOXEL_RACER_ONE;
 
-	public static final HashMap<UUID, String[]> SERVER_PLAYER_KEYS = new HashMap<>();
-
 	@Override
 	public void onInitialize() {
-
 		NoClipC2S.register();
 		GodModeC2S.register();
 		PowerGogglesC2S.register();
 		ElectromagneticPulseS2C.register();
 
-		DRONE_SPAWNER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "drone_spawner_item"), new QuadcopterItem(new Item.Settings().maxCount(1)));
+		VOXEL_RACER_ONE_SPAWNER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "voxel_racer_one_spawner"), new QuadcopterItem(new Item.Settings().maxCount(1)));
 		GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
 		TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new TransmitterItem(new Item.Settings().maxCount(1)));
 		CHANNEL_WAND_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "channel_wand_item"), new ChannelWandItem(new Item.Settings().maxCount(1)));
@@ -79,7 +77,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 				.create(new Identifier(MODID, "items"))
 				.icon(() -> new ItemStack(GOGGLES_ITEM))
 				.appendItems(stack -> {
-					stack.add(new ItemStack(DRONE_SPAWNER_ITEM));
+					stack.add(new ItemStack(VOXEL_RACER_ONE_SPAWNER_ITEM));
 					stack.add(new ItemStack(GOGGLES_ITEM));
 					stack.add(new ItemStack(TRANSMITTER_ITEM));
 					stack.add(new ItemStack(CHANNEL_WAND_ITEM));
@@ -120,7 +118,9 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 
 	@Override
 	public void registerItemComponentFactories(ItemComponentFactoryRegistry registry) {
-		registry.registerFor(new Identifier(MODID, "goggles_item"), VIDEO_RECEIVER, VideoReceiverComponent::new);
+		registry.registerFor(new Identifier(MODID, "goggles_item"), GOGGLES_CONTAINER, GogglesContainer::new);
+		registry.registerFor(new Identifier(MODID, "transmitter_item"), TRANSMITTER_CONTAINER, TransmitterContainer::new);
+		registry.registerFor(new Identifier(MODID, "quadcopter_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
 	}
 
 	@Override

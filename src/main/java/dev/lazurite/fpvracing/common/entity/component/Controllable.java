@@ -8,12 +8,4 @@ public interface Controllable {
 
     void setInputFrame(InputFrame frame);
     InputFrame getInputFrame();
-
-    void setRate(float rate);
-    void setSuperRate(float superRate);
-    void setExpo(float expo);
-
-    float getRate();
-    float getSuperRate();
-    float getExpo();
 }

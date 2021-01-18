@@ -1,69 +1,47 @@
 package dev.lazurite.fpvracing.client.packet;
 
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.entity.FlyableEntity;
-import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
+import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
-import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
-import net.fabricmc.fabric.api.network.PacketContext;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.entity.player.PlayerEntity;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 
 public class PowerGogglesC2S {
     public static final Identifier PACKET_ID = new Identifier(FPVRacing.MODID, "power_goggles_c2s");
 
-    public static void accept(PacketContext context, PacketByteBuf buf) {
-        PlayerEntity player = context.getPlayer();
+    public static void accept(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
         ItemStack hat = player.inventory.armor.get(3);
-        boolean on = buf.readBoolean();
-        String[] keys = new String[] {
-            buf.readString(32767),
-            buf.readString(32767)
-        };
+        ItemStack hand = player.inventory.getMainHandStack();
+        boolean enable = buf.readBoolean();
 
-        context.getTaskQueue().execute(() -> {
-            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
-
-            FPVRacing.SERVER_PLAYER_KEYS.remove(player.getUuid());
-            FPVRacing.SERVER_PLAYER_KEYS.put(player.getUuid(), keys);
-
-            if (hat.getItem() instanceof GogglesItem) {
-                if (on && !GogglesItem.isInGoggles(serverPlayer)) {
-                    List<FlyableEntity> flyables = FlyableEntity.getList(serverPlayer, FlyableEntity.class, 500);
-
-                    for (FlyableEntity entity : flyables) {
-                        if (serverPlayer.distanceTo(entity) < QuadcopterEntity.TRACKING_RANGE && GogglesItem.isOnSameChannel(entity, serverPlayer)) {
-                            GogglesItem.setOn(hat, true);
-                            ServerTick.setView(serverPlayer, entity);
-                            player.sendMessage(new TranslatableText("message.fpvracing.goggles_on", (Object[]) keys), true);
-                        }
-                    }
-                } else {
-                    GogglesItem.setOn(hat, false);
-                    ServerTick.resetView(serverPlayer);
-                }
+        server.execute(() -> {
+            // TODO play sound
+            if (hand.getItem() instanceof GogglesItem) {
+                GogglesContainer.get(hand).setEnabled(enable);
+            } else if (hat.getItem() instanceof GogglesItem) {
+                GogglesContainer.get(hat).setEnabled(enable);
             }
+
+            player.playSound(enable ? SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, 1.0f, 1.0f);
         });
     }
 
-    public static void send(boolean on, String[] keys) {
-        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeBoolean(on);
-
-        for (String key : keys) {
-            buf.writeString(key);
-        }
-
-        ClientSidePacketRegistry.INSTANCE.sendToServer(PACKET_ID, buf);
+    public static void send(boolean enabled) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeBoolean(enabled);
+        ClientPlayNetworking.send(PACKET_ID, buf);
     }
 
     public static void register() {
-        ServerSidePacketRegistry.INSTANCE.register(PACKET_ID, PowerGogglesC2S::accept);
+        ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, PowerGogglesC2S::accept);
     }
 }

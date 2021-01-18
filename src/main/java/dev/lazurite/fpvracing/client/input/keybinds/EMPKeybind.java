@@ -20,11 +20,6 @@ import org.lwjgl.glfw.GLFW;
 public class EMPKeybind {
     private static KeyBinding key;
 
-    /**
-     * The callback for the keybinding. It triggers
-     * when the player presses the EMP keybinding.
-     * @param client the client
-     */
     public static void callback(MinecraftClient client) {
         if (key.wasPressed()) ElectromagneticPulseS2C.send(client.player.getPos());
     }

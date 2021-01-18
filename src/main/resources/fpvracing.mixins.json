@@ -4,12 +4,9 @@
   "package": "dev.lazurite.fpvracing.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "EntityPositionS2CPacketMixin",
     "common.math.Matrix4fMixin",
     "common.player.PlayerInventoryMixin",
     "common.player.PlayerManagerMixin",
-    "PlayerSpawnS2CPacketMixin",
-    "RotateAndMoveRelativeMixin",
     "common.player.ServerPlayerEntityMixin"
   ],
   "client": [

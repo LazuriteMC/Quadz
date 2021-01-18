@@ -4,14 +4,15 @@ import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.client.input.InputTick;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.component.Controllable;
-import dev.lazurite.fpvracing.common.entity.component.Thrust;
+import dev.lazurite.fpvracing.common.entity.component.QuadcopterProperties;
 import dev.lazurite.fpvracing.common.entity.component.VideoTransmission;
 import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
+import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
 import dev.lazurite.fpvracing.common.util.Axis;
-import dev.lazurite.fpvracing.common.util.BetaflightHelper;
 import dev.lazurite.fpvracing.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.fpvracing.common.util.Frequency;
+import dev.lazurite.fpvracing.event.QuadcopterStepEvents;
 import dev.lazurite.rayon.api.packet.RayonSpawnS2CPacket;
 import dev.lazurite.rayon.physics.body.EntityRigidBody;
 import dev.lazurite.rayon.physics.helper.math.QuaternionHelper;
@@ -39,16 +40,13 @@ import physics.javax.vecmath.Vector3f;
 
 import java.util.Random;
 
-public abstract class QuadcopterEntity extends Entity implements VideoTransmission, Controllable, Thrust {
+public abstract class QuadcopterEntity extends Entity implements QuadcopterProperties {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<State> STATE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.STATE);
 
 	/* Controllable Stuff */
 	private static final TrackedData<InputFrame> INPUT_FRAME = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.INPUT_FRAME);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	private static final TrackedData<Float> RATE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
-	private static final TrackedData<Float> SUPER_RATE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
-	private static final TrackedData<Float> EXPO = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
 	/* Video Transmission Stuff */
 	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
@@ -56,26 +54,29 @@ public abstract class QuadcopterEntity extends Entity implements VideoTransmissi
 	private static final TrackedData<Integer> FIELD_OF_VIEW = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Integer> POWER = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
-	/* Thrust Stuff */
-	private static final TrackedData<Float> THRUST_FORCE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
-	private static final TrackedData<Float> THRUST_CURVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
+//	/* Thrust Stuff */
+//	private static final TrackedData<Float> THRUST_FORCE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
+//	private static final TrackedData<Float> THRUST_CURVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
 	public QuadcopterEntity(EntityType<?> type, World world) {
 		super(type, world);
 	}
 
 	public void step(float delta) {
+		QuadcopterStepEvents.START_QUADCOPTER_STEP.invoker().onStartStep(this, delta);
 		decreaseAngularVelocity();
 
 		// TODO check for bound transmitter
 		if (getEntityWorld().isClient()) {
-			setInputFrame(InputTick.INSTANCE.getFrame());
+			setInputFrame(InputTick.INSTANCE.getInputFrame());
 		}
 
-		rotate(Axis.X, (float) BetaflightHelper.calculateRates(getInputFrame().getX(), getRate(), getExpo(), getSuperRate(), delta));
-		rotate(Axis.Y, (float) BetaflightHelper.calculateRates(getInputFrame().getY(), getRate(), getExpo(), getSuperRate(), delta));
-		rotate(Axis.Z, (float) BetaflightHelper.calculateRates(getInputFrame().getZ(), getRate(), getExpo(), getSuperRate(), delta));
+		rotate(Axis.X, getInputFrame().getX());
+		rotate(Axis.Y, getInputFrame().getY());
+		rotate(Axis.Z, getInputFrame().getZ());
 //        body.applyForce(thrust.getForce());
+
+		QuadcopterStepEvents.END_QUADCOPTER_STEP.invoker().onEndStep(this, delta);
 	}
 
 	public void rotate(Axis axis, float deg) {
@@ -95,7 +96,7 @@ public abstract class QuadcopterEntity extends Entity implements VideoTransmissi
 		}
 	}
 
-	public void decreaseAngularVelocity() {
+	protected void decreaseAngularVelocity() {
 		EntityRigidBody body = EntityRigidBody.get(this);
 		body.setAngularVelocity(VectorHelper.mul(body.getAngularVelocity(new Vector3f()), 0.5f));
 //		float distance = 0.25f;
@@ -132,37 +133,31 @@ public abstract class QuadcopterEntity extends Entity implements VideoTransmissi
 
 	@Override
 	protected void readCustomDataFromTag(CompoundTag tag) {
+		setState(State.valueOf(tag.getString("state")));
+		setGodMode(tag.getBoolean("god_mode"));
+
 		setInputFrame(InputFrame.fromTag(tag));
 		setBindId(tag.getInt("bind_id"));
-		setRate(tag.getFloat("rate"));
-		setSuperRate(tag.getFloat("super_rate"));
-		setExpo(tag.getFloat("expo"));
 
 		setFrequency(new Frequency((char) tag.getInt("band"), tag.getInt("channel")));
 		setCameraAngle(tag.getInt("camera_angle"));
 		setFieldOfView(tag.getInt("field_of_view"));
 		setPower(tag.getInt("power"));
-
-		setThrustForce(tag.getFloat("thrust_force"));
-		setThrustCurve(tag.getFloat("thrust_curve"));
 	}
 
 	@Override
 	protected void writeCustomDataToTag(CompoundTag tag) {
+		tag.putString("state", getState().toString());
+		tag.putBoolean("god_mode", isInGodMode());
+
 		getInputFrame().toTag(tag);
 		tag.putInt("bind_id", getBindId());
-		tag.putFloat("rate", getRate());
-		tag.putFloat("super_rate", getSuperRate());
-		tag.putFloat("expo", getExpo());
 
 		tag.putInt("band", getFrequency().getBand());
 		tag.putInt("channel", getFrequency().getChannel());
 		tag.putInt("camera_angle", getCameraAngle());
 		tag.putInt("field_of_view", getFieldOfView());
 		tag.putInt("power", getPower());
-
-		tag.putFloat("thrust_force", getThrustForce());
-		tag.putFloat("thrust_curve", getThrustCurve());
 	}
 
 	@Override
@@ -196,7 +191,11 @@ public abstract class QuadcopterEntity extends Entity implements VideoTransmissi
 	@Override
 	public void kill() {
 		if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-			dropStack(new ItemStack(FPVRacing.DRONE_SPAWNER_ITEM));
+			ItemStack stack = new ItemStack(FPVRacing.VOXEL_RACER_ONE_SPAWNER_ITEM);
+			CompoundTag tag = new CompoundTag();
+			writeCustomDataToTag(tag);
+			QuadcopterContainer.get(stack).readFromNbt(tag);
+			dropStack(stack);
 		}
 
 		super.kill();
@@ -207,14 +206,9 @@ public abstract class QuadcopterEntity extends Entity implements VideoTransmissi
 		getDataTracker().startTracking(GOD_MODE, false);
 		getDataTracker().startTracking(INPUT_FRAME, new InputFrame());
 		getDataTracker().startTracking(BIND_ID, -1);
-		getDataTracker().startTracking(RATE, 1.0f);
-		getDataTracker().startTracking(SUPER_RATE, 1.0f);
-		getDataTracker().startTracking(EXPO, 1.0f);
 		getDataTracker().startTracking(FREQUENCY, new Frequency());
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
 		getDataTracker().startTracking(FIELD_OF_VIEW, 90);
-		getDataTracker().startTracking(THRUST_FORCE, 50.0f);
-		getDataTracker().startTracking(THRUST_CURVE, 1.0f);
 	}
 
 	@Override
@@ -240,56 +234,6 @@ public abstract class QuadcopterEntity extends Entity implements VideoTransmissi
 	@Override
 	public InputFrame getInputFrame() {
 		return getDataTracker().get(INPUT_FRAME);
-	}
-
-	@Override
-	public void setRate(float rate) {
-		getDataTracker().set(RATE, rate);
-	}
-
-	@Override
-	public void setSuperRate(float superRate) {
-		getDataTracker().set(SUPER_RATE, superRate);
-	}
-
-	@Override
-	public void setExpo(float expo) {
-		getDataTracker().set(EXPO, expo);
-	}
-
-	@Override
-	public float getRate() {
-		return getDataTracker().get(RATE);
-	}
-
-	@Override
-	public float getSuperRate() {
-		return getDataTracker().get(SUPER_RATE);
-	}
-
-	@Override
-	public float getExpo() {
-		return getDataTracker().get(EXPO);
-	}
-
-	@Override
-	public void setThrustForce(float thrust) {
-		getDataTracker().set(THRUST_FORCE, thrust);
-	}
-
-	@Override
-	public float getThrustForce() {
-		return getDataTracker().get(THRUST_FORCE);
-	}
-
-	@Override
-	public void setThrustCurve(float thrustCurve) {
-		getDataTracker().set(THRUST_CURVE, thrustCurve);
-	}
-
-	@Override
-	public float getThrustCurve() {
-		return getDataTracker().get(THRUST_CURVE);
 	}
 
 	@Override

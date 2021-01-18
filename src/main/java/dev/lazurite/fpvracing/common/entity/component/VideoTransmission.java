@@ -6,7 +6,7 @@ public interface VideoTransmission {
     void setFrequency(Frequency frequency);
     Frequency getFrequency();
 
-    void setPower(int milliWatts);
+    void setPower(int power);
     int getPower();
 
     void setFieldOfView(int fieldOfView);

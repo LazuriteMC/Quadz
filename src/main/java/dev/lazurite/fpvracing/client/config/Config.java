@@ -44,4 +44,13 @@ public final class Config {
 
     @Setting
     public boolean throttleInCenter;
+
+    @Setting
+    public float rate;
+
+    @Setting
+    public float superRate;
+
+    @Setting
+    public float expo;
 }

@@ -1,11 +1,11 @@
 package dev.lazurite.fpvracing.client.input;
 
 import dev.lazurite.fpvracing.client.config.Config;
+import dev.lazurite.fpvracing.common.util.BetaflightHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import java.nio.FloatBuffer;
-import java.util.function.BooleanSupplier;
 
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 
@@ -22,8 +22,8 @@ public final class InputTick {
     private InputTick() {
     }
 
-    public void tick(BooleanSupplier shouldTick) {
-        if (shouldTick.getAsBoolean() && controllerExists()) {
+    public void tick(float delta) {
+        if (controllerExists()) {
             FloatBuffer buffer = glfwGetJoystickAxes(Config.INSTANCE.controllerId);
             frame.set(buffer.get(Config.INSTANCE.throttle), buffer.get(Config.INSTANCE.pitch), buffer.get(Config.INSTANCE.roll), buffer.get(Config.INSTANCE.yaw));
 
@@ -66,10 +66,14 @@ public final class InputTick {
                     frame.setZ(0);
                 }
             }
+
+            frame.setX((float) BetaflightHelper.calculateRates(getInputFrame().getX(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
+            frame.setY((float) BetaflightHelper.calculateRates(getInputFrame().getY(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
+            frame.setZ((float) BetaflightHelper.calculateRates(getInputFrame().getZ(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
         }
     }
 
-    public InputFrame getFrame() {
+    public InputFrame getInputFrame() {
         return this.frame;
     }
 

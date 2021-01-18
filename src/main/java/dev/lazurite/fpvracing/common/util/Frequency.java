@@ -31,6 +31,10 @@ public class Frequency {
     }
 
     public Frequency(Frequency frequency) {
+        set(frequency);
+    }
+
+    public void set(Frequency frequency) {
         setBand(frequency.getBand());
         setChannel(frequency.getChannel());
     }

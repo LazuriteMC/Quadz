@@ -37,7 +37,9 @@
 
   "custom": {
     "cardinal-components": [
-      "fpvracing:video_receiver"
+      "fpvracing:goggles_container",
+      "fpvracing:transmitter_container",
+      "fpvracing:quadcopter_container"
     ]
   }
 }
