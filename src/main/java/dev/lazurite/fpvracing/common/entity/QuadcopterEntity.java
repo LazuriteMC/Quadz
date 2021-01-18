@@ -3,12 +3,12 @@ package dev.lazurite.fpvracing.common.entity;
 import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.client.input.InputTick;
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.entity.component.Controllable;
-import dev.lazurite.fpvracing.common.entity.component.QuadcopterProperties;
-import dev.lazurite.fpvracing.common.entity.component.VideoTransmission;
+import dev.lazurite.fpvracing.common.entity.component.Bindable;
+import dev.lazurite.fpvracing.common.entity.component.QuadcopterState;
 import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
+import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import dev.lazurite.fpvracing.common.util.Axis;
 import dev.lazurite.fpvracing.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.fpvracing.common.util.Frequency;
@@ -38,9 +38,7 @@ import net.minecraft.world.World;
 import physics.javax.vecmath.Quat4f;
 import physics.javax.vecmath.Vector3f;
 
-import java.util.Random;
-
-public abstract class QuadcopterEntity extends Entity implements QuadcopterProperties {
+public abstract class QuadcopterEntity extends Entity implements QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<State> STATE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.STATE);
 
@@ -96,6 +94,14 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterPrope
 		}
 	}
 
+	public boolean isBound(Bindable bindable) {
+		if (bindable != null) {
+			return bindable.getBindId() == getBindId();
+		}
+
+		return false;
+	}
+
 	protected void decreaseAngularVelocity() {
 		EntityRigidBody body = EntityRigidBody.get(this);
 		body.setAngularVelocity(VectorHelper.mul(body.getAngularVelocity(new Vector3f()), 0.5f));
@@ -132,6 +138,27 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterPrope
 	}
 
 	@Override
+	public ActionResult interact(PlayerEntity player, Hand hand) {
+		ItemStack stack = player.inventory.getMainHandStack();
+
+		if (stack.getItem() instanceof TransmitterItem) {
+			Bindable.bind(this, TransmitterContainer.get(stack));
+			player.sendMessage(new LiteralText("Transmitter bound"), false);
+		} else if (stack.getItem() instanceof ChannelWandItem) {
+			Frequency frequency = getFrequency();
+			player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), false);
+		}
+
+		if (world.isClient()) {
+			if (!InputTick.controllerExists()) {
+				player.sendMessage(new LiteralText("Controller not found"), false);
+			}
+		}
+
+		return ActionResult.SUCCESS;
+	}
+
+	@Override
 	public void readCustomDataFromTag(CompoundTag tag) {
 		setState(State.valueOf(tag.getString("state")));
 		setGodMode(tag.getBoolean("god_mode"));
@@ -161,28 +188,6 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterPrope
 	}
 
 	@Override
-	public ActionResult interact(PlayerEntity player, Hand hand) {
-		ItemStack stack = player.inventory.getMainHandStack();
-
-		if (stack.getItem() instanceof TransmitterItem) {
-			Random rand = new Random();
-			setBindId(rand.nextInt(10000));
-			player.sendMessage(new LiteralText("Transmitter bound"), false);
-		} else if (stack.getItem() instanceof ChannelWandItem) {
-			Frequency frequency = getFrequency();
-			player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), false);
-		}
-
-		if (world.isClient()) {
-			if (!InputTick.controllerExists()) {
-				player.sendMessage(new LiteralText("Controller not found"), false);
-			}
-		}
-
-		return ActionResult.SUCCESS;
-	}
-
-	@Override
 	@Environment(EnvType.CLIENT)
 	public boolean shouldRender(double distance) {
 		return true;
@@ -191,7 +196,7 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterPrope
 	@Override
 	public void kill() {
 		if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-			ItemStack stack = new ItemStack(FPVRacing.VOXEL_RACER_ONE_SPAWNER_ITEM);
+			ItemStack stack = new ItemStack(FPVRacing.VOXEL_RACER_ONE_ITEM);
 			CompoundTag tag = new CompoundTag();
 			writeCustomDataToTag(tag);
 			QuadcopterContainer.get(stack).readFromNbt(tag);

@@ -1,6 +1,7 @@
 package dev.lazurite.fpvracing.mixin.common.player;
 
-import dev.lazurite.fpvracing.common.entity.FlyableEntity;
+import dev.lazurite.fpvracing.access.PlayerAccess;
+import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.Packet;
@@ -25,22 +26,21 @@ import java.util.List;
  */
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
-    @Shadow @Final
-    private List<ServerPlayerEntity> players;
+    @Shadow @Final private List<ServerPlayerEntity> players;
 
     @Inject(method = "sendToAround", at = @At("TAIL"))
     public void sendToAround(PlayerEntity player, double x, double y, double z, double distance, RegistryKey<World> worldKey, Packet<?> packet, CallbackInfo info) {
-        for (ServerPlayerEntity serverPlayerEntity : this.players) {
-            if (serverPlayerEntity != player && serverPlayerEntity.world.getRegistryKey() == worldKey) {
-                if (GogglesItem.isInGoggles(serverPlayerEntity)) {
-                    FlyableEntity flyable = (FlyableEntity) serverPlayerEntity.getCameraEntity();
+        for (ServerPlayerEntity serverPlayer : this.players) {
+            if (!serverPlayer.equals(player) && serverPlayer.world.getRegistryKey() == worldKey) {
+                if (((PlayerAccess) serverPlayer).isInGoggles()) {
+                    QuadcopterEntity quadcopter = (QuadcopterEntity) serverPlayer.getCameraEntity();
 
-                    double d = x - flyable.getX();
-                    double e = y - flyable.getY();
-                    double f = z - flyable.getZ();
+                    double d = x - quadcopter.getX();
+                    double e = y - quadcopter.getY();
+                    double f = z - quadcopter.getZ();
 
                     if (d * d + e * e + f * f < distance * distance) {
-                        serverPlayerEntity.networkHandler.sendPacket(packet);
+                        serverPlayer.networkHandler.sendPacket(packet);
                     }
                 }
             }

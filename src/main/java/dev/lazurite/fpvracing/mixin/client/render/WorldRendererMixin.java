@@ -1,7 +1,6 @@
 package dev.lazurite.fpvracing.mixin.client.render;
 
 import dev.lazurite.fpvracing.client.config.Config;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.WorldRenderer;
@@ -21,13 +20,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class WorldRendererMixin {
     @Shadow @Final private MinecraftClient client;
 
-    /**
-     * This mixin modifies the {@link Camera#getFocusedEntity()} method
-     * to return the {@link ClientPlayerEntity} whenever {@link Config#shouldRenderPlayer}
-     * is true.
-     * @param camera the camera object
-     * @return the focused entity
-     */
     @Redirect(
             method = "render",
             at = @At(

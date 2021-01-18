@@ -1,6 +1,5 @@
 package dev.lazurite.fpvracing.mixin.client.render;
 
-import dev.lazurite.fpvracing.common.entity.FlyableEntity;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.rayon.physics.body.EntityRigidBody;
 import dev.lazurite.rayon.physics.helper.math.QuaternionHelper;
@@ -25,16 +24,14 @@ public class GameRendererMixin {
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
 		Entity entity = client.getCameraEntity();
 
-		if (entity instanceof FlyableEntity) {
+		if (entity instanceof QuadcopterEntity) {
 			EntityRigidBody body = EntityRigidBody.get(entity);
 
 			Quat4f q = QuaternionHelper.slerp(body.getPrevOrientation(new Quat4f()), body.getTickOrientation(new Quat4f()), tickDelta);
 			q.set(q.x, -q.y, q.z, -q.w);
 
 			/* Camera Angle */
-			if (entity instanceof QuadcopterEntity) {
-                QuaternionHelper.rotateX(q, ((QuadcopterEntity) entity).getCameraAngle());
-			}
+			QuaternionHelper.rotateX(q, ((QuadcopterEntity) entity).getCameraAngle());
 
 			Matrix4f newMat = new Matrix4f(QuaternionHelper.quat4fToQuaternion(q));
 			newMat.transpose();

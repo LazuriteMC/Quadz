@@ -5,21 +5,17 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "common.math.Matrix4fMixin",
-    "common.player.PlayerInventoryMixin",
     "common.player.PlayerManagerMixin",
     "common.player.ServerPlayerEntityMixin"
   ],
   "client": [
-    "client.world.ClientChunkManagerMixin",
-    "client.player.ClientPlayerEntityMixin",
-    "client.network.ClientPlayNetworkHandlerMixin",
-    "client.world.ClientWorldMixin",
+    "client.ClientWorldMixin",
     "client.render.GameRendererMixin",
     "client.render.HeldItemRendererMixin",
     "client.render.ItemRendererMixin",
     "client.render.InGameHudMixin",
     "common.math.MatrixStackMixin",
-    "client.input.MouseMixin",
+    "client.MouseMixin",
     "client.render.WorldRendererMixin"
   ],
   "injectors": {

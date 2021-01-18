@@ -2,7 +2,7 @@ package dev.lazurite.fpvracing.common.entity.component;
 
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 
-public interface QuadcopterProperties extends Controllable, VideoTransmission {
+public interface QuadcopterState extends Controllable, VideoTransmission {
     void setGodMode(boolean godMode);
     boolean isInGodMode();
 

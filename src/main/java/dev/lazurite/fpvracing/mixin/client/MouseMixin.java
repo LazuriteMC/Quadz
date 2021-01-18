@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.mixin.client.input;
+package dev.lazurite.fpvracing.mixin.client;
 
 import dev.lazurite.fpvracing.access.PlayerAccess;
 import dev.lazurite.fpvracing.common.entity.component.VideoTransmission;

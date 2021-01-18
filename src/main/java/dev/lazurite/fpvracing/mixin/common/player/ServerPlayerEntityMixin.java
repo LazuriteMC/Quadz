@@ -2,10 +2,9 @@ package dev.lazurite.fpvracing.mixin.common.player;
 
 import com.mojang.authlib.GameProfile;
 import dev.lazurite.fpvracing.access.ServerPlayerAccess;
-import dev.lazurite.fpvracing.common.entity.FlyableEntity;
-import dev.lazurite.fpvracing.common.item.GogglesItem;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
+import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import dev.lazurite.fpvracing.common.packet.SelectedSlotS2C;
 import dev.lazurite.fpvracing.common.packet.ShouldRenderPlayerS2C;
 import net.minecraft.entity.Entity;
@@ -29,34 +28,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ServerPlayerEntityMixin extends PlayerEntity implements ServerPlayerAccess {
     @Shadow public ServerPlayNetworkHandler networkHandler;
     @Shadow private Entity cameraEntity;
-
     @Shadow public abstract Entity getCameraEntity();
 
+    /* Ughhhh */
     public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
         super(world, pos, yaw, profile);
-    }
-
-    /**
-     * Designed to prevent a server player who is flying a drone from
-     * becoming unloaded on clients observing the player.
-     * @param entity the entity that the game wishes to stop tracking
-     * @param info required by every mixin injection
-     */
-    @Inject(at = @At("HEAD"), method = "onStoppedTracking", cancellable = true)
-    public void onStoppedTracking(Entity entity, CallbackInfo info) {
-        if (entity instanceof ServerPlayerEntity) {
-            ServerPlayerEntity player = (ServerPlayerEntity) entity;
-
-            if (GogglesItem.isInGoggles(player)) {
-                info.cancel();
-            }
-        }
-
-//        if (entity instanceof DroneEntity) {
-//            if (GogglesItem.isInGoggles((ServerPlayerEntity) (Object) this) && !entity.removed) {
-//                info.cancel();
-//            }
-//        }
     }
 
     /**
@@ -66,27 +42,10 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
      */
     @Inject(at = @At("HEAD"), method = "isInTeleportationState()Z", cancellable = true)
     public void isInTeleportationState(CallbackInfoReturnable<Boolean> info) {
-        if (GogglesItem.isInGoggles((ServerPlayerEntity) (Object) this)) {
+        if (isInGoggles()) {
             info.setReturnValue(true);
         }
     }
-
-//    /**
-//     * Helps prevent the {@link ServerPlayerEntity} from taking damage while in teleported state.
-//     * @param source the damage source
-//     * @param amount the damage amount
-//     * @param info required by every mixin injection
-//     */
-//    @Inject(at = @At("HEAD"), method = "damage", cancellable = true)
-//    public void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
-//        ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
-//
-//        if (GogglesItem.isInGoggles(player)) {
-//            if (!player.getPos().equals(ServerTick.playerPositionManager.getPos(player))) {
-//                info.setReturnValue(false);
-//            }
-//        }
-//    }
 
     /**
      * Does the same things as {@link ServerPlayerEntity#setCameraEntity(Entity)} but excludes the
@@ -105,36 +64,6 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
             // requestTeleport is gone now
             info.cancel();
         }
-    }
-
-//    /**
-//     * When the player disconnects from the server, run {@link ServerTick#resetView(ServerPlayerEntity)}
-//     * @param info required by every mixin injection
-//     */
-//    @Inject(at = @At("TAIL"), method = "onDisconnect")
-//    public void onDisconnect(CallbackInfo info) {
-//        ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
-//
-//        if (GogglesItem.isInGoggles(player)) {
-//            this.setView(this);
-//        }
-//    }
-
-    /**
-     * Inserts a {@link ServerPlayerAccess#setView} method call into tick
-     * just before the second {@link ServerPlayerEntity#setCameraEntity(Entity)} is called.
-     * @param info required by every mixin injection
-     */
-    @Inject(
-            method = "tick",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;setCameraEntity(Lnet/minecraft/entity/Entity;)V",
-                    ordinal = 1
-            )
-    )
-    public void tick(CallbackInfo info) {
-        this.setView((ServerPlayerEntity) (Object) this);
     }
 
     /**
@@ -180,13 +109,13 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
     @Unique
     @Override
     public boolean isInGoggles() {
-        return getCameraEntity() instanceof FlyableEntity;
+        return getCameraEntity() instanceof QuadcopterEntity;
     }
 
     @Unique
     @Override
     public boolean isInGoggles(ServerPlayerEntity player) {
-        return player.getCameraEntity() instanceof FlyableEntity;
+        return player.getCameraEntity() instanceof QuadcopterEntity;
     }
 
     @Unique
@@ -196,15 +125,17 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
         ShouldRenderPlayerS2C.send(player, !player.equals(entity));
         player.setCameraEntity(entity);
 
-        if (entity instanceof FlyableEntity) {
-            FlyableEntity flyable = (FlyableEntity) entity;
+        if (entity instanceof QuadcopterEntity) {
+            QuadcopterEntity quadcopter = (QuadcopterEntity) entity;
 
             for (int i = 0; i < 9; i++) {
-                ItemStack itemStack = player.inventory.getStack(i);
+                ItemStack stack = player.inventory.getStack(i);
 
-                if (TransmitterItem.isBoundTransmitter(itemStack, flyable)) {
-                    player.inventory.selectedSlot = i;
-                    SelectedSlotS2C.send(player, i);
+                if (stack.getItem() instanceof TransmitterItem) {
+                    if (quadcopter.isBound(TransmitterContainer.get(stack))) {
+                        player.inventory.selectedSlot = i;
+                        SelectedSlotS2C.send(player, i);
+                    }
                 }
             }
         }

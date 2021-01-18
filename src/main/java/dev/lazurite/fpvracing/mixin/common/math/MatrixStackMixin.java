@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.mixin.common.math;
 
-import dev.lazurite.fpvracing.common.entity.FlyableEntity;
+import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.util.math.MatrixStack;
@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Deque;
 
 /**
- * This mixin prevents the screen from rotating while the player is using goggles
- * to fly or watch somebody fly a drone.
+ * This mixin prevents the screen from rotating along with the player's
+ * yaw and pitch values while the player is wearing activated goggles.
  */
 @Mixin(MatrixStack.class)
 public abstract class MatrixStackMixin {
@@ -29,7 +29,7 @@ public abstract class MatrixStackMixin {
         Quaternion yaw = Vector3f.POSITIVE_Y.getDegreesQuaternion(camera.getYaw() + 180.0F);
         Quaternion pitch = Vector3f.POSITIVE_X.getDegreesQuaternion(camera.getPitch());
 
-        if (camera.getFocusedEntity() instanceof FlyableEntity && (quaternion.equals(yaw) || quaternion.equals(pitch))) {
+        if (camera.getFocusedEntity() instanceof QuadcopterEntity  && (quaternion.equals(yaw) || quaternion.equals(pitch))) {
             MatrixStack.Entry entry = stack.getLast();
 
             entry.getModel().multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90));
