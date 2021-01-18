@@ -15,18 +15,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 public class QuadcopterContainer implements ComponentV3, AutoSyncedComponent, QuadcopterProperties {
     private final ItemStack stack;
 
-    private QuadcopterEntity.State state;
-    private boolean godMode;
-
-    private int bindId;
-    private float rate;
-    private float superRate;
-    private float expo;
+    private QuadcopterEntity.State state = QuadcopterEntity.State.DISARMED;
+    private boolean godMode = false;
+    private int bindId = -1;
 
     private final Frequency frequency = new Frequency();
-    private int cameraAngle;
-    private int fieldOfView;
-    private int power;
+    private int cameraAngle = 0;
+    private int fieldOfView = 90;
+    private int power = 25;
 
     public QuadcopterContainer(ItemStack stack) {
         this.stack = stack;
@@ -48,11 +44,7 @@ public class QuadcopterContainer implements ComponentV3, AutoSyncedComponent, Qu
     public void applySyncPacket(PacketByteBuf buf) {
         state = buf.readEnumConstant(QuadcopterEntity.State.class);
         godMode = buf.readBoolean();
-
         bindId = buf.readInt();
-        rate = buf.readFloat();
-        superRate = buf.readFloat();
-        expo = buf.readFloat();
 
         frequency.setBand(buf.readChar());
         frequency.setChannel(buf.readInt());
@@ -65,11 +57,7 @@ public class QuadcopterContainer implements ComponentV3, AutoSyncedComponent, Qu
     public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
         buf.writeEnumConstant(state);
         buf.writeBoolean(godMode);
-
         buf.writeInt(bindId);
-        buf.writeFloat(rate);
-        buf.writeFloat(superRate);
-        buf.writeFloat(expo);
 
         buf.writeChar(frequency.getBand());
         buf.writeInt(frequency.getChannel());
@@ -82,11 +70,7 @@ public class QuadcopterContainer implements ComponentV3, AutoSyncedComponent, Qu
     public void readFromNbt(CompoundTag tag) {
         state = QuadcopterEntity.State.valueOf(tag.getString("state"));
         godMode = tag.getBoolean("god_mode");
-
         bindId = tag.getInt("bind_id");
-        rate = tag.getFloat("rate");
-        superRate = tag.getFloat("super_rate");
-        expo = tag.getFloat("expo");
 
         frequency.setBand((char) tag.getInt("band"));
         frequency.setChannel(tag.getInt("channel"));
@@ -99,11 +83,7 @@ public class QuadcopterContainer implements ComponentV3, AutoSyncedComponent, Qu
     public void writeToNbt(CompoundTag tag) {
         tag.putString("state", state.toString());
         tag.putBoolean("god_mode", godMode);
-
         tag.putInt("bind_id", bindId);
-        tag.putFloat("rate", rate);
-        tag.putFloat("super_rate", superRate);
-        tag.putFloat("expo", expo);
 
         tag.putInt("band", frequency.getBand());
         tag.putInt("channel", frequency.getChannel());

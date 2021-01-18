@@ -1,7 +1,10 @@
 package dev.lazurite.fpvracing.common.util;
 
-import net.minecraft.nbt.CompoundTag;
-
+/**
+ * A class modeling the frequency of a video transmitter. A frequency is typically
+ * represented in the band-channel format where you have a letter band (e.g. race band, or 'R')
+ * and a number channel (typically between 1-8).
+ */
 public class Frequency {
     public static final int CHANNELS = 8;
     public static final char[] BANDS = {'A', 'B', 'E', 'F', 'R'};
@@ -16,8 +19,12 @@ public class Frequency {
     private char band;
     private int channel;
 
+    /**
+     * The default frequency is R1.
+     */
     public Frequency() {
-
+        setBand('R');
+        setChannel('1');
     }
 
     public Frequency(int frequency) {

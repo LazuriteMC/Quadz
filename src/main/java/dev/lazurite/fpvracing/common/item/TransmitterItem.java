@@ -1,21 +1,12 @@
 package dev.lazurite.fpvracing.common.item;
 
-import dev.lazurite.fpvracing.common.entity.FlyableEntity;
-import dev.lazurite.fpvracing.network.tracker.generic.GenericType;
 import dev.lazurite.fpvracing.FPVRacing;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 
-import java.util.List;
-
-/**
- * @author Ethan Johnson
- * @author Patrick Hofmann
- */
 public class TransmitterItem extends Item {
-
     public TransmitterItem(Settings settings) {
         super(settings);
     }

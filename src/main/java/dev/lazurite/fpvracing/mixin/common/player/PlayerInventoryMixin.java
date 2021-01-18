@@ -2,7 +2,7 @@ package dev.lazurite.fpvracing.mixin.common.player;
 
 import dev.lazurite.fpvracing.common.entity.FlyableEntity;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
-import dev.lazurite.fpvracing.common.item.QuadcopterItem;
+import dev.lazurite.fpvracing.common.item.VoxelRacerOneItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -27,8 +27,8 @@ public class PlayerInventoryMixin {
                 GogglesItem.writeToTag(itemStack, player);
             }
 
-            if (itemStack.getItem() instanceof QuadcopterItem) {
-                QuadcopterItem.writeToTag(itemStack, player);
+            if (itemStack.getItem() instanceof VoxelRacerOneItem) {
+                VoxelRacerOneItem.writeToTag(itemStack, player);
             }
 
             if (itemStack.getItem() instanceof TransmitterItem) {
@@ -49,8 +49,8 @@ public class PlayerInventoryMixin {
                 GogglesItem.writeToTag(itemStack, player);
             }
 
-            if (itemStack.getItem() instanceof QuadcopterItem) {
-                QuadcopterItem.writeToTag(itemStack, player);
+            if (itemStack.getItem() instanceof VoxelRacerOneItem) {
+                VoxelRacerOneItem.writeToTag(itemStack, player);
             }
         }
     }

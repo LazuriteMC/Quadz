@@ -16,10 +16,10 @@ import dev.lazurite.fpvracing.common.packet.SelectedSlotS2C;
 import dev.lazurite.fpvracing.common.packet.ShouldRenderPlayerS2C;
 import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
-import dev.lazurite.fpvracing.common.item.QuadcopterItem;
+import dev.lazurite.fpvracing.common.item.VoxelRacerOneItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
-import dev.lazurite.fpvracing.client.render.QuadcopterRenderer;
+import dev.lazurite.fpvracing.client.render.VoxelRacerOneRenderer;
 import dev.lazurite.rayon.api.event.EntityBodyStepEvents;
 import dev.lazurite.rayon.api.registry.DynamicEntityRegistry;
 import dev.lazurite.rayon.api.shape.provider.BoundingBoxShapeProvider;
@@ -47,7 +47,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 	public static final String MODID = "fpvracing";
 
 	/* Items */
-	public static QuadcopterItem VOXEL_RACER_ONE_SPAWNER_ITEM;
+	public static VoxelRacerOneItem VOXEL_RACER_ONE_ITEM;
 	public static GogglesItem GOGGLES_ITEM;
 	public static TransmitterItem TRANSMITTER_ITEM;
 	public static ChannelWandItem CHANNEL_WAND_ITEM;
@@ -68,7 +68,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		PowerGogglesC2S.register();
 		ElectromagneticPulseC2S.register();
 
-		VOXEL_RACER_ONE_SPAWNER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "voxel_racer_one_spawner"), new QuadcopterItem(new Item.Settings().maxCount(1)));
+		VOXEL_RACER_ONE_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "voxel_racer_one_item"), new VoxelRacerOneItem(new Item.Settings().maxCount(1)));
 		GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
 		TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new TransmitterItem(new Item.Settings().maxCount(1)));
 		CHANNEL_WAND_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "channel_wand_item"), new ChannelWandItem(new Item.Settings().maxCount(1)));
@@ -77,7 +77,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 				.create(new Identifier(MODID, "items"))
 				.icon(() -> new ItemStack(GOGGLES_ITEM))
 				.appendItems(stack -> {
-					stack.add(new ItemStack(VOXEL_RACER_ONE_SPAWNER_ITEM));
+					stack.add(new ItemStack(VOXEL_RACER_ONE_ITEM));
 					stack.add(new ItemStack(GOGGLES_ITEM));
 					stack.add(new ItemStack(TRANSMITTER_ITEM));
 					stack.add(new ItemStack(CHANNEL_WAND_ITEM));
@@ -114,14 +114,14 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		SelectedSlotS2C.register();
 		ShouldRenderPlayerS2C.register();
 
-		QuadcopterRenderer.register();
+		VoxelRacerOneRenderer.register();
 	}
 
 	@Override
 	public void registerItemComponentFactories(ItemComponentFactoryRegistry registry) {
 		registry.registerFor(new Identifier(MODID, "goggles_item"), GOGGLES_CONTAINER, GogglesContainer::new);
 		registry.registerFor(new Identifier(MODID, "transmitter_item"), TRANSMITTER_CONTAINER, TransmitterContainer::new);
-		registry.registerFor(new Identifier(MODID, "quadcopter_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
+		registry.registerFor(new Identifier(MODID, "voxel_racer_one_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
 	}
 
 	@Override

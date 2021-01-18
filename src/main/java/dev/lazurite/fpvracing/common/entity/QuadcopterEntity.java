@@ -132,7 +132,7 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterPrope
 	}
 
 	@Override
-	protected void readCustomDataFromTag(CompoundTag tag) {
+	public void readCustomDataFromTag(CompoundTag tag) {
 		setState(State.valueOf(tag.getString("state")));
 		setGodMode(tag.getBoolean("god_mode"));
 
@@ -146,7 +146,7 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterPrope
 	}
 
 	@Override
-	protected void writeCustomDataToTag(CompoundTag tag) {
+	public void writeCustomDataToTag(CompoundTag tag) {
 		tag.putString("state", getState().toString());
 		tag.putBoolean("god_mode", isInGodMode());
 

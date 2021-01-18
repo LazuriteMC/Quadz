@@ -9,10 +9,10 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 
 @Environment(EnvType.CLIENT)
-public class QuadcopterModel extends EntityModel<QuadcopterEntity> {
+public class VoxelRacerOneModel extends EntityModel<QuadcopterEntity> {
     private ModelPart base;
 
-    public QuadcopterModel() {
+    public VoxelRacerOneModel() {
         this.textureHeight = 16;
         this.textureWidth = 16;
     }
