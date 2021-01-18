@@ -3,9 +3,7 @@ package dev.lazurite.fpvracing.common.item.container;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
-import dev.lazurite.fpvracing.common.entity.component.Controllable;
 import dev.lazurite.fpvracing.common.entity.component.QuadcopterProperties;
-import dev.lazurite.fpvracing.common.entity.component.VideoTransmission;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -114,10 +112,12 @@ public class QuadcopterContainer implements ComponentV3, AutoSyncedComponent, Qu
         tag.putInt("power", power);
     }
 
+    @Override
     public void setGodMode(boolean godMode) {
         this.godMode = godMode;
     }
 
+    @Override
     public boolean isInGodMode() {
         return this.godMode;
     }
