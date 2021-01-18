@@ -1,5 +1,6 @@
 package dev.lazurite.fpvracing.common.entity;
 
+import dev.lazurite.fpvracing.access.Matrix4fAccess;
 import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.client.input.InputTick;
 import dev.lazurite.fpvracing.FPVRacing;
@@ -19,6 +20,7 @@ import dev.lazurite.rayon.physics.helper.math.QuaternionHelper;
 import dev.lazurite.rayon.physics.helper.math.VectorHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
@@ -33,6 +35,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.Matrix4f;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import physics.javax.vecmath.Quat4f;
@@ -52,28 +55,57 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	private static final TrackedData<Integer> FIELD_OF_VIEW = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Integer> POWER = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
-//	/* Thrust Stuff */
-//	private static final TrackedData<Float> THRUST_FORCE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
-//	private static final TrackedData<Float> THRUST_CURVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
-
 	public QuadcopterEntity(EntityType<?> type, World world) {
 		super(type, world);
 	}
 
-	public void step(float delta) {
-		QuadcopterStepEvents.START_QUADCOPTER_STEP.invoker().onStartStep(this, delta);
-		decreaseAngularVelocity();
+	abstract float getThrustForce();
+	abstract float getThrustCurve();
 
-		// TODO check for bound transmitter
+	public void step(float delta) {
+		/* Start Step Event */
+		QuadcopterStepEvents.START_QUADCOPTER_STEP.invoker().onStartStep(this, delta);
+
+		/* Update user input */
 		if (getEntityWorld().isClient()) {
-			setInputFrame(InputTick.INSTANCE.getInputFrame());
+			PlayerEntity player = MinecraftClient.getInstance().player;
+
+			if (player != null) {
+				ItemStack hand = player.getMainHandStack();
+
+				if (isBound(TransmitterContainer.get(hand))) {
+					setInputFrame(InputTick.INSTANCE.getInputFrame());
+				}
+			}
 		}
 
-		rotate(Axis.X, getInputFrame().getX());
-		rotate(Axis.Y, getInputFrame().getY());
-		rotate(Axis.Z, getInputFrame().getZ());
-//        body.applyForce(thrust.getForce());
+		/* Rotate the quadcopter based on user input */
+		rotate(Axis.X, getInputFrame().getPitch());
+		rotate(Axis.Y, getInputFrame().getYaw());
+		rotate(Axis.Z, getInputFrame().getRoll());
 
+		/* Decrease angular velocity hack */
+		decreaseAngularVelocity();
+
+		/* Get the thrust direction vector */
+		EntityRigidBody body = EntityRigidBody.get(this);
+		Quat4f orientation = body.getOrientation(new Quat4f());
+		QuaternionHelper.rotateX(orientation, 90);
+		Matrix4f mat = new Matrix4f();
+		Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.quat4fToQuaternion(orientation));
+
+		/* Calculate new vectors based on direction */
+		Vector3f direction = Matrix4fAccess.from(mat).matrixToVector();
+		Vector3f thrust = VectorHelper.mul(direction, (float) (getThrustForce() * (Math.pow(getInputFrame().getThrottle(), getThrustCurve()))));
+		Vector3f yawThrust = VectorHelper.mul(direction, Math.abs(getInputFrame().getYaw()));
+
+		/* Add up the net thrust and apply the force */
+		Vector3f netThrust = new Vector3f();
+		netThrust.add(thrust, yawThrust);
+		netThrust.negate();
+        body.applyCentralForce(netThrust);
+
+        /* End Step Event */
 		QuadcopterStepEvents.END_QUADCOPTER_STEP.invoker().onEndStep(this, delta);
 	}
 

@@ -1,7 +1,6 @@
 package dev.lazurite.fpvracing.client.input;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.PacketByteBuf;
 
 /**
  * This represents one "frame" of time when
@@ -10,72 +9,72 @@ import net.minecraft.network.PacketByteBuf;
  * @see InputTick
  */
 public class InputFrame {
-    private float t;
-    private float x;
-    private float y;
-    private float z;
+    private float throttle;
+    private float pitch;
+    private float yaw;
+    private float roll;
 
     public InputFrame() {
 
     }
 
     public InputFrame(InputFrame frame) {
-        set(frame.t, frame.x, frame.y, frame.z);
+        set(frame.throttle, frame.pitch, frame.yaw, frame.roll);
     }
 
-    public InputFrame(float t, float x, float y, float z) {
-        set(t, x, y, z);
+    public InputFrame(float throttle, float pitch, float yaw, float roll) {
+        set(throttle, pitch, yaw, roll);
     }
 
     public void set(InputFrame frame) {
-        set(frame.t, frame.x, frame.y, frame.z);
+        set(frame.throttle, frame.pitch, frame.yaw, frame.roll);
     }
 
-    public void set(float t, float x, float y, float z) {
-        this.t = t;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public void set(float throttle, float pitch, float yaw, float roll) {
+        this.throttle = throttle;
+        this.pitch = pitch;
+        this.yaw = yaw;
+        this.roll = roll;
     }
 
-    public void setT(float t) {
-        this.t = t;
+    public void setThrottle(float throttle) {
+        this.throttle = throttle;
     }
 
-    public void setX(float x) {
-        this.x = x;
+    public void setPitch(float pitch) {
+        this.pitch = pitch;
     }
 
-    public void setY(float y) {
-        this.y = y;
+    public void setYaw(float yaw) {
+        this.yaw = yaw;
     }
 
-    public void setZ(float z) {
-        this.z = z;
+    public void setRoll(float roll) {
+        this.roll = roll;
     }
 
-    public float getT() {
-        return this.t;
+    public float getThrottle() {
+        return this.throttle;
     }
 
-    public float getX() {
-        return this.x;
+    public float getPitch() {
+        return this.pitch;
     }
 
-    public float getY() {
-        return this.y;
+    public float getYaw() {
+        return this.yaw;
     }
 
-    public float getZ() {
-        return this.z;
+    public float getRoll() {
+        return this.roll;
     }
 
     public void toTag(CompoundTag tag) {
         CompoundTag sub = new CompoundTag();
-        sub.putFloat("t", t);
-        sub.putFloat("x", x);
-        sub.putFloat("y", y);
-        sub.putFloat("z", z);
+        sub.putFloat("t", throttle);
+        sub.putFloat("x", pitch);
+        sub.putFloat("y", yaw);
+        sub.putFloat("z", roll);
         tag.put("frame", sub);
     }
 
@@ -86,6 +85,6 @@ public class InputFrame {
 
     @Override
     public String toString() {
-        return "[t: " + t + " x: " + x + " y: " + y + " z: " + z + "]";
+        return "[throttle: " + throttle + " pitch: " + pitch + " yaw: " + yaw + " roll: " + roll + "]";
     }
 }

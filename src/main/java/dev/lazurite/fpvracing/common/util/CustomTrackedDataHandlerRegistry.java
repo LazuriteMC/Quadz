@@ -26,10 +26,10 @@ public class CustomTrackedDataHandlerRegistry {
 
     public static final TrackedDataHandler<InputFrame> INPUT_FRAME = new TrackedDataHandler<InputFrame>() {
         public void write(PacketByteBuf buf, InputFrame frame) {
-            buf.writeFloat(frame.getT());
-            buf.writeFloat(frame.getX());
-            buf.writeFloat(frame.getY());
-            buf.writeFloat(frame.getZ());
+            buf.writeFloat(frame.getThrottle());
+            buf.writeFloat(frame.getPitch());
+            buf.writeFloat(frame.getYaw());
+            buf.writeFloat(frame.getRoll());
         }
 
         public InputFrame read(PacketByteBuf buf) {

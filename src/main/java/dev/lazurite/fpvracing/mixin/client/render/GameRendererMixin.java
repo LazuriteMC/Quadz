@@ -1,5 +1,6 @@
 package dev.lazurite.fpvracing.mixin.client.render;
 
+import dev.lazurite.fpvracing.client.input.InputTick;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.rayon.physics.body.EntityRigidBody;
 import dev.lazurite.rayon.physics.helper.math.QuaternionHelper;
@@ -22,6 +23,8 @@ public class GameRendererMixin {
 
 	@Inject(at = @At("HEAD"), method = "renderWorld")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
+		InputTick.INSTANCE.tick();
+
 		Entity entity = client.getCameraEntity();
 
 		if (entity instanceof QuadcopterEntity) {

@@ -11,7 +11,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 
 /**
  * This class is responsible for polling the user's controller each
- * time the class is ticked. It dynamically values stored in {@link Config}.
+ * time the class is ticked. It dynamically values stored in {@lin Config}.
  * @see Config
  */
 @Environment(EnvType.CLIENT)
@@ -22,59 +22,59 @@ public final class InputTick {
     private InputTick() {
     }
 
-    public void tick(float delta) {
+    public void tick() {
         if (controllerExists()) {
             FloatBuffer buffer = glfwGetJoystickAxes(Config.INSTANCE.controllerId);
             frame.set(buffer.get(Config.INSTANCE.throttle), buffer.get(Config.INSTANCE.pitch), buffer.get(Config.INSTANCE.roll), buffer.get(Config.INSTANCE.yaw));
 
             if (Config.INSTANCE.invertThrottle) {
-                frame.setT(-frame.getT());
+                frame.setThrottle(-frame.getThrottle());
             }
 
             if (Config.INSTANCE.invertPitch) {
-                frame.setX(-frame.getX());
+                frame.setPitch(-frame.getPitch());
             }
 
             if (Config.INSTANCE.invertRoll) {
-                frame.setZ(-frame.getZ());
+                frame.setRoll(-frame.getRoll());
             }
 
             if (Config.INSTANCE.invertYaw) {
-                frame.setY(-frame.getY());
+                frame.setYaw(-frame.getYaw());
             }
 
             if (Config.INSTANCE.throttleInCenter) {
-                if (frame.getT() < 0) {
-                    frame.setT(0);
+                if (frame.getThrottle() < 0) {
+                    frame.setThrottle(0);
                 }
             } else {
-                frame.setT((frame.getT() + 1) / 2.0f);
+                frame.setThrottle((frame.getThrottle() + 1) / 2.0f);
             }
 
             if (Config.INSTANCE.deadzone != 0.0f) {
                 float halfDeadzone = Config.INSTANCE.deadzone / 2.0f;
 
-                if (frame.getX() < halfDeadzone && frame.getX() > -halfDeadzone) {
-                    frame.setX(0);
+                if (frame.getPitch() < halfDeadzone && frame.getPitch() > -halfDeadzone) {
+                    frame.setPitch(0);
                 }
 
-                if (frame.getY() < halfDeadzone && frame.getY() > -halfDeadzone) {
-                    frame.setY(0);
+                if (frame.getYaw() < halfDeadzone && frame.getYaw() > -halfDeadzone) {
+                    frame.setYaw(0);
                 }
 
-                if (frame.getZ() < halfDeadzone && frame.getZ() > -halfDeadzone) {
-                    frame.setZ(0);
+                if (frame.getRoll() < halfDeadzone && frame.getRoll() > -halfDeadzone) {
+                    frame.setRoll(0);
                 }
             }
-
-            frame.setX((float) BetaflightHelper.calculateRates(getInputFrame().getX(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
-            frame.setY((float) BetaflightHelper.calculateRates(getInputFrame().getY(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
-            frame.setZ((float) BetaflightHelper.calculateRates(getInputFrame().getZ(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
         }
     }
 
-    public InputFrame getInputFrame() {
-        return this.frame;
+    public InputFrame getInputFrame(float delta) {
+        InputFrame out = new InputFrame(frame);
+        out.setPitch((float) BetaflightHelper.calculateRates(out.getPitch(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
+        out.setYaw((float) BetaflightHelper.calculateRates(out.getYaw(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
+        out.setRoll((float) BetaflightHelper.calculateRates(out.getRoll(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
+        return out;
     }
 
     public static boolean controllerExists() {
