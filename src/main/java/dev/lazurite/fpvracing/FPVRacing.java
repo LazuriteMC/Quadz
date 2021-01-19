@@ -1,5 +1,7 @@
 package dev.lazurite.fpvracing;
 
+import dev.lazurite.fpvracing.api.event.JoystickEvents;
+import dev.lazurite.fpvracing.client.config.Config;
 import dev.lazurite.fpvracing.client.input.keybinds.EMPKeybind;
 import dev.lazurite.fpvracing.client.input.keybinds.GodModeKeybind;
 import dev.lazurite.fpvracing.client.input.keybinds.GogglePowerKeybind;
@@ -7,6 +9,7 @@ import dev.lazurite.fpvracing.client.input.keybinds.NoClipKeybind;
 import dev.lazurite.fpvracing.client.packet.GodModeC2S;
 import dev.lazurite.fpvracing.client.packet.NoClipC2S;
 import dev.lazurite.fpvracing.client.packet.PowerGogglesC2S;
+import dev.lazurite.fpvracing.client.ui.toast.ControllerToast;
 import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.entity.VoxelRacerOne;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
@@ -27,24 +30,32 @@ import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
 import dev.onyxstudios.cca.api.v3.item.ItemComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.item.ItemComponentInitializer;
-import io.github.prospector.modmenu.api.ConfigScreenFactory;
-import io.github.prospector.modmenu.api.ModMenuApi;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.advancement.Advancement;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.toast.AdvancementToast;
+import net.minecraft.client.toast.RecipeToast;
+import net.minecraft.client.toast.SystemToast;
+import net.minecraft.client.toast.Toast;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
-public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComponentInitializer, ModMenuApi {
+public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComponentInitializer {
 	public static final String MODID = "fpvracing";
+	public static final Logger LOGGER = LogManager.getLogger("FPV Racing");
 
 	/* Items */
 	public static VoxelRacerOneItem VOXEL_RACER_ONE_ITEM;
@@ -63,27 +74,30 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 
 	@Override
 	public void onInitialize() {
+		LOGGER.info("Charge your batts!");
+
+		/* Register Packets */
 		NoClipC2S.register();
 		GodModeC2S.register();
 		PowerGogglesC2S.register();
 		ElectromagneticPulseC2S.register();
 
+		/* Register Items */
 		VOXEL_RACER_ONE_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "voxel_racer_one_item"), new VoxelRacerOneItem(new Item.Settings().maxCount(1)));
 		GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
 		TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new TransmitterItem(new Item.Settings().maxCount(1)));
 		CHANNEL_WAND_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "channel_wand_item"), new ChannelWandItem(new Item.Settings().maxCount(1)));
 
-		ITEM_GROUP = FabricItemGroupBuilder
-				.create(new Identifier(MODID, "items"))
+		ITEM_GROUP = FabricItemGroupBuilder.create(new Identifier(MODID, "items"))
 				.icon(() -> new ItemStack(GOGGLES_ITEM))
 				.appendItems(stack -> {
 					stack.add(new ItemStack(VOXEL_RACER_ONE_ITEM));
 					stack.add(new ItemStack(GOGGLES_ITEM));
 					stack.add(new ItemStack(TRANSMITTER_ITEM));
 					stack.add(new ItemStack(CHANNEL_WAND_ITEM));
-				})
-				.build();
+				}).build();
 
+		/* Register Entities */
 		VOXEL_RACER_ONE = Registry.register(
 				Registry.ENTITY_TYPE,
 				new Identifier(MODID, "voxel_racer_one"),
@@ -94,6 +108,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 						.forceTrackedVelocityUpdates(true)
 						.build());
 
+		/* Register Rayon Rigid Bodies */
 		DynamicEntityRegistry.INSTANCE.register(QuadcopterEntity.class, BoundingBoxShapeProvider::get, 1.0f, 0.05f);
 		EntityBodyStepEvents.START_ENTITY_STEP.register((entity, delta) -> {
 			if (entity.getEntity() instanceof QuadcopterEntity) {
@@ -105,16 +120,23 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 	@Override
 	public void onInitializeClient() {
 		GLFW.glfwInit(); // forcefully initializes GLFW
+		Config.INSTANCE.load(); // load the config
 
+		/* Register Keybindings */
 		GogglePowerKeybind.register();
 		GodModeKeybind.register();
 		NoClipKeybind.register();
 		EMPKeybind.register();
 
+		/* Register Packets */
 		SelectedSlotS2C.register();
 		ShouldRenderPlayerS2C.register();
 
+		/* Register Renderers */
 		VoxelRacerOneRenderer.register();
+
+		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.connect"), name));
+		JoystickEvents.JOYSTICK_DISCONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.disconnect"), name));
 	}
 
 	@Override
@@ -123,9 +145,4 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		registry.registerFor(new Identifier(MODID, "transmitter_item"), TRANSMITTER_CONTAINER, TransmitterContainer::new);
 		registry.registerFor(new Identifier(MODID, "voxel_racer_one_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
 	}
-
-//	@Override
-//	public ConfigScreenFactory<?> getModConfigScreenFactory() {
-//		return null;
-//	}
 }

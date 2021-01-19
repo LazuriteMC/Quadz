@@ -1,6 +1,7 @@
 package dev.lazurite.fpvracing.common.item.container;
 
 import dev.lazurite.fpvracing.FPVRacing;
+import dev.lazurite.fpvracing.common.type.VideoCapable;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -9,7 +10,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public class GogglesContainer implements ComponentV3, AutoSyncedComponent {
+/**
+ * A dumping ground for goggles information. Mainly for storing
+ * frequency and whether or not the goggles are powered on.
+ * @see VideoCapable
+ */
+public class GogglesContainer implements ComponentV3, AutoSyncedComponent, VideoCapable {
     private final ItemStack stack;
     private final Frequency frequency;
     private boolean enabled;
@@ -32,12 +38,41 @@ public class GogglesContainer implements ComponentV3, AutoSyncedComponent {
         return this.stack;
     }
 
+    @Override
     public void setFrequency(Frequency frequency) {
         this.frequency.set(frequency);
     }
 
+    @Override
     public Frequency getFrequency() {
         return new Frequency(frequency);
+    }
+
+    @Override
+    public void setPower(int power) {
+    }
+
+    @Override
+    public int getPower() {
+        return 0;
+    }
+
+    @Override
+    public void setFieldOfView(int fieldOfView) {
+    }
+
+    @Override
+    public int getFieldOfView() {
+        return 0;
+    }
+
+    @Override
+    public void setCameraAngle(int cameraAngle) {
+    }
+
+    @Override
+    public int getCameraAngle() {
+        return 0;
     }
 
     public void setEnabled(boolean enabled) {

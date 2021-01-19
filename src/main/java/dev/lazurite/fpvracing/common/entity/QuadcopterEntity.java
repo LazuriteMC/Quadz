@@ -1,11 +1,11 @@
 package dev.lazurite.fpvracing.common.entity;
 
-import dev.lazurite.fpvracing.access.Matrix4fAccess;
+import dev.lazurite.fpvracing.common.access.Matrix4fAccess;
 import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.client.input.InputTick;
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.entity.component.Bindable;
-import dev.lazurite.fpvracing.common.entity.component.QuadcopterState;
+import dev.lazurite.fpvracing.common.type.Bindable;
+import dev.lazurite.fpvracing.common.type.QuadcopterState;
 import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
@@ -13,7 +13,7 @@ import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import dev.lazurite.fpvracing.common.util.Axis;
 import dev.lazurite.fpvracing.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.fpvracing.common.util.Frequency;
-import dev.lazurite.fpvracing.event.QuadcopterStepEvents;
+import dev.lazurite.fpvracing.api.event.QuadcopterStepEvents;
 import dev.lazurite.rayon.api.packet.RayonSpawnS2CPacket;
 import dev.lazurite.rayon.physics.body.EntityRigidBody;
 import dev.lazurite.rayon.physics.helper.math.QuaternionHelper;

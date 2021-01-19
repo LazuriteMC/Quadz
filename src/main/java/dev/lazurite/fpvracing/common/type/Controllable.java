@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.common.entity.component;
+package dev.lazurite.fpvracing.common.type;
 
 import dev.lazurite.fpvracing.client.input.InputFrame;
 

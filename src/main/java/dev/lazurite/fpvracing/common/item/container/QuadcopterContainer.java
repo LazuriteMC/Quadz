@@ -3,7 +3,8 @@ package dev.lazurite.fpvracing.common.item.container;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
-import dev.lazurite.fpvracing.common.entity.component.QuadcopterState;
+import dev.lazurite.fpvracing.common.item.VoxelRacerOneItem;
+import dev.lazurite.fpvracing.common.type.QuadcopterState;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -12,6 +13,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+/**
+ * A dumping ground for {@link QuadcopterState} information. The same
+ * information found here also goes in {@link QuadcopterEntity}.
+ * @see QuadcopterState
+ * @see VoxelRacerOneItem
+ */
 public class QuadcopterContainer implements ComponentV3, AutoSyncedComponent, QuadcopterState {
     private final ItemStack stack;
 

@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.access;
+package dev.lazurite.fpvracing.common.access;
 
 public interface PlayerAccess {
     boolean isInGoggles();

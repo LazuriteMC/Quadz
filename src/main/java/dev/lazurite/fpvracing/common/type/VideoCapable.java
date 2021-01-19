@@ -1,8 +1,8 @@
-package dev.lazurite.fpvracing.common.entity.component;
+package dev.lazurite.fpvracing.common.type;
 
 import dev.lazurite.fpvracing.common.util.Frequency;
 
-public interface VideoTransmission {
+public interface VideoCapable {
     void setFrequency(Frequency frequency);
     Frequency getFrequency();
 

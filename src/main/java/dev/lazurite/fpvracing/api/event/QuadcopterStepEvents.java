@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.event;
+package dev.lazurite.fpvracing.api.event;
 
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.fabricmc.fabric.api.event.Event;

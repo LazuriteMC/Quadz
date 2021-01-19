@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.access;
+package dev.lazurite.fpvracing.common.access;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;

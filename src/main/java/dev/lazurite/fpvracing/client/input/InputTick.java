@@ -1,28 +1,55 @@
 package dev.lazurite.fpvracing.client.input;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import dev.lazurite.fpvracing.api.event.JoystickEvents;
 import dev.lazurite.fpvracing.client.config.Config;
 import dev.lazurite.fpvracing.common.util.BetaflightHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import java.nio.FloatBuffer;
+import java.util.List;
+import java.util.Map;
 
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
+import static org.lwjgl.glfw.GLFW.*;
 
 /**
  * This class is responsible for polling the user's controller each
- * time the class is ticked. It dynamically values stored in {@lin Config}.
+ * time the class is ticked. It dynamically values stored in {@link Config}.
  * @see Config
  */
 @Environment(EnvType.CLIENT)
 public final class InputTick {
     public static final InputTick INSTANCE = new InputTick();
     private final InputFrame frame = new InputFrame();
+    private final Map<Integer, String> joysticks = Maps.newHashMap();
+    private long next;
 
     private InputTick() {
     }
 
     public void tick() {
+        if (System.currentTimeMillis() > next) {
+            Map<Integer, String> lastJoysticks = Maps.newHashMap(joysticks);
+            this.joysticks.clear();
+
+            System.out.println(lastJoysticks);
+            for (int i = 0; i < 16; i++) {
+                if (glfwJoystickPresent(i)) {
+                    joysticks.put(i, getJoystickName(i));
+
+                    if (!lastJoysticks.containsKey(i)) {
+                        JoystickEvents.JOYSTICK_CONNECT.invoker().onConnect(i, getJoystickName(i));
+                    }
+                } else if (lastJoysticks.containsKey(i)) {
+                    JoystickEvents.JOYSTICK_DISCONNECT.invoker().onDisconnect(i, lastJoysticks.get(i));
+                }
+            }
+
+            next = System.currentTimeMillis() + 500;
+        }
+
         if (controllerExists()) {
             FloatBuffer buffer = glfwGetJoystickAxes(Config.INSTANCE.controllerId);
             frame.set(buffer.get(Config.INSTANCE.throttle), buffer.get(Config.INSTANCE.pitch), buffer.get(Config.INSTANCE.roll), buffer.get(Config.INSTANCE.yaw));
@@ -69,6 +96,10 @@ public final class InputTick {
         }
     }
 
+    public List<String> getJoysticks() {
+        return Lists.newArrayList(joysticks.values());
+    }
+
     public InputFrame getInputFrame(float delta) {
         InputFrame out = new InputFrame(frame);
         out.setPitch((float) BetaflightHelper.calculateRates(out.getPitch(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
@@ -77,12 +108,15 @@ public final class InputTick {
         return out;
     }
 
-    public static boolean controllerExists() {
-        try {
-            glfwGetJoystickAxes(Config.INSTANCE.controllerId).get();
-            return true;
-        } catch (NullPointerException e) {
-            return false;
+    public static String getJoystickName(int id) {
+        if (glfwJoystickPresent(id)) {
+            return glfwGetJoystickName(id);
         }
+
+        return null;
+    }
+
+    public static boolean controllerExists() {
+        return glfwJoystickPresent(Config.INSTANCE.controllerId);
     }
 }

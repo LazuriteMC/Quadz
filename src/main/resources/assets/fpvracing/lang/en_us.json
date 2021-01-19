@@ -1,25 +1,32 @@
 {
-  "category.fpvracing.keys":"FPV Racing Keybindings",
-  "key.fpvracing.emp": "Electro-Magnetic Pulse",
-  "key.fpvracing.noclip": "No Clip",
-  "key.fpvracing.godmode": "God Mode",
-  "key.fpvracing.powergoggles": "Goggle Power",
+  "category.fpvracing.keys" : "FPV Racing Keybindings",
+  "key.fpvracing.emp" : "Electro-Magnetic Pulse",
+  "key.fpvracing.noclip" : "No Clip",
+  "key.fpvracing.godmode" : "God Mode",
+  "key.fpvracing.powergoggles" : "Goggle Power",
 
-  "entity.fpvracing.voxel_race_one": "Voxel Racer 1",
+  "entity.fpvracing.voxel_race_one" : "Voxel Racer 1",
 
-  "itemGroup.fpvracing.items": "FPV Racing",
-  "item.fpvracing.voxel_racer_one_item": "Voxel Racer 1",
-  "item.fpvracing.goggles_item": "Goggles",
-  "item.fpvracing.transmitter_item": "Transmitter",
-  "item.fpvracing.channel_wand_item": "Channel Wand",
+  "itemGroup.fpvracing.items" : "FPV Racing",
+  "item.fpvracing.voxel_racer_one_item" : "Voxel Racer 1",
+  "item.fpvracing.goggles_item" : "Goggles",
+  "item.fpvracing.transmitter_item" : "Transmitter",
+  "item.fpvracing.channel_wand_item" : "Channel Wand",
 
-  "message.fpvracing.drone_error": "Must be holding a Quadcopter Item or a bound Transmitter.",
-  "message.fpvracing.goggles_error": "Must be holding or wearing Goggles.",
+  "message.fpvracing.drone_error" : "Must be holding a Quadcopter Item or a bound Transmitter.",
+  "message.fpvracing.goggles_error" : "Must be holding or wearing Goggles.",
 
-  "message.fpvracing.emp": "Destroyed drone.",
-  "message.fpvracing.godmode_on": "God mode enabled.",
-  "message.fpvracing.godmode_off": "God mode disabled.",
-  "message.fpvracing.noclip_on": "No clip enabled.",
-  "message.fpvracing.noclip_off": "No clip disabled.",
-  "message.fpvracing.goggles_on": "Press %1$s or %2$s to power off goggles."
+  "message.fpvracing.emp" : "Destroyed drone.",
+  "message.fpvracing.godmode_on" : "God mode enabled.",
+  "message.fpvracing.godmode_off" : "God mode disabled.",
+  "message.fpvracing.noclip_on" : "No clip enabled.",
+  "message.fpvracing.noclip_off" : "No clip disabled.",
+  "message.fpvracing.goggles_on" : "Press %1$s or %2$s to power off goggles.",
+
+  "toast.fpvracing.controller.connect" : "Controller Connected!",
+  "toast.fpvracing.controller.disconnect" : "Controller Disconnected!",
+
+  "config.fpvracing.title" : "FPV Racing Settings",
+  "config.fpvracing.category.controller_setup" : "Controller Setup",
+  "config.fpvracing.entry.controller_id" : "Controller ID"
 }

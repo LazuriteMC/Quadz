@@ -1,8 +1,7 @@
 package dev.lazurite.fpvracing.mixin.common.player;
 
-import dev.lazurite.fpvracing.access.PlayerAccess;
+import dev.lazurite.fpvracing.common.access.PlayerAccess;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
-import dev.lazurite.fpvracing.common.item.GogglesItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.Packet;
 import net.minecraft.server.PlayerManager;
