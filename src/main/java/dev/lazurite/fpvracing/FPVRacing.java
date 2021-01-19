@@ -124,8 +124,8 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		registry.registerFor(new Identifier(MODID, "voxel_racer_one_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
 	}
 
-	@Override
-	public ConfigScreenFactory<?> getModConfigScreenFactory() {
-		return null;
-	}
+//	@Override
+//	public ConfigScreenFactory<?> getModConfigScreenFactory() {
+//		return null;
+//	}
 }

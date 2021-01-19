@@ -75,4 +75,13 @@ public class GogglesContainer implements ComponentV3, AutoSyncedComponent {
         tag.putInt("channel", frequency.getChannel());
         tag.putBoolean("enabled", enabled);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof GogglesContainer) {
+            return ((GogglesContainer) obj).getFrequency().equals(getFrequency());
+        }
+
+        return false;
+    }
 }

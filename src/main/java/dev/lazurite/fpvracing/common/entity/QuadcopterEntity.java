@@ -74,7 +74,7 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 				ItemStack hand = player.getMainHandStack();
 
 				if (isBound(TransmitterContainer.get(hand))) {
-					setInputFrame(InputTick.INSTANCE.getInputFrame());
+					setInputFrame(InputTick.INSTANCE.getInputFrame(delta));
 				}
 			}
 		}
@@ -241,11 +241,13 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	@Override
 	protected void initDataTracker() {
 		getDataTracker().startTracking(GOD_MODE, false);
+		getDataTracker().startTracking(STATE, State.DISARMED);
 		getDataTracker().startTracking(INPUT_FRAME, new InputFrame());
 		getDataTracker().startTracking(BIND_ID, -1);
 		getDataTracker().startTracking(FREQUENCY, new Frequency());
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
 		getDataTracker().startTracking(FIELD_OF_VIEW, 90);
+		getDataTracker().startTracking(POWER, 25);
 	}
 
 	@Override

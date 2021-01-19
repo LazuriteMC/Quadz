@@ -58,4 +58,14 @@ public class TransmitterContainer implements ComponentV3, AutoSyncedComponent, B
     public void writeToNbt(CompoundTag tag) {
         tag.putInt("bind_id", bindId);
     }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof TransmitterContainer) {
+            return getBindId() == ((TransmitterContainer) obj).getBindId();
+        }
+
+        return false;
+    }
 }

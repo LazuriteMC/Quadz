@@ -170,4 +170,13 @@ public class QuadcopterContainer implements ComponentV3, AutoSyncedComponent, Qu
     public int getCameraAngle() {
         return this.cameraAngle;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof QuadcopterContainer) {
+            return getBindId() == ((QuadcopterContainer) obj).getBindId();
+        }
+
+        return false;
+    }
 }

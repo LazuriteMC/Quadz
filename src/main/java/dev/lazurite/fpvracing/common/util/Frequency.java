@@ -1,5 +1,7 @@
 package dev.lazurite.fpvracing.common.util;
 
+import net.minecraft.util.math.MathHelper;
+
 /**
  * A class modeling the frequency of a video transmitter. A frequency is typically
  * represented in the band-channel format where you have a letter band (e.g. race band, or 'R')
@@ -24,7 +26,7 @@ public class Frequency {
      */
     public Frequency() {
         setBand('R');
-        setChannel('1');
+        setChannel(1);
     }
 
     public Frequency(int frequency) {
@@ -51,7 +53,7 @@ public class Frequency {
     }
 
     public void setChannel(int channel) {
-        this.channel = channel;
+        this.channel = MathHelper.clamp(channel, 1, 8);
     }
 
     public int getFrequency() {

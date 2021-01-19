@@ -9,6 +9,7 @@
     "common.player.ServerPlayerEntityMixin"
   ],
   "client": [
+    "client.ClientPlayerEntityMixin",
     "client.ClientWorldMixin",
     "client.render.GameRendererMixin",
     "client.render.HeldItemRendererMixin",

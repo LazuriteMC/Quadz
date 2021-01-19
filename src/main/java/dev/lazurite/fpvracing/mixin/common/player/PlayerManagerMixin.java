@@ -32,7 +32,7 @@ public class PlayerManagerMixin {
     public void sendToAround(PlayerEntity player, double x, double y, double z, double distance, RegistryKey<World> worldKey, Packet<?> packet, CallbackInfo info) {
         for (ServerPlayerEntity serverPlayer : this.players) {
             if (!serverPlayer.equals(player) && serverPlayer.world.getRegistryKey() == worldKey) {
-                if (((PlayerAccess) serverPlayer).isInGoggles()) {
+                if (((PlayerAccess) (Object) serverPlayer).isInGoggles()) {
                     QuadcopterEntity quadcopter = (QuadcopterEntity) serverPlayer.getCameraEntity();
 
                     double d = x - quadcopter.getX();
