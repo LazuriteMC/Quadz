@@ -29,11 +29,12 @@ public class ControllerToast implements Toast {
         manager.getGame().getTextureManager().bindTexture(TEXTURE);
         RenderSystem.color3f(1.0f, 1.0f, 1.0f);
         manager.drawTexture(matrices, 0, 0, 0, 0, getWidth(), getHeight());
-        manager.getGame().textRenderer.draw(matrices, message, 35, 7, -1);
-        manager.getGame().textRenderer.draw(matrices, new LiteralText(controllerName), 35, 18, -1);
+        manager.getGame().textRenderer.draw(matrices, message, 30, 7, -1);
+        manager.getGame().textRenderer.draw(matrices, new LiteralText(controllerName), 30, 18, -1);
 
         RenderSystem.pushMatrix();
-        manager.getGame().getItemRenderer().renderInGui(new ItemStack(FPVRacing.TRANSMITTER_ITEM), 9, 9);
+        RenderSystem.scalef(1.5f, 1.5f, 1.0f);
+        manager.getGame().getItemRenderer().renderInGui(new ItemStack(FPVRacing.TRANSMITTER_ITEM), 3, 3);
         RenderSystem.popMatrix();
 
         return startTime >= 5000L ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
@@ -41,10 +42,6 @@ public class ControllerToast implements Toast {
 
     public static void add(Text message, String name) {
         ToastManager manager = MinecraftClient.getInstance().getToastManager();
-        ControllerToast toast = manager.getToast(ControllerToast.class, Toast.TYPE);
-
-        if (toast == null) {
-            manager.add(new ControllerToast(message, name));
-        }
+        manager.add(new ControllerToast(message, name));
     }
 }
