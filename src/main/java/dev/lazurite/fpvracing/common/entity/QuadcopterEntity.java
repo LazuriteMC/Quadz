@@ -334,9 +334,6 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	public enum State {
 		ARMED,
 		DISARMED,
-		DISABLED;
-
-		private State() {
-		}
+		DISABLED
 	}
 }

@@ -34,7 +34,6 @@ public final class InputTick {
             Map<Integer, String> lastJoysticks = Maps.newHashMap(joysticks);
             this.joysticks.clear();
 
-            System.out.println(lastJoysticks);
             for (int i = 0; i < 16; i++) {
                 if (glfwJoystickPresent(i)) {
                     joysticks.put(i, getJoystickName(i));

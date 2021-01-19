@@ -12,11 +12,15 @@ import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Settings(onlyAnnotated = true)
 public final class Config {
     public static final Config INSTANCE = new Config();
-    public static final String CONFIG_NAME = "fpv.json";
+    private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("fpv.json");
+    private static final ConfigTree CONFIG_TREE = ConfigTree.builder()
+            .applyFromPojo(INSTANCE, AnnotatedSettings.builder().build())
+            .build();
 
     public boolean shouldRenderPlayer = false;
 
@@ -75,13 +79,11 @@ public final class Config {
     }
 
     public void load() {
-        if (Files.exists(FabricLoader.getInstance().getConfigDir().resolve(CONFIG_NAME))) {
+        if (Files.exists(PATH)) {
             try {
                 FiberSerialization.deserialize(
-                        ConfigTree.builder()
-                                .applyFromPojo(this, AnnotatedSettings.builder().build())
-                                .build(),
-                        Files.newInputStream(FabricLoader.getInstance().getConfigDir().resolve(CONFIG_NAME)),
+                        CONFIG_TREE,
+                        Files.newInputStream(PATH),
                         new JanksonValueSerializer(false)
                 );
             } catch (IOException | FiberException e) {
@@ -97,10 +99,8 @@ public final class Config {
     public void save() {
         try {
             FiberSerialization.serialize(
-                    ConfigTree.builder()
-                            .applyFromPojo(this, AnnotatedSettings.builder().build())
-                            .build(),
-                    Files.newOutputStream(FabricLoader.getInstance().getConfigDir().resolve(CONFIG_NAME)),
+                    CONFIG_TREE,
+                    Files.newOutputStream(PATH),
                     new JanksonValueSerializer(false)
             );
         } catch (IOException e) {
