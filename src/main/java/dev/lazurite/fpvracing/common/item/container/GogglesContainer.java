@@ -4,18 +4,15 @@ import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.type.VideoCapable;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 /**
  * A dumping ground for goggles information. Mainly for storing
  * frequency and whether or not the goggles are powered on.
  * @see VideoCapable
  */
-public class GogglesContainer implements ComponentV3, AutoSyncedComponent, VideoCapable {
+public class GogglesContainer implements ComponentV3, VideoCapable {
     private final ItemStack stack;
     private final Frequency frequency;
     private boolean enabled;
@@ -81,20 +78,6 @@ public class GogglesContainer implements ComponentV3, AutoSyncedComponent, Video
 
     public boolean isEnabled() {
         return this.enabled;
-    }
-
-    @Override
-    public void applySyncPacket(PacketByteBuf buf) {
-        frequency.setBand((char) buf.readInt());
-        frequency.setChannel(buf.readInt());
-        enabled = buf.readBoolean();
-    }
-
-    @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
-        buf.writeInt(frequency.getBand());
-        buf.writeInt(frequency.getChannel());
-        buf.writeBoolean(enabled);
     }
 
     @Override

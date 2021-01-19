@@ -3,18 +3,15 @@ package dev.lazurite.fpvracing.common.item.container;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.type.Bindable;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 /**
  * A dumping ground for transmitter information. Really
  * only stores the bind ID.
  * @see Bindable
  */
-public class TransmitterContainer implements ComponentV3, AutoSyncedComponent, Bindable {
+public class TransmitterContainer implements ComponentV3, Bindable {
     private final ItemStack stack;
     private int bindId;
 
@@ -42,16 +39,6 @@ public class TransmitterContainer implements ComponentV3, AutoSyncedComponent, B
     @Override
     public int getBindId() {
         return this.bindId;
-    }
-
-    @Override
-    public void applySyncPacket(PacketByteBuf buf) {
-        bindId = buf.readInt();
-    }
-
-    @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
-        buf.writeInt(bindId);
     }
 
     @Override

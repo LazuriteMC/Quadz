@@ -7,11 +7,8 @@ import dev.lazurite.fpvracing.common.item.VoxelRacerOneItem;
 import dev.lazurite.fpvracing.common.type.QuadcopterState;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 /**
  * A dumping ground for {@link QuadcopterState} information. The same
@@ -19,7 +16,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
  * @see QuadcopterState
  * @see VoxelRacerOneItem
  */
-public class QuadcopterContainer implements ComponentV3, AutoSyncedComponent, QuadcopterState {
+public class QuadcopterContainer implements ComponentV3, QuadcopterState {
     private final ItemStack stack;
 
     private QuadcopterEntity.State state = QuadcopterEntity.State.DISARMED;
@@ -45,32 +42,6 @@ public class QuadcopterContainer implements ComponentV3, AutoSyncedComponent, Qu
 
     public ItemStack getStack() {
         return this.stack;
-    }
-
-    @Override
-    public void applySyncPacket(PacketByteBuf buf) {
-        state = buf.readEnumConstant(QuadcopterEntity.State.class);
-        godMode = buf.readBoolean();
-        bindId = buf.readInt();
-
-        frequency.setBand(buf.readChar());
-        frequency.setChannel(buf.readInt());
-        cameraAngle = buf.readInt();
-        fieldOfView = buf.readInt();
-        power = buf.readInt();
-    }
-
-    @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
-        buf.writeEnumConstant(state);
-        buf.writeBoolean(godMode);
-        buf.writeInt(bindId);
-
-        buf.writeChar(frequency.getBand());
-        buf.writeInt(frequency.getChannel());
-        buf.writeInt(cameraAngle);
-        buf.writeInt(fieldOfView);
-        buf.writeInt(power);
     }
 
     @Override
