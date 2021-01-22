@@ -1,6 +1,6 @@
-package dev.lazurite.fpvracing.client.render.model;
+package dev.lazurite.fpvracing.client.render.entity.model;
 
-import dev.lazurite.fpvracing.common.entity.Voyager;
+import dev.lazurite.fpvracing.common.entity.VoxelRacerOne;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.ModelPart;
@@ -9,16 +9,16 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 
 @Environment(EnvType.CLIENT)
-public class VoyagerModel extends EntityModel<Voyager> {
+public class VoxelRacerOneModel extends EntityModel<VoxelRacerOne> {
     private ModelPart base;
 
-    public VoyagerModel() {
+    public VoxelRacerOneModel() {
         this.textureHeight = 16;
         this.textureWidth = 16;
     }
 
     @Override
-    public void setAngles(Voyager entity, float limbAngle, float limbDistance, float customAngle, float headYaw, float headPitch) {
+    public void setAngles(VoxelRacerOne entity, float limbAngle, float limbDistance, float customAngle, float headYaw, float headPitch) {
 
     }
 

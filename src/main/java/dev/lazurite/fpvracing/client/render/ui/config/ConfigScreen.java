@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.client.ui.config;
+package dev.lazurite.fpvracing.client.render.ui.config;
 
 import com.google.common.collect.Lists;
 import dev.lazurite.fpvracing.client.config.Config;
@@ -6,10 +6,7 @@ import dev.lazurite.fpvracing.client.config.ModMenuEntry;
 import dev.lazurite.fpvracing.client.input.InputTick;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
-import me.shedaniel.clothconfig2.gui.entries.DropdownBoxEntry;
-import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
 import java.util.List;

@@ -52,7 +52,7 @@ public class GogglePowerKeybind {
                 "key." + FPVRacing.MODID + ".powergoggles",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_G,
-                "category." + FPVRacing.MODID + ".keys"
+                "key." + FPVRacing.MODID + ".category"
         );
 
         KeyBindingHelper.registerKeyBinding(key);

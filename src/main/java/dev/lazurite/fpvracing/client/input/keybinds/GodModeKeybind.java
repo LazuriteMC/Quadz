@@ -24,7 +24,7 @@ public class GodModeKeybind {
                 "key." + FPVRacing.MODID + ".godmode",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_M,
-                "category." + FPVRacing.MODID + ".keys"
+                "key." + FPVRacing.MODID + ".category"
         );
 
         KeyBindingHelper.registerKeyBinding(key);

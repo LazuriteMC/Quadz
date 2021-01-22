@@ -3,7 +3,7 @@ package dev.lazurite.fpvracing.common.item.container;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
-import dev.lazurite.fpvracing.common.item.VoxelRacerOneItem;
+import dev.lazurite.fpvracing.common.item.quadcopter.VoxelRacerOneItem;
 import dev.lazurite.fpvracing.common.type.QuadcopterState;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;

@@ -1,7 +1,9 @@
 package dev.lazurite.fpvracing.mixin.client.render;
 
 import dev.lazurite.fpvracing.client.render.item.VoxelRacerOneItemRenderer;
-import dev.lazurite.fpvracing.common.item.VoxelRacerOneItem;
+import dev.lazurite.fpvracing.client.render.item.VoyagerItemRenderer;
+import dev.lazurite.fpvracing.common.item.quadcopter.VoxelRacerOneItem;
+import dev.lazurite.fpvracing.common.item.quadcopter.VoyagerItem;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
@@ -39,6 +41,8 @@ public class ItemRendererMixin {
     private void renderItem(ItemStack stack, Mode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, BakedModel model, CallbackInfo info) {
         if(stack.getItem() instanceof VoxelRacerOneItem) {
             VoxelRacerOneItemRenderer.render(matrices, vertexConsumers, light, overlay);
+        } else if (stack.getItem() instanceof VoyagerItem) {
+            VoyagerItemRenderer.render(matrices, vertexConsumers, light, overlay);
         }
     }
 }

@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.client.ui.toast;
+package dev.lazurite.fpvracing.client.render.ui.toast;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.lazurite.fpvracing.FPVRacing;

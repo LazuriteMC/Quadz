@@ -1,6 +1,6 @@
-package dev.lazurite.fpvracing.client.render;
+package dev.lazurite.fpvracing.client.render.entity;
 
-import dev.lazurite.fpvracing.client.render.model.VoxelRacerOneModel;
+import dev.lazurite.fpvracing.client.render.entity.model.VoxelRacerOneModel;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.VoxelRacerOne;
 import net.fabricmc.api.EnvType;

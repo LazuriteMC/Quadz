@@ -24,7 +24,7 @@ public class NoClipKeybind {
                 "key." + FPVRacing.MODID + ".noclip",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_N,
-                "category." + FPVRacing.MODID + ".keys"
+                "key." + FPVRacing.MODID + ".category"
         );
 
         KeyBindingHelper.registerKeyBinding(key);

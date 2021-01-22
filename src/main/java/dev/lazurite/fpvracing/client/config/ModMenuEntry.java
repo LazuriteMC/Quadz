@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.client.config;
 
-import dev.lazurite.fpvracing.client.ui.config.ConfigScreen;
+import dev.lazurite.fpvracing.client.render.ui.config.ConfigScreen;
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import io.github.prospector.modmenu.api.ModMenuApi;
 
