@@ -10,6 +10,7 @@ import dev.lazurite.fpvracing.client.packet.GodModeC2S;
 import dev.lazurite.fpvracing.client.packet.NoClipC2S;
 import dev.lazurite.fpvracing.client.packet.PowerGogglesC2S;
 import dev.lazurite.fpvracing.client.ui.toast.ControllerToast;
+import dev.lazurite.fpvracing.common.entity.Voyager;
 import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.entity.VoxelRacerOne;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
@@ -65,11 +66,10 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 
 	/* Entity */
 	public static EntityType<VoxelRacerOne> VOXEL_RACER_ONE;
+	public static EntityType<Voyager> VOYAGER;
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Charge your batts!");
-
 		/* Register Packets */
 		NoClipC2S.register();
 		GodModeC2S.register();
@@ -96,6 +96,16 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 				Registry.ENTITY_TYPE,
 				new Identifier(MODID, "voxel_racer_one"),
 				FabricEntityTypeBuilder.create(SpawnGroup.MISC, VoxelRacerOne::new)
+						.dimensions(EntityDimensions.fixed(0.5F, 0.125F))
+						.trackedUpdateRate(3)
+						.trackRangeBlocks(80)
+						.forceTrackedVelocityUpdates(true)
+						.build());
+
+		VOYAGER = Registry.register(
+				Registry.ENTITY_TYPE,
+				new Identifier(MODID, "voyager"),
+				FabricEntityTypeBuilder.create(SpawnGroup.MISC, Voyager::new)
 						.dimensions(EntityDimensions.fixed(0.5F, 0.125F))
 						.trackedUpdateRate(3)
 						.trackRangeBlocks(80)
