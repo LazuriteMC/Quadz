@@ -2,6 +2,7 @@ package dev.lazurite.fpvracing.client.render;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.client.render.model.VoxelRacerOneModel;
+import dev.lazurite.fpvracing.client.render.model.VoyagerModel;
 import dev.lazurite.fpvracing.common.entity.Voyager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -18,7 +19,7 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 public class VoyagerRenderer extends EntityRenderer<Voyager> {
     public static final Identifier texture = new Identifier(FPVRacing.MODID, "textures/entity/drone.png");
-    private final VoxelRacerOneModel model = new VoxelRacerOneModel();
+    private final VoyagerModel model = new VoyagerModel();
 
     public VoyagerRenderer(EntityRenderDispatcher dispatcher) {
         super(dispatcher);
@@ -26,7 +27,7 @@ public class VoyagerRenderer extends EntityRenderer<Voyager> {
     }
 
     public static void register() {
-        EntityRendererRegistry.INSTANCE.register(FPVRacing.VOXEL_RACER_ONE, (entityRenderDispatcher, context) -> new VoyagerRenderer(entityRenderDispatcher));
+        EntityRendererRegistry.INSTANCE.register(FPVRacing.VOYAGER, (entityRenderDispatcher, context) -> new VoyagerRenderer(entityRenderDispatcher));
     }
 
     public void render(Voyager voyager, float yaw, float delta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {

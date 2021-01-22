@@ -9,6 +9,7 @@ import dev.lazurite.fpvracing.client.input.keybinds.NoClipKeybind;
 import dev.lazurite.fpvracing.client.packet.GodModeC2S;
 import dev.lazurite.fpvracing.client.packet.NoClipC2S;
 import dev.lazurite.fpvracing.client.packet.PowerGogglesC2S;
+import dev.lazurite.fpvracing.client.render.VoyagerRenderer;
 import dev.lazurite.fpvracing.client.ui.toast.ControllerToast;
 import dev.lazurite.fpvracing.common.entity.Voyager;
 import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
@@ -123,8 +124,8 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 
 	@Override
 	public void onInitializeClient() {
-		GLFW.glfwInit(); // forcefully initializes GLFW
-		Config.INSTANCE.load(); // load the config
+//		GLFW.glfwInit(); // forcefully initializes GLFW
+		Config.getInstance().load(); // load the config
 
 		/* Register Keybindings */
 		GogglePowerKeybind.register();
@@ -138,6 +139,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 
 		/* Register Renderers */
 		VoxelRacerOneRenderer.register();
+		VoyagerRenderer.register();
 
 		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.connect"), name));
 		JoystickEvents.JOYSTICK_DISCONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.disconnect"), name));

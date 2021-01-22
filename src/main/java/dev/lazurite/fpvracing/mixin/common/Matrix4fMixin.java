@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.mixin.common.math;
+package dev.lazurite.fpvracing.mixin.common;
 
 import dev.lazurite.fpvracing.common.access.Matrix4fAccess;
 import net.minecraft.util.math.Matrix4f;

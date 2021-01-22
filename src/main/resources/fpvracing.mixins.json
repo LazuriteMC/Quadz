@@ -4,19 +4,19 @@
   "package": "dev.lazurite.fpvracing.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "common.math.Matrix4fMixin",
+    "common.Matrix4fMixin",
     "common.player.PlayerManagerMixin",
     "common.player.ServerPlayerEntityMixin"
   ],
   "client": [
     "client.ClientPlayerEntityMixin",
     "client.ClientWorldMixin",
+    "client.input.MouseMixin",
+    "client.MatrixStackMixin",
     "client.render.GameRendererMixin",
     "client.render.HeldItemRendererMixin",
     "client.render.ItemRendererMixin",
     "client.render.InGameHudMixin",
-    "common.math.MatrixStackMixin",
-    "client.MouseMixin",
     "client.render.WorldRendererMixin"
   ],
   "injectors": {

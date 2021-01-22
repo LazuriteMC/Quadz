@@ -21,12 +21,16 @@ import static org.lwjgl.glfw.GLFW.*;
  */
 @Environment(EnvType.CLIENT)
 public final class InputTick {
-    public static final InputTick INSTANCE = new InputTick();
+    private static final InputTick instance = new InputTick();
     private final InputFrame frame = new InputFrame();
     private final Map<Integer, String> joysticks = Maps.newHashMap();
     private long next;
 
     private InputTick() {
+    }
+
+    public static InputTick getInstance() {
+        return instance;
     }
 
     public void tick() {
@@ -50,26 +54,26 @@ public final class InputTick {
         }
 
         if (controllerExists()) {
-            FloatBuffer buffer = glfwGetJoystickAxes(Config.INSTANCE.controllerId);
-            frame.set(buffer.get(Config.INSTANCE.throttle), buffer.get(Config.INSTANCE.pitch), buffer.get(Config.INSTANCE.roll), buffer.get(Config.INSTANCE.yaw));
+            FloatBuffer buffer = glfwGetJoystickAxes(Config.getInstance().controllerId);
+            frame.set(buffer.get(Config.getInstance().throttle), buffer.get(Config.getInstance().pitch), buffer.get(Config.getInstance().roll), buffer.get(Config.getInstance().yaw));
 
-            if (Config.INSTANCE.invertThrottle) {
+            if (Config.getInstance().invertThrottle) {
                 frame.setThrottle(-frame.getThrottle());
             }
 
-            if (Config.INSTANCE.invertPitch) {
+            if (Config.getInstance().invertPitch) {
                 frame.setPitch(-frame.getPitch());
             }
 
-            if (Config.INSTANCE.invertRoll) {
+            if (Config.getInstance().invertRoll) {
                 frame.setRoll(-frame.getRoll());
             }
 
-            if (Config.INSTANCE.invertYaw) {
+            if (Config.getInstance().invertYaw) {
                 frame.setYaw(-frame.getYaw());
             }
 
-            if (Config.INSTANCE.throttleInCenter) {
+            if (Config.getInstance().throttleInCenter) {
                 if (frame.getThrottle() < 0) {
                     frame.setThrottle(0);
                 }
@@ -77,8 +81,8 @@ public final class InputTick {
                 frame.setThrottle((frame.getThrottle() + 1) / 2.0f);
             }
 
-            if (Config.INSTANCE.deadzone != 0.0f) {
-                float halfDeadzone = Config.INSTANCE.deadzone / 2.0f;
+            if (Config.getInstance().deadzone != 0.0f) {
+                float halfDeadzone = Config.getInstance().deadzone / 2.0f;
 
                 if (frame.getPitch() < halfDeadzone && frame.getPitch() > -halfDeadzone) {
                     frame.setPitch(0);
@@ -101,9 +105,9 @@ public final class InputTick {
 
     public InputFrame getInputFrame(float delta) {
         InputFrame out = new InputFrame(frame);
-        out.setPitch((float) BetaflightHelper.calculateRates(out.getPitch(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
-        out.setYaw((float) BetaflightHelper.calculateRates(out.getYaw(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
-        out.setRoll((float) BetaflightHelper.calculateRates(out.getRoll(), Config.INSTANCE.rate, Config.INSTANCE.expo, Config.INSTANCE.superRate, delta));
+        out.setPitch((float) BetaflightHelper.calculateRates(out.getPitch(), Config.getInstance().rate, Config.getInstance().expo, Config.getInstance().superRate, delta));
+        out.setYaw((float) BetaflightHelper.calculateRates(out.getYaw(), Config.getInstance().rate, Config.getInstance().expo, Config.getInstance().superRate, delta));
+        out.setRoll((float) BetaflightHelper.calculateRates(out.getRoll(), Config.getInstance().rate, Config.getInstance().expo, Config.getInstance().superRate, delta));
         return out;
     }
 
@@ -116,6 +120,6 @@ public final class InputTick {
     }
 
     public static boolean controllerExists() {
-        return glfwJoystickPresent(Config.INSTANCE.controllerId);
+        return glfwJoystickPresent(Config.getInstance().controllerId);
     }
 }

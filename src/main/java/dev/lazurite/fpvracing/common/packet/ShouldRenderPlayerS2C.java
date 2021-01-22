@@ -17,7 +17,7 @@ public class ShouldRenderPlayerS2C {
 
     public static void accept(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
         boolean shouldRenderPlayer = buf.readBoolean();
-        client.execute(() -> Config.INSTANCE.shouldRenderPlayer = shouldRenderPlayer);
+        client.execute(() -> Config.getInstance().shouldRenderPlayer = shouldRenderPlayer);
     }
 
     public static void send(ServerPlayerEntity player, boolean shouldRenderPlayer) {

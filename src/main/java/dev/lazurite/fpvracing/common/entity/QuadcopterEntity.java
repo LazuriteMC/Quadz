@@ -74,7 +74,7 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 				ItemStack hand = player.getMainHandStack();
 
 				if (isBound(TransmitterContainer.get(hand))) {
-					setInputFrame(InputTick.INSTANCE.getInputFrame(delta));
+					setInputFrame(InputTick.getInstance().getInputFrame(delta));
 				}
 			}
 		}

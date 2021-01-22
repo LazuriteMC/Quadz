@@ -1,6 +1,5 @@
 package dev.lazurite.fpvracing.client.config;
 
-import dev.lazurite.fpvracing.FPVRacing;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.AnnotatedSettings;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.Setting;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.Settings;
@@ -16,11 +15,8 @@ import java.nio.file.Path;
 
 @Settings(onlyAnnotated = true)
 public final class Config {
-    public static final Config INSTANCE = new Config();
+    private static final Config instance = new Config();
     private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("fpv.json");
-    private static final ConfigTree CONFIG_TREE = ConfigTree.builder()
-            .applyFromPojo(INSTANCE, AnnotatedSettings.builder().build())
-            .build();
 
     public boolean shouldRenderPlayer = false;
 
@@ -78,20 +74,22 @@ public final class Config {
     private Config() {
     }
 
+    public static Config getInstance() {
+        return instance;
+    }
+
     public void load() {
         if (Files.exists(PATH)) {
             try {
                 FiberSerialization.deserialize(
-                        CONFIG_TREE,
+                        ConfigTree.builder().applyFromPojo(instance, AnnotatedSettings.builder().build()).build(),
                         Files.newInputStream(PATH),
                         new JanksonValueSerializer(false)
                 );
             } catch (IOException | FiberException e) {
-                FPVRacing.LOGGER.error("Error loading config.");
                 e.printStackTrace();
             }
         } else {
-            FPVRacing.LOGGER.info("Creating config.");
             this.save();
         }
     }
@@ -99,12 +97,11 @@ public final class Config {
     public void save() {
         try {
             FiberSerialization.serialize(
-                    CONFIG_TREE,
+                    ConfigTree.builder().applyFromPojo(instance, AnnotatedSettings.builder().build()).build(),
                     Files.newOutputStream(PATH),
                     new JanksonValueSerializer(false)
             );
         } catch (IOException e) {
-            FPVRacing.LOGGER.error("Error saving config.");
             e.printStackTrace();
         }
     }

@@ -29,7 +29,7 @@ public class WorldRendererMixin {
             )
     )
     public Entity getFocusedEntity(Camera camera) {
-        if (Config.INSTANCE.shouldRenderPlayer) {
+        if (Config.getInstance().shouldRenderPlayer) {
             return client.player;
         }
 
