@@ -7,6 +7,7 @@ import dev.lazurite.fpvracing.client.input.InputTick;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
 import java.util.List;
@@ -41,6 +42,15 @@ public class ConfigScreen {
         joysticks.toArray(),
         joysticks.get(0))
                 .setTooltip(new TranslatableText("config.fpvracing.entry.controller_id.tooltip"))
+                .setNameProvider(value -> {
+                    String string = (String) value;
+
+                    if (string.length() > 15) {
+                        return new LiteralText(string.substring(0, 15) + "...");
+                    } else {
+                        return new LiteralText(string);
+                    }
+                })
                 .setSaveConsumer(value -> {
                     for (int i = 0; i < joysticks.toArray().length; i++) {
                         if (value.equals(joysticks.toArray()[i])) {

@@ -21,22 +21,6 @@ import physics.javax.vecmath.Quat4f;
 public class GameRendererMixin {
 	@Shadow @Final private MinecraftClient client;
 
-	/**
-	 * Updates the user's controller input. Calling {@link InputTick#tick}
-	 * here allows for input to be available in the menus as well as
-	 * in-game for configuration purposes.
-	 * @param tickDelta
-	 * @param startTime
-	 * @param tick
-	 * @param info
-	 */
-	@Inject(method = "render", at = @At("HEAD"))
-	public void render(float tickDelta, long startTime, boolean tick, CallbackInfo info) {
-		if (!client.isPaused()) {
-			InputTick.getInstance().tick();
-		}
-	}
-
 	@Inject(method = "renderWorld", at = @At("HEAD"))
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
 		Entity entity = client.getCameraEntity();

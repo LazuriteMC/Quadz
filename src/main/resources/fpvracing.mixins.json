@@ -11,12 +11,13 @@
   "client": [
     "client.ClientPlayerEntityMixin",
     "client.ClientWorldMixin",
-    "client.input.MouseMixin",
     "client.MatrixStackMixin",
+    "client.MinecraftClientMixin",
+    "client.input.MouseMixin",
     "client.render.GameRendererMixin",
     "client.render.HeldItemRendererMixin",
-    "client.render.ItemRendererMixin",
     "client.render.InGameHudMixin",
+    "client.render.ItemRendererMixin",
     "client.render.WorldRendererMixin"
   ],
   "injectors": {

@@ -24,6 +24,7 @@ public final class InputTick {
     private static final InputTick instance = new InputTick();
     private final InputFrame frame = new InputFrame();
     private final Map<Integer, String> joysticks = Maps.newHashMap();
+    private boolean loaded = false;
     private long next;
 
     private InputTick() {
@@ -43,14 +44,19 @@ public final class InputTick {
                     joysticks.put(i, getJoystickName(i));
 
                     if (!lastJoysticks.containsKey(i)) {
-                        JoystickEvents.JOYSTICK_CONNECT.invoker().onConnect(i, getJoystickName(i));
+                        if (loaded) {
+                            JoystickEvents.JOYSTICK_CONNECT.invoker().onConnect(i, getJoystickName(i));
+                        }
                     }
                 } else if (lastJoysticks.containsKey(i)) {
-                    JoystickEvents.JOYSTICK_DISCONNECT.invoker().onDisconnect(i, lastJoysticks.get(i));
+                    if (loaded) {
+                        JoystickEvents.JOYSTICK_DISCONNECT.invoker().onDisconnect(i, lastJoysticks.get(i));
+                    }
                 }
             }
 
             next = System.currentTimeMillis() + 500;
+            loaded = true;
         }
 
         if (controllerExists()) {

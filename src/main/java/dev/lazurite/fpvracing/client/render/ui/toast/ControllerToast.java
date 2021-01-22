@@ -3,6 +3,7 @@ package dev.lazurite.fpvracing.client.render.ui.toast;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.lazurite.fpvracing.FPVRacing;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.toast.Toast;
 import net.minecraft.client.toast.ToastManager;
 import net.minecraft.client.util.math.MatrixStack;

@@ -59,14 +59,14 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 	public static final ComponentKey<QuadcopterContainer> QUADCOPTER_CONTAINER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "quadcopter_container"), QuadcopterContainer.class);
 
 	/* Items */
-	public static GogglesItem GOGGLES_ITEM;
-	public static TransmitterItem TRANSMITTER_ITEM;
-	public static ChannelWandItem CHANNEL_WAND_ITEM;
+	public static GogglesItem GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
+	public static TransmitterItem TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new TransmitterItem(new Item.Settings().maxCount(1)));
+	public static ChannelWandItem CHANNEL_WAND_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "channel_wand_item"), new ChannelWandItem(new Item.Settings().maxCount(1)));
 	public static ItemGroup ITEM_GROUP;
 
 	/* Quadcopter Items */
-	public static VoxelRacerOneItem VOXEL_RACER_ONE_ITEM;
-	public static VoyagerItem VOYAGER_ITEM;
+	public static VoxelRacerOneItem VOXEL_RACER_ONE_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "voxel_racer_one_item"), new VoxelRacerOneItem(new Item.Settings().maxCount(1)));
+	public static VoyagerItem VOYAGER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "voyager_item"), new VoyagerItem(new Item.Settings().maxCount(1)));
 
 	/* Quadcopter Entities */
 	public static EntityType<VoxelRacerOne> VOXEL_RACER_ONE;
@@ -80,13 +80,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		PowerGogglesC2S.register();
 		ElectromagneticPulseC2S.register();
 
-		/* Register Items */
-		GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
-		TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new TransmitterItem(new Item.Settings().maxCount(1)));
-		CHANNEL_WAND_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "channel_wand_item"), new ChannelWandItem(new Item.Settings().maxCount(1)));
-		VOXEL_RACER_ONE_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "voxel_racer_one_item"), new VoxelRacerOneItem(new Item.Settings().maxCount(1)));
-		VOYAGER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "voyager_item"), new VoyagerItem(new Item.Settings().maxCount(1)));
-
+		/* Register Creative Tab */
 		ITEM_GROUP = FabricItemGroupBuilder.create(new Identifier(MODID, "items"))
 				.icon(() -> new ItemStack(GOGGLES_ITEM))
 				.appendItems(stack -> {
