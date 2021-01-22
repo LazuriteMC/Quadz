@@ -24,10 +24,10 @@ public class ConfigScreen {
 //                .setTransparentBackground(true)
                 .setSavingRunnable(Config.getInstance()::save);
 
-        return builder.setFallbackCategory(getControllerSetup(builder)).build();
+        return builder.setFallbackCategory(getControllerSettings(builder)).build();
     }
 
-    public static ConfigCategory getControllerSetup(ConfigBuilder builder) {
+    public static ConfigCategory getControllerSettings(ConfigBuilder builder) {
         ConfigCategory controllerSetup = builder.getOrCreateCategory(new TranslatableText("config.rayon.category.controller_setup")); // category name is ignored
         List<String> joysticks = Lists.newArrayList(InputTick.getInstance().getJoysticks());
 
