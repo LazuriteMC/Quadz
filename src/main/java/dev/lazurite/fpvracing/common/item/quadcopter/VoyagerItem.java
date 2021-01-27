@@ -32,7 +32,7 @@ public class VoyagerItem extends Item {
 				Voyager entity = new Voyager(FPVRacing.VOYAGER, world);
 				entity.updatePositionAndAngles(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z, user.yaw, 0);
 
-				QuadcopterContainer item = QuadcopterContainer.get(itemStack);
+				QuadcopterContainer item = FPVRacing.QUADCOPTER_CONTAINER.get(itemStack);
 				CompoundTag tag = new CompoundTag();
 				item.writeToNbt(tag);
 				entity.readCustomDataFromTag(tag);

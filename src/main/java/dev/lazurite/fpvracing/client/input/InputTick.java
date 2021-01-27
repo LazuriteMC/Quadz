@@ -22,8 +22,8 @@ import static org.lwjgl.glfw.GLFW.*;
 @Environment(EnvType.CLIENT)
 public final class InputTick {
     private static final InputTick instance = new InputTick();
-    private final InputFrame frame = new InputFrame();
     private final Map<Integer, String> joysticks = Maps.newHashMap();
+    private final InputFrame frame = new InputFrame();
     private boolean loaded = false;
     private long next;
 
@@ -61,7 +61,7 @@ public final class InputTick {
 
         if (controllerExists()) {
             FloatBuffer buffer = glfwGetJoystickAxes(Config.getInstance().controllerId);
-            frame.set(buffer.get(Config.getInstance().throttle), buffer.get(Config.getInstance().pitch), buffer.get(Config.getInstance().roll), buffer.get(Config.getInstance().yaw));
+            frame.set(buffer.get(Config.getInstance().throttle), buffer.get(Config.getInstance().pitch), buffer.get(Config.getInstance().yaw), buffer.get(Config.getInstance().roll));
 
             if (Config.getInstance().invertThrottle) {
                 frame.setThrottle(-frame.getThrottle());

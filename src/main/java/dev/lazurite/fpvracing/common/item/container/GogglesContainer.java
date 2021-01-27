@@ -1,7 +1,6 @@
 package dev.lazurite.fpvracing.common.item.container;
 
-import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.type.VideoCapable;
+import dev.lazurite.fpvracing.common.util.type.VideoCapable;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import net.minecraft.item.ItemStack;
@@ -21,14 +20,6 @@ public class GogglesContainer implements ComponentV3, VideoCapable {
         this.stack = stack;
         this.frequency = new Frequency();
         this.enabled = false;
-    }
-
-    public static GogglesContainer get(ItemStack stack) {
-        try {
-            return FPVRacing.GOGGLES_CONTAINER.get(stack);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public ItemStack getStack() {

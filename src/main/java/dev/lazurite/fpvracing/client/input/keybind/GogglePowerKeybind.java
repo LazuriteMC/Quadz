@@ -1,9 +1,9 @@
-package dev.lazurite.fpvracing.client.input.keybinds;
+package dev.lazurite.fpvracing.client.input.keybind;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
-import dev.lazurite.fpvracing.client.packet.PowerGogglesC2S;
+import dev.lazurite.fpvracing.client.packet.keybind.PowerGogglesC2S;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -27,9 +27,9 @@ public class GogglePowerKeybind {
             boolean sentPowerOn = false;
 
             if (hand.getItem() instanceof GogglesItem) {
-                goggles = GogglesContainer.get(hand);
+                goggles = FPVRacing.GOGGLES_CONTAINER.get(hand);
             } else if (hat.getItem() instanceof GogglesItem) {
-                goggles = GogglesContainer.get(hat);
+                goggles = FPVRacing.GOGGLES_CONTAINER.get(hat);
             } else return;
 
             if (key.wasPressed()) {

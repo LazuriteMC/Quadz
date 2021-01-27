@@ -1,10 +1,9 @@
 package dev.lazurite.fpvracing.common.item.container;
 
-import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.common.item.quadcopter.VoxelRacerOneItem;
-import dev.lazurite.fpvracing.common.type.QuadcopterState;
+import dev.lazurite.fpvracing.common.util.type.QuadcopterState;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import net.minecraft.item.ItemStack;
@@ -30,14 +29,6 @@ public class QuadcopterContainer implements ComponentV3, QuadcopterState {
 
     public QuadcopterContainer(ItemStack stack) {
         this.stack = stack;
-    }
-
-    public static QuadcopterContainer get(ItemStack stack) {
-        try {
-            return FPVRacing.QUADCOPTER_CONTAINER.get(stack);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public ItemStack getStack() {

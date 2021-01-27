@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.common.type;
+package dev.lazurite.fpvracing.common.util.type;
 
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 

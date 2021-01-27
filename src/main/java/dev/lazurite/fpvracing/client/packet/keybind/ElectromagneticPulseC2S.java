@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.client.packet;
+package dev.lazurite.fpvracing.client.packet.keybind;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;

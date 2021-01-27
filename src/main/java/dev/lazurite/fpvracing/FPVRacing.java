@@ -2,13 +2,16 @@ package dev.lazurite.fpvracing;
 
 import dev.lazurite.fpvracing.api.event.JoystickEvents;
 import dev.lazurite.fpvracing.client.config.Config;
-import dev.lazurite.fpvracing.client.input.keybinds.EMPKeybind;
-import dev.lazurite.fpvracing.client.input.keybinds.GodModeKeybind;
-import dev.lazurite.fpvracing.client.input.keybinds.GogglePowerKeybind;
-import dev.lazurite.fpvracing.client.input.keybinds.NoClipKeybind;
-import dev.lazurite.fpvracing.client.packet.GodModeC2S;
-import dev.lazurite.fpvracing.client.packet.NoClipC2S;
-import dev.lazurite.fpvracing.client.packet.PowerGogglesC2S;
+import dev.lazurite.fpvracing.client.input.InputFrame;
+import dev.lazurite.fpvracing.client.input.InputTick;
+import dev.lazurite.fpvracing.client.input.keybind.EMPKeybind;
+import dev.lazurite.fpvracing.client.input.keybind.GodModeKeybind;
+import dev.lazurite.fpvracing.client.input.keybind.GogglePowerKeybind;
+import dev.lazurite.fpvracing.client.input.keybind.NoClipKeybind;
+import dev.lazurite.fpvracing.client.packet.InputFrameC2S;
+import dev.lazurite.fpvracing.client.packet.keybind.GodModeC2S;
+import dev.lazurite.fpvracing.client.packet.keybind.NoClipC2S;
+import dev.lazurite.fpvracing.client.packet.keybind.PowerGogglesC2S;
 import dev.lazurite.fpvracing.client.render.entity.VoyagerRenderer;
 import dev.lazurite.fpvracing.client.render.ui.toast.ControllerToast;
 import dev.lazurite.fpvracing.common.entity.Voyager;
@@ -16,7 +19,7 @@ import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.entity.VoxelRacerOne;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
-import dev.lazurite.fpvracing.client.packet.ElectromagneticPulseC2S;
+import dev.lazurite.fpvracing.client.packet.keybind.ElectromagneticPulseC2S;
 import dev.lazurite.fpvracing.common.item.quadcopter.VoyagerItem;
 import dev.lazurite.fpvracing.common.packet.SelectedSlotS2C;
 import dev.lazurite.fpvracing.common.packet.ShouldRenderPlayerS2C;
@@ -26,6 +29,8 @@ import dev.lazurite.fpvracing.common.item.quadcopter.VoxelRacerOneItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.client.render.entity.VoxelRacerOneRenderer;
+import dev.lazurite.fpvracing.common.util.type.Bindable;
+import dev.lazurite.fpvracing.common.util.type.Controllable;
 import dev.lazurite.rayon.api.event.EntityBodyStepEvents;
 import dev.lazurite.rayon.api.registry.DynamicEntityRegistry;
 import dev.lazurite.rayon.api.shape.provider.BoundingBoxShapeProvider;
@@ -35,8 +40,10 @@ import dev.onyxstudios.cca.api.v3.item.ItemComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.item.ItemComponentInitializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
@@ -79,6 +86,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		GodModeC2S.register();
 		PowerGogglesC2S.register();
 		ElectromagneticPulseC2S.register();
+		InputFrameC2S.register();
 
 		/* Register Creative Tab */
 		ITEM_GROUP = FabricItemGroupBuilder.create(new Identifier(MODID, "items"))
@@ -114,9 +122,37 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 
 		/* Register Rayon Rigid Bodies */
 		DynamicEntityRegistry.INSTANCE.register(QuadcopterEntity.class, BoundingBoxShapeProvider::get, 1.0f, 0.05f);
+
 		EntityBodyStepEvents.START_ENTITY_STEP.register((entity, delta) -> {
 			if (entity.getEntity() instanceof QuadcopterEntity) {
 				((QuadcopterEntity) entity.getEntity()).step(delta);
+			}
+		});
+
+		ClientTickEvents.START_CLIENT_TICK.register(client -> {
+			if (client.world != null && client.player != null && !client.isPaused()) {
+				if (client.player.getMainHandStack().getItem() instanceof TransmitterItem) {
+					TransmitterContainer transmitter = TRANSMITTER_CONTAINER.get(client.player.getMainHandStack());
+
+					if (client.getCameraEntity() instanceof Controllable) {
+						Controllable controllable = (Controllable) client.getCameraEntity();
+
+						if (controllable.getBindId() == transmitter.getBindId()) {
+							InputFrameC2S.send(client.getCameraEntity(), controllable.getInputFrame());
+						}
+					} else {
+						for (Entity entity : client.world.getEntities()) {
+							if (entity instanceof Controllable) {
+								Controllable controllable = (Controllable) entity;
+
+								if (controllable.getBindId() == transmitter.getBindId()) {
+									InputFrameC2S.send(entity, controllable.getInputFrame());
+									break;
+								}
+							}
+						}
+					}
+				}
 			}
 		});
 	}

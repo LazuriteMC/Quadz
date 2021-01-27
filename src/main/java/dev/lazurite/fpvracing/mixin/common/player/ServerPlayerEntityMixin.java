@@ -1,7 +1,8 @@
 package dev.lazurite.fpvracing.mixin.common.player;
 
 import com.mojang.authlib.GameProfile;
-import dev.lazurite.fpvracing.common.access.ServerPlayerAccess;
+import dev.lazurite.fpvracing.FPVRacing;
+import dev.lazurite.fpvracing.common.util.access.ServerPlayerAccess;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
@@ -132,7 +133,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
                 ItemStack stack = player.inventory.getStack(i);
 
                 if (stack.getItem() instanceof TransmitterItem) {
-                    if (quadcopter.isBound(TransmitterContainer.get(stack))) {
+                    if (quadcopter.isBound(FPVRacing.TRANSMITTER_CONTAINER.get(stack))) {
                         player.inventory.selectedSlot = i;
                         SelectedSlotS2C.send(player, i);
                     }

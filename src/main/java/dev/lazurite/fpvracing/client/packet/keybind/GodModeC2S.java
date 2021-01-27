@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.client.packet;
+package dev.lazurite.fpvracing.client.packet.keybind;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
@@ -29,7 +29,7 @@ public class GodModeC2S {
 
         server.execute(() -> {
             if (hand.getItem() instanceof TransmitterItem) {
-                TransmitterContainer transmitter = TransmitterContainer.get(hand);
+                TransmitterContainer transmitter = FPVRacing.TRANSMITTER_CONTAINER.get(hand);
                 List<QuadcopterEntity> quadcopters = player.getEntityWorld().getEntitiesByClass(QuadcopterEntity.class, new Box(player.getBlockPos()).expand(80), null);
 
                 for (QuadcopterEntity quadcopter : quadcopters) {
@@ -46,7 +46,7 @@ public class GodModeC2S {
                     }
                 }
             } else if (hand.getItem() instanceof VoxelRacerOneItem) {
-                QuadcopterContainer quadcopter = QuadcopterContainer.get(hand);
+                QuadcopterContainer quadcopter = FPVRacing.QUADCOPTER_CONTAINER.get(hand);
                 quadcopter.setGodMode(!quadcopter.isInGodMode());
 
                 if (quadcopter.isInGodMode()) {

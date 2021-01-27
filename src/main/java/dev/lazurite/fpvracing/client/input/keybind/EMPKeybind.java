@@ -1,7 +1,7 @@
-package dev.lazurite.fpvracing.client.input.keybinds;
+package dev.lazurite.fpvracing.client.input.keybind;
 
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.client.packet.ElectromagneticPulseC2S;
+import dev.lazurite.fpvracing.client.packet.keybind.ElectromagneticPulseC2S;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;

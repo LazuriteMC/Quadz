@@ -1,15 +1,13 @@
 package dev.lazurite.fpvracing.common.entity;
 
-import dev.lazurite.fpvracing.common.access.Matrix4fAccess;
+import dev.lazurite.fpvracing.common.util.access.Matrix4fAccess;
 import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.client.input.InputTick;
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.type.Bindable;
-import dev.lazurite.fpvracing.common.type.QuadcopterState;
+import dev.lazurite.fpvracing.common.util.type.Bindable;
+import dev.lazurite.fpvracing.common.util.type.QuadcopterState;
 import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
-import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
-import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import dev.lazurite.fpvracing.common.util.Axis;
 import dev.lazurite.fpvracing.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.fpvracing.common.util.Frequency;
@@ -44,9 +42,6 @@ import physics.javax.vecmath.Vector3f;
 public abstract class QuadcopterEntity extends Entity implements QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<State> STATE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.STATE);
-
-	/* Controllable Stuff */
-	private static final TrackedData<InputFrame> INPUT_FRAME = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.INPUT_FRAME);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
 	/* Video Transmission Stuff */
@@ -54,6 +49,8 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	private static final TrackedData<Integer> CAMERA_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Integer> FIELD_OF_VIEW = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Integer> POWER = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
+
+	private final InputFrame inputFrame = new InputFrame();
 
 	public QuadcopterEntity(EntityType<?> type, World world) {
 		super(type, world);
@@ -65,19 +62,6 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	public void step(float delta) {
 		/* Start Step Event */
 		QuadcopterStepEvents.START_QUADCOPTER_STEP.invoker().onStartStep(this, delta);
-
-		/* Update user input */
-		if (getEntityWorld().isClient()) {
-			PlayerEntity player = MinecraftClient.getInstance().player;
-
-			if (player != null) {
-				ItemStack hand = player.getMainHandStack();
-
-				if (isBound(TransmitterContainer.get(hand))) {
-					setInputFrame(InputTick.getInstance().getInputFrame(delta));
-				}
-			}
-		}
 
 		/* Rotate the quadcopter based on user input */
 		rotate(Axis.X, getInputFrame().getPitch());
@@ -105,7 +89,22 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 		netThrust.negate();
         body.applyCentralForce(netThrust);
 
-        /* End Step Event */
+		/* Update user input */
+		if (getEntityWorld().isClient()) {
+			PlayerEntity player = MinecraftClient.getInstance().player;
+
+			if (player != null) {
+				ItemStack hand = player.getMainHandStack();
+
+				if (hand.getItem() instanceof TransmitterItem) {
+					if (isBound(FPVRacing.TRANSMITTER_CONTAINER.get(hand))) {
+						setInputFrame(InputTick.getInstance().getInputFrame(delta));
+					}
+				}
+			}
+		}
+
+		/* End Step Event */
 		QuadcopterStepEvents.END_QUADCOPTER_STEP.invoker().onEndStep(this, delta);
 	}
 
@@ -173,15 +172,15 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	public ActionResult interact(PlayerEntity player, Hand hand) {
 		ItemStack stack = player.inventory.getMainHandStack();
 
-		if (stack.getItem() instanceof TransmitterItem) {
-			Bindable.bind(this, TransmitterContainer.get(stack));
-			player.sendMessage(new LiteralText("Transmitter bound"), false);
-		} else if (stack.getItem() instanceof ChannelWandItem) {
-			Frequency frequency = getFrequency();
-			player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), false);
-		}
-
-		if (world.isClient()) {
+		if (!world.isClient()) {
+			if (stack.getItem() instanceof TransmitterItem) {
+				Bindable.bind(this, FPVRacing.TRANSMITTER_CONTAINER.get(stack));
+				player.sendMessage(new LiteralText("Transmitter bound"), false);
+			} else if (stack.getItem() instanceof ChannelWandItem) {
+				Frequency frequency = getFrequency();
+				player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), false);
+			}
+		} else {
 			if (!InputTick.controllerExists()) {
 				player.sendMessage(new LiteralText("Controller not found"), false);
 			}
@@ -194,8 +193,6 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	public void readCustomDataFromTag(CompoundTag tag) {
 		setState(State.valueOf(tag.getString("state")));
 		setGodMode(tag.getBoolean("god_mode"));
-
-		setInputFrame(InputFrame.fromTag(tag));
 		setBindId(tag.getInt("bind_id"));
 
 		setFrequency(new Frequency((char) tag.getInt("band"), tag.getInt("channel")));
@@ -208,8 +205,6 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	public void writeCustomDataToTag(CompoundTag tag) {
 		tag.putString("state", getState().toString());
 		tag.putBoolean("god_mode", isInGodMode());
-
-		getInputFrame().toTag(tag);
 		tag.putInt("bind_id", getBindId());
 
 		tag.putInt("band", getFrequency().getBand());
@@ -231,7 +226,7 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 			ItemStack stack = new ItemStack(FPVRacing.VOXEL_RACER_ONE_ITEM);
 			CompoundTag tag = new CompoundTag();
 			writeCustomDataToTag(tag);
-			QuadcopterContainer.get(stack).readFromNbt(tag);
+			FPVRacing.QUADCOPTER_CONTAINER.get(stack).readFromNbt(tag);
 			dropStack(stack);
 		}
 
@@ -242,7 +237,6 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	protected void initDataTracker() {
 		getDataTracker().startTracking(GOD_MODE, false);
 		getDataTracker().startTracking(STATE, State.DISARMED);
-		getDataTracker().startTracking(INPUT_FRAME, new InputFrame());
 		getDataTracker().startTracking(BIND_ID, -1);
 		getDataTracker().startTracking(FREQUENCY, new Frequency());
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
@@ -253,6 +247,11 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	@Override
 	public Packet<?> createSpawnPacket() {
 		return RayonSpawnS2CPacket.get(this);
+	}
+
+	@Override
+	public boolean collides() {
+		return true;
 	}
 
 	@Override
@@ -267,12 +266,12 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 
 	@Override
 	public void setInputFrame(InputFrame frame) {
-		getDataTracker().set(INPUT_FRAME, frame);
+		this.inputFrame.set(frame);
 	}
 
 	@Override
 	public InputFrame getInputFrame() {
-		return getDataTracker().get(INPUT_FRAME);
+		return this.inputFrame;
 	}
 
 	@Override

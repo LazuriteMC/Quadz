@@ -32,7 +32,7 @@ public class VoxelRacerOneItem extends Item {
 				VoxelRacerOne entity = new VoxelRacerOne(FPVRacing.VOXEL_RACER_ONE, world);
 				entity.updatePositionAndAngles(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z, user.yaw, 0);
 
-				QuadcopterContainer item = QuadcopterContainer.get(itemStack);
+				QuadcopterContainer item = FPVRacing.QUADCOPTER_CONTAINER.get(itemStack);
 				CompoundTag tag = new CompoundTag();
 				item.writeToNbt(tag);
 				entity.readCustomDataFromTag(tag);

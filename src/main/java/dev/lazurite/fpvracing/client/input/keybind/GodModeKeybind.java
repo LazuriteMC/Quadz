@@ -1,6 +1,6 @@
-package dev.lazurite.fpvracing.client.input.keybinds;
+package dev.lazurite.fpvracing.client.input.keybind;
 
-import dev.lazurite.fpvracing.client.packet.GodModeC2S;
+import dev.lazurite.fpvracing.client.packet.keybind.GodModeC2S;
 import dev.lazurite.fpvracing.FPVRacing;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

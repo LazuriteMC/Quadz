@@ -1,7 +1,6 @@
 package dev.lazurite.fpvracing.common.item.container;
 
-import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.type.Bindable;
+import dev.lazurite.fpvracing.common.util.type.Bindable;
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -17,14 +16,6 @@ public class TransmitterContainer implements ComponentV3, Bindable {
 
     public TransmitterContainer(ItemStack stack) {
         this.stack = stack;
-    }
-
-    public static TransmitterContainer get(ItemStack stack) {
-        try {
-            return FPVRacing.TRANSMITTER_CONTAINER.get(stack);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public ItemStack getStack() {

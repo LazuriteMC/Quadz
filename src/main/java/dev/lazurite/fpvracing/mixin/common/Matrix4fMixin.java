@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.mixin.common;
 
-import dev.lazurite.fpvracing.common.access.Matrix4fAccess;
+import dev.lazurite.fpvracing.common.util.access.Matrix4fAccess;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
 import org.spongepowered.asm.mixin.Mixin;

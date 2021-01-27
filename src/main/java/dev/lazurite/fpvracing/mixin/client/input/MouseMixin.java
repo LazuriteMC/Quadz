@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.mixin.client.input;
 
-import dev.lazurite.fpvracing.common.access.PlayerAccess;
+import dev.lazurite.fpvracing.common.util.access.PlayerAccess;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;

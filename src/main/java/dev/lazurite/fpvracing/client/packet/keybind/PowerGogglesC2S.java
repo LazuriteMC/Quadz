@@ -1,7 +1,6 @@
-package dev.lazurite.fpvracing.client.packet;
+package dev.lazurite.fpvracing.client.packet.keybind;
 
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -26,9 +25,9 @@ public class PowerGogglesC2S {
         server.execute(() -> {
             // TODO play sound
             if (hand.getItem() instanceof GogglesItem) {
-                GogglesContainer.get(hand).setEnabled(enable);
+                FPVRacing.GOGGLES_CONTAINER.get(hand).setEnabled(enable);
             } else if (hat.getItem() instanceof GogglesItem) {
-                GogglesContainer.get(hat).setEnabled(enable);
+                FPVRacing.GOGGLES_CONTAINER.get(hat).setEnabled(enable);
             }
 
             player.playSound(enable ? SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, 1.0f, 1.0f);

@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.common.access;
+package dev.lazurite.fpvracing.common.util.access;
 
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
