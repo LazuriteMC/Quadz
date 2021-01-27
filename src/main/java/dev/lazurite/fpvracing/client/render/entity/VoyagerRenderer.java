@@ -2,7 +2,7 @@ package dev.lazurite.fpvracing.client.render.entity;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.client.render.entity.model.VoyagerModel;
-import dev.lazurite.fpvracing.common.entity.Voyager;
+import dev.lazurite.fpvracing.common.entity.quads.Voyager;
 import dev.lazurite.rayon.physics.body.EntityRigidBody;
 import dev.lazurite.rayon.physics.helper.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;

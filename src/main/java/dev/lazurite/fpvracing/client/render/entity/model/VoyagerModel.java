@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.client.render.entity.model;
 
-import dev.lazurite.fpvracing.common.entity.Voyager;
+import dev.lazurite.fpvracing.common.entity.quads.Voyager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.ModelPart;

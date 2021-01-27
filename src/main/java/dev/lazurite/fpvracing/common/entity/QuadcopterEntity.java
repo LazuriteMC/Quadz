@@ -56,8 +56,8 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 		super(type, world);
 	}
 
-	abstract float getThrustForce();
-	abstract float getThrustCurve();
+	public abstract float getThrustForce();
+	public abstract float getThrustCurve();
 
 	public void step(float delta) {
 		/* Start Step Event */
@@ -175,16 +175,14 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 		if (!world.isClient()) {
 			if (stack.getItem() instanceof TransmitterItem) {
 				Bindable.bind(this, FPVRacing.TRANSMITTER_CONTAINER.get(stack));
-				player.sendMessage(new LiteralText("Transmitter bound"), false);
+				player.sendMessage(new LiteralText("Transmitter bound"), true);
 			} else if (stack.getItem() instanceof ChannelWandItem) {
 				Frequency frequency = getFrequency();
-				player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), false);
-			}
-		} else {
-			if (!InputTick.controllerExists()) {
-				player.sendMessage(new LiteralText("Controller not found"), false);
+				player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), true);
 			}
 		}
+
+		// TODO transmitter not found message (toast maybe?)
 
 		return ActionResult.SUCCESS;
 	}

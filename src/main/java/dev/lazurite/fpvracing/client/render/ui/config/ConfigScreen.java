@@ -2,7 +2,6 @@ package dev.lazurite.fpvracing.client.render.ui.config;
 
 import com.google.common.collect.Lists;
 import dev.lazurite.fpvracing.client.config.Config;
-import dev.lazurite.fpvracing.client.config.ModMenuEntry;
 import dev.lazurite.fpvracing.client.input.InputTick;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;

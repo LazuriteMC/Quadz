@@ -2,8 +2,6 @@ package dev.lazurite.fpvracing;
 
 import dev.lazurite.fpvracing.api.event.JoystickEvents;
 import dev.lazurite.fpvracing.client.config.Config;
-import dev.lazurite.fpvracing.client.input.InputFrame;
-import dev.lazurite.fpvracing.client.input.InputTick;
 import dev.lazurite.fpvracing.client.input.keybind.EMPKeybind;
 import dev.lazurite.fpvracing.client.input.keybind.GodModeKeybind;
 import dev.lazurite.fpvracing.client.input.keybind.GogglePowerKeybind;
@@ -14,23 +12,23 @@ import dev.lazurite.fpvracing.client.packet.keybind.NoClipC2S;
 import dev.lazurite.fpvracing.client.packet.keybind.PowerGogglesC2S;
 import dev.lazurite.fpvracing.client.render.entity.VoyagerRenderer;
 import dev.lazurite.fpvracing.client.render.ui.toast.ControllerToast;
-import dev.lazurite.fpvracing.common.entity.Voyager;
+import dev.lazurite.fpvracing.client.tick.GogglesTick;
+import dev.lazurite.fpvracing.client.tick.TransmitterTick;
+import dev.lazurite.fpvracing.common.entity.quads.Voyager;
 import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
-import dev.lazurite.fpvracing.common.entity.VoxelRacerOne;
+import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOne;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import dev.lazurite.fpvracing.client.packet.keybind.ElectromagneticPulseC2S;
-import dev.lazurite.fpvracing.common.item.quadcopter.VoyagerItem;
+import dev.lazurite.fpvracing.common.item.quads.VoyagerItem;
 import dev.lazurite.fpvracing.common.packet.SelectedSlotS2C;
 import dev.lazurite.fpvracing.common.packet.ShouldRenderPlayerS2C;
 import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
-import dev.lazurite.fpvracing.common.item.quadcopter.VoxelRacerOneItem;
+import dev.lazurite.fpvracing.common.item.quads.VoxelRacerOneItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.client.render.entity.VoxelRacerOneRenderer;
-import dev.lazurite.fpvracing.common.util.type.Bindable;
-import dev.lazurite.fpvracing.common.util.type.Controllable;
 import dev.lazurite.rayon.api.event.EntityBodyStepEvents;
 import dev.lazurite.rayon.api.registry.DynamicEntityRegistry;
 import dev.lazurite.rayon.api.shape.provider.BoundingBoxShapeProvider;
@@ -43,7 +41,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
@@ -128,39 +125,12 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 				((QuadcopterEntity) entity.getEntity()).step(delta);
 			}
 		});
-
-		ClientTickEvents.START_CLIENT_TICK.register(client -> {
-			if (client.world != null && client.player != null && !client.isPaused()) {
-				if (client.player.getMainHandStack().getItem() instanceof TransmitterItem) {
-					TransmitterContainer transmitter = TRANSMITTER_CONTAINER.get(client.player.getMainHandStack());
-
-					if (client.getCameraEntity() instanceof Controllable) {
-						Controllable controllable = (Controllable) client.getCameraEntity();
-
-						if (controllable.getBindId() == transmitter.getBindId()) {
-							InputFrameC2S.send(client.getCameraEntity(), controllable.getInputFrame());
-						}
-					} else {
-						for (Entity entity : client.world.getEntities()) {
-							if (entity instanceof Controllable) {
-								Controllable controllable = (Controllable) entity;
-
-								if (controllable.getBindId() == transmitter.getBindId()) {
-									InputFrameC2S.send(entity, controllable.getInputFrame());
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-		});
 	}
 
 	@Override
 	public void onInitializeClient() {
-//		GLFW.glfwInit(); // forcefully initializes GLFW
-		Config.getInstance().load(); // load the config
+		/* Load the Config */
+		Config.getInstance().load();
 
 		/* Register Keybindings */
 		GogglePowerKeybind.register();
@@ -179,6 +149,10 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		/* Register Toast Events */
 		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.connect"), name));
 		JoystickEvents.JOYSTICK_DISCONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.disconnect"), name));
+
+		/* Register Client Tick Events */
+		ClientTickEvents.START_CLIENT_TICK.register(TransmitterTick::tick);
+		ClientTickEvents.START_CLIENT_TICK.register(GogglesTick::tick);
 	}
 
 	@Override

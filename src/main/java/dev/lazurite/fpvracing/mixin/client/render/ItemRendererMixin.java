@@ -2,8 +2,8 @@ package dev.lazurite.fpvracing.mixin.client.render;
 
 import dev.lazurite.fpvracing.client.render.item.VoxelRacerOneItemRenderer;
 import dev.lazurite.fpvracing.client.render.item.VoyagerItemRenderer;
-import dev.lazurite.fpvracing.common.item.quadcopter.VoxelRacerOneItem;
-import dev.lazurite.fpvracing.common.item.quadcopter.VoyagerItem;
+import dev.lazurite.fpvracing.common.item.quads.VoxelRacerOneItem;
+import dev.lazurite.fpvracing.common.item.quads.VoyagerItem;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;

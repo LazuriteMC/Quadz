@@ -1,7 +1,7 @@
-package dev.lazurite.fpvracing.common.item.quadcopter;
+package dev.lazurite.fpvracing.common.item.quads;
 
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.entity.VoxelRacerOne;
+import dev.lazurite.fpvracing.common.entity.quads.Voyager;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -14,8 +14,8 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 
-public class VoxelRacerOneItem extends Item {
-	public VoxelRacerOneItem(Settings settings) {
+public class VoyagerItem extends Item {
+	public VoyagerItem(Settings settings) {
 		super(settings);
 	}
 
@@ -29,7 +29,7 @@ public class VoxelRacerOneItem extends Item {
 			return TypedActionResult.pass(itemStack);
 		} else {
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
-				VoxelRacerOne entity = new VoxelRacerOne(FPVRacing.VOXEL_RACER_ONE, world);
+				Voyager entity = new Voyager(FPVRacing.VOYAGER, world);
 				entity.updatePositionAndAngles(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z, user.yaw, 0);
 
 				QuadcopterContainer item = FPVRacing.QUADCOPTER_CONTAINER.get(itemStack);

@@ -1,5 +1,6 @@
-package dev.lazurite.fpvracing.common.entity;
+package dev.lazurite.fpvracing.common.entity.quads;
 
+import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
 
@@ -12,12 +13,12 @@ public class Voyager extends QuadcopterEntity {
     }
 
     @Override
-    float getThrustForce() {
+    public float getThrustForce() {
         return thrustForce;
     }
 
     @Override
-    float getThrustCurve() {
+    public float getThrustCurve() {
         return thrustCurve;
     }
 }
