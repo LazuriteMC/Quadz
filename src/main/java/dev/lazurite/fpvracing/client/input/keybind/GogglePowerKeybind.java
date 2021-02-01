@@ -33,7 +33,6 @@ public class GogglePowerKeybind {
             } else return;
 
             if (key.wasPressed()) {
-                System.out.println("SEND TO HAT");
                 PowerGogglesC2S.send(true);
                 sentPowerOn = true;//!goggles.isEnabled();
             } else if (client.options.keySneak.wasPressed()) {

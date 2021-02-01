@@ -33,6 +33,10 @@ public class GogglesContainer extends ItemComponent implements VideoCapable {
         return new Frequency((char) getInt("band"), getInt("channel"));
     }
 
+    public int getRange() {
+        return 80;
+    }
+
     public void setEnabled(boolean enabled) {
         putBoolean("enabled", enabled);
     }

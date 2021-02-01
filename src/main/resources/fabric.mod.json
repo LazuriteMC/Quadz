@@ -20,7 +20,7 @@
     "main": [ "dev.lazurite.fpvracing.FPVRacing" ],
     "client": [ "dev.lazurite.fpvracing.FPVRacing" ],
     "cardinal-components-item": [ "dev.lazurite.fpvracing.FPVRacing" ],
-    "modmenu": [ "dev.lazurite.fpvracing.client.render.ui.config.ModMenuEntry" ]
+    "modmenu": [ "dev.lazurite.fpvracing.client.render.ui.config.ConfigScreen" ]
   },
 
   "mixins": [ "fpvracing.mixins.json" ],

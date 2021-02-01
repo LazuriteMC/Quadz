@@ -12,7 +12,7 @@ import dev.lazurite.fpvracing.client.packet.keybind.NoClipC2S;
 import dev.lazurite.fpvracing.client.packet.keybind.PowerGogglesC2S;
 import dev.lazurite.fpvracing.client.render.entity.VoyagerRenderer;
 import dev.lazurite.fpvracing.client.render.ui.toast.ControllerToast;
-import dev.lazurite.fpvracing.client.tick.GogglesTick;
+import dev.lazurite.fpvracing.common.tick.GogglesTick;
 import dev.lazurite.fpvracing.client.tick.TransmitterTick;
 import dev.lazurite.fpvracing.common.entity.quads.Voyager;
 import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
@@ -40,6 +40,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
@@ -125,6 +126,8 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 				((QuadcopterEntity) entity.getEntity()).step(delta);
 			}
 		});
+
+		ServerTickEvents.START_SERVER_TICK.register(GogglesTick::tick);
 	}
 
 	@Override
@@ -152,7 +155,6 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 
 		/* Register Client Tick Events */
 		ClientTickEvents.START_CLIENT_TICK.register(TransmitterTick::tick);
-		ClientTickEvents.START_CLIENT_TICK.register(GogglesTick::tick);
 	}
 
 	@Override

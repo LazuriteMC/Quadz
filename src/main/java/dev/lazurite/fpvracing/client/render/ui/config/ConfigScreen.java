@@ -3,6 +3,8 @@ package dev.lazurite.fpvracing.client.render.ui.config;
 import com.google.common.collect.Lists;
 import dev.lazurite.fpvracing.client.config.Config;
 import dev.lazurite.fpvracing.client.input.InputTick;
+import io.github.prospector.modmenu.api.ConfigScreenFactory;
+import io.github.prospector.modmenu.api.ModMenuApi;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import net.minecraft.client.gui.screen.Screen;
@@ -13,10 +15,10 @@ import java.util.List;
 
 /**
  * Class for housing the methods which returns a new config screen made using Cloth Config.
- * @see ModMenuEntry#getModConfigScreenFactory()
+ * @see ConfigScreen#getModConfigScreenFactory()
  * @see Config
  */
-public class ConfigScreen {
+public class ConfigScreen implements ModMenuApi {
     public static Screen create(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
@@ -60,5 +62,10 @@ public class ConfigScreen {
                 .build());
 
         return controllerSetup;
+    }
+
+    @Override
+    public ConfigScreenFactory<?> getModConfigScreenFactory() {
+        return ConfigScreen::create;
     }
 }
