@@ -3,8 +3,9 @@ package dev.lazurite.fpvracing.client.render.entity;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.client.render.entity.model.VoyagerModel;
 import dev.lazurite.fpvracing.common.entity.quads.Voyager;
-import dev.lazurite.rayon.physics.body.EntityRigidBody;
-import dev.lazurite.rayon.physics.helper.math.QuaternionHelper;
+import dev.lazurite.rayon.Rayon;
+import dev.lazurite.rayon.impl.physics.body.EntityRigidBody;
+import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
@@ -16,8 +17,7 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Box;
-import physics.javax.vecmath.Quat4f;
+import physics.com.jme3.math.Quaternion;
 
 @Environment(EnvType.CLIENT)
 public class VoyagerRenderer extends EntityRenderer<Voyager> {
@@ -34,21 +34,14 @@ public class VoyagerRenderer extends EntityRenderer<Voyager> {
     }
 
     public void render(Voyager voyager, float yaw, float delta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
+        EntityRigidBody body = Rayon.ENTITY.get(voyager);
+
         matrixStack.push();
-
-        EntityRigidBody body = EntityRigidBody.get(voyager);
-        Box box = body.getBox();
-
-        matrixStack.translate(0, box.getYLength() / 2.0, 0);
-        matrixStack.multiply(QuaternionHelper.quat4fToQuaternion(QuaternionHelper.slerp(
-                body.getPrevOrientation(new Quat4f()),
-                body.getTickOrientation(new Quat4f()),
-                delta)));
-        matrixStack.translate(-box.getXLength() / 2.0, -box.getYLength() / 2.0, -box.getZLength() / 2.0);
-
+        matrixStack.multiply(QuaternionHelper.bulletToMinecraft(body.getPhysicsRotation(new Quaternion(), delta)));
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(model.getLayer(this.getTexture(voyager)));
         model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.pop();
+
         super.render(voyager, yaw, delta, matrixStack, vertexConsumerProvider, i);
     }
 

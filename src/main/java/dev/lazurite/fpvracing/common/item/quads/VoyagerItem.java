@@ -3,7 +3,7 @@ package dev.lazurite.fpvracing.common.item.quads;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.quads.Voyager;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
-import dev.lazurite.rayon.physics.body.EntityRigidBody;
+import dev.lazurite.rayon.Rayon;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -37,7 +37,7 @@ public class VoyagerItem extends Item {
 				CompoundTag tag = new CompoundTag();
 				item.writeToNbt(tag);
 				entity.readCustomDataFromTag(tag);
-				EntityRigidBody.get(entity).prioritizeFor(user);
+				Rayon.ENTITY.get(entity).prioritize(user);
 
 				world.spawnEntity(entity);
 			}

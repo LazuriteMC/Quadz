@@ -12,10 +12,11 @@ import dev.lazurite.fpvracing.common.util.Axis;
 import dev.lazurite.fpvracing.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.lazurite.fpvracing.api.event.QuadcopterStepEvents;
+import dev.lazurite.rayon.Rayon;
 import dev.lazurite.rayon.api.packet.RayonSpawnS2CPacket;
-import dev.lazurite.rayon.physics.body.EntityRigidBody;
-import dev.lazurite.rayon.physics.helper.math.QuaternionHelper;
-import dev.lazurite.rayon.physics.helper.math.VectorHelper;
+import dev.lazurite.rayon.impl.physics.body.EntityRigidBody;
+import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
+import dev.lazurite.rayon.impl.util.math.VectorHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -36,8 +37,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import physics.javax.vecmath.Quat4f;
-import physics.javax.vecmath.Vector3f;
+import physics.com.jme3.math.Quaternion;
+import physics.com.jme3.math.Vector3f;
 
 public abstract class QuadcopterEntity extends Entity implements QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -72,21 +73,28 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 		decreaseAngularVelocity();
 
 		/* Get the thrust direction vector */
-		EntityRigidBody body = EntityRigidBody.get(this);
-		Quat4f orientation = body.getOrientation(new Quat4f());
+		EntityRigidBody body = Rayon.ENTITY.get(this);
+		Quaternion orientation = body.getPhysicsRotation(new Quaternion());
 		QuaternionHelper.rotateX(orientation, 90);
 		Matrix4f mat = new Matrix4f();
-		Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.quat4fToQuaternion(orientation));
+		Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.bulletToMinecraft(orientation));
 
 		/* Calculate new vectors based on direction */
 		Vector3f direction = Matrix4fAccess.from(mat).matrixToVector();
-		Vector3f thrust = VectorHelper.mul(direction, (float) (getThrustForce() * (Math.pow(getInputFrame().getThrottle(), getThrustCurve()))));
-		Vector3f yawThrust = VectorHelper.mul(direction, Math.abs(getInputFrame().getYaw()));
+
+		Vector3f thrust = new Vector3f();
+		thrust.set(direction);
+		thrust.multLocal((float) (getThrustForce() * (Math.pow(getInputFrame().getThrottle(), getThrustCurve()))));
+
+		Vector3f yawThrust = new Vector3f();
+		yawThrust.set(direction);
+		yawThrust.multLocal(Math.abs(getInputFrame().getYaw()));
 
 		/* Add up the net thrust and apply the force */
 		Vector3f netThrust = new Vector3f();
-		netThrust.add(thrust, yawThrust);
-		netThrust.negate();
+		netThrust.add(thrust);
+		netThrust.add(yawThrust);
+		netThrust.multLocal(-1);
         body.applyCentralForce(netThrust);
 
 		/* Update user input */
@@ -109,18 +117,18 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	}
 
 	public void rotate(Axis axis, float deg) {
-		EntityRigidBody body = EntityRigidBody.get(this);
-		Quat4f orientation = body.getOrientation(new Quat4f());
+		EntityRigidBody body = Rayon.ENTITY.get(this);
+		Quaternion orientation = body.getPhysicsRotation(new Quaternion());
 
 		switch(axis) {
 			case X:
-				body.setOrientation(QuaternionHelper.rotateX(orientation, deg));
+				body.setPhysicsRotation(QuaternionHelper.rotateX(orientation, deg));
 				break;
 			case Y:
-				body.setOrientation(QuaternionHelper.rotateY(orientation, deg));
+				body.setPhysicsRotation(QuaternionHelper.rotateY(orientation, deg));
 				break;
 			case Z:
-				body.setOrientation(QuaternionHelper.rotateZ(orientation, deg));
+				body.setPhysicsRotation(QuaternionHelper.rotateZ(orientation, deg));
 				break;
 		}
 	}
@@ -134,8 +142,8 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	}
 
 	protected void decreaseAngularVelocity() {
-		EntityRigidBody body = EntityRigidBody.get(this);
-		body.setAngularVelocity(VectorHelper.mul(body.getAngularVelocity(new Vector3f()), 0.5f));
+		EntityRigidBody body = Rayon.ENTITY.get(this);
+		body.setAngularVelocity(body.getAngularVelocity(new Vector3f()).multLocal(0.5f));
 //		float distance = 0.25f;
 //
 //		for(int manifoldNum = 0; manifoldNum < body.getDynamicsWorld().getDispatcher().getNumManifolds(); ++manifoldNum) {

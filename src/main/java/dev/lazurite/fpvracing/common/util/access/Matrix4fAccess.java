@@ -2,7 +2,7 @@ package dev.lazurite.fpvracing.common.util.access;
 
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
-import physics.javax.vecmath.Vector3f;
+import physics.com.jme3.math.Vector3f;
 
 public interface Matrix4fAccess {
     Vector3f matrixToVector();

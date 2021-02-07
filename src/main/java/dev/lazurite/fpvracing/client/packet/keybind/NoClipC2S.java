@@ -4,7 +4,8 @@ import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
-import dev.lazurite.rayon.physics.body.EntityRigidBody;
+import dev.lazurite.rayon.Rayon;
+import dev.lazurite.rayon.impl.physics.body.EntityRigidBody;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -33,7 +34,7 @@ public class NoClipC2S {
 
                 for (QuadcopterEntity quadcopter : quadcopters) {
                     if (quadcopter.getBindId() == transmitter.getBindId()) {
-                        EntityRigidBody body = EntityRigidBody.get(quadcopter);
+                        EntityRigidBody body = Rayon.ENTITY.get(quadcopter);
                         body.setNoClip(!body.isNoClipEnabled());
 
                         if (body.isNoClipEnabled()) {

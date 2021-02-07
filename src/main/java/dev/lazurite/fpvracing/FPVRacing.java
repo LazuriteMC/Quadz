@@ -29,9 +29,9 @@ import dev.lazurite.fpvracing.common.item.quads.VoxelRacerOneItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.client.render.entity.VoxelRacerOneRenderer;
-import dev.lazurite.rayon.api.event.EntityBodyStepEvents;
-import dev.lazurite.rayon.api.registry.DynamicEntityRegistry;
-import dev.lazurite.rayon.api.shape.provider.BoundingBoxShapeProvider;
+import dev.lazurite.rayon.api.builder.EntityRigidBodyBuilder;
+import dev.lazurite.rayon.api.builder.EntityRigidBodyRegistry;
+import dev.lazurite.rayon.api.event.EntityRigidBodyEvents;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
 import dev.onyxstudios.cca.api.v3.item.ItemComponentFactoryRegistry;
@@ -119,9 +119,9 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 						.build());
 
 		/* Register Rayon Rigid Bodies */
-		DynamicEntityRegistry.INSTANCE.register(QuadcopterEntity.class, BoundingBoxShapeProvider::get, 1.0f, 0.05f);
+		EntityRigidBodyRegistry.register(EntityRigidBodyBuilder.create(QuadcopterEntity.class).build());
 
-		EntityBodyStepEvents.START_ENTITY_STEP.register((entity, delta) -> {
+		EntityRigidBodyEvents.STEP.register((entity, delta) -> {
 			if (entity.getEntity() instanceof QuadcopterEntity) {
 				((QuadcopterEntity) entity.getEntity()).step(delta);
 			}
