@@ -12,6 +12,8 @@ group = project.maven_group
 
 repositories {
 	maven { url 'https://jitpack.io' }
+	maven { url 'https://maven.blamejared.com' }
+	maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
 }
 
 dependencies {
@@ -24,20 +26,11 @@ dependencies {
 	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// Rayon
-//	modImplementation "com.github.LazuriteMC:Rayon:${project.rayon_version}"
-//	include "com.github.LazuriteMC:Rayon:${project.rayon_version}"
-	implementation files("testlib/rayon-1.1.0-all.jar")
+	modImplementation "com.github.LazuriteMC:Rayon:${project.rayon_version}"
+	include "com.github.LazuriteMC:Rayon:${project.rayon_version}"
 
 	// Mod Menu
 	modImplementation("io.github.prospector:modmenu:${project.modmenu_version}") { exclude(group: "net.fabricmc.fabric-api") }
-
-	// Cardinal Components
-	modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cca_version}"
-	modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cca_version}"
-	modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-world:${project.cca_version}"
-	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cca_version}"
-	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cca_version}"
-	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-world:${project.cca_version}"
 
 	// Fiber
 	modApi "me.zeroeightsix:fiber:${project.fiber_version}"
@@ -47,9 +40,13 @@ dependencies {
 	modApi ("me.shedaniel.cloth:config-2:${project.cloth_version}") { exclude(group: "net.fabricmc.fabric-api") }
 	include "me.shedaniel.cloth:config-2:${project.cloth_version}"
 
-	// Cardinal Components
+	// Cardinal Components - Item
 	modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-item:${project.cca_version}"
 	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-item:${project.cca_version}"
+
+	// Gecko Lib
+	modImplementation "software.bernie.geckolib:${project.geckolib_version}:dev"
+	modImplementation "vazkii.patchouli:Patchouli:${project.patchouli_version}"
 }
 
 processResources {
