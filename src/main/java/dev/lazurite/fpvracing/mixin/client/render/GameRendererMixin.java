@@ -1,8 +1,7 @@
 package dev.lazurite.fpvracing.mixin.client.render;
 
+import com.jme3.math.Quaternion;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
-import dev.lazurite.rayon.Rayon;
-import dev.lazurite.rayon.impl.physics.body.EntityRigidBody;
 import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
@@ -15,7 +14,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import physics.com.jme3.math.Quaternion;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
@@ -26,9 +24,9 @@ public class GameRendererMixin {
 		Entity entity = client.getCameraEntity();
 
 		if (entity instanceof QuadcopterEntity) {
-			EntityRigidBody body = Rayon.ENTITY.get(entity);
+			QuadcopterEntity quadcopter = (QuadcopterEntity) entity;
 
-			Quaternion q = body.getPhysicsRotation(new Quaternion(), tickDelta);
+			Quaternion q = quadcopter.getPhysicsRotation(new Quaternion(), tickDelta);
 			q.set(q.getX(), -q.getY(), q.getZ(), -q.getW());
 
 			/* Camera Angle */

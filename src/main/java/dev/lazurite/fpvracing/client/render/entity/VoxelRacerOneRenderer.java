@@ -1,10 +1,9 @@
 package dev.lazurite.fpvracing.client.render.entity;
 
+import com.jme3.math.Quaternion;
 import dev.lazurite.fpvracing.client.render.entity.model.VoxelRacerOneModel;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOne;
-import dev.lazurite.rayon.Rayon;
-import dev.lazurite.rayon.impl.physics.body.EntityRigidBody;
 import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -17,7 +16,6 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import physics.com.jme3.math.Quaternion;
 
 @Environment(EnvType.CLIENT)
 public class VoxelRacerOneRenderer extends EntityRenderer<VoxelRacerOne> {
@@ -34,10 +32,8 @@ public class VoxelRacerOneRenderer extends EntityRenderer<VoxelRacerOne> {
     }
 
     public void render(VoxelRacerOne voxelRacer, float yaw, float delta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
-        EntityRigidBody body = Rayon.ENTITY.get(voxelRacer);
-
         matrixStack.push();
-        matrixStack.multiply(QuaternionHelper.bulletToMinecraft(body.getPhysicsRotation(new Quaternion(), delta)));
+        matrixStack.multiply(QuaternionHelper.bulletToMinecraft(voxelRacer.getPhysicsRotation(new Quaternion(), delta)));
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(model.getLayer(this.getTexture(voxelRacer)));
         model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.pop();

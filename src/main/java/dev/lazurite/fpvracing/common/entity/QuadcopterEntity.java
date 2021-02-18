@@ -1,5 +1,7 @@
 package dev.lazurite.fpvracing.common.entity;
 
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import dev.lazurite.fpvracing.common.util.access.Matrix4fAccess;
 import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.client.input.InputTick;
@@ -11,17 +13,16 @@ import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.util.Axis;
 import dev.lazurite.fpvracing.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.fpvracing.common.util.Frequency;
-import dev.lazurite.fpvracing.api.event.QuadcopterStepEvents;
-import dev.lazurite.rayon.Rayon;
-import dev.lazurite.rayon.api.packet.RayonSpawnS2CPacket;
-import dev.lazurite.rayon.impl.physics.body.EntityRigidBody;
+import dev.lazurite.rayon.api.element.PhysicsElement;
+import dev.lazurite.rayon.impl.bullet.body.ElementRigidBody;
+import dev.lazurite.rayon.impl.bullet.world.MinecraftSpace;
 import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
-import dev.lazurite.rayon.impl.util.math.VectorHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.data.DataTracker;
@@ -29,18 +30,19 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Packet;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import physics.com.jme3.math.Quaternion;
-import physics.com.jme3.math.Vector3f;
 
-public abstract class QuadcopterEntity extends Entity implements QuadcopterState {
+import java.util.ArrayList;
+
+public abstract class QuadcopterEntity extends LivingEntity implements PhysicsElement, QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<State> STATE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.STATE);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -52,18 +54,17 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	private static final TrackedData<Integer> POWER = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
 	private final InputFrame inputFrame = new InputFrame();
+	private final ElementRigidBody rigidBody = new ElementRigidBody(this);
 
-	public QuadcopterEntity(EntityType<?> type, World world) {
+	public QuadcopterEntity(EntityType<? extends LivingEntity> type, World world) {
 		super(type, world);
 	}
 
 	public abstract float getThrustForce();
 	public abstract float getThrustCurve();
 
-	public void step(float delta) {
-		/* Start Step Event */
-		QuadcopterStepEvents.START_QUADCOPTER_STEP.invoker().onStartStep(this, delta);
-
+	@Override
+	public void step(MinecraftSpace space) {
 		/* Rotate the quadcopter based on user input */
 		rotate(Axis.X, getInputFrame().getPitch());
 		rotate(Axis.Y, getInputFrame().getYaw());
@@ -73,8 +74,7 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 		decreaseAngularVelocity();
 
 		/* Get the thrust direction vector */
-		EntityRigidBody body = Rayon.ENTITY.get(this);
-		Quaternion orientation = body.getPhysicsRotation(new Quaternion());
+		Quaternion orientation = getRigidBody().getPhysicsRotation(new Quaternion());
 		QuaternionHelper.rotateX(orientation, 90);
 		Matrix4f mat = new Matrix4f();
 		Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.bulletToMinecraft(orientation));
@@ -95,7 +95,7 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 		netThrust.add(thrust);
 		netThrust.add(yawThrust);
 		netThrust.multLocal(-1);
-        body.applyCentralForce(netThrust);
+        getRigidBody().applyCentralForce(netThrust);
 
 		/* Update user input */
 		if (getEntityWorld().isClient()) {
@@ -106,29 +106,25 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 
 				if (hand.getItem() instanceof TransmitterItem) {
 					if (isBound(FPVRacing.TRANSMITTER_CONTAINER.get(hand))) {
-						setInputFrame(InputTick.getInstance().getInputFrame(delta));
+						setInputFrame(InputTick.getInstance().getInputFrame(1 / 20f));
 					}
 				}
 			}
 		}
-
-		/* End Step Event */
-		QuadcopterStepEvents.END_QUADCOPTER_STEP.invoker().onEndStep(this, delta);
 	}
 
 	public void rotate(Axis axis, float deg) {
-		EntityRigidBody body = Rayon.ENTITY.get(this);
-		Quaternion orientation = body.getPhysicsRotation(new Quaternion());
+		Quaternion orientation = getRigidBody().getPhysicsRotation(new Quaternion());
 
 		switch(axis) {
 			case X:
-				body.setPhysicsRotation(QuaternionHelper.rotateX(orientation, deg));
+				getRigidBody().setPhysicsRotation(QuaternionHelper.rotateX(orientation, deg));
 				break;
 			case Y:
-				body.setPhysicsRotation(QuaternionHelper.rotateY(orientation, deg));
+				getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(orientation, deg));
 				break;
 			case Z:
-				body.setPhysicsRotation(QuaternionHelper.rotateZ(orientation, deg));
+				getRigidBody().setPhysicsRotation(QuaternionHelper.rotateZ(orientation, deg));
 				break;
 		}
 	}
@@ -142,8 +138,7 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	}
 
 	protected void decreaseAngularVelocity() {
-		EntityRigidBody body = Rayon.ENTITY.get(this);
-		body.setAngularVelocity(body.getAngularVelocity(new Vector3f()).multLocal(0.5f));
+		getRigidBody().setAngularVelocity(getRigidBody().getAngularVelocity(new Vector3f()).multLocal(0.5f));
 //		float distance = 0.25f;
 //
 //		for(int manifoldNum = 0; manifoldNum < body.getDynamicsWorld().getDispatcher().getNumManifolds(); ++manifoldNum) {
@@ -174,6 +169,21 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 		}
 
 		return false;
+	}
+
+	@Override
+	public Iterable<ItemStack> getArmorItems() {
+		return new ArrayList<>();
+	}
+
+	@Override
+	public ItemStack getEquippedStack(EquipmentSlot slot) {
+		return new ItemStack(Items.AIR);
+	}
+
+	@Override
+	public void equipStack(EquipmentSlot slot, ItemStack stack) {
+
 	}
 
 	@Override
@@ -251,13 +261,18 @@ public abstract class QuadcopterEntity extends Entity implements QuadcopterState
 	}
 
 	@Override
-	public Packet<?> createSpawnPacket() {
-		return RayonSpawnS2CPacket.get(this);
+	public boolean collides() {
+		return true;
 	}
 
 	@Override
-	public boolean collides() {
-		return true;
+	public Arm getMainArm() {
+		return null;
+	}
+
+	@Override
+	public ElementRigidBody getRigidBody() {
+		return this.rigidBody;
 	}
 
 	@Override

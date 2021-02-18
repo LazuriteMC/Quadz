@@ -4,8 +4,6 @@ import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
-import dev.lazurite.rayon.Rayon;
-import dev.lazurite.rayon.impl.physics.body.EntityRigidBody;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -15,7 +13,6 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 
@@ -34,14 +31,13 @@ public class NoClipC2S {
 
                 for (QuadcopterEntity quadcopter : quadcopters) {
                     if (quadcopter.getBindId() == transmitter.getBindId()) {
-                        EntityRigidBody body = Rayon.ENTITY.get(quadcopter);
-                        body.setNoClip(!body.isNoClipEnabled());
+//                        quadcopter.getRigidBody().setNoClip(!body.isNoClipEnabled());
 
-                        if (body.isNoClipEnabled()) {
-                            player.sendMessage(new TranslatableText("message.fpvracing.noclip_on"), false);
-                        } else {
-                            player.sendMessage(new TranslatableText("message.fpvracing.noclip_off"), false);
-                        }
+//                        if (body.isNoClipEnabled()) {
+//                            player.sendMessage(new TranslatableText("message.fpvracing.noclip_on"), false);
+//                        } else {
+//                            player.sendMessage(new TranslatableText("message.fpvracing.noclip_off"), false);
+//                        }
 
                         break;
                     }

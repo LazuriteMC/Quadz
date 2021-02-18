@@ -27,11 +27,7 @@ import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
 import dev.lazurite.fpvracing.common.item.quads.VoxelRacerOneItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
-import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.client.render.entity.VoxelRacerOneRenderer;
-import dev.lazurite.rayon.api.builder.EntityRigidBodyBuilder;
-import dev.lazurite.rayon.api.builder.EntityRigidBodyRegistry;
-import dev.lazurite.rayon.api.event.EntityRigidBodyEvents;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
 import dev.onyxstudios.cca.api.v3.item.ItemComponentFactoryRegistry;
@@ -44,6 +40,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -101,31 +98,28 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		VOXEL_RACER_ONE = Registry.register(
 				Registry.ENTITY_TYPE,
 				new Identifier(MODID, "voxel_racer_one"),
-				FabricEntityTypeBuilder.create(SpawnGroup.MISC, VoxelRacerOne::new)
+				FabricEntityTypeBuilder.createLiving()
+						.entityFactory(VoxelRacerOne::new)
+						.spawnGroup(SpawnGroup.MISC)
 						.dimensions(EntityDimensions.fixed(0.5F, 0.125F))
-						.trackedUpdateRate(3)
-						.trackRangeBlocks(80)
-						.forceTrackedVelocityUpdates(true)
+						.defaultAttributes(LivingEntity::createLivingAttributes)
+//						.trackedUpdateRate(3)
+//						.trackRangeBlocks(80)
+//						.forceTrackedVelocityUpdates(true)
 						.build());
 
 		VOYAGER = Registry.register(
 				Registry.ENTITY_TYPE,
 				new Identifier(MODID, "voyager"),
-				FabricEntityTypeBuilder.create(SpawnGroup.MISC, Voyager::new)
+				FabricEntityTypeBuilder.createLiving()
+						.entityFactory(Voyager::new)
+						.spawnGroup(SpawnGroup.MISC)
 						.dimensions(EntityDimensions.fixed(0.5F, 0.125F))
-						.trackedUpdateRate(3)
-						.trackRangeBlocks(80)
-						.forceTrackedVelocityUpdates(true)
+						.defaultAttributes(LivingEntity::createLivingAttributes)
+//						.trackedUpdateRate(3)
+//						.trackRangeBlocks(80)
+//						.forceTrackedVelocityUpdates(true)
 						.build());
-
-		/* Register Rayon Rigid Bodies */
-		EntityRigidBodyRegistry.register(EntityRigidBodyBuilder.create(QuadcopterEntity.class).build());
-
-		EntityRigidBodyEvents.STEP.register((entity, delta) -> {
-			if (entity.getEntity() instanceof QuadcopterEntity) {
-				((QuadcopterEntity) entity.getEntity()).step(delta);
-			}
-		});
 
 		ServerTickEvents.START_SERVER_TICK.register(GogglesTick::tick);
 	}

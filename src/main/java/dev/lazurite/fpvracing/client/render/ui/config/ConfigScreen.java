@@ -1,10 +1,9 @@
 package dev.lazurite.fpvracing.client.render.ui.config;
 
 import com.google.common.collect.Lists;
+import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.lazurite.fpvracing.client.config.Config;
 import dev.lazurite.fpvracing.client.input.InputTick;
-import io.github.prospector.modmenu.api.ConfigScreenFactory;
-import io.github.prospector.modmenu.api.ModMenuApi;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import net.minecraft.client.gui.screen.Screen;
@@ -19,7 +18,7 @@ import java.util.List;
  * @see Config
  */
 public class ConfigScreen implements ModMenuApi {
-    public static Screen create(Screen parent) {
+    /*public static Screen create(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
                 .setTitle(new TranslatableText("config.fpvracing.title"))
@@ -37,7 +36,7 @@ public class ConfigScreen implements ModMenuApi {
             joysticks.add("");
         }
 
-        /* List of Controllers */
+        /* List of Controllers *//*
         controllerSetup.addEntry(builder.entryBuilder().startSelector(
         new TranslatableText("config.fpvracing.entry.controller_id"),
         joysticks.toArray(),
@@ -67,5 +66,5 @@ public class ConfigScreen implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
         return ConfigScreen::create;
-    }
+    } */
 }

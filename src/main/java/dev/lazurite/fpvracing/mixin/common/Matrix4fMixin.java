@@ -1,12 +1,12 @@
 package dev.lazurite.fpvracing.mixin.common;
 
+import com.jme3.math.Vector3f;
 import dev.lazurite.fpvracing.common.util.access.Matrix4fAccess;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import physics.com.jme3.math.Vector3f;
 
 @Mixin(Matrix4f.class)
 public class Matrix4fMixin implements Matrix4fAccess {
