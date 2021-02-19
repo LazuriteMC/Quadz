@@ -1,6 +1,7 @@
 package dev.lazurite.fpvracing.common.entity;
 
 import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import dev.lazurite.fpvracing.common.util.access.Matrix4fAccess;
 import dev.lazurite.fpvracing.client.input.InputFrame;
@@ -15,16 +16,17 @@ import dev.lazurite.fpvracing.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.lazurite.rayon.api.element.PhysicsElement;
 import dev.lazurite.rayon.impl.bullet.body.ElementRigidBody;
+import dev.lazurite.rayon.impl.bullet.thread.PhysicsThread;
 import dev.lazurite.rayon.impl.bullet.world.MinecraftSpace;
 import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -36,6 +38,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -47,7 +50,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	private static final TrackedData<State> STATE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.STATE);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
-	/* Video Transmission Stuff */
 	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
 	private static final TrackedData<Integer> CAMERA_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Integer> FIELD_OF_VIEW = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -64,39 +66,12 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	public abstract float getThrustCurve();
 
 	@Override
+	protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
+
+	}
+
+	@Override
 	public void step(MinecraftSpace space) {
-		/* Rotate the quadcopter based on user input */
-		rotate(Axis.X, getInputFrame().getPitch());
-		rotate(Axis.Y, getInputFrame().getYaw());
-		rotate(Axis.Z, getInputFrame().getRoll());
-
-		/* Decrease angular velocity hack */
-		decreaseAngularVelocity();
-
-		/* Get the thrust direction vector */
-		Quaternion orientation = getRigidBody().getPhysicsRotation(new Quaternion());
-		QuaternionHelper.rotateX(orientation, 90);
-		Matrix4f mat = new Matrix4f();
-		Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.bulletToMinecraft(orientation));
-
-		/* Calculate new vectors based on direction */
-		Vector3f direction = Matrix4fAccess.from(mat).matrixToVector();
-
-		Vector3f thrust = new Vector3f();
-		thrust.set(direction);
-		thrust.multLocal((float) (getThrustForce() * (Math.pow(getInputFrame().getThrottle(), getThrustCurve()))));
-
-		Vector3f yawThrust = new Vector3f();
-		yawThrust.set(direction);
-		yawThrust.multLocal(Math.abs(getInputFrame().getYaw()));
-
-		/* Add up the net thrust and apply the force */
-		Vector3f netThrust = new Vector3f();
-		netThrust.add(thrust);
-		netThrust.add(yawThrust);
-		netThrust.multLocal(-1);
-        getRigidBody().applyCentralForce(netThrust);
-
 		/* Update user input */
 		if (getEntityWorld().isClient()) {
 			PlayerEntity player = MinecraftClient.getInstance().player;
@@ -106,25 +81,61 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 				if (hand.getItem() instanceof TransmitterItem) {
 					if (isBound(FPVRacing.TRANSMITTER_CONTAINER.get(hand))) {
-						setInputFrame(InputTick.getInstance().getInputFrame(1 / 20f));
+						setInputFrame(InputTick.getInstance().getInputFrame(1 / (float) PhysicsThread.STEP_SIZE));
 					}
 				}
 			}
 		}
+
+		/* Rotate the quadcopter based on user input */
+		rotate(Axis.X, getInputFrame().getPitch());
+		rotate(Axis.Y, getInputFrame().getYaw());
+		rotate(Axis.Z, getInputFrame().getRoll());
+
+		/* Decrease angular velocity hack */
+		getRigidBody().setAngularVelocity(getRigidBody().getAngularVelocity(new Vector3f()).multLocal(0.5f * getInputFrame().getThrottle()));
+
+		/* Get the thrust direction vector */
+		Matrix4f mat = new Matrix4f();
+		Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.bulletToMinecraft(
+				QuaternionHelper.rotateX(getRigidBody().getPhysicsRotation(new Quaternion()), 90)));
+		Vector3f direction = Matrix4fAccess.from(mat).matrixToVector();
+
+		/* Calculate basic thrust */
+		Vector3f thrust = new Vector3f();
+		thrust.set(direction);
+		thrust.multLocal((float) (getThrustForce() * (Math.pow(getInputFrame().getThrottle(), getThrustCurve()))));
+
+		/* Calculate thrust from yaw spin */
+		Vector3f yawThrust = new Vector3f();
+		yawThrust.set(direction);
+		yawThrust.multLocal(Math.abs(getInputFrame().getYaw()));
+
+		/* Add up the net thrust and apply the force */
+		getRigidBody().applyCentralForce(thrust.add(yawThrust).multLocal(-1));
 	}
 
 	public void rotate(Axis axis, float deg) {
-		Quaternion orientation = getRigidBody().getPhysicsRotation(new Quaternion());
+		Transform trans;
 
 		switch(axis) {
 			case X:
-				getRigidBody().setPhysicsRotation(QuaternionHelper.rotateX(orientation, deg));
+//				getRigidBody().setPhysicsRotation(QuaternionHelper.rotateX(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
+				trans = getRigidBody().getTransform(new Transform());
+				trans.getRotation().set(QuaternionHelper.rotateX(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
+				getRigidBody().setPhysicsTransform(trans);
 				break;
 			case Y:
-				getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(orientation, deg));
+//				getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
+				trans = getRigidBody().getTransform(new Transform());
+				trans.getRotation().set(QuaternionHelper.rotateY(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
+				getRigidBody().setPhysicsTransform(trans);
 				break;
 			case Z:
-				getRigidBody().setPhysicsRotation(QuaternionHelper.rotateZ(orientation, deg));
+//				getRigidBody().setPhysicsRotation(QuaternionHelper.rotateZ(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
+				trans = getRigidBody().getTransform(new Transform());
+				trans.getRotation().set(QuaternionHelper.rotateZ(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
+				getRigidBody().setPhysicsTransform(trans);
 				break;
 		}
 	}
@@ -137,38 +148,14 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		return false;
 	}
 
-	protected void decreaseAngularVelocity() {
-		getRigidBody().setAngularVelocity(getRigidBody().getAngularVelocity(new Vector3f()).multLocal(0.5f));
-//		float distance = 0.25f;
-//
-//		for(int manifoldNum = 0; manifoldNum < body.getDynamicsWorld().getDispatcher().getNumManifolds(); ++manifoldNum) {
-//			PersistentManifold manifold = body.getDynamicsWorld().getDispatcher().getManifoldByIndexInternal(manifoldNum);
-//
-//			BlockRigidBody block;
-//			if (manifold.getBody0() instanceof BlockRigidBody && manifold.getBody1().equals(body)) {
-//				block = (BlockRigidBody) manifold.getBody0();
-//			} else if (manifold.getBody0().equals(body) && manifold.getBody1() instanceof BlockRigidBody) {
-//				block = (BlockRigidBody) manifold.getBody1();
-//			}
-//
-//			for(int contactNum = 0; contactNum < manifold.getNumContacts(); ++contactNum) {
-//				if (manifold.getContactPoint(contactNum).getDistance() < distance) {
-//
-//				}
-//			}
-//		}
-	}
-
 	@Override
 	public boolean damage(DamageSource source, float amount) {
-		if (!isInGodMode()) {
-			if (source.getAttacker() instanceof PlayerEntity || source instanceof ProjectileDamageSource) {
-				this.kill();
-				return true;
-			}
+		if (source.equals(DamageSource.OUT_OF_WORLD)) {
+			this.remove();
+			return true;
 		}
 
-		return false;
+		return !isInGodMode();
 	}
 
 	@Override
@@ -251,6 +238,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 	@Override
 	protected void initDataTracker() {
+		super.initDataTracker();
 		getDataTracker().startTracking(GOD_MODE, false);
 		getDataTracker().startTracking(STATE, State.DISARMED);
 		getDataTracker().startTracking(BIND_ID, -1);

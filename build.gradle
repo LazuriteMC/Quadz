@@ -11,11 +11,9 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-	maven { url 'https://jitpack.io' }
-	maven { url 'https://maven.shedaniel.me/' }
-	maven { url 'https://maven.blamejared.com' }
-	maven { url 'https://maven.terraformersmc.com/releases/' }
-	maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
+	maven { url 'https://jitpack.io/' }
+	maven { url 'https://maven.blamejared.com/' }
+	maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib/' }
 }
 
 dependencies {

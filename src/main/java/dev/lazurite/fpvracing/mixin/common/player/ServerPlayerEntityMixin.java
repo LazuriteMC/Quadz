@@ -5,7 +5,6 @@ import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.util.access.ServerPlayerAccess;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
-import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import dev.lazurite.fpvracing.common.packet.SelectedSlotS2C;
 import dev.lazurite.fpvracing.common.packet.ShouldRenderPlayerS2C;
 import net.minecraft.entity.Entity;
@@ -18,7 +17,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -107,19 +105,16 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
         // Don't move plz
     }
 
-    @Unique
     @Override
     public boolean isInGoggles() {
         return getCameraEntity() instanceof QuadcopterEntity;
     }
 
-    @Unique
     @Override
     public boolean isInGoggles(ServerPlayerEntity player) {
         return player.getCameraEntity() instanceof QuadcopterEntity;
     }
 
-    @Unique
     @Override
     public void setView(Entity entity) {
         ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;

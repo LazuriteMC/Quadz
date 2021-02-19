@@ -36,25 +36,5 @@ public class GameRendererMixin {
 			newMat.transpose();
 			matrix.peek().getModel().multiply(newMat);
 		}
-
-//		if (client.player != null && !client.isPaused()) {
-//			if (client.getCameraEntity() instanceof FlyableEntity) {
-//				FlyableEntity flyable = (FlyableEntity) client.getCameraEntity();
-//				float droneFOV = 0; //flyable.getValue(FlyableEntity.FIELD_OF_VIEW);
-//
-//				if (droneFOV != 0.0f && client.options.fov != droneFOV) {
-//					prevFOV = client.options.fov;
-//					client.options.fov = droneFOV;
-//				}
-//
-//				if (droneFOV == 0.0f && prevFOV != 0.0f) {
-//					client.options.fov = prevFOV;
-//					prevFOV = 0.0f;
-//				}
-//			} else if (prevFOV != 0.0f) {
-//				client.options.fov = prevFOV;
-//				prevFOV = 0.0f;
-//			}
-//		}
 	}
 }

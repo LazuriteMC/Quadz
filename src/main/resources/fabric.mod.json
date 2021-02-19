@@ -19,8 +19,7 @@
   "entrypoints": {
     "main": [ "dev.lazurite.fpvracing.FPVRacing" ],
     "client": [ "dev.lazurite.fpvracing.FPVRacing" ],
-    "cardinal-components-item": [ "dev.lazurite.fpvracing.FPVRacing" ],
-    "modmenu": [ "dev.lazurite.fpvracing.client.render.ui.config.ConfigScreen" ]
+    "cardinal-components-item": [ "dev.lazurite.fpvracing.FPVRacing" ]
   },
 
   "mixins": [ "fpvracing.mixins.json" ],

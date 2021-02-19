@@ -50,6 +50,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import software.bernie.geckolib3.GeckoLib;
 
 public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComponentInitializer {
 	public static final String MODID = "fpvracing";
@@ -126,6 +127,8 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 
 	@Override
 	public void onInitializeClient() {
+		GeckoLib.initialize();
+
 		/* Load the Config */
 		Config.getInstance().load();
 
