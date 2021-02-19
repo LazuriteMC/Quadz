@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.client.tick;
+package dev.lazurite.fpvracing.client.input.tick;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.client.packet.InputFrameC2S;

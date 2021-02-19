@@ -120,19 +120,16 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 		switch(axis) {
 			case X:
-//				getRigidBody().setPhysicsRotation(QuaternionHelper.rotateX(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
 				trans = getRigidBody().getTransform(new Transform());
 				trans.getRotation().set(QuaternionHelper.rotateX(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
 				getRigidBody().setPhysicsTransform(trans);
 				break;
 			case Y:
-//				getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
 				trans = getRigidBody().getTransform(new Transform());
 				trans.getRotation().set(QuaternionHelper.rotateY(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
 				getRigidBody().setPhysicsTransform(trans);
 				break;
 			case Z:
-//				getRigidBody().setPhysicsRotation(QuaternionHelper.rotateZ(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
 				trans = getRigidBody().getTransform(new Transform());
 				trans.getRotation().set(QuaternionHelper.rotateZ(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
 				getRigidBody().setPhysicsTransform(trans);

@@ -13,7 +13,7 @@ import dev.lazurite.fpvracing.client.packet.keybind.PowerGogglesC2S;
 import dev.lazurite.fpvracing.client.render.entity.VoyagerRenderer;
 import dev.lazurite.fpvracing.client.render.ui.toast.ControllerToast;
 import dev.lazurite.fpvracing.common.tick.GogglesTick;
-import dev.lazurite.fpvracing.client.tick.TransmitterTick;
+import dev.lazurite.fpvracing.client.input.tick.TransmitterTick;
 import dev.lazurite.fpvracing.common.entity.quads.Voyager;
 import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOne;

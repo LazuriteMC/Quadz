@@ -28,6 +28,22 @@
   "toast.fpvracing.controller.disconnect" : "Controller Disconnected!",
 
   "config.fpvracing.title" : "FPV Racing Settings",
-  "config.fpvracing.category.controller_setup" : "Controller Setup",
-  "config.fpvracing.entry.controller_id" : "Controller ID"
+  "config.fpvracing.category.controller_axes" : "Controller Axes Setup",
+  "config.fpvracing.category.betaflight" : "Betaflight Setup",
+
+  "config.fpvracing.entry.controller_id" : "Controller ID",
+  "config.fpvracing.entry.pitch_axis" : "Pitch",
+  "config.fpvracing.entry.yaw_axis" : "Yaw",
+  "config.fpvracing.entry.roll_axis" : "Roll",
+  "config.fpvracing.entry.throttle_axis" : "Throttle",
+
+  "config.fpvracing.entry.invert_pitch" : "Invert Pitch",
+  "config.fpvracing.entry.invert_yaw" : "Invert Yaw",
+  "config.fpvracing.entry.invert_roll" : "Invert Roll",
+  "config.fpvracing.entry.invert_throttle" : "Invert Throttle",
+  "config.fpvracing.entry.throttle_in_center" : "Throttle In Center",
+
+  "config.fpvracing.entry.rate" : "Rate",
+  "config.fpvracing.entry.expo" : "Expo",
+  "config.fpvracing.entry.super_rate" : "Super Rate"
 }
