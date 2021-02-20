@@ -1,8 +1,12 @@
 package dev.lazurite.fpvracing.common.entity.quads;
 
+import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -18,7 +22,7 @@ public class VoyagerEntity extends QuadcopterEntity implements IAnimatable {
 
     private final AnimationFactory factory = new AnimationFactory(this);
 
-    public VoyagerEntity(EntityType<? extends LivingEntity> type, World world) {
+    public VoyagerEntity(EntityType<? extends AnimalEntity> type, World world) {
         super(type, world);
     }
 
@@ -30,6 +34,19 @@ public class VoyagerEntity extends QuadcopterEntity implements IAnimatable {
     @Override
     public float getThrustCurve() {
         return thrustCurve;
+    }
+
+    @Override
+    public void kill() {
+        if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+            ItemStack stack = new ItemStack(FPVRacing.VOYAGER_ITEM);
+            CompoundTag tag = new CompoundTag();
+            writeCustomDataToTag(tag);
+            FPVRacing.QUADCOPTER_CONTAINER.get(stack).readFromNbt(tag);
+            dropStack(stack);
+        }
+
+        super.kill();
     }
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {

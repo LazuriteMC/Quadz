@@ -25,27 +25,31 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-public abstract class QuadcopterEntity extends LivingEntity implements PhysicsElement, QuadcopterState {
+public abstract class QuadcopterEntity extends AnimalEntity implements PhysicsElement, QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<State> STATE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.STATE);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -58,7 +62,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	private final InputFrame inputFrame = new InputFrame();
 	private final ElementRigidBody rigidBody = new ElementRigidBody(this);
 
-	public QuadcopterEntity(EntityType<? extends LivingEntity> type, World world) {
+	public QuadcopterEntity(EntityType<? extends AnimalEntity> type, World world) {
 		super(type, world);
 	}
 
@@ -66,8 +70,12 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	public abstract float getThrustCurve();
 
 	@Override
-	protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
+	public void tick() {
+		super.tick();
 
+		this.bodyYaw = 0;
+		this.headYaw = 0;
+		this.yaw = 0;
 	}
 
 	@Override
@@ -93,7 +101,9 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		rotate(Axis.Z, getInputFrame().getRoll());
 
 		/* Decrease angular velocity hack */
-		getRigidBody().setAngularVelocity(getRigidBody().getAngularVelocity(new Vector3f()).multLocal(0.5f * getInputFrame().getThrottle()));
+		if (getInputFrame().getThrottle() > 0.1f) {
+			getRigidBody().setAngularVelocity(getRigidBody().getAngularVelocity(new Vector3f()).multLocal(0.5f * getInputFrame().getThrottle()));
+		}
 
 		/* Get the thrust direction vector */
 		Matrix4f mat = new Matrix4f();
@@ -156,6 +166,18 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	}
 
 	@Override
+	public void travel(Vec3d pos) {
+	}
+
+	@Override
+	protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
+	}
+
+	@Override
+	protected void playStepSound(BlockPos pos, BlockState blockIn) {
+	}
+
+	@Override
 	public Iterable<ItemStack> getArmorItems() {
 		return new ArrayList<>();
 	}
@@ -171,7 +193,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	}
 
 	@Override
-	public ActionResult interact(PlayerEntity player, Hand hand) {
+	public ActionResult interactMob(PlayerEntity player, Hand hand) {
 		ItemStack stack = player.inventory.getMainHandStack();
 
 		if (!world.isClient()) {
@@ -220,17 +242,10 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		return true;
 	}
 
+	@Nullable
 	@Override
-	public void kill() {
-		if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-			ItemStack stack = new ItemStack(FPVRacing.VOXEL_RACER_ONE_ITEM);
-			CompoundTag tag = new CompoundTag();
-			writeCustomDataToTag(tag);
-			FPVRacing.QUADCOPTER_CONTAINER.get(stack).readFromNbt(tag);
-			dropStack(stack);
-		}
-
-		super.kill();
+	public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
+		return null;
 	}
 
 	@Override

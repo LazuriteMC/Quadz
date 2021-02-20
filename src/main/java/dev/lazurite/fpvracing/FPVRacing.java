@@ -41,8 +41,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -100,27 +100,21 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		VOXEL_RACER_ONE = Registry.register(
 				Registry.ENTITY_TYPE,
 				new Identifier(MODID, "voxel_racer_one"),
-				FabricEntityTypeBuilder.createLiving()
+				FabricEntityTypeBuilder.createMob()
 						.entityFactory(VoxelRacerOneEntity::new)
 						.spawnGroup(SpawnGroup.MISC)
 						.dimensions(EntityDimensions.fixed(0.5F, 0.125F))
-						.defaultAttributes(LivingEntity::createLivingAttributes)
-//						.trackedUpdateRate(3)
-//						.trackRangeBlocks(80)
-//						.forceTrackedVelocityUpdates(true)
+						.defaultAttributes(AnimalEntity::createMobAttributes)
 						.build());
 
 		VOYAGER = Registry.register(
 				Registry.ENTITY_TYPE,
 				new Identifier(MODID, "voyager"),
-				FabricEntityTypeBuilder.createLiving()
+				FabricEntityTypeBuilder.createMob()
 						.entityFactory(VoyagerEntity::new)
 						.spawnGroup(SpawnGroup.MISC)
 						.dimensions(EntityDimensions.fixed(1.0F, 0.125F))
-						.defaultAttributes(LivingEntity::createLivingAttributes)
-//						.trackedUpdateRate(3)
-//						.trackRangeBlocks(80)
-//						.forceTrackedVelocityUpdates(true)
+						.defaultAttributes(AnimalEntity::createMobAttributes)
 						.build());
 
 		ServerTickEvents.START_SERVER_TICK.register(GogglesTick::tick);
