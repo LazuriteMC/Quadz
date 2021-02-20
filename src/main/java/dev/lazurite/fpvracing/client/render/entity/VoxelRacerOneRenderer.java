@@ -3,11 +3,10 @@ package dev.lazurite.fpvracing.client.render.entity;
 import com.jme3.math.Quaternion;
 import dev.lazurite.fpvracing.client.render.entity.model.VoxelRacerOneModel;
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOne;
+import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOneEntity;
 import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
@@ -18,8 +17,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
-public class VoxelRacerOneRenderer extends EntityRenderer<VoxelRacerOne> {
-    public static final Identifier texture = new Identifier(FPVRacing.MODID, "textures/entity/drone.png");
+public class VoxelRacerOneRenderer extends EntityRenderer<VoxelRacerOneEntity> {
+    public static final Identifier texture = new Identifier(FPVRacing.MODID, "textures/drone.png");
     private final VoxelRacerOneModel model = new VoxelRacerOneModel();
 
     public VoxelRacerOneRenderer(EntityRenderDispatcher dispatcher) {
@@ -27,11 +26,7 @@ public class VoxelRacerOneRenderer extends EntityRenderer<VoxelRacerOne> {
         this.shadowRadius = 0.2F;
     }
 
-    public static void register() {
-        EntityRendererRegistry.INSTANCE.register(FPVRacing.VOXEL_RACER_ONE, (entityRenderDispatcher, context) -> new VoxelRacerOneRenderer(entityRenderDispatcher));
-    }
-
-    public void render(VoxelRacerOne voxelRacer, float yaw, float delta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
+    public void render(VoxelRacerOneEntity voxelRacer, float yaw, float delta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         matrixStack.push();
         matrixStack.multiply(QuaternionHelper.bulletToMinecraft(voxelRacer.getPhysicsRotation(new Quaternion(), delta)));
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(model.getLayer(this.getTexture(voxelRacer)));
@@ -42,12 +37,12 @@ public class VoxelRacerOneRenderer extends EntityRenderer<VoxelRacerOne> {
     }
 
     @Override
-    public boolean shouldRender(VoxelRacerOne voxelRacer, Frustum frustum, double x, double y, double z) {
+    public boolean shouldRender(VoxelRacerOneEntity voxelRacer, Frustum frustum, double x, double y, double z) {
         return voxelRacer.shouldRender(x, y, z);
     }
 
     @Override
-    public Identifier getTexture(VoxelRacerOne voxelRacer) {
+    public Identifier getTexture(VoxelRacerOneEntity voxelRacer) {
         return texture;
     }
 }

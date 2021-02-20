@@ -5,11 +5,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
 
-public class Voyager extends QuadcopterEntity {
-    private static final float thrustForce = 75.0f;
+public class VoxelRacerOneEntity extends QuadcopterEntity {
+    private static final float thrustForce = 150.0f;
     private static final float thrustCurve = 1.0f;
 
-    public Voyager(EntityType<? extends LivingEntity> type, World world) {
+    public VoxelRacerOneEntity(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
     }
 

@@ -132,7 +132,7 @@ public class ConfigScreen implements ModMenuApi {
                 .setSaveConsumer(value -> Config.getInstance().throttleInCenter = value)
                 .build());
 
-        controllerSetup.addEntry(betaflight.build());
+        controllerSetup.addEntry(betaflight.setExpanded(true).build());
         controllerSetup.addEntry(controllerAxes.build());
         return controllerSetup;
     }

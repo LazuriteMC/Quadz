@@ -14,9 +14,9 @@ import dev.lazurite.fpvracing.client.render.entity.VoyagerRenderer;
 import dev.lazurite.fpvracing.client.render.ui.toast.ControllerToast;
 import dev.lazurite.fpvracing.common.tick.GogglesTick;
 import dev.lazurite.fpvracing.client.input.tick.TransmitterTick;
-import dev.lazurite.fpvracing.common.entity.quads.Voyager;
+import dev.lazurite.fpvracing.common.entity.quads.VoyagerEntity;
 import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
-import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOne;
+import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOneEntity;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import dev.lazurite.fpvracing.client.packet.keybind.ElectromagneticPulseC2S;
@@ -36,6 +36,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
@@ -72,8 +73,8 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 	public static VoyagerItem VOYAGER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "voyager_item"), new VoyagerItem(new Item.Settings().maxCount(1)));
 
 	/* Quadcopter Entities */
-	public static EntityType<VoxelRacerOne> VOXEL_RACER_ONE;
-	public static EntityType<Voyager> VOYAGER;
+	public static EntityType<VoxelRacerOneEntity> VOXEL_RACER_ONE;
+	public static EntityType<VoyagerEntity> VOYAGER;
 
 	@Override
 	public void onInitialize() {
@@ -100,7 +101,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 				Registry.ENTITY_TYPE,
 				new Identifier(MODID, "voxel_racer_one"),
 				FabricEntityTypeBuilder.createLiving()
-						.entityFactory(VoxelRacerOne::new)
+						.entityFactory(VoxelRacerOneEntity::new)
 						.spawnGroup(SpawnGroup.MISC)
 						.dimensions(EntityDimensions.fixed(0.5F, 0.125F))
 						.defaultAttributes(LivingEntity::createLivingAttributes)
@@ -113,9 +114,9 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 				Registry.ENTITY_TYPE,
 				new Identifier(MODID, "voyager"),
 				FabricEntityTypeBuilder.createLiving()
-						.entityFactory(Voyager::new)
+						.entityFactory(VoyagerEntity::new)
 						.spawnGroup(SpawnGroup.MISC)
-						.dimensions(EntityDimensions.fixed(0.5F, 0.125F))
+						.dimensions(EntityDimensions.fixed(1.0F, 0.125F))
 						.defaultAttributes(LivingEntity::createLivingAttributes)
 //						.trackedUpdateRate(3)
 //						.trackRangeBlocks(80)
@@ -143,8 +144,8 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		ShouldRenderPlayerS2C.register();
 
 		/* Register Renderers */
-		VoxelRacerOneRenderer.register();
-		VoyagerRenderer.register();
+		EntityRendererRegistry.INSTANCE.register(VOXEL_RACER_ONE, (entityRenderDispatcher, context) -> new VoxelRacerOneRenderer(entityRenderDispatcher));
+		EntityRendererRegistry.INSTANCE.register(VOYAGER, (entityRenderDispatcher, context) -> new VoyagerRenderer(entityRenderDispatcher));
 
 		/* Register Toast Events */
 		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.connect"), name));
