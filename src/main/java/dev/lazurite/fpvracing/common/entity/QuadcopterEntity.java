@@ -5,7 +5,7 @@ import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import dev.lazurite.fpvracing.common.util.access.Matrix4fAccess;
 import dev.lazurite.fpvracing.client.input.InputFrame;
-import dev.lazurite.fpvracing.client.input.InputTick;
+import dev.lazurite.fpvracing.client.input.tick.InputTick;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.util.type.Bindable;
 import dev.lazurite.fpvracing.common.util.type.QuadcopterState;
@@ -25,17 +25,15 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
@@ -43,13 +41,11 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-public abstract class QuadcopterEntity extends AnimalEntity implements PhysicsElement, QuadcopterState {
+public abstract class QuadcopterEntity extends LivingEntity implements PhysicsElement, QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<State> STATE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.STATE);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -62,7 +58,7 @@ public abstract class QuadcopterEntity extends AnimalEntity implements PhysicsEl
 	private final InputFrame inputFrame = new InputFrame();
 	private final ElementRigidBody rigidBody = new ElementRigidBody(this);
 
-	public QuadcopterEntity(EntityType<? extends AnimalEntity> type, World world) {
+	public QuadcopterEntity(EntityType<? extends LivingEntity> type, World world) {
 		super(type, world);
 	}
 
@@ -193,7 +189,7 @@ public abstract class QuadcopterEntity extends AnimalEntity implements PhysicsEl
 	}
 
 	@Override
-	public ActionResult interactMob(PlayerEntity player, Hand hand) {
+	public ActionResult interact(PlayerEntity player, Hand hand) {
 		ItemStack stack = player.inventory.getMainHandStack();
 
 		if (!world.isClient()) {
@@ -213,7 +209,6 @@ public abstract class QuadcopterEntity extends AnimalEntity implements PhysicsEl
 
 	@Override
 	public void readCustomDataFromTag(CompoundTag tag) {
-		setState(State.valueOf(tag.getString("state")));
 		setGodMode(tag.getBoolean("god_mode"));
 		setBindId(tag.getInt("bind_id"));
 
@@ -225,7 +220,6 @@ public abstract class QuadcopterEntity extends AnimalEntity implements PhysicsEl
 
 	@Override
 	public void writeCustomDataToTag(CompoundTag tag) {
-		tag.putString("state", getState().toString());
 		tag.putBoolean("god_mode", isInGodMode());
 		tag.putInt("bind_id", getBindId());
 
@@ -240,12 +234,6 @@ public abstract class QuadcopterEntity extends AnimalEntity implements PhysicsEl
 	@Environment(EnvType.CLIENT)
 	public boolean shouldRender(double distance) {
 		return true;
-	}
-
-	@Nullable
-	@Override
-	public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
-		return null;
 	}
 
 	@Override

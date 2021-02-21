@@ -1,7 +1,6 @@
 package dev.lazurite.fpvracing.common.packet;
 
 import dev.lazurite.fpvracing.FPVRacing;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -28,9 +27,5 @@ public class SelectedSlotS2C {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeInt(slot);
         ServerPlayNetworking.send(player, PACKET_ID, buf);
-    }
-
-    public static void register() {
-        ClientPlayNetworking.registerGlobalReceiver(PACKET_ID, SelectedSlotS2C::accept);
     }
 }

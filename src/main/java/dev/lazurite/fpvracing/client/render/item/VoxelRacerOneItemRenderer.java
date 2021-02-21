@@ -1,7 +1,7 @@
 package dev.lazurite.fpvracing.client.render.item;
 
-import dev.lazurite.fpvracing.client.render.entity.VoxelRacerOneRenderer;
-import dev.lazurite.fpvracing.client.render.entity.model.VoxelRacerOneModel;
+import dev.lazurite.fpvracing.client.render.entity.VoxelRacerOneEntityRenderer;
+import dev.lazurite.fpvracing.client.render.model.VoxelRacerOneModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.RenderLayer;
@@ -16,7 +16,7 @@ public class VoxelRacerOneItemRenderer {
         matrices.push();
         matrices.translate(0.5, 0.45, 0.5);
         matrices.scale(2.0f, 2.0f, 2.0f);
-        model.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntitySolid(VoxelRacerOneRenderer.texture)), light, overlay, 1f, 1f, 1f, 1f);
+        model.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntitySolid(VoxelRacerOneEntityRenderer.texture)), light, overlay, 1f, 1f, 1f, 1f);
         matrices.pop();
     }
 

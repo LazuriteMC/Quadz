@@ -5,7 +5,6 @@ import dev.lazurite.fpvracing.common.item.GogglesItem;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -38,9 +37,5 @@ public class PowerGogglesC2S {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeBoolean(enabled);
         ClientPlayNetworking.send(PACKET_ID, buf);
-    }
-
-    public static void register() {
-        ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, PowerGogglesC2S::accept);
     }
 }

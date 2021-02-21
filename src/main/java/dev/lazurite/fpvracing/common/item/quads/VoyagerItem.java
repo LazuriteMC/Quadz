@@ -1,8 +1,10 @@
 package dev.lazurite.fpvracing.common.item.quads;
 
+import com.jme3.math.Quaternion;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.quads.VoyagerEntity;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
+import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -13,8 +15,17 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class VoyagerItem extends Item {
+public class VoyagerItem extends Item implements IAnimatable {
+	public AnimationFactory factory = new AnimationFactory(this);
+
 	public VoyagerItem(Settings settings) {
 		super(settings);
 	}
@@ -30,7 +41,8 @@ public class VoyagerItem extends Item {
 		} else {
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
 				VoyagerEntity entity = new VoyagerEntity(FPVRacing.VOYAGER, world);
-				entity.updatePositionAndAngles(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z, user.yaw, 0);
+				entity.updatePosition(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
+				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), user.yaw));
 
 				QuadcopterContainer item = FPVRacing.QUADCOPTER_CONTAINER.get(itemStack);
 				CompoundTag tag = new CompoundTag();
@@ -45,5 +57,20 @@ public class VoyagerItem extends Item {
 		}
 
 		return TypedActionResult.success(itemStack);
+	}
+
+	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voyager.armed", true));
+		return PlayState.CONTINUE;
+	}
+
+	@Override
+	public void registerControllers(AnimationData animationData) {
+		animationData.addAnimationController(new AnimationController<>(this, "voyager_item_controller", 0, this::predicate));
+	}
+
+	@Override
+	public AnimationFactory getFactory() {
+		return this.factory;
 	}
 }

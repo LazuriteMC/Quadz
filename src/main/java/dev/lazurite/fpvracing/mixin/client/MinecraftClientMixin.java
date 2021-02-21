@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.mixin.client;
 
-import dev.lazurite.fpvracing.client.input.InputTick;
+import dev.lazurite.fpvracing.client.input.tick.InputTick;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.profiler.Profiler;
 import org.spongepowered.asm.mixin.Mixin;

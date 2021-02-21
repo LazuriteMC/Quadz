@@ -7,7 +7,6 @@ import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -48,9 +47,5 @@ public class NoClipC2S {
 
     public static void send() {
         ClientPlayNetworking.send(PACKET_ID, PacketByteBufs.create());
-    }
-
-    public static void register() {
-        ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, NoClipC2S::accept);
     }
 }

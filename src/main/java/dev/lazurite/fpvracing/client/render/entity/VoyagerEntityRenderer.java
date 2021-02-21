@@ -1,7 +1,7 @@
 package dev.lazurite.fpvracing.client.render.entity;
 
 import com.jme3.math.Quaternion;
-import dev.lazurite.fpvracing.client.render.entity.model.VoyagerModel;
+import dev.lazurite.fpvracing.client.render.model.VoyagerModel;
 import dev.lazurite.fpvracing.common.entity.quads.VoyagerEntity;
 import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
@@ -12,9 +12,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import software.bernie.geckolib3.renderer.geo.GeoEntityRenderer;
 
 @Environment(EnvType.CLIENT)
-public class VoyagerRenderer extends GeoEntityRenderer<VoyagerEntity> {
-    public VoyagerRenderer(EntityRenderDispatcher dispatcher) {
-        super(dispatcher, new VoyagerModel());
+public class VoyagerEntityRenderer extends GeoEntityRenderer<VoyagerEntity> {
+    public VoyagerEntityRenderer(EntityRenderDispatcher dispatcher) {
+        super(dispatcher, new VoyagerModel<>());
         this.shadowRadius = 0.2F;
     }
 

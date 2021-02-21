@@ -15,9 +15,7 @@
     "client.MinecraftClientMixin",
     "client.input.MouseMixin",
     "client.render.GameRendererMixin",
-    "client.render.HeldItemRendererMixin",
     "client.render.InGameHudMixin",
-    "client.render.ItemRendererMixin",
     "client.render.WorldRendererMixin"
   ],
   "injectors": {

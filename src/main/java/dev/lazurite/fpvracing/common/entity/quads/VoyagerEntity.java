@@ -3,7 +3,7 @@ package dev.lazurite.fpvracing.common.entity.quads;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.GameRules;
@@ -22,7 +22,7 @@ public class VoyagerEntity extends QuadcopterEntity implements IAnimatable {
 
     private final AnimationFactory factory = new AnimationFactory(this);
 
-    public VoyagerEntity(EntityType<? extends AnimalEntity> type, World world) {
+    public VoyagerEntity(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
     }
 
@@ -56,7 +56,7 @@ public class VoyagerEntity extends QuadcopterEntity implements IAnimatable {
 
     @Override
     public void registerControllers(AnimationData animationData) {
-        animationData.addAnimationController(new AnimationController<>(this, "controller", 0, this::predicate));
+        animationData.addAnimationController(new AnimationController<>(this, "voyager_entity_controller", 0, this::predicate));
     }
 
     @Override

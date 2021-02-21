@@ -3,7 +3,7 @@ package dev.lazurite.fpvracing.common.entity.quads;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.GameRules;
@@ -13,7 +13,7 @@ public class VoxelRacerOneEntity extends QuadcopterEntity {
     private static final float thrustForce = 150.0f;
     private static final float thrustCurve = 1.0f;
 
-    public VoxelRacerOneEntity(EntityType<? extends AnimalEntity> type, World world) {
+    public VoxelRacerOneEntity(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
     }
 

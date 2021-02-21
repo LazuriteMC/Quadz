@@ -18,10 +18,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 	@Shadow @Final private MinecraftClient client;
+	@Shadow private boolean renderHand;
 
 	@Inject(method = "renderWorld", at = @At("HEAD"))
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
 		Entity entity = client.getCameraEntity();
+		this.renderHand = !(entity instanceof QuadcopterEntity);
 
 		if (entity instanceof QuadcopterEntity) {
 			QuadcopterEntity quadcopter = (QuadcopterEntity) entity;

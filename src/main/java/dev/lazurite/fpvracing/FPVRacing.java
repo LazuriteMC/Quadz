@@ -10,7 +10,8 @@ import dev.lazurite.fpvracing.client.packet.InputFrameC2S;
 import dev.lazurite.fpvracing.client.packet.keybind.GodModeC2S;
 import dev.lazurite.fpvracing.client.packet.keybind.NoClipC2S;
 import dev.lazurite.fpvracing.client.packet.keybind.PowerGogglesC2S;
-import dev.lazurite.fpvracing.client.render.entity.VoyagerRenderer;
+import dev.lazurite.fpvracing.client.render.entity.VoyagerEntityRenderer;
+import dev.lazurite.fpvracing.client.render.model.VoyagerModel;
 import dev.lazurite.fpvracing.client.render.ui.toast.ControllerToast;
 import dev.lazurite.fpvracing.common.tick.GogglesTick;
 import dev.lazurite.fpvracing.client.input.tick.TransmitterTick;
@@ -27,7 +28,7 @@ import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
 import dev.lazurite.fpvracing.common.item.quads.VoxelRacerOneItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
-import dev.lazurite.fpvracing.client.render.entity.VoxelRacerOneRenderer;
+import dev.lazurite.fpvracing.client.render.entity.VoxelRacerOneEntityRenderer;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
 import dev.onyxstudios.cca.api.v3.item.ItemComponentFactoryRegistry;
@@ -36,13 +37,15 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -52,6 +55,7 @@ import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib3.renderer.geo.GeoItemRenderer;
 
 public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComponentInitializer {
 	public static final String MODID = "fpvracing";
@@ -79,11 +83,11 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 	@Override
 	public void onInitialize() {
 		/* Register Packets */
-		NoClipC2S.register();
-		GodModeC2S.register();
-		PowerGogglesC2S.register();
-		ElectromagneticPulseC2S.register();
-		InputFrameC2S.register();
+		ServerPlayNetworking.registerGlobalReceiver(NoClipC2S.PACKET_ID, NoClipC2S::accept);
+		ServerPlayNetworking.registerGlobalReceiver(GodModeC2S.PACKET_ID, GodModeC2S::accept);
+		ServerPlayNetworking.registerGlobalReceiver(PowerGogglesC2S.PACKET_ID, PowerGogglesC2S::accept);
+		ServerPlayNetworking.registerGlobalReceiver(ElectromagneticPulseC2S.PACKET_ID, ElectromagneticPulseC2S::accept);
+		ServerPlayNetworking.registerGlobalReceiver(InputFrameC2S.PACKET_ID, InputFrameC2S::accept);
 
 		/* Register Creative Tab */
 		ITEM_GROUP = FabricItemGroupBuilder.create(new Identifier(MODID, "items"))
@@ -100,21 +104,21 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		VOXEL_RACER_ONE = Registry.register(
 				Registry.ENTITY_TYPE,
 				new Identifier(MODID, "voxel_racer_one"),
-				FabricEntityTypeBuilder.createMob()
+				FabricEntityTypeBuilder.createLiving()
 						.entityFactory(VoxelRacerOneEntity::new)
 						.spawnGroup(SpawnGroup.MISC)
 						.dimensions(EntityDimensions.fixed(0.5F, 0.125F))
-						.defaultAttributes(AnimalEntity::createMobAttributes)
+						.defaultAttributes(LivingEntity::createLivingAttributes)
 						.build());
 
 		VOYAGER = Registry.register(
 				Registry.ENTITY_TYPE,
 				new Identifier(MODID, "voyager"),
-				FabricEntityTypeBuilder.createMob()
+				FabricEntityTypeBuilder.createLiving()
 						.entityFactory(VoyagerEntity::new)
 						.spawnGroup(SpawnGroup.MISC)
 						.dimensions(EntityDimensions.fixed(1.0F, 0.125F))
-						.defaultAttributes(AnimalEntity::createMobAttributes)
+						.defaultAttributes(LivingEntity::createLivingAttributes)
 						.build());
 
 		ServerTickEvents.START_SERVER_TICK.register(GogglesTick::tick);
@@ -134,12 +138,13 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		EMPKeybind.register();
 
 		/* Register Packets */
-		SelectedSlotS2C.register();
-		ShouldRenderPlayerS2C.register();
+		ClientPlayNetworking.registerGlobalReceiver(SelectedSlotS2C.PACKET_ID, SelectedSlotS2C::accept);
+		ClientPlayNetworking.registerGlobalReceiver(ShouldRenderPlayerS2C.PACKET_ID, ShouldRenderPlayerS2C::accept);
 
 		/* Register Renderers */
-		EntityRendererRegistry.INSTANCE.register(VOXEL_RACER_ONE, (entityRenderDispatcher, context) -> new VoxelRacerOneRenderer(entityRenderDispatcher));
-		EntityRendererRegistry.INSTANCE.register(VOYAGER, (entityRenderDispatcher, context) -> new VoyagerRenderer(entityRenderDispatcher));
+		EntityRendererRegistry.INSTANCE.register(VOXEL_RACER_ONE, (entityRenderDispatcher, context) -> new VoxelRacerOneEntityRenderer(entityRenderDispatcher));
+		EntityRendererRegistry.INSTANCE.register(VOYAGER, (entityRenderDispatcher, context) -> new VoyagerEntityRenderer(entityRenderDispatcher));
+		GeoItemRenderer.registerItemRenderer(VOYAGER_ITEM, new GeoItemRenderer<>(new VoyagerModel<>()));
 
 		/* Register Toast Events */
 		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.connect"), name));

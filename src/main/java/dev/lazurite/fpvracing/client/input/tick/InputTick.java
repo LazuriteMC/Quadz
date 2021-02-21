@@ -1,9 +1,10 @@
-package dev.lazurite.fpvracing.client.input;
+package dev.lazurite.fpvracing.client.input.tick;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import dev.lazurite.fpvracing.api.event.JoystickEvents;
 import dev.lazurite.fpvracing.client.config.Config;
+import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.common.util.BetaflightHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

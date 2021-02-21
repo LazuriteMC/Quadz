@@ -1,7 +1,7 @@
 package dev.lazurite.fpvracing.client.render.entity;
 
 import com.jme3.math.Quaternion;
-import dev.lazurite.fpvracing.client.render.entity.model.VoxelRacerOneModel;
+import dev.lazurite.fpvracing.client.render.model.VoxelRacerOneModel;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOneEntity;
 import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
@@ -17,11 +17,11 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
-public class VoxelRacerOneRenderer extends EntityRenderer<VoxelRacerOneEntity> {
+public class VoxelRacerOneEntityRenderer extends EntityRenderer<VoxelRacerOneEntity> {
     public static final Identifier texture = new Identifier(FPVRacing.MODID, "textures/drone.png");
     private final VoxelRacerOneModel model = new VoxelRacerOneModel();
 
-    public VoxelRacerOneRenderer(EntityRenderDispatcher dispatcher) {
+    public VoxelRacerOneEntityRenderer(EntityRenderDispatcher dispatcher) {
         super(dispatcher);
         this.shadowRadius = 0.2F;
     }

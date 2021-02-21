@@ -37,7 +37,6 @@ public class QuadcopterContainer implements ComponentV3, QuadcopterState {
 
     @Override
     public void readFromNbt(CompoundTag tag) {
-        state = QuadcopterEntity.State.valueOf(tag.getString("state"));
         godMode = tag.getBoolean("god_mode");
         bindId = tag.getInt("bind_id");
 
@@ -50,7 +49,6 @@ public class QuadcopterContainer implements ComponentV3, QuadcopterState {
 
     @Override
     public void writeToNbt(CompoundTag tag) {
-        tag.putString("state", state.toString());
         tag.putBoolean("god_mode", godMode);
         tag.putInt("bind_id", bindId);
 
