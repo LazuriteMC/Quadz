@@ -42,7 +42,7 @@ public class VoyagerItem extends Item implements IAnimatable {
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
 				VoyagerEntity entity = new VoyagerEntity(FPVRacing.VOYAGER, world);
 				entity.updatePosition(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
-				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), user.yaw));
+				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), user.headYaw - 90));
 
 				QuadcopterContainer item = FPVRacing.QUADCOPTER_CONTAINER.get(itemStack);
 				CompoundTag tag = new CompoundTag();

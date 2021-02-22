@@ -1,8 +1,10 @@
 package dev.lazurite.fpvracing.common.item.quads;
 
+import com.jme3.math.Quaternion;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOneEntity;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
+import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -39,7 +41,8 @@ public class VoxelRacerOneItem extends Item implements IAnimatable {
 		} else {
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
 				VoxelRacerOneEntity entity = new VoxelRacerOneEntity(FPVRacing.VOXEL_RACER_ONE, world);
-				entity.updatePositionAndAngles(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z, user.yaw, 0);
+				entity.updatePosition(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
+				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), user.headYaw - 90));
 
 				QuadcopterContainer item = FPVRacing.QUADCOPTER_CONTAINER.get(itemStack);
 				CompoundTag tag = new CompoundTag();
