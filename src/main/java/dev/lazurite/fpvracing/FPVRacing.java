@@ -1,16 +1,17 @@
 package dev.lazurite.fpvracing;
 
 import dev.lazurite.fpvracing.api.event.JoystickEvents;
-import dev.lazurite.fpvracing.client.config.Config;
-import dev.lazurite.fpvracing.client.input.keybind.EMPKeybind;
-import dev.lazurite.fpvracing.client.input.keybind.GodModeKeybind;
-import dev.lazurite.fpvracing.client.input.keybind.GogglePowerKeybind;
-import dev.lazurite.fpvracing.client.input.keybind.NoClipKeybind;
-import dev.lazurite.fpvracing.client.packet.InputFrameC2S;
-import dev.lazurite.fpvracing.client.packet.keybind.GodModeC2S;
-import dev.lazurite.fpvracing.client.packet.keybind.NoClipC2S;
-import dev.lazurite.fpvracing.client.packet.keybind.PowerGogglesC2S;
+import dev.lazurite.fpvracing.client.Config;
+import dev.lazurite.fpvracing.client.input.keybind.key.EMPKeybind;
+import dev.lazurite.fpvracing.client.input.keybind.key.GodModeKeybind;
+import dev.lazurite.fpvracing.client.input.keybind.key.GogglePowerKeybind;
+import dev.lazurite.fpvracing.client.input.keybind.key.NoClipKeybind;
+import dev.lazurite.fpvracing.client.input.frame.InputFrameC2S;
+import dev.lazurite.fpvracing.client.input.keybind.net.GodModeC2S;
+import dev.lazurite.fpvracing.client.input.keybind.net.NoClipC2S;
+import dev.lazurite.fpvracing.client.input.keybind.net.PowerGogglesC2S;
 import dev.lazurite.fpvracing.client.render.entity.VoyagerEntityRenderer;
+import dev.lazurite.fpvracing.client.render.model.VoxelRacerOneModel;
 import dev.lazurite.fpvracing.client.render.model.VoyagerModel;
 import dev.lazurite.fpvracing.client.render.ui.toast.ControllerToast;
 import dev.lazurite.fpvracing.common.tick.GogglesTick;
@@ -20,10 +21,10 @@ import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOneEntity;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
-import dev.lazurite.fpvracing.client.packet.keybind.ElectromagneticPulseC2S;
+import dev.lazurite.fpvracing.client.input.keybind.net.ElectromagneticPulseC2S;
 import dev.lazurite.fpvracing.common.item.quads.VoyagerItem;
-import dev.lazurite.fpvracing.common.packet.SelectedSlotS2C;
-import dev.lazurite.fpvracing.common.packet.ShouldRenderPlayerS2C;
+import dev.lazurite.fpvracing.common.util.net.SelectedSlotS2C;
+import dev.lazurite.fpvracing.common.util.net.ShouldRenderPlayerS2C;
 import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
 import dev.lazurite.fpvracing.common.item.quads.VoxelRacerOneItem;
@@ -144,6 +145,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		/* Register Renderers */
 		EntityRendererRegistry.INSTANCE.register(VOXEL_RACER_ONE, (entityRenderDispatcher, context) -> new VoxelRacerOneEntityRenderer(entityRenderDispatcher));
 		EntityRendererRegistry.INSTANCE.register(VOYAGER, (entityRenderDispatcher, context) -> new VoyagerEntityRenderer(entityRenderDispatcher));
+		GeoItemRenderer.registerItemRenderer(VOXEL_RACER_ONE_ITEM, new GeoItemRenderer<>(new VoxelRacerOneModel<>()));
 		GeoItemRenderer.registerItemRenderer(VOYAGER_ITEM, new GeoItemRenderer<>(new VoyagerModel<>()));
 
 		/* Register Toast Events */

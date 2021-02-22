@@ -1,7 +1,6 @@
-package dev.lazurite.fpvracing.client.packet;
+package dev.lazurite.fpvracing.client.input.frame;
 
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.client.input.InputFrame;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import dev.lazurite.fpvracing.common.util.type.Controllable;

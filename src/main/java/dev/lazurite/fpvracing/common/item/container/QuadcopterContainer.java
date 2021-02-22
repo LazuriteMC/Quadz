@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.common.item.container;
 
-import dev.lazurite.fpvracing.client.input.InputFrame;
+import dev.lazurite.fpvracing.client.input.frame.InputFrame;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.common.item.quads.VoxelRacerOneItem;
 import dev.lazurite.fpvracing.common.util.type.QuadcopterState;

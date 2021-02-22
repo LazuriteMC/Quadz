@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.client.config;
+package dev.lazurite.fpvracing.client;
 
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.AnnotatedSettings;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.Setting;

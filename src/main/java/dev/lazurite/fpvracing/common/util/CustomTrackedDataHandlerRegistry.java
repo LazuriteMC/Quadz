@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.common.util;
 
-import dev.lazurite.fpvracing.client.input.InputFrame;
+import dev.lazurite.fpvracing.client.input.frame.InputFrame;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;

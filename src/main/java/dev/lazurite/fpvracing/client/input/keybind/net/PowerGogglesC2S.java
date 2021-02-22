@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.client.packet.keybind;
+package dev.lazurite.fpvracing.client.input.keybind.net;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.item.GogglesItem;

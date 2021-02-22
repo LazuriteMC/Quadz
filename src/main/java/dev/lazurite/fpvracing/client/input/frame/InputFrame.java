@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.client.input;
+package dev.lazurite.fpvracing.client.input.frame;
 
 import dev.lazurite.fpvracing.client.input.tick.InputTick;
 import net.minecraft.nbt.CompoundTag;

@@ -1,7 +1,7 @@
-package dev.lazurite.fpvracing.client.input.keybind;
+package dev.lazurite.fpvracing.client.input.keybind.key;
 
-import dev.lazurite.fpvracing.client.packet.keybind.GodModeC2S;
 import dev.lazurite.fpvracing.FPVRacing;
+import dev.lazurite.fpvracing.client.input.keybind.net.ElectromagneticPulseC2S;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -12,22 +12,22 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 @Environment(EnvType.CLIENT)
-public class GodModeKeybind {
+public class EMPKeybind {
     private static KeyBinding key;
 
     public static void callback(MinecraftClient client) {
-        if (key.wasPressed()) GodModeC2S.send();
+        if (key.wasPressed()) ElectromagneticPulseC2S.send(80);
     }
 
     public static void register() {
         key = new KeyBinding(
-                "key." + FPVRacing.MODID + ".godmode",
+                "key." + FPVRacing.MODID + ".emp",
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_M,
+                GLFW.GLFW_KEY_O,
                 "key." + FPVRacing.MODID + ".category"
         );
 
         KeyBindingHelper.registerKeyBinding(key);
-        ClientTickEvents.END_CLIENT_TICK.register(GodModeKeybind::callback);
+        ClientTickEvents.END_CLIENT_TICK.register(EMPKeybind::callback);
     }
 }

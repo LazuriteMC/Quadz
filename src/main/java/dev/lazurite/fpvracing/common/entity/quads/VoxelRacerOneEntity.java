@@ -8,10 +8,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class VoxelRacerOneEntity extends QuadcopterEntity {
+public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable {
     private static final float thrustForce = 150.0f;
     private static final float thrustCurve = 1.0f;
+
+    private final AnimationFactory factory = new AnimationFactory(this);
 
     public VoxelRacerOneEntity(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
@@ -38,5 +47,20 @@ public class VoxelRacerOneEntity extends QuadcopterEntity {
         }
 
         super.kill();
+    }
+
+    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voyager.armed", true));
+        return PlayState.CONTINUE;
+    }
+
+    @Override
+    public void registerControllers(AnimationData animationData) {
+        animationData.addAnimationController(new AnimationController<>(this, "voyager_entity_controller", 0, this::predicate));
+    }
+
+    @Override
+    public AnimationFactory getFactory() {
+        return this.factory;
     }
 }

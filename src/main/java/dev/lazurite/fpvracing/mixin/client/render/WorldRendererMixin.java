@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.mixin.client.render;
 
-import dev.lazurite.fpvracing.client.config.Config;
+import dev.lazurite.fpvracing.client.Config;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.WorldRenderer;
@@ -30,9 +30,9 @@ public class WorldRendererMixin {
     )
     public Entity getFocusedEntity(Camera camera) {
         if (Config.getInstance().shouldRenderPlayer) {
-            return client.player;
+            return camera.getFocusedEntity();
         }
 
-        return camera.getFocusedEntity();
+        return client.player;
     }
 }

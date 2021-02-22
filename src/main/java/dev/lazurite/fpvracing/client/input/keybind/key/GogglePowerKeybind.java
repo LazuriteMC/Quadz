@@ -1,9 +1,9 @@
-package dev.lazurite.fpvracing.client.input.keybind;
+package dev.lazurite.fpvracing.client.input.keybind.key;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
-import dev.lazurite.fpvracing.client.packet.keybind.PowerGogglesC2S;
+import dev.lazurite.fpvracing.client.input.keybind.net.PowerGogglesC2S;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;

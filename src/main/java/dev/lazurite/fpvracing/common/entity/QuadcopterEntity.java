@@ -4,7 +4,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import dev.lazurite.fpvracing.common.util.access.Matrix4fAccess;
-import dev.lazurite.fpvracing.client.input.InputFrame;
+import dev.lazurite.fpvracing.client.input.frame.InputFrame;
 import dev.lazurite.fpvracing.client.input.tick.InputTick;
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.util.type.Bindable;

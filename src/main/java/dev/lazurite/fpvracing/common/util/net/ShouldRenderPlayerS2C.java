@@ -1,7 +1,7 @@
-package dev.lazurite.fpvracing.common.packet;
+package dev.lazurite.fpvracing.common.util.net;
 
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.client.config.Config;
+import dev.lazurite.fpvracing.client.Config;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

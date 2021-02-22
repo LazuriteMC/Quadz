@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.common.packet;
+package dev.lazurite.fpvracing.common.util.net;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
