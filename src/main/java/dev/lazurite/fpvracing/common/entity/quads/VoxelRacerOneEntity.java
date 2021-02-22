@@ -53,7 +53,12 @@ public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voyager.armed", true));
-        return PlayState.CONTINUE;
+
+        if (getState().equals(State.ARMED)) {
+            return PlayState.CONTINUE;
+        } else {
+            return PlayState.STOP;
+        }
     }
 
     @Override

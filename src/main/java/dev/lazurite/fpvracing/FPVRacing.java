@@ -5,9 +5,6 @@ import dev.lazurite.fpvracing.client.Config;
 import dev.lazurite.fpvracing.client.input.keybind.key.*;
 import dev.lazurite.fpvracing.client.input.frame.InputFrameC2S;
 import dev.lazurite.fpvracing.client.input.keybind.net.*;
-import dev.lazurite.fpvracing.client.render.entity.VoyagerEntityRenderer;
-import dev.lazurite.fpvracing.client.render.model.VoxelRacerOneModel;
-import dev.lazurite.fpvracing.client.render.model.VoyagerModel;
 import dev.lazurite.fpvracing.client.render.ui.toast.ControllerToast;
 import dev.lazurite.fpvracing.common.tick.GogglesTick;
 import dev.lazurite.fpvracing.client.input.tick.TransmitterTick;
@@ -23,7 +20,6 @@ import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
 import dev.lazurite.fpvracing.common.item.quads.VoxelRacerOneItem;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
-import dev.lazurite.fpvracing.client.render.entity.VoxelRacerOneEntityRenderer;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
 import dev.onyxstudios.cca.api.v3.item.ItemComponentFactoryRegistry;
@@ -33,7 +29,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -49,8 +44,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.renderer.geo.GeoItemRenderer;
 
 public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComponentInitializer {
 	public static final String MODID = "fpvracing";
@@ -122,8 +115,6 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 
 	@Override
 	public void onInitializeClient() {
-		GeckoLib.initialize();
-
 		/* Load the Config */
 		Config.getInstance().load();
 
@@ -138,12 +129,6 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		/* Register Packets */
 		ClientPlayNetworking.registerGlobalReceiver(SelectedSlotS2C.PACKET_ID, SelectedSlotS2C::accept);
 		ClientPlayNetworking.registerGlobalReceiver(ShouldRenderPlayerS2C.PACKET_ID, ShouldRenderPlayerS2C::accept);
-
-		/* Register Renderers */
-		EntityRendererRegistry.INSTANCE.register(VOXEL_RACER_ONE, (entityRenderDispatcher, context) -> new VoxelRacerOneEntityRenderer(entityRenderDispatcher));
-		EntityRendererRegistry.INSTANCE.register(VOYAGER, (entityRenderDispatcher, context) -> new VoyagerEntityRenderer(entityRenderDispatcher));
-		GeoItemRenderer.registerItemRenderer(VOXEL_RACER_ONE_ITEM, new GeoItemRenderer<>(new VoxelRacerOneModel<>()));
-		GeoItemRenderer.registerItemRenderer(VOYAGER_ITEM, new GeoItemRenderer<>(new VoyagerModel<>()));
 
 		/* Register Toast Events */
 		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.connect"), name));
