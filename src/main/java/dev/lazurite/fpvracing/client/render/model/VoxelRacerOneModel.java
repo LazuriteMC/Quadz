@@ -16,16 +16,16 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public class VoxelRacerOneModel<T extends IAnimatable> extends AnimatedGeoModel<T> {
     @Override
     public Identifier getModelLocation(T voxelRacer) {
-        return new Identifier(FPVRacing.MODID, "geo/voyager.geo.json");
+        return new Identifier(FPVRacing.MODID, "geo/voxel_racer_one.geo.json");
     }
 
     @Override
     public Identifier getTextureLocation(T voxelRacer) {
-        return new Identifier(FPVRacing.MODID, "textures/voyager.png");
+        return new Identifier(FPVRacing.MODID, "textures/voxel_racer_one.png");
     }
 
     @Override
     public Identifier getAnimationFileLocation(T voxelRacer) {
-        return new Identifier(FPVRacing.MODID, "animations/voyager.animation.json");
+        return new Identifier(FPVRacing.MODID, "animations/voxel_racer_one.animation.json");
     }
 }
