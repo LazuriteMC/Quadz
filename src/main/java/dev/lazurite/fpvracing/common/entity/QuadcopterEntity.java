@@ -15,7 +15,6 @@ import dev.lazurite.fpvracing.common.util.Axis;
 import dev.lazurite.fpvracing.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.fpvracing.common.util.Frequency;
 import dev.lazurite.rayon.api.element.PhysicsElement;
-import dev.lazurite.rayon.impl.bullet.body.ElementRigidBody;
 import dev.lazurite.rayon.impl.bullet.thread.PhysicsThread;
 import dev.lazurite.rayon.impl.bullet.world.MinecraftSpace;
 import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
@@ -56,7 +55,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	private static final TrackedData<Integer> POWER = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
 	private final InputFrame inputFrame = new InputFrame();
-	private final ElementRigidBody rigidBody = new ElementRigidBody(this);
 
 	public QuadcopterEntity(EntityType<? extends LivingEntity> type, World world) {
 		super(type, world);
@@ -64,6 +62,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 	public abstract float getThrustForce();
 	public abstract float getThrustCurve();
+	public abstract void dropSpawner();
 
 	@Override
 	public void tick() {
@@ -154,6 +153,11 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		if (source.equals(DamageSource.OUT_OF_WORLD)) {
 			this.remove();
 			return true;
+		}
+
+		if (source.getAttacker() instanceof PlayerEntity) {
+			this.dropSpawner();
+			this.remove();
 		}
 
 		return !isInGodMode();
@@ -251,11 +255,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	@Override
 	public Arm getMainArm() {
 		return null;
-	}
-
-	@Override
-	public ElementRigidBody getRigidBody() {
-		return this.rigidBody;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package dev.lazurite.fpvracing.client.render.entity;
 
+import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Quaternion;
 import dev.lazurite.fpvracing.client.render.model.VoxelRacerOneModel;
 import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOneEntity;
@@ -25,6 +26,7 @@ public class VoxelRacerOneEntityRenderer extends GeoEntityRenderer<VoxelRacerOne
     @Override
     public void render(VoxelRacerOneEntity voxelRacer, float entityYaw, float tickDelta, MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn) {
         stack.push();
+        stack.translate(0, -voxelRacer.getRigidBody().boundingBox(new BoundingBox()).getYExtent(), 0);
         stack.multiply(QuaternionHelper.bulletToMinecraft(voxelRacer.getPhysicsRotation(new Quaternion(), tickDelta)));
 
         float temp = voxelRacer.bodyYaw;

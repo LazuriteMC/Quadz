@@ -60,13 +60,13 @@ public class VoxelRacerOneItem extends Item implements IAnimatable {
 	}
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voyager.armed", true));
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voxel_racer_one.armed", true));
 		return PlayState.CONTINUE;
 	}
 
 	@Override
 	public void registerControllers(AnimationData animationData) {
-		animationData.addAnimationController(new AnimationController<>(this, "voyager_item_controller", 0, this::predicate));
+		animationData.addAnimationController(new AnimationController<>(this, "voxel_racer_one_item_controller", 0, this::predicate));
 	}
 
 	@Override

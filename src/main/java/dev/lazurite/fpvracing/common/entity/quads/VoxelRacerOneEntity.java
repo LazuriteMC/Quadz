@@ -2,6 +2,7 @@ package dev.lazurite.fpvracing.common.entity.quads;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
+import dev.lazurite.rayon.impl.bullet.body.ElementRigidBody;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -21,11 +22,13 @@ public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable
     private static final float thrustCurve = 1.0f;
 
     private final AnimationFactory factory = new AnimationFactory(this);
+    private final ElementRigidBody rigidBody = new ElementRigidBody(this);
 
     public VoxelRacerOneEntity(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
         this.setCameraAngle(50);
         this.getRigidBody().setMass(0.5f);
+        this.getRigidBody().setDragCoefficient(0.04f);
     }
 
     @Override
@@ -39,7 +42,7 @@ public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable
     }
 
     @Override
-    public void kill() {
+    public void dropSpawner() {
         if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
             ItemStack stack = new ItemStack(FPVRacing.VOXEL_RACER_ONE_ITEM);
             CompoundTag tag = new CompoundTag();
@@ -47,23 +50,27 @@ public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable
             FPVRacing.QUADCOPTER_CONTAINER.get(stack).readFromNbt(tag);
             dropStack(stack);
         }
+    }
 
+    @Override
+    public ElementRigidBody getRigidBody() {
+        return this.rigidBody;
+    }
+
+    @Override
+    public void kill() {
+        this.dropSpawner();
         super.kill();
     }
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voyager.armed", true));
-
-        if (getState().equals(State.ARMED)) {
-            return PlayState.CONTINUE;
-        } else {
-            return PlayState.STOP;
-        }
+        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voxel_racer_one.armed", true));
+        return PlayState.CONTINUE;
     }
 
     @Override
     public void registerControllers(AnimationData animationData) {
-        animationData.addAnimationController(new AnimationController<>(this, "voyager_entity_controller", 0, this::predicate));
+        animationData.addAnimationController(new AnimationController<>(this, "voxel_racer_one_entity_controller", 0, this::predicate));
     }
 
     @Override
