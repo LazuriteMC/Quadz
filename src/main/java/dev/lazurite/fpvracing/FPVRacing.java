@@ -2,14 +2,9 @@ package dev.lazurite.fpvracing;
 
 import dev.lazurite.fpvracing.api.event.JoystickEvents;
 import dev.lazurite.fpvracing.client.Config;
-import dev.lazurite.fpvracing.client.input.keybind.key.EMPKeybind;
-import dev.lazurite.fpvracing.client.input.keybind.key.GodModeKeybind;
-import dev.lazurite.fpvracing.client.input.keybind.key.GogglePowerKeybind;
-import dev.lazurite.fpvracing.client.input.keybind.key.NoClipKeybind;
+import dev.lazurite.fpvracing.client.input.keybind.key.*;
 import dev.lazurite.fpvracing.client.input.frame.InputFrameC2S;
-import dev.lazurite.fpvracing.client.input.keybind.net.GodModeC2S;
-import dev.lazurite.fpvracing.client.input.keybind.net.NoClipC2S;
-import dev.lazurite.fpvracing.client.input.keybind.net.PowerGogglesC2S;
+import dev.lazurite.fpvracing.client.input.keybind.net.*;
 import dev.lazurite.fpvracing.client.render.entity.VoyagerEntityRenderer;
 import dev.lazurite.fpvracing.client.render.model.VoxelRacerOneModel;
 import dev.lazurite.fpvracing.client.render.model.VoyagerModel;
@@ -21,7 +16,6 @@ import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOneEntity;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
-import dev.lazurite.fpvracing.client.input.keybind.net.ElectromagneticPulseC2S;
 import dev.lazurite.fpvracing.common.item.quads.VoyagerItem;
 import dev.lazurite.fpvracing.common.util.net.SelectedSlotS2C;
 import dev.lazurite.fpvracing.common.util.net.ShouldRenderPlayerS2C;
@@ -88,6 +82,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		ServerPlayNetworking.registerGlobalReceiver(GodModeC2S.PACKET_ID, GodModeC2S::accept);
 		ServerPlayNetworking.registerGlobalReceiver(PowerGogglesC2S.PACKET_ID, PowerGogglesC2S::accept);
 		ServerPlayNetworking.registerGlobalReceiver(ElectromagneticPulseC2S.PACKET_ID, ElectromagneticPulseC2S::accept);
+		ServerPlayNetworking.registerGlobalReceiver(ChangeCameraAngleC2S.PACKET_ID, ChangeCameraAngleC2S::accept);
 		ServerPlayNetworking.registerGlobalReceiver(InputFrameC2S.PACKET_ID, InputFrameC2S::accept);
 
 		/* Register Creative Tab */
@@ -133,6 +128,8 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		Config.getInstance().load();
 
 		/* Register Keybindings */
+		RaiseCameraAngleKeybind.register();
+		LowerCameraAngleKeybind.register();
 		GogglePowerKeybind.register();
 		GodModeKeybind.register();
 		NoClipKeybind.register();

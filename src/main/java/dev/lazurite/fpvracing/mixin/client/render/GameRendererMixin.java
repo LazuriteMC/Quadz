@@ -32,7 +32,7 @@ public class GameRendererMixin {
 			q.set(q.getX(), -q.getY(), q.getZ(), -q.getW());
 
 			/* Camera Angle */
-			QuaternionHelper.rotateX(q, ((QuadcopterEntity) entity).getCameraAngle());
+			q.set(QuaternionHelper.rotateX(q, ((QuadcopterEntity) entity).getCameraAngle()));
 
 			Matrix4f newMat = new Matrix4f(QuaternionHelper.bulletToMinecraft(q));
 			newMat.transpose();

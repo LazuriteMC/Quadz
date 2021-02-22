@@ -1,6 +1,7 @@
 package dev.lazurite.fpvracing.client.input.tick;
 
 import dev.lazurite.fpvracing.FPVRacing;
+import dev.lazurite.fpvracing.client.input.frame.InputFrame;
 import dev.lazurite.fpvracing.client.input.frame.InputFrameC2S;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
@@ -11,6 +12,15 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 
+/**
+ * This class is responsible for transmitting the player's controller input
+ * information to the server each tick. It will send input data from either
+ * the player's camera entity or whatever entity they happen to be controlling
+ * within range.
+ * @see InputTick
+ * @see InputFrame
+ * @see InputFrameC2S
+ */
 @Environment(EnvType.CLIENT)
 public class TransmitterTick {
     public static void tick(ClientWorld world) {
@@ -32,7 +42,6 @@ public class TransmitterTick {
                     if (entity instanceof Controllable) {
                         Controllable controllable = (Controllable) entity;
 
-                        System.out.println(controllable.getBindId() + " == " + transmitter.getBindId());
                         if (controllable.getBindId() == transmitter.getBindId()) {
                             InputFrameC2S.send(entity, controllable.getInputFrame()); // send controller input to the server
                             break;

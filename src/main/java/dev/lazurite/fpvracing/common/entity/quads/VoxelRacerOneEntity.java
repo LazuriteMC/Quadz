@@ -17,13 +17,15 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable {
-    private static final float thrustForce = 150.0f;
+    private static final float thrustForce = 100.0f;
     private static final float thrustCurve = 1.0f;
 
     private final AnimationFactory factory = new AnimationFactory(this);
 
     public VoxelRacerOneEntity(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
+        this.setCameraAngle(50);
+        this.getRigidBody().setMass(0.5f);
     }
 
     @Override

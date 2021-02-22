@@ -68,10 +68,8 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	@Override
 	public void tick() {
 		super.tick();
-
-		this.bodyYaw = 0;
-		this.headYaw = 0;
-		this.yaw = 0;
+		this.bodyYaw = QuaternionHelper.getYaw(getRigidBody().getPhysicsRotation(new Quaternion()));
+		this.yaw = bodyYaw;
 	}
 
 	@Override
@@ -85,7 +83,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 				if (hand.getItem() instanceof TransmitterItem) {
 					if (isBound(FPVRacing.TRANSMITTER_CONTAINER.get(hand))) {
-						setInputFrame(InputTick.getInstance().getInputFrame(1 / (float) PhysicsThread.STEP_SIZE));
+						setInputFrame(InputTick.getInstance().getInputFrame(PhysicsThread.STEP_SIZE));
 					}
 				}
 			}
@@ -185,7 +183,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 	@Override
 	public void equipStack(EquipmentSlot slot, ItemStack stack) {
-
 	}
 
 	@Override
@@ -211,7 +208,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	public void readCustomDataFromTag(CompoundTag tag) {
 		setGodMode(tag.getBoolean("god_mode"));
 		setBindId(tag.getInt("bind_id"));
-
 		setFrequency(new Frequency((char) tag.getInt("band"), tag.getInt("channel")));
 		setCameraAngle(tag.getInt("camera_angle"));
 		setFieldOfView(tag.getInt("field_of_view"));
@@ -222,7 +218,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	public void writeCustomDataToTag(CompoundTag tag) {
 		tag.putBoolean("god_mode", isInGodMode());
 		tag.putInt("bind_id", getBindId());
-
 		tag.putInt("band", getFrequency().getBand());
 		tag.putInt("channel", getFrequency().getChannel());
 		tag.putInt("camera_angle", getCameraAngle());

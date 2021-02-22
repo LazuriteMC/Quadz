@@ -16,7 +16,9 @@ public class GodModeKeybind {
     private static KeyBinding key;
 
     public static void callback(MinecraftClient client) {
-        if (key.wasPressed()) GodModeC2S.send();
+        if (key.wasPressed()) {
+            GodModeC2S.send();
+        }
     }
 
     public static void register() {

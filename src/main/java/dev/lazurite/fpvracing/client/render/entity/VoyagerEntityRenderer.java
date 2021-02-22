@@ -26,7 +26,13 @@ public class VoyagerEntityRenderer extends GeoEntityRenderer<VoyagerEntity> {
     public void render(VoyagerEntity voyager, float entityYaw, float tickDelta, MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn) {
         stack.push();
         stack.multiply(QuaternionHelper.bulletToMinecraft(voyager.getPhysicsRotation(new Quaternion(), tickDelta)));
+
+        float temp = voyager.bodyYaw;
+        voyager.bodyYaw = 0;
+        voyager.prevBodyYaw = 0;
+
         super.render(voyager, entityYaw, tickDelta, stack, bufferIn, packedLightIn);
+        voyager.bodyYaw = temp;
         stack.pop();
     }
 }

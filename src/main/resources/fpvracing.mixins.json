@@ -10,7 +10,6 @@
   ],
   "client": [
     "client.ClientPlayerEntityMixin",
-    "client.ClientWorldMixin",
     "client.MatrixStackMixin",
     "client.MinecraftClientMixin",
     "client.input.MouseMixin",

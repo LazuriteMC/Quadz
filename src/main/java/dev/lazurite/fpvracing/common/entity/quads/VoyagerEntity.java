@@ -24,7 +24,9 @@ public class VoyagerEntity extends QuadcopterEntity implements IAnimatable {
 
     public VoyagerEntity(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
-        getRigidBody().setDragCoefficient(0.025f);
+        this.getRigidBody().setDragCoefficient(0.015f);
+        this.getRigidBody().setMass(1.5f);
+        this.setCameraAngle(30);
     }
 
     @Override

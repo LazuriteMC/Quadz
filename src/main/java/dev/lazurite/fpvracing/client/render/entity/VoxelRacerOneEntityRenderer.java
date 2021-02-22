@@ -26,7 +26,13 @@ public class VoxelRacerOneEntityRenderer extends GeoEntityRenderer<VoxelRacerOne
     public void render(VoxelRacerOneEntity voxelRacer, float entityYaw, float tickDelta, MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn) {
         stack.push();
         stack.multiply(QuaternionHelper.bulletToMinecraft(voxelRacer.getPhysicsRotation(new Quaternion(), tickDelta)));
-        super.render(voxelRacer, entityYaw, tickDelta, stack, bufferIn, packedLightIn);
+
+        float temp = voxelRacer.bodyYaw;
+        voxelRacer.bodyYaw = 0;
+        voxelRacer.prevBodyYaw = 0;
+
+        super.render(voxelRacer, 0, tickDelta, stack, bufferIn, packedLightIn);
+        voxelRacer.bodyYaw = temp;
         stack.pop();
     }
 }

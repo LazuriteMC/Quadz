@@ -4,6 +4,8 @@
   "key.fpvracing.noclip" : "No Clip",
   "key.fpvracing.godmode" : "God Mode",
   "key.fpvracing.powergoggles" : "Goggle Power",
+  "key.fpvracing.raise_camera": "Camera Angle - Increase",
+  "key.fpvracing.lower_camera": "Camera Angle - Decrease",
 
   "entity.fpvracing.voxel_race_one" : "Voxel Racer 1",
   "entity.fpvracing.voyager" : "Voyager",

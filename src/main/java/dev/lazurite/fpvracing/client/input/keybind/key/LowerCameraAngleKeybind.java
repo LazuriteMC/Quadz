@@ -1,7 +1,7 @@
 package dev.lazurite.fpvracing.client.input.keybind.key;
 
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.client.input.keybind.net.NoClipC2S;
+import dev.lazurite.fpvracing.client.input.keybind.net.ChangeCameraAngleC2S;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -12,24 +12,24 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 @Environment(EnvType.CLIENT)
-public class NoClipKeybind {
+public class LowerCameraAngleKeybind {
     private static KeyBinding key;
 
     public static void callback(MinecraftClient client) {
         if (key.wasPressed()) {
-            NoClipC2S.send();
+            ChangeCameraAngleC2S.send(-5);
         }
     }
 
     public static void register() {
         key = new KeyBinding(
-                "key." + FPVRacing.MODID + ".noclip",
+                "key." + FPVRacing.MODID + ".lower_camera",
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_N,
+                GLFW.GLFW_KEY_DOWN,
                 "key." + FPVRacing.MODID + ".category"
         );
 
         KeyBindingHelper.registerKeyBinding(key);
-        ClientTickEvents.END_CLIENT_TICK.register(NoClipKeybind::callback);
+        ClientTickEvents.END_CLIENT_TICK.register(LowerCameraAngleKeybind::callback);
     }
 }

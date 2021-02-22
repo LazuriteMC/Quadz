@@ -16,7 +16,9 @@ public class EMPKeybind {
     private static KeyBinding key;
 
     public static void callback(MinecraftClient client) {
-        if (key.wasPressed()) ElectromagneticPulseC2S.send(80);
+        if (key.wasPressed()) {
+            ElectromagneticPulseC2S.send(80);
+        }
     }
 
     public static void register() {
