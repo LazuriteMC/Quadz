@@ -1,8 +1,10 @@
 package dev.lazurite.fpvracing.client.render;
 
 import dev.lazurite.fpvracing.FPVRacing;
+import dev.lazurite.fpvracing.client.render.entity.PixelEntityRenderer;
 import dev.lazurite.fpvracing.client.render.entity.VoxelRacerOneEntityRenderer;
 import dev.lazurite.fpvracing.client.render.entity.VoyagerEntityRenderer;
+import dev.lazurite.fpvracing.client.render.model.PixelModel;
 import dev.lazurite.fpvracing.client.render.model.VoxelRacerOneModel;
 import dev.lazurite.fpvracing.client.render.model.VoyagerModel;
 import net.fabricmc.api.ClientModInitializer;
@@ -22,9 +24,11 @@ public class RenderInitializer implements ClientModInitializer {
         /* Entities */
         EntityRendererRegistry.INSTANCE.register(FPVRacing.VOXEL_RACER_ONE, (entityRenderDispatcher, context) -> new VoxelRacerOneEntityRenderer(entityRenderDispatcher));
         EntityRendererRegistry.INSTANCE.register(FPVRacing.VOYAGER, (entityRenderDispatcher, context) -> new VoyagerEntityRenderer(entityRenderDispatcher));
+        EntityRendererRegistry.INSTANCE.register(FPVRacing.PIXEL, (entityRenderDispatcher, context) -> new PixelEntityRenderer(entityRenderDispatcher));
 
         /* Items */
         GeoItemRenderer.registerItemRenderer(FPVRacing.VOXEL_RACER_ONE_ITEM, new GeoItemRenderer<>(new VoxelRacerOneModel<>()));
         GeoItemRenderer.registerItemRenderer(FPVRacing.VOYAGER_ITEM, new GeoItemRenderer<>(new VoyagerModel<>()));
+        GeoItemRenderer.registerItemRenderer(FPVRacing.PIXEL_ITEM, new GeoItemRenderer<>(new PixelModel<>()));
     }
 }

@@ -9,7 +9,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 /**
- * The model for the voxel racer 1 drone.
+ * The model for the voxel racer 1 racing drone.
  * @see VoxelRacerOneEntityRenderer
  */
 @Environment(EnvType.CLIENT)

@@ -9,11 +9,11 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 /**
- * The model for the voyager long range drone.
+ * The model for the pixel micro drone.
  * @see VoyagerEntityRenderer
  */
 @Environment(EnvType.CLIENT)
-public class VoyagerModel<T extends IAnimatable> extends AnimatedGeoModel<T> {
+public class PixelModel<T extends IAnimatable> extends AnimatedGeoModel<T> {
     @Override
     public Identifier getModelLocation(T voyager) {
         return new Identifier(FPVRacing.MODID, "geo/voyager.geo.json");

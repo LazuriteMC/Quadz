@@ -17,31 +17,31 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class VoyagerEntity extends QuadcopterEntity implements IAnimatable {
+public class PixelEntity extends QuadcopterEntity implements IAnimatable {
     private final AnimationFactory factory = new AnimationFactory(this);
     private final ElementRigidBody rigidBody = new ElementRigidBody(this);
 
-    public VoyagerEntity(EntityType<? extends LivingEntity> type, World world) {
+    public PixelEntity(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
-        this.setCameraAngle(30);
-        this.getRigidBody().setMass(1.25f);
-        this.getRigidBody().setDragCoefficient(0.005f);
+        this.setCameraAngle(5);
+        this.getRigidBody().setMass(0.050f); // 50 grams
+        this.getRigidBody().setDragCoefficient(0.05f);
     }
 
     @Override
     public float getThrustForce() {
-        return 90.0f;
+        return 10.0f;
     }
 
     @Override
     public float getThrustCurve() {
-        return 0.9f;
+        return 1.0f;
     }
 
     @Override
     public void dropSpawner() {
         if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-            ItemStack stack = new ItemStack(FPVRacing.VOYAGER_ITEM);
+            ItemStack stack = new ItemStack(FPVRacing.PIXEL_ITEM);
             CompoundTag tag = new CompoundTag();
             writeCustomDataToTag(tag);
             FPVRacing.QUADCOPTER_CONTAINER.get(stack).readFromNbt(tag);
@@ -67,7 +67,7 @@ public class VoyagerEntity extends QuadcopterEntity implements IAnimatable {
 
     @Override
     public void registerControllers(AnimationData animationData) {
-        animationData.addAnimationController(new AnimationController<>(this, "voyager_entity_controller", 0, this::predicate));
+        animationData.addAnimationController(new AnimationController<>(this, "pixel_entity_controller", 0, this::predicate));
     }
 
     @Override

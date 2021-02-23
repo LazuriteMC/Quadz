@@ -2,7 +2,7 @@ package dev.lazurite.fpvracing.common.item.quads;
 
 import com.jme3.math.Quaternion;
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOneEntity;
+import dev.lazurite.fpvracing.common.entity.quads.PixelEntity;
 import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
 import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,7 +13,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -24,10 +23,10 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class VoxelRacerOneItem extends Item implements IAnimatable {
+public class PixelItem extends Item implements IAnimatable {
 	public AnimationFactory factory = new AnimationFactory(this);
 
-	public VoxelRacerOneItem(Settings settings) {
+	public PixelItem(Settings settings) {
 		super(settings);
 	}
 
@@ -41,9 +40,9 @@ public class VoxelRacerOneItem extends Item implements IAnimatable {
 			return TypedActionResult.pass(itemStack);
 		} else {
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
-				VoxelRacerOneEntity entity = new VoxelRacerOneEntity(FPVRacing.VOXEL_RACER_ONE, world);
+				PixelEntity entity = new PixelEntity(FPVRacing.VOYAGER, world);
 				entity.updatePosition(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
-				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), 45));
+				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), user.headYaw - 90));
 
 				QuadcopterContainer item = FPVRacing.QUADCOPTER_CONTAINER.get(itemStack);
 				CompoundTag tag = new CompoundTag();
@@ -61,13 +60,13 @@ public class VoxelRacerOneItem extends Item implements IAnimatable {
 	}
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voxel_racer_one.armed", true));
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voyager.armed", true));
 		return PlayState.CONTINUE;
 	}
 
 	@Override
 	public void registerControllers(AnimationData animationData) {
-		animationData.addAnimationController(new AnimationController<>(this, "voxel_racer_one_item_controller", 0, this::predicate));
+		animationData.addAnimationController(new AnimationController<>(this, "pixel_item_controller", 0, this::predicate));
 	}
 
 	@Override

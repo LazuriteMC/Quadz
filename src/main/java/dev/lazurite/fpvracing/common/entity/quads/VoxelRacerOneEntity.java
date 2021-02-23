@@ -18,9 +18,6 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable {
-    private static final float thrustForce = 100.0f;
-    private static final float thrustCurve = 1.0f;
-
     private final AnimationFactory factory = new AnimationFactory(this);
     private final ElementRigidBody rigidBody = new ElementRigidBody(this);
 
@@ -33,12 +30,12 @@ public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable
 
     @Override
     public float getThrustForce() {
-        return thrustForce;
+        return 100.0f;
     }
 
     @Override
     public float getThrustCurve() {
-        return thrustCurve;
+        return 1.0f;
     }
 
     @Override

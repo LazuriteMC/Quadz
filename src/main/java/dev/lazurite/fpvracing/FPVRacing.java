@@ -6,6 +6,8 @@ import dev.lazurite.fpvracing.client.input.keybind.key.*;
 import dev.lazurite.fpvracing.client.input.frame.InputFrameC2S;
 import dev.lazurite.fpvracing.client.input.keybind.net.*;
 import dev.lazurite.fpvracing.client.render.ui.toast.ControllerToast;
+import dev.lazurite.fpvracing.common.entity.quads.PixelEntity;
+import dev.lazurite.fpvracing.common.item.quads.PixelItem;
 import dev.lazurite.fpvracing.common.tick.GogglesTick;
 import dev.lazurite.fpvracing.client.input.tick.TransmitterTick;
 import dev.lazurite.fpvracing.common.entity.quads.VoyagerEntity;
@@ -63,10 +65,12 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 	/* Quadcopter Items */
 	public static VoxelRacerOneItem VOXEL_RACER_ONE_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "voxel_racer_one_item"), new VoxelRacerOneItem(new Item.Settings().maxCount(1)));
 	public static VoyagerItem VOYAGER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "voyager_item"), new VoyagerItem(new Item.Settings().maxCount(1)));
+	public static PixelItem PIXEL_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "pixel_item"), new PixelItem(new Item.Settings().maxCount(1)));
 
 	/* Quadcopter Entities */
 	public static EntityType<VoxelRacerOneEntity> VOXEL_RACER_ONE;
 	public static EntityType<VoyagerEntity> VOYAGER;
+	public static EntityType<PixelEntity> PIXEL;
 
 	@Override
 	public void onInitialize() {
@@ -87,6 +91,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 					stack.add(new ItemStack(CHANNEL_WAND_ITEM));
 					stack.add(new ItemStack(VOXEL_RACER_ONE_ITEM));
 					stack.add(new ItemStack(VOYAGER_ITEM));
+					stack.add(new ItemStack(PIXEL_ITEM));
 				}).build();
 
 		/* Register Entities */
@@ -107,6 +112,16 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 						.entityFactory(VoyagerEntity::new)
 						.spawnGroup(SpawnGroup.MISC)
 						.dimensions(EntityDimensions.fixed(1.1F, 0.3F))
+						.defaultAttributes(LivingEntity::createLivingAttributes)
+						.build());
+
+		PIXEL = Registry.register(
+				Registry.ENTITY_TYPE,
+				new Identifier(MODID, "pixel"),
+				FabricEntityTypeBuilder.createLiving()
+						.entityFactory(PixelEntity::new)
+						.spawnGroup(SpawnGroup.MISC)
+						.dimensions(EntityDimensions.fixed(0.1F, 0.1F))
 						.defaultAttributes(LivingEntity::createLivingAttributes)
 						.build());
 
@@ -144,5 +159,6 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		registry.registerFor(new Identifier(MODID, "transmitter_item"), TRANSMITTER_CONTAINER, TransmitterContainer::new);
 		registry.registerFor(new Identifier(MODID, "voxel_racer_one_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
 		registry.registerFor(new Identifier(MODID, "voyager_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
+		registry.registerFor(new Identifier(MODID, "pixel_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
 	}
 }
