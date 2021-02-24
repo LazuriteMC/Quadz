@@ -61,7 +61,7 @@ public class PixelEntity extends QuadcopterEntity implements IAnimatable {
     }
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voyager.armed", true));
+        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.pixel.armed", true));
         return PlayState.CONTINUE;
     }
 

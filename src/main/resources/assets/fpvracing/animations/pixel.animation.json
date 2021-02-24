@@ -1,0 +1,52 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.fpvracing.pixel.armed": {
+			"loop": true,
+			"animation_length": 0.6,
+			"bones": {
+				"prop1": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.6": {
+							"vector": [0, 720, 0]
+						}
+					}
+				},
+				"prop2": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.6": {
+							"vector": [0, 720, 0]
+						}
+					}
+				},
+				"prop3": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.6": {
+							"vector": [0, -720, 0],
+							"easing": "linear"
+						}
+					}
+				},
+				"prop4": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.6": {
+							"vector": [0, -720, 0]
+						}
+					}
+				}
+			}
+		}
+	}
+}

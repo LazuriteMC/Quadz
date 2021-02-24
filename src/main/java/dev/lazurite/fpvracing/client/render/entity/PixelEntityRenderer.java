@@ -2,7 +2,7 @@ package dev.lazurite.fpvracing.client.render.entity;
 
 import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Quaternion;
-import dev.lazurite.fpvracing.client.render.model.VoyagerModel;
+import dev.lazurite.fpvracing.client.render.model.PixelModel;
 import dev.lazurite.fpvracing.common.entity.quads.PixelEntity;
 import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
@@ -19,7 +19,7 @@ import software.bernie.geckolib3.renderer.geo.GeoEntityRenderer;
 @Environment(EnvType.CLIENT)
 public class PixelEntityRenderer extends GeoEntityRenderer<PixelEntity> {
     public PixelEntityRenderer(EntityRenderDispatcher dispatcher) {
-        super(dispatcher, new VoyagerModel<>());
+        super(dispatcher, new PixelModel<>());
         this.shadowRadius = 0.2F;
     }
 

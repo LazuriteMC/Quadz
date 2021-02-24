@@ -9,6 +9,7 @@
 
   "entity.fpvracing.voxel_race_one" : "Voxel Racer 1",
   "entity.fpvracing.voyager" : "Voyager",
+  "entity.fpvracing.pixel" : "Pixel",
 
   "itemGroup.fpvracing.items" : "FPV Racing",
   "item.fpvracing.goggles_item" : "Goggles",
@@ -16,6 +17,7 @@
   "item.fpvracing.channel_wand_item" : "Channel Wand",
   "item.fpvracing.voxel_racer_one_item" : "Voxel Racer 1",
   "item.fpvracing.voyager_item" : "Voyager",
+  "item.fpvracing.pixel_item" : "Pixel",
 
   "message.fpvracing.drone_error" : "Must be holding a quadcopter or a bound transmitter.",
   "message.fpvracing.goggles_error" : "Must be holding or wearing goggles.",

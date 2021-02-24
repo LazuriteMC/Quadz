@@ -40,7 +40,7 @@ public class PixelItem extends Item implements IAnimatable {
 			return TypedActionResult.pass(itemStack);
 		} else {
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
-				PixelEntity entity = new PixelEntity(FPVRacing.VOYAGER, world);
+				PixelEntity entity = new PixelEntity(FPVRacing.PIXEL, world);
 				entity.updatePosition(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
 				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), user.headYaw - 90));
 
@@ -60,7 +60,7 @@ public class PixelItem extends Item implements IAnimatable {
 	}
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voyager.armed", true));
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.pixel.armed", true));
 		return PlayState.CONTINUE;
 	}
 
