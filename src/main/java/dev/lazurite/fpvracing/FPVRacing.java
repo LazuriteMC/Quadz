@@ -150,7 +150,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		JoystickEvents.JOYSTICK_DISCONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.disconnect"), name));
 
 		/* Register Client Tick Events */
-		ClientTickEvents.START_WORLD_TICK.register(TransmitterTick::tick);
+		ClientTickEvents.START_CLIENT_TICK.register(TransmitterTick::tick);
 	}
 
 	@Override

@@ -52,6 +52,7 @@
 
   "config.fpvracing.entry.mode" : "Mode",
   "config.fpvracing.entry.max_angle" : "Max Angle",
+  "config.fpvracing.entry.follow_los" : "Follow LOS",
   "config.fpvracing.entry.rate" : "Rate",
   "config.fpvracing.entry.expo" : "Expo",
   "config.fpvracing.entry.super_rate" : "Super Rate",

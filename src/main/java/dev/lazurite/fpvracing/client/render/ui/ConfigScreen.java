@@ -54,6 +54,12 @@ public class ConfigScreen implements ModMenuApi {
                 .setDefaultValue(45)
                 .build());
 
+        preferences.add(builder.entryBuilder().startBooleanToggle(
+                new TranslatableText("config.fpvracing.entry.follow_los"), Config.getInstance().followLOS)
+                .setSaveConsumer(value -> Config.getInstance().followLOS = value)
+                .setDefaultValue(Config.getInstance().followLOS)
+                .build());
+
         preferences.add(builder.entryBuilder().startFloatField(
                 new TranslatableText("config.fpvracing.entry.rate"), Config.getInstance().rate)
                 .setDefaultValue(Config.getInstance().rate)

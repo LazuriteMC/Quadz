@@ -67,9 +67,10 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 	@Override
 	public void tick() {
+		prevYaw = yaw;
+		yaw = QuaternionHelper.getYaw(getRigidBody().getPhysicsRotation(new Quaternion()));
+
 		super.tick();
-		this.bodyYaw = QuaternionHelper.getYaw(getRigidBody().getPhysicsRotation(new Quaternion()));
-		this.yaw = bodyYaw;
 	}
 
 	@Override

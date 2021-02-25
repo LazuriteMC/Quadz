@@ -2,11 +2,15 @@ package dev.lazurite.fpvracing.common.tick;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
+import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
+import dev.lazurite.fpvracing.common.util.net.SelectedSlotS2C;
+import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.Box;
 
 import java.util.List;
@@ -26,8 +30,15 @@ public class GogglesTick {
                         QuadcopterEntity entity = quads.get(0);
 
                         if (entity != null) {
-                            Optional<TransmitterContainer> transmitter = FPVRacing.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack());
                             player.setCameraEntity(entity);
+
+                            for (int i = 0; i < player.inventory.main.size(); i++) {
+                                if (player.inventory.main.get(i).getItem().equals(FPVRacing.TRANSMITTER_ITEM)) {
+                                    SelectedSlotS2C.send(player, i);
+                                }
+                            }
+
+                            Optional<TransmitterContainer> transmitter = FPVRacing.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack());
 
                             if (transmitter.isPresent()) {
                                 if (entity.getBindId() == transmitter.get().getBindId()) {

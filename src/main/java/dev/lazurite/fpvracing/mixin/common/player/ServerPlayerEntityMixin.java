@@ -2,7 +2,6 @@ package dev.lazurite.fpvracing.mixin.common.player;
 
 import com.mojang.authlib.GameProfile;
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.util.access.ServerPlayerAccess;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.util.net.SelectedSlotS2C;
@@ -24,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin extends PlayerEntity implements ServerPlayerAccess {
+public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     @Shadow public ServerPlayNetworkHandler networkHandler;
     @Shadow private Entity cameraEntity;
     @Shadow public abstract Entity getCameraEntity();
@@ -41,7 +40,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
      */
     @Inject(at = @At("HEAD"), method = "isInTeleportationState()Z", cancellable = true)
     public void isInTeleportationState(CallbackInfoReturnable<Boolean> info) {
-        if (isInGoggles()) {
+        if (getCameraEntity() instanceof QuadcopterEntity) {
             info.setReturnValue(true);
         }
     }
@@ -76,7 +75,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;shouldDismount()Z")
     )
     public boolean shouldDismount(ServerPlayerEntity player) {
-        if (isInGoggles()) {
+        if (player.getCameraEntity() instanceof QuadcopterEntity) {
             return false;
         } else {
             return player.isSneaking();
@@ -105,35 +104,25 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
         // Don't move plz
     }
 
-    @Override
-    public boolean isInGoggles() {
-        return getCameraEntity() instanceof QuadcopterEntity;
-    }
-
-    @Override
-    public boolean isInGoggles(ServerPlayerEntity player) {
-        return player.getCameraEntity() instanceof QuadcopterEntity;
-    }
-
-    @Override
-    public void setView(Entity entity) {
-        ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
-        ShouldRenderPlayerS2C.send(player, !player.equals(entity));
-        player.setCameraEntity(entity);
-
-        if (entity instanceof QuadcopterEntity) {
-            QuadcopterEntity quadcopter = (QuadcopterEntity) entity;
-
-            for (int i = 0; i < 9; i++) {
-                ItemStack stack = player.inventory.getStack(i);
-
-                if (stack.getItem() instanceof TransmitterItem) {
-                    if (quadcopter.isBound(FPVRacing.TRANSMITTER_CONTAINER.get(stack))) {
-                        player.inventory.selectedSlot = i;
-                        SelectedSlotS2C.send(player, i);
-                    }
-                }
-            }
-        }
-    }
+//    @Override
+//    public void setView(Entity entity) {
+//        ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
+//        ShouldRenderPlayerS2C.send(player, !player.equals(entity));
+//        player.setCameraEntity(entity);
+//
+//        if (entity instanceof QuadcopterEntity) {
+//            QuadcopterEntity quadcopter = (QuadcopterEntity) entity;
+//
+//            for (int i = 0; i < 9; i++) {
+//                ItemStack stack = player.inventory.getStack(i);
+//
+//                if (stack.getItem() instanceof TransmitterItem) {
+//                    if (quadcopter.isBound(FPVRacing.TRANSMITTER_CONTAINER.get(stack))) {
+//                        player.inventory.selectedSlot = i;
+//                        SelectedSlotS2C.send(player, i);
+//                    }
+//                }
+//            }
+//        }
+//    }
 }

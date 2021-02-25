@@ -79,6 +79,9 @@ public final class Config {
     @Setting
     public Mode mode;
 
+    @Setting
+    public boolean followLOS;
+
     private Config() {
         /* Defaults */
         this.controllerId = 0;
@@ -97,6 +100,7 @@ public final class Config {
         this.expo = 0.1f;
         this.maxAngle = 45;
         this.mode = Mode.RATE;
+        this.followLOS = true;
     }
 
     public static Config getInstance() {

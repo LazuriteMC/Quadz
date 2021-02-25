@@ -9,7 +9,6 @@ import dev.lazurite.fpvracing.common.util.type.Controllable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 
 /**
@@ -23,10 +22,8 @@ import net.minecraft.entity.Entity;
  */
 @Environment(EnvType.CLIENT)
 public class TransmitterTick {
-    public static void tick(ClientWorld world) {
-        MinecraftClient client = MinecraftClient.getInstance();
-
-        if (client.player != null && !client.isPaused()) {
+    public static void tick(MinecraftClient client) {
+        if (client.player != null && client.world != null && !client.isPaused()) {
             if (client.player.getMainHandStack().getItem() instanceof TransmitterItem) {
                 TransmitterContainer transmitter = FPVRacing.TRANSMITTER_CONTAINER.get(client.player.getMainHandStack());
 
@@ -38,7 +35,7 @@ public class TransmitterTick {
                     }
                 }
 
-                for (Entity entity : world.getEntities()) {
+                for (Entity entity : client.world.getEntities()) {
                     if (entity instanceof Controllable) {
                         Controllable controllable = (Controllable) entity;
 

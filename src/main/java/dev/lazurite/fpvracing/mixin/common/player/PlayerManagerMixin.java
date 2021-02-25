@@ -1,6 +1,5 @@
 package dev.lazurite.fpvracing.mixin.common.player;
 
-import dev.lazurite.fpvracing.common.util.access.PlayerAccess;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.Packet;
@@ -31,7 +30,7 @@ public class PlayerManagerMixin {
     public void sendToAround(PlayerEntity player, double x, double y, double z, double distance, RegistryKey<World> worldKey, Packet<?> packet, CallbackInfo info) {
         for (ServerPlayerEntity serverPlayer : this.players) {
             if (!serverPlayer.equals(player) && serverPlayer.world.getRegistryKey() == worldKey) {
-                if (((PlayerAccess) (Object) serverPlayer).isInGoggles()) {
+                if (serverPlayer.getCameraEntity() instanceof QuadcopterEntity) {
                     QuadcopterEntity quadcopter = (QuadcopterEntity) serverPlayer.getCameraEntity();
 
                     double d = x - quadcopter.getX();
