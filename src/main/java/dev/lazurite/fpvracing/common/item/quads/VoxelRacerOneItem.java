@@ -43,7 +43,7 @@ public class VoxelRacerOneItem extends Item implements IAnimatable {
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
 				VoxelRacerOneEntity entity = new VoxelRacerOneEntity(FPVRacing.VOXEL_RACER_ONE, world);
 				entity.updatePosition(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
-				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), 45));
+				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), -user.yaw));
 
 				QuadcopterContainer item = FPVRacing.QUADCOPTER_CONTAINER.get(itemStack);
 				CompoundTag tag = new CompoundTag();

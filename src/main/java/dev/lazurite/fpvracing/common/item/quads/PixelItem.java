@@ -42,7 +42,7 @@ public class PixelItem extends Item implements IAnimatable {
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
 				PixelEntity entity = new PixelEntity(FPVRacing.PIXEL, world);
 				entity.updatePosition(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
-				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), user.headYaw - 90));
+				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), -user.yaw));
 
 				QuadcopterContainer item = FPVRacing.QUADCOPTER_CONTAINER.get(itemStack);
 				CompoundTag tag = new CompoundTag();
