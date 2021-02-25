@@ -9,6 +9,7 @@ import dev.lazurite.fpvracing.common.util.type.QuadcopterState;
 import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import dev.lazurite.rayon.impl.util.math.VectorHelper;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -47,6 +48,10 @@ public class GameRendererMixin {
 			Matrix4f newMat = new Matrix4f(QuaternionHelper.bulletToMinecraft(q));
 			newMat.transpose();
 			matrix.peek().getModel().multiply(newMat);
+
+			Camera camera = client.gameRenderer.getCamera();
+			matrix.multiply(QuaternionHelper.bulletToMinecraft(QuaternionHelper.rotateY(new Quaternion(), camera.getYaw()).inverse()));
+			matrix.multiply(QuaternionHelper.bulletToMinecraft(QuaternionHelper.rotateX(new Quaternion(), camera.getPitch()).inverse()));
 
 		/* Rotate the player's yaw and pitch to follow the quadcopter in the world. */
 		} else if (Config.getInstance().followLOS && FPVRacing.TRANSMITTER_CONTAINER.maybeGet(client.player.getMainHandStack()).isPresent()) {

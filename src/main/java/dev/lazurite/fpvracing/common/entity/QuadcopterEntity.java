@@ -67,8 +67,8 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 	@Override
 	public void tick() {
-		prevYaw = yaw;
-		yaw = QuaternionHelper.getYaw(getRigidBody().getPhysicsRotation(new Quaternion()));
+//		prevYaw = yaw;
+//		yaw = QuaternionHelper.getYaw(getRigidBody().getPhysicsRotation(new Quaternion()));
 		super.tick();
 	}
 
@@ -260,6 +260,16 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
 		getDataTracker().startTracking(FIELD_OF_VIEW, 90);
 		getDataTracker().startTracking(POWER, 25);
+	}
+
+	@Override
+	public float getYaw(float tickDelta) {
+		return QuaternionHelper.getYaw(getPhysicsRotation(new Quaternion(), tickDelta));
+	}
+
+	@Override
+	public float getPitch(float tickDelta) {
+		return QuaternionHelper.getPitch(getPhysicsRotation(new Quaternion(), tickDelta));
 	}
 
 	@Override

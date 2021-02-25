@@ -9,7 +9,6 @@
     "common.player.ServerPlayerEntityMixin"
   ],
   "client": [
-    "client.render.MatrixStackMixin",
     "client.MinecraftClientMixin",
     "client.input.MouseMixin",
     "client.render.GameRendererMixin",
