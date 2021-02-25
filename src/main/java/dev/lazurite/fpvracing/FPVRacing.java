@@ -121,7 +121,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 				FabricEntityTypeBuilder.createLiving()
 						.entityFactory(PixelEntity::new)
 						.spawnGroup(SpawnGroup.MISC)
-						.dimensions(EntityDimensions.fixed(0.1F, 0.1F))
+						.dimensions(EntityDimensions.fixed(0.225F, 0.125F))
 						.defaultAttributes(LivingEntity::createLivingAttributes)
 						.build());
 

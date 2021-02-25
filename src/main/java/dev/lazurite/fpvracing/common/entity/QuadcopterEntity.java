@@ -115,7 +115,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		yawThrust.multLocal(Math.abs(getInputFrame().getYaw()));
 
 		/* Add up the net thrust and apply the force */
-		getRigidBody().applyCentralForce(thrust.add(yawThrust).multLocal(-1));
+		getRigidBody().applyCentralForce(thrust/*.add(yawThrust)*/.multLocal(-1));
 	}
 
 	public void rotate(Axis axis, float deg) {

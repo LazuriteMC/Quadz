@@ -20,7 +20,7 @@ import software.bernie.geckolib3.renderer.geo.GeoEntityRenderer;
 public class PixelEntityRenderer extends GeoEntityRenderer<PixelEntity> {
     public PixelEntityRenderer(EntityRenderDispatcher dispatcher) {
         super(dispatcher, new PixelModel<>());
-        this.shadowRadius = 0.2F;
+        this.shadowRadius = 0.05F;
     }
 
     @Override
