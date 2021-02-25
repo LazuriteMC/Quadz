@@ -1,6 +1,5 @@
 package dev.lazurite.fpvracing.common.util;
 
-import dev.lazurite.fpvracing.client.input.frame.InputFrame;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -21,23 +20,6 @@ public class CustomTrackedDataHandlerRegistry {
 
         public Frequency copy(Frequency frequency) {
             return new Frequency(frequency);
-        }
-    };
-
-    public static final TrackedDataHandler<InputFrame> INPUT_FRAME = new TrackedDataHandler<InputFrame>() {
-        public void write(PacketByteBuf buf, InputFrame frame) {
-            buf.writeFloat(frame.getThrottle());
-            buf.writeFloat(frame.getPitch());
-            buf.writeFloat(frame.getYaw());
-            buf.writeFloat(frame.getRoll());
-        }
-
-        public InputFrame read(PacketByteBuf buf) {
-            return new InputFrame(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
-        }
-
-        public InputFrame copy(InputFrame frame) {
-            return new InputFrame(frame);
         }
     };
 
@@ -71,7 +53,7 @@ public class CustomTrackedDataHandlerRegistry {
 
     static {
         TrackedDataHandlerRegistry.register(FREQUENCY);
-        TrackedDataHandlerRegistry.register(INPUT_FRAME);
         TrackedDataHandlerRegistry.register(STATE);
+        TrackedDataHandlerRegistry.register(MODE);
     }
 }

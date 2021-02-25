@@ -34,7 +34,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
@@ -49,6 +48,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<State> STATE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.STATE);
 	private static final TrackedData<Mode> MODE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.MODE);
+	private static final TrackedData<Integer> MAX_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
 	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
@@ -75,7 +75,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 	@Override
 	public void step(MinecraftSpace space) {
-		/* Update user input */
+		/* Update user input on the client */
 		if (getEntityWorld().isClient()) {
 			PlayerEntity player = MinecraftClient.getInstance().player;
 
@@ -84,16 +84,28 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 				if (hand.getItem() instanceof TransmitterItem) {
 					if (isBound(FPVRacing.TRANSMITTER_CONTAINER.get(hand))) {
-						setInputFrame(InputTick.getInstance().getInputFrame(PhysicsThread.STEP_SIZE));
+						setInputFrame(InputTick.getInstance().getInputFrame());
 					}
 				}
 			}
 		}
 
 		/* Rotate the quadcopter based on user input */
-		rotate(Axis.X, getInputFrame().getPitch());
-		rotate(Axis.Y, getInputFrame().getYaw());
-		rotate(Axis.Z, getInputFrame().getRoll());
+		if (getMode().equals(Mode.RATE)) {
+			rotate(Axis.X, getInputFrame().calculatePitch(PhysicsThread.STEP_SIZE));
+			rotate(Axis.Y, getInputFrame().calculateYaw(PhysicsThread.STEP_SIZE));
+			rotate(Axis.Z, getInputFrame().calculateRoll(PhysicsThread.STEP_SIZE));
+		} else if (getMode().equals(Mode.ANGLE)) {
+			float targetPitch = -getInputFrame().getPitch() * getMaxAngle();
+			float targetRoll = -getInputFrame().getRoll() * getMaxAngle();
+
+			float currentPitch = -1.0F * (float)Math.toDegrees(QuaternionHelper.toEulerAngles(getRigidBody().getPhysicsRotation(new Quaternion())).y);
+			float currentRoll = -1.0F * (float)Math.toDegrees(QuaternionHelper.toEulerAngles(getRigidBody().getPhysicsRotation(new Quaternion())).x);
+
+			rotate(Axis.X, currentPitch - targetPitch);
+			rotate(Axis.Y, getInputFrame().calculateYaw(PhysicsThread.STEP_SIZE));
+			rotate(Axis.Z, currentRoll - targetRoll);
+		}
 
 		/* Decrease angular velocity hack */
 		if (getInputFrame().getThrottle() > 0.1f) {
@@ -242,7 +254,8 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		super.initDataTracker();
 		getDataTracker().startTracking(GOD_MODE, false);
 		getDataTracker().startTracking(STATE, State.DISARMED);
-		getDataTracker().startTracking(MODE, Mode.RATE);
+		getDataTracker().startTracking(MODE, Mode.ANGLE);
+		getDataTracker().startTracking(MAX_ANGLE, 45);
 		getDataTracker().startTracking(BIND_ID, -1);
 		getDataTracker().startTracking(FREQUENCY, new Frequency());
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
@@ -318,6 +331,22 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	@Override
 	public int getCameraAngle() {
 		return getDataTracker().get(CAMERA_ANGLE);
+	}
+
+	public void setMode(Mode mode) {
+		getDataTracker().set(MODE, mode);
+	}
+
+	public Mode getMode() {
+		return getDataTracker().get(MODE);
+	}
+
+	public void setMaxAngle(int maxAngle) {
+		getDataTracker().set(MAX_ANGLE, maxAngle);
+	}
+
+	public int getMaxAngle() {
+		return getDataTracker().get(MAX_ANGLE);
 	}
 
 	public void setGodMode(boolean godMode) {

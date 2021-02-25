@@ -19,7 +19,7 @@ public class InputFrameC2S {
 
     public static void accept(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
         int entityId = buf.readInt();
-        InputFrame frame = new InputFrame(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
+        InputFrame frame = new InputFrame(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
 
         server.execute(() -> {
             if (player.getMainHandStack().getItem() instanceof TransmitterItem) {
@@ -42,6 +42,9 @@ public class InputFrameC2S {
         buf.writeFloat(frame.getPitch());
         buf.writeFloat(frame.getYaw());
         buf.writeFloat(frame.getRoll());
+        buf.writeFloat(frame.getRate());
+        buf.writeFloat(frame.getSuperRate());
+        buf.writeFloat(frame.getExpo());
         ClientPlayNetworking.send(PACKET_ID, buf);
     }
 }

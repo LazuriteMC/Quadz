@@ -62,7 +62,14 @@ public final class InputTick {
 
         if (controllerExists()) {
             FloatBuffer buffer = glfwGetJoystickAxes(Config.getInstance().controllerId);
-            frame.set(buffer.get(Config.getInstance().throttle), buffer.get(Config.getInstance().pitch), buffer.get(Config.getInstance().yaw), buffer.get(Config.getInstance().roll));
+            frame.set(
+                    buffer.get(Config.getInstance().throttle),
+                    buffer.get(Config.getInstance().pitch),
+                    buffer.get(Config.getInstance().yaw),
+                    buffer.get(Config.getInstance().roll),
+                    Config.getInstance().rate,
+                    Config.getInstance().superRate,
+                    Config.getInstance().expo);
 
             if (Config.getInstance().invertThrottle) {
                 frame.setThrottle(-frame.getThrottle());
@@ -106,16 +113,12 @@ public final class InputTick {
         }
     }
 
-    public List<String> getJoysticks() {
-        return Lists.newArrayList(joysticks.values());
+    public InputFrame getInputFrame() {
+        return new InputFrame(frame);
     }
 
-    public InputFrame getInputFrame(float delta) {
-        InputFrame out = new InputFrame(frame);
-        out.setPitch((float) BetaflightHelper.calculateRates(out.getPitch(), Config.getInstance().rate, Config.getInstance().expo, Config.getInstance().superRate, delta));
-        out.setYaw((float) BetaflightHelper.calculateRates(out.getYaw(), Config.getInstance().rate, Config.getInstance().expo, Config.getInstance().superRate, delta));
-        out.setRoll((float) BetaflightHelper.calculateRates(out.getRoll(), Config.getInstance().rate, Config.getInstance().expo, Config.getInstance().superRate, delta));
-        return out;
+    public List<String> getJoysticks() {
+        return Lists.newArrayList(joysticks.values());
     }
 
     public static String getJoystickName(int id) {
