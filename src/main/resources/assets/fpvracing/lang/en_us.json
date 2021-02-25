@@ -31,9 +31,12 @@
   "toast.fpvracing.controller.connect" : "Controller Connected!",
   "toast.fpvracing.controller.disconnect" : "Controller Disconnected!",
 
+  "mode.fpvracing.rate" : "Rate",
+  "mode.fpvracing.angle" : "Angle",
+
   "config.fpvracing.title" : "FPV Racing Settings",
   "config.fpvracing.category.controller_axes" : "Controller Axes Setup",
-  "config.fpvracing.category.betaflight" : "Betaflight Setup",
+  "config.fpvracing.category.preferences" : "Stick Preferences",
 
   "config.fpvracing.entry.controller_id" : "Controller ID",
   "config.fpvracing.entry.pitch_axis" : "Pitch",
@@ -47,7 +50,9 @@
   "config.fpvracing.entry.invert_throttle" : "Invert Throttle",
   "config.fpvracing.entry.throttle_in_center" : "Throttle In Center",
 
+  "config.fpvracing.entry.default_mode" : "Default Mode",
   "config.fpvracing.entry.rate" : "Rate",
   "config.fpvracing.entry.expo" : "Expo",
-  "config.fpvracing.entry.super_rate" : "Super Rate"
+  "config.fpvracing.entry.super_rate" : "Super Rate",
+  "config.fpvracing.entry.deadzone" : "Deadzone"
 }

@@ -34,6 +34,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
@@ -47,6 +48,7 @@ import java.util.ArrayList;
 public abstract class QuadcopterEntity extends LivingEntity implements PhysicsElement, QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<State> STATE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.STATE);
+	private static final TrackedData<Mode> MODE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.MODE);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
 	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
@@ -240,6 +242,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		super.initDataTracker();
 		getDataTracker().startTracking(GOD_MODE, false);
 		getDataTracker().startTracking(STATE, State.DISARMED);
+		getDataTracker().startTracking(MODE, Mode.RATE);
 		getDataTracker().startTracking(BIND_ID, -1);
 		getDataTracker().startTracking(FREQUENCY, new Frequency());
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
@@ -337,5 +340,20 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		ARMED,
 		DISARMED,
 		DISABLED
+	}
+
+	public enum Mode {
+		RATE("mode.fpvracing.rate"),
+		ANGLE("mode.fpvracing.angle");
+
+		private final String translation;
+
+		Mode(String translation) {
+			this.translation = translation;
+		}
+
+		public String getTranslation() {
+			return this.translation;
+		}
 	}
 }

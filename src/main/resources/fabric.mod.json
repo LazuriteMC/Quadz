@@ -18,7 +18,7 @@
   "environment": "*",
   "entrypoints": {
     "cardinal-components-item": [ "dev.lazurite.fpvracing.FPVRacing" ],
-    "modmenu": [ "dev.lazurite.fpvracing.client.render.ui.config.ConfigScreen" ],
+    "modmenu": [ "dev.lazurite.fpvracing.client.render.ui.ConfigScreen" ],
     "main": [ "dev.lazurite.fpvracing.FPVRacing" ],
     "client": [
       "dev.lazurite.fpvracing.FPVRacing",

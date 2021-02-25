@@ -1,5 +1,6 @@
 package dev.lazurite.fpvracing.client;
 
+import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.AnnotatedSettings;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.Setting;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.Settings;
@@ -71,7 +72,26 @@ public final class Config {
     @Setting.Constrain.Range(min = 0.0f)
     public float expo;
 
+    @Setting
+    public QuadcopterEntity.Mode defaultMode;
+
     private Config() {
+        /* Defaults */
+        this.controllerId = 0;
+        this.throttle = 0;
+        this.pitch = 2;
+        this.roll = 1;
+        this.yaw = 3;
+        this.deadzone = 0.05f;
+        this.invertThrottle = false;
+        this.invertPitch = false;
+        this.invertRoll = false;
+        this.invertYaw = true;
+        this.throttleInCenter = false;
+        this.rate = 0.7f;
+        this.superRate = 0.9f;
+        this.expo = 0.1f;
+        this.defaultMode = QuadcopterEntity.Mode.RATE;
     }
 
     public static Config getInstance() {

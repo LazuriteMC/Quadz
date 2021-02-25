@@ -1,8 +1,9 @@
-package dev.lazurite.fpvracing.client.render.ui.config;
+package dev.lazurite.fpvracing.client.render.ui;
 
 import com.google.common.collect.Lists;
 import dev.lazurite.fpvracing.client.Config;
 import dev.lazurite.fpvracing.client.input.tick.InputTick;
+import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import io.github.prospector.modmenu.api.ModMenuApi;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
@@ -38,24 +39,42 @@ public class ConfigScreen implements ModMenuApi {
         }
 
         SubCategoryBuilder controllerAxes = builder.entryBuilder().startSubCategory(new TranslatableText("config.fpvracing.category.controller_axes"));
-        SubCategoryBuilder betaflight = builder.entryBuilder().startSubCategory(new TranslatableText("config.fpvracing.category.betaflight"));
+        SubCategoryBuilder preferences = builder.entryBuilder().startSubCategory(new TranslatableText("config.fpvracing.category.preferences"));
 
-        betaflight.add(builder.entryBuilder().startFloatField(
+        preferences.add(builder.entryBuilder().startEnumSelector(
+                new TranslatableText("config.fpvracing.entry.default_mode"), QuadcopterEntity.Mode.class, QuadcopterEntity.Mode.RATE)
+                .setEnumNameProvider(value -> new TranslatableText(((QuadcopterEntity.Mode) value).getTranslation()))
+                .setDefaultValue(Config.getInstance().defaultMode)
+                .build());
+
+        preferences.add(builder.entryBuilder().startFloatField(
                 new TranslatableText("config.fpvracing.entry.rate"), Config.getInstance().rate)
                 .setDefaultValue(Config.getInstance().rate)
                 .setSaveConsumer(value -> Config.getInstance().rate = value)
                 .setMin(0).build());
 
-        betaflight.add(builder.entryBuilder().startFloatField(
+        preferences.add(builder.entryBuilder().startFloatField(
                 new TranslatableText("config.fpvracing.entry.expo"), Config.getInstance().expo)
                 .setDefaultValue(Config.getInstance().expo)
                 .setSaveConsumer(value -> Config.getInstance().expo = value)
                 .setMin(0).build());
 
-        betaflight.add(builder.entryBuilder().startFloatField(
+        preferences.add(builder.entryBuilder().startFloatField(
                 new TranslatableText("config.fpvracing.entry.super_rate"), Config.getInstance().superRate)
                 .setDefaultValue(Config.getInstance().superRate)
                 .setSaveConsumer(value -> Config.getInstance().superRate = value)
+                .setMin(0).build());
+
+        preferences.add(builder.entryBuilder().startFloatField(
+                new TranslatableText("config.fpvracing.entry.super_rate"), Config.getInstance().superRate)
+                .setDefaultValue(Config.getInstance().superRate)
+                .setSaveConsumer(value -> Config.getInstance().superRate = value)
+                .setMin(0).build());
+
+        preferences.add(builder.entryBuilder().startFloatField(
+                new TranslatableText("config.fpvracing.entry.deadzone"), Config.getInstance().deadzone)
+                .setDefaultValue(Config.getInstance().deadzone)
+                .setSaveConsumer(value -> Config.getInstance().deadzone = value)
                 .setMin(0).build());
 
         controllerAxes.add(builder.entryBuilder().startSelector(
@@ -132,7 +151,7 @@ public class ConfigScreen implements ModMenuApi {
                 .setSaveConsumer(value -> Config.getInstance().throttleInCenter = value)
                 .build());
 
-        controllerSetup.addEntry(betaflight.setExpanded(true).build());
+        controllerSetup.addEntry(preferences.setExpanded(true).build());
         controllerSetup.addEntry(controllerAxes.build());
         return controllerSetup;
     }
