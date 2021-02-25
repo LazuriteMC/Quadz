@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import dev.lazurite.fpvracing.api.event.JoystickEvents;
 import dev.lazurite.fpvracing.client.Config;
 import dev.lazurite.fpvracing.client.input.frame.InputFrame;
-import dev.lazurite.fpvracing.common.util.BetaflightHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -69,7 +68,9 @@ public final class InputTick {
                     buffer.get(Config.getInstance().roll),
                     Config.getInstance().rate,
                     Config.getInstance().superRate,
-                    Config.getInstance().expo);
+                    Config.getInstance().expo,
+                    Config.getInstance().maxAngle,
+                    Config.getInstance().mode);
 
             if (Config.getInstance().invertThrottle) {
                 frame.setThrottle(-frame.getThrottle());

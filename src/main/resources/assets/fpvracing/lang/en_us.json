@@ -50,7 +50,8 @@
   "config.fpvracing.entry.invert_throttle" : "Invert Throttle",
   "config.fpvracing.entry.throttle_in_center" : "Throttle In Center",
 
-  "config.fpvracing.entry.default_mode" : "Default Mode",
+  "config.fpvracing.entry.mode" : "Mode",
+  "config.fpvracing.entry.max_angle" : "Max Angle",
   "config.fpvracing.entry.rate" : "Rate",
   "config.fpvracing.entry.expo" : "Expo",
   "config.fpvracing.entry.super_rate" : "Super Rate",

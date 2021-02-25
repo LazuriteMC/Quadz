@@ -3,6 +3,7 @@ package dev.lazurite.fpvracing.common.entity;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
+import dev.lazurite.fpvracing.client.input.Mode;
 import dev.lazurite.fpvracing.client.input.tick.InputTick;
 import dev.lazurite.fpvracing.common.util.access.Matrix4fAccess;
 import dev.lazurite.fpvracing.client.input.frame.InputFrame;
@@ -47,8 +48,6 @@ import java.util.ArrayList;
 public abstract class QuadcopterEntity extends LivingEntity implements PhysicsElement, QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<State> STATE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.STATE);
-	private static final TrackedData<Mode> MODE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.MODE);
-	private static final TrackedData<Integer> MAX_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
 	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
@@ -91,45 +90,47 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		}
 
 		/* Rotate the quadcopter based on user input */
-		if (getMode().equals(Mode.RATE)) {
-			rotate(Axis.X, getInputFrame().calculatePitch(PhysicsThread.STEP_SIZE));
-			rotate(Axis.Y, getInputFrame().calculateYaw(PhysicsThread.STEP_SIZE));
-			rotate(Axis.Z, getInputFrame().calculateRoll(PhysicsThread.STEP_SIZE));
-		} else if (getMode().equals(Mode.ANGLE)) {
-			float targetPitch = -getInputFrame().getPitch() * getMaxAngle();
-			float targetRoll = -getInputFrame().getRoll() * getMaxAngle();
+		if (!getInputFrame().isEmpty()) {
+			if (Mode.RATE.equals(getInputFrame().getMode())) {
+				rotate(Axis.X, getInputFrame().calculatePitch(PhysicsThread.STEP_SIZE));
+				rotate(Axis.Y, getInputFrame().calculateYaw(PhysicsThread.STEP_SIZE));
+				rotate(Axis.Z, getInputFrame().calculateRoll(PhysicsThread.STEP_SIZE));
+			} else if (Mode.ANGLE.equals(getInputFrame().getMode())) {
+				float targetPitch = -getInputFrame().getPitch() * getInputFrame().getMaxAngle();
+				float targetRoll = -getInputFrame().getRoll() * getInputFrame().getMaxAngle();
 
-			float currentPitch = -1.0F * (float)Math.toDegrees(QuaternionHelper.toEulerAngles(getRigidBody().getPhysicsRotation(new Quaternion())).y);
-			float currentRoll = -1.0F * (float)Math.toDegrees(QuaternionHelper.toEulerAngles(getRigidBody().getPhysicsRotation(new Quaternion())).x);
+				float currentPitch = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(getRigidBody().getPhysicsRotation(new Quaternion())).y);
+				float currentRoll = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(getRigidBody().getPhysicsRotation(new Quaternion())).x);
 
-			rotate(Axis.X, currentPitch - targetPitch);
-			rotate(Axis.Y, getInputFrame().calculateYaw(PhysicsThread.STEP_SIZE));
-			rotate(Axis.Z, currentRoll - targetRoll);
+				rotate(Axis.X, currentPitch - targetPitch);
+				rotate(Axis.Y, getInputFrame().calculateYaw(PhysicsThread.STEP_SIZE));
+				rotate(Axis.Z, currentRoll - targetRoll);
+			}
+
+			/* Decrease angular velocity hack */
+			if (getInputFrame().getThrottle() > 0.1f) {
+				getRigidBody().setAngularVelocity(getRigidBody().getAngularVelocity(new Vector3f()).multLocal(0.5f * getInputFrame().getThrottle()));
+			}
+
+			/* Get the thrust direction vector */
+			Matrix4f mat = new Matrix4f();
+			Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.bulletToMinecraft(
+					QuaternionHelper.rotateX(getRigidBody().getPhysicsRotation(new Quaternion()), 90)));
+			Vector3f direction = Matrix4fAccess.from(mat).matrixToVector();
+
+			/* Calculate basic thrust */
+			Vector3f thrust = new Vector3f();
+			thrust.set(direction);
+			thrust.multLocal((float) (getThrustForce() * (Math.pow(getInputFrame().getThrottle(), getThrustCurve()))));
+
+			/* Calculate thrust from yaw spin */
+			Vector3f yawThrust = new Vector3f();
+			yawThrust.set(direction);
+			yawThrust.multLocal(Math.abs(getInputFrame().getYaw()));
+
+			/* Add up the net thrust and apply the force */
+			getRigidBody().applyCentralForce(thrust/*.add(yawThrust)*/.multLocal(-1));
 		}
-
-		/* Decrease angular velocity hack */
-		if (getInputFrame().getThrottle() > 0.1f) {
-			getRigidBody().setAngularVelocity(getRigidBody().getAngularVelocity(new Vector3f()).multLocal(0.5f * getInputFrame().getThrottle()));
-		}
-
-		/* Get the thrust direction vector */
-		Matrix4f mat = new Matrix4f();
-		Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.bulletToMinecraft(
-				QuaternionHelper.rotateX(getRigidBody().getPhysicsRotation(new Quaternion()), 90)));
-		Vector3f direction = Matrix4fAccess.from(mat).matrixToVector();
-
-		/* Calculate basic thrust */
-		Vector3f thrust = new Vector3f();
-		thrust.set(direction);
-		thrust.multLocal((float) (getThrustForce() * (Math.pow(getInputFrame().getThrottle(), getThrustCurve()))));
-
-		/* Calculate thrust from yaw spin */
-		Vector3f yawThrust = new Vector3f();
-		yawThrust.set(direction);
-		yawThrust.multLocal(Math.abs(getInputFrame().getYaw()));
-
-		/* Add up the net thrust and apply the force */
-		getRigidBody().applyCentralForce(thrust/*.add(yawThrust)*/.multLocal(-1));
 	}
 
 	public void rotate(Axis axis, float deg) {
@@ -254,8 +255,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		super.initDataTracker();
 		getDataTracker().startTracking(GOD_MODE, false);
 		getDataTracker().startTracking(STATE, State.DISARMED);
-		getDataTracker().startTracking(MODE, Mode.ANGLE);
-		getDataTracker().startTracking(MAX_ANGLE, 45);
 		getDataTracker().startTracking(BIND_ID, -1);
 		getDataTracker().startTracking(FREQUENCY, new Frequency());
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
@@ -333,22 +332,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		return getDataTracker().get(CAMERA_ANGLE);
 	}
 
-	public void setMode(Mode mode) {
-		getDataTracker().set(MODE, mode);
-	}
-
-	public Mode getMode() {
-		return getDataTracker().get(MODE);
-	}
-
-	public void setMaxAngle(int maxAngle) {
-		getDataTracker().set(MAX_ANGLE, maxAngle);
-	}
-
-	public int getMaxAngle() {
-		return getDataTracker().get(MAX_ANGLE);
-	}
-
 	public void setGodMode(boolean godMode) {
 		getDataTracker().set(GOD_MODE, godMode);
 	}
@@ -369,20 +352,5 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		ARMED,
 		DISARMED,
 		DISABLED
-	}
-
-	public enum Mode {
-		RATE("mode.fpvracing.rate"),
-		ANGLE("mode.fpvracing.angle");
-
-		private final String translation;
-
-		Mode(String translation) {
-			this.translation = translation;
-		}
-
-		public String getTranslation() {
-			return this.translation;
-		}
 	}
 }

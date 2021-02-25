@@ -1,8 +1,8 @@
 package dev.lazurite.fpvracing.client.input.frame;
 
+import dev.lazurite.fpvracing.client.input.Mode;
 import dev.lazurite.fpvracing.client.input.tick.InputTick;
 import dev.lazurite.fpvracing.common.util.BetaflightHelper;
-import net.minecraft.nbt.CompoundTag;
 
 /**
  * This represents one "frame" of time when
@@ -20,22 +20,25 @@ public class InputFrame {
     private float superRate;
     private float expo;
 
+    private float maxAngle;
+    private Mode mode;
+
     public InputFrame() {
     }
 
     public InputFrame(InputFrame frame) {
-        set(frame.throttle, frame.pitch, frame.yaw, frame.roll, frame.rate, frame.superRate, frame.expo);
+        set(frame.throttle, frame.pitch, frame.yaw, frame.roll, frame.rate, frame.superRate, frame.expo, frame.maxAngle, frame.mode);
     }
 
-    public InputFrame(float throttle, float pitch, float yaw, float roll, float rate, float superRate, float expo) {
-        set(throttle, pitch, yaw, roll, rate, superRate, expo);
+    public InputFrame(float throttle, float pitch, float yaw, float roll, float rate, float superRate, float expo, float maxAngle, Mode mode) {
+        set(throttle, pitch, yaw, roll, rate, superRate, expo, maxAngle, mode);
     }
 
     public void set(InputFrame frame) {
-        set(frame.throttle, frame.pitch, frame.yaw, frame.roll, frame.rate, frame.superRate, frame.expo);
+        set(frame.throttle, frame.pitch, frame.yaw, frame.roll, frame.rate, frame.superRate, frame.expo, frame.maxAngle, frame.mode);
     }
 
-    public void set(float throttle, float pitch, float yaw, float roll, float rate, float superRate, float expo) {
+    public void set(float throttle, float pitch, float yaw, float roll, float rate, float superRate, float expo, float maxAngle, Mode mode) {
         this.throttle = throttle;
         this.pitch = pitch;
         this.yaw = yaw;
@@ -43,6 +46,14 @@ public class InputFrame {
         this.rate = rate;
         this.superRate = superRate;
         this.expo = expo;
+        this.maxAngle = maxAngle;
+        this.mode = mode;
+    }
+
+    public boolean isEmpty() {
+        return this.throttle == 0 && this.pitch == 0 && this.yaw == 0 && this.roll == 0 &&
+                this.rate == 0 && this.superRate == 0 && this.expo == 0 &&
+                this.maxAngle == 0 && this.mode == null;
     }
 
     public void setThrottle(float throttle) {
@@ -59,18 +70,6 @@ public class InputFrame {
 
     public void setRoll(float roll) {
         this.roll = roll;
-    }
-
-    public void setRate(float rate) {
-        this.rate = rate;
-    }
-
-    public void setSuperRate(float superRate) {
-        this.superRate = superRate;
-    }
-
-    public void setExpo(float expo) {
-        this.expo = expo;
     }
 
     public float getThrottle() {
@@ -101,6 +100,14 @@ public class InputFrame {
         return this.expo;
     }
 
+    public float getMaxAngle() {
+        return this.maxAngle;
+    }
+
+    public Mode getMode() {
+        return this.mode;
+    }
+
     public float calculatePitch(float delta) {
         return (float) BetaflightHelper.calculateRates(pitch, rate, expo, superRate, delta);
     }
@@ -111,30 +118,6 @@ public class InputFrame {
 
     public float calculateRoll(float delta) {
         return (float) BetaflightHelper.calculateRates(roll, rate, expo, superRate, delta);
-    }
-
-    public void toTag(CompoundTag tag) {
-        CompoundTag sub = new CompoundTag();
-        sub.putFloat("t", throttle);
-        sub.putFloat("x", pitch);
-        sub.putFloat("y", yaw);
-        sub.putFloat("z", roll);
-        sub.putFloat("rate", rate);
-        sub.putFloat("super_rate", superRate);
-        sub.putFloat("expo", expo);
-        tag.put("frame", sub);
-    }
-
-    public static InputFrame fromTag(CompoundTag tag) {
-        CompoundTag sub = tag.getCompound("frame");
-        return new InputFrame(
-                sub.getFloat("t"),
-                sub.getFloat("x"),
-                sub.getFloat("y"),
-                sub.getFloat("z"),
-                sub.getFloat("rate"),
-                sub.getFloat("super_rate"),
-                sub.getFloat("expo"));
     }
 
     @Override

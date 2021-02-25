@@ -2,8 +2,8 @@ package dev.lazurite.fpvracing.client.render.ui;
 
 import com.google.common.collect.Lists;
 import dev.lazurite.fpvracing.client.Config;
+import dev.lazurite.fpvracing.client.input.Mode;
 import dev.lazurite.fpvracing.client.input.tick.InputTick;
-import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import io.github.prospector.modmenu.api.ModMenuApi;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
@@ -42,9 +42,16 @@ public class ConfigScreen implements ModMenuApi {
         SubCategoryBuilder preferences = builder.entryBuilder().startSubCategory(new TranslatableText("config.fpvracing.category.preferences"));
 
         preferences.add(builder.entryBuilder().startEnumSelector(
-                new TranslatableText("config.fpvracing.entry.default_mode"), QuadcopterEntity.Mode.class, QuadcopterEntity.Mode.RATE)
-                .setEnumNameProvider(value -> new TranslatableText(((QuadcopterEntity.Mode) value).getTranslation()))
-                .setDefaultValue(Config.getInstance().defaultMode)
+                new TranslatableText("config.fpvracing.entry.mode"), Mode.class, Config.getInstance().mode)
+                .setEnumNameProvider(value -> new TranslatableText(((Mode) value).getTranslation()))
+                .setSaveConsumer(value -> Config.getInstance().mode = value)
+                .setDefaultValue(Config.getInstance().mode)
+                .build());
+
+        preferences.add(builder.entryBuilder().startIntSlider(
+                new TranslatableText("config.fpvracing.entry.max_angle"), Config.getInstance().maxAngle, 0, 60)
+                .setSaveConsumer(value -> Config.getInstance().maxAngle = value)
+                .setDefaultValue(45)
                 .build());
 
         preferences.add(builder.entryBuilder().startFloatField(

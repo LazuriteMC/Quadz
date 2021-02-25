@@ -37,23 +37,8 @@ public class CustomTrackedDataHandlerRegistry {
         }
     };
 
-    public static final TrackedDataHandler<QuadcopterEntity.Mode> MODE = new TrackedDataHandler<QuadcopterEntity.Mode>() {
-        public void write(PacketByteBuf buf, QuadcopterEntity.Mode mode) {
-            buf.writeEnumConstant(mode);
-        }
-
-        public QuadcopterEntity.Mode read(PacketByteBuf buf) {
-            return buf.readEnumConstant(QuadcopterEntity.Mode.class);
-        }
-
-        public QuadcopterEntity.Mode copy(QuadcopterEntity.Mode mode) {
-            return mode;
-        }
-    };
-
     static {
         TrackedDataHandlerRegistry.register(FREQUENCY);
         TrackedDataHandlerRegistry.register(STATE);
-        TrackedDataHandlerRegistry.register(MODE);
     }
 }
