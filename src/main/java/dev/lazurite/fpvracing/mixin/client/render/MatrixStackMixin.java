@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.mixin.client;
+package dev.lazurite.fpvracing.mixin.client.render;
 
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.client.MinecraftClient;
@@ -25,20 +25,20 @@ public abstract class MatrixStackMixin {
 
     @Inject(at = @At("HEAD"), method = "multiply", cancellable = true)
     public void multiply(Quaternion quaternion, CallbackInfo info) {
-        Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
-        Quaternion yaw = Vector3f.POSITIVE_Y.getDegreesQuaternion(camera.getYaw() + 180.0F);
-        Quaternion pitch = Vector3f.POSITIVE_X.getDegreesQuaternion(camera.getPitch());
-
-        if (camera.getFocusedEntity() instanceof QuadcopterEntity  && (quaternion.equals(yaw) || quaternion.equals(pitch))) {
-            MatrixStack.Entry entry = stack.getLast();
-
-            entry.getModel().multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90));
-            entry.getNormal().multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90));
-
-            entry.getModel().multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(0));
-            entry.getNormal().multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(0));
-
-            info.cancel();
-        }
+//        Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
+//        Quaternion yaw = Vector3f.POSITIVE_Y.getDegreesQuaternion(camera.getYaw() + 180.0F);
+//        Quaternion pitch = Vector3f.POSITIVE_X.getDegreesQuaternion(camera.getPitch());
+//
+//        if (camera.getFocusedEntity() instanceof QuadcopterEntity  && (quaternion.equals(yaw) || quaternion.equals(pitch))) {
+//            MatrixStack.Entry entry = stack.getLast();
+//
+//            entry.getModel().multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90));
+//            entry.getNormal().multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90));
+//
+//            entry.getModel().multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(0));
+//            entry.getNormal().multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(0));
+//
+//            info.cancel();
+//        }
     }
 }
