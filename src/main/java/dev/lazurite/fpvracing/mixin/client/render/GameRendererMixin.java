@@ -60,7 +60,7 @@ public class GameRendererMixin {
 					FPVRacing.TRANSMITTER_CONTAINER.get(client.player.getMainHandStack()).getBindId(),
 					100);
 
-			if (quad != null) {
+			if (quad != null && client.player.canSee(quad)) {
 				/* Get the difference in position between the camera and the quad */
 				Vec3d delta = client.gameRenderer.getCamera().getPos().subtract(VectorHelper.vector3fToVec3d(quad.getPhysicsLocation(new Vector3f(), tickDelta)));
 
