@@ -17,7 +17,6 @@ import dev.lazurite.fpvracing.common.item.container.QuadcopterContainer;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import dev.lazurite.fpvracing.common.item.quads.VoyagerItem;
 import dev.lazurite.fpvracing.common.util.net.SelectedSlotS2C;
-import dev.lazurite.fpvracing.common.util.net.ShouldRenderPlayerS2C;
 import dev.lazurite.fpvracing.common.item.ChannelWandItem;
 import dev.lazurite.fpvracing.common.item.GogglesItem;
 import dev.lazurite.fpvracing.common.item.quads.VoxelRacerOneItem;
@@ -143,7 +142,6 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 
 		/* Register Packets */
 		ClientPlayNetworking.registerGlobalReceiver(SelectedSlotS2C.PACKET_ID, SelectedSlotS2C::accept);
-		ClientPlayNetworking.registerGlobalReceiver(ShouldRenderPlayerS2C.PACKET_ID, ShouldRenderPlayerS2C::accept);
 
 		/* Register Toast Events */
 		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.connect"), name));

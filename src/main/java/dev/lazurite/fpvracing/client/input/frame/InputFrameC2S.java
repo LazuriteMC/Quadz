@@ -2,7 +2,6 @@ package dev.lazurite.fpvracing.client.input.frame;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.client.input.Mode;
-import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import dev.lazurite.fpvracing.common.util.type.Controllable;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -32,7 +31,7 @@ public class InputFrameC2S {
                 buf.readEnumConstant(Mode.class));
 
         server.execute(() -> {
-            if (player.getMainHandStack().getItem() instanceof TransmitterItem) {
+            if (FPVRacing.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack()).isPresent()) {
                 TransmitterContainer transmitter = FPVRacing.TRANSMITTER_CONTAINER.get(player.getMainHandStack());
                 Entity entity = player.getEntityWorld().getEntityById(entityId);
 

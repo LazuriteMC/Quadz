@@ -31,17 +31,25 @@ public class TransmitterTick {
                     Controllable controllable = (Controllable) client.getCameraEntity();
 
                     if (controllable.getBindId() == transmitter.getBindId()) {
-                        InputFrameC2S.send(client.getCameraEntity(), controllable.getInputFrame()); // send controller input to server
+                        /* Get a new InputFrame from InputTick. */
+                        controllable.setInputFrame(InputTick.getInstance().getInputFrame());
+
+                        /* Send that InputFrame to the server. */
+                        InputFrameC2S.send(client.getCameraEntity(), controllable.getInputFrame());
                     }
-                }
+                } else {
+                    for (Entity entity : client.world.getEntities()) {
+                        if (entity instanceof Controllable) {
+                            Controllable controllable = (Controllable) entity;
 
-                for (Entity entity : client.world.getEntities()) {
-                    if (entity instanceof Controllable) {
-                        Controllable controllable = (Controllable) entity;
+                            if (controllable.getBindId() == transmitter.getBindId()) {
+                                /* Get a new InputFrame from InputTick. */
+                                controllable.setInputFrame(InputTick.getInstance().getInputFrame());
 
-                        if (controllable.getBindId() == transmitter.getBindId()) {
-                            InputFrameC2S.send(entity, controllable.getInputFrame()); // send controller input to the server
-                            break;
+                                /* Send that InputFrame to the server. */
+                                InputFrameC2S.send(client.getCameraEntity(), controllable.getInputFrame());
+                                break;
+                            }
                         }
                     }
                 }

@@ -1,14 +1,9 @@
 package dev.lazurite.fpvracing.mixin.common.player;
 
 import com.mojang.authlib.GameProfile;
-import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
-import dev.lazurite.fpvracing.common.item.TransmitterItem;
-import dev.lazurite.fpvracing.common.util.net.SelectedSlotS2C;
-import dev.lazurite.fpvracing.common.util.net.ShouldRenderPlayerS2C;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.SetCameraEntityS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -53,15 +48,13 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
      */
     @Inject(at = @At("HEAD"), method = "setCameraEntity", cancellable = true)
     public void setCameraEntity(Entity entity, CallbackInfo info) {
-        Entity prevEntity = cameraEntity;
-        Entity nextEntity = (Entity) (entity == null ? this : entity);
-
-        if (prevEntity instanceof QuadcopterEntity || nextEntity instanceof QuadcopterEntity) {
-            networkHandler.sendPacket(new SetCameraEntityS2CPacket(nextEntity));
-            cameraEntity = nextEntity;
-            // requestTeleport is gone now
-            info.cancel();
+        Entity entity2 = this.getCameraEntity();
+        this.cameraEntity = (Entity)(entity == null ? this : entity);
+        if (entity2 != this.cameraEntity) {
+            this.networkHandler.sendPacket(new SetCameraEntityS2CPacket(this.cameraEntity));
         }
+
+        info.cancel();
     }
 
     /**
@@ -85,12 +78,6 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     /**
      * At this specific method call within {@link ServerPlayerEntity#tick()}, do not execute
      * the intended code (i.e. redirect to nothing).
-     * @param entity the entity on which this method was originally called
-     * @param x
-     * @param y
-     * @param z
-     * @param yaw
-     * @param pitch
      */
     @Redirect(
             method = "tick",

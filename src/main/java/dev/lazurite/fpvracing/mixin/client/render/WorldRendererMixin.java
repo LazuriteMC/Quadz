@@ -1,6 +1,6 @@
 package dev.lazurite.fpvracing.mixin.client.render;
 
-import dev.lazurite.fpvracing.client.Config;
+import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.WorldRenderer;
@@ -29,10 +29,10 @@ public class WorldRendererMixin {
             )
     )
     public Entity getFocusedEntity(Camera camera) {
-        if (Config.getInstance().shouldRenderPlayer) {
-            return camera.getFocusedEntity();
+        if (camera.getFocusedEntity() instanceof QuadcopterEntity) {
+            return client.player;
         }
 
-        return client.player;
+        return camera.getFocusedEntity();
     }
 }

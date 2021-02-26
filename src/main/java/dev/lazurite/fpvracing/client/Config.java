@@ -19,8 +19,6 @@ public final class Config {
     private static final Config instance = new Config();
     private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("fpv.json");
 
-    public boolean shouldRenderPlayer = false;
-
     @Setting
     @Setting.Constrain.Range(min = 0)
     public int controllerId;

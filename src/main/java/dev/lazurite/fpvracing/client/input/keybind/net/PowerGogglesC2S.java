@@ -1,7 +1,6 @@
 package dev.lazurite.fpvracing.client.input.keybind.net;
 
 import dev.lazurite.fpvracing.FPVRacing;
-import dev.lazurite.fpvracing.common.item.GogglesItem;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -10,7 +9,6 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 
 public class PowerGogglesC2S {
@@ -22,14 +20,13 @@ public class PowerGogglesC2S {
         boolean enable = buf.readBoolean();
 
         server.execute(() -> {
-            // TODO play sound
-            if (hand.getItem() instanceof GogglesItem) {
+            if (FPVRacing.GOGGLES_CONTAINER.maybeGet(hand).isPresent()) {
                 FPVRacing.GOGGLES_CONTAINER.get(hand).setEnabled(enable);
-            } else if (hat.getItem() instanceof GogglesItem) {
+            } else if (FPVRacing.GOGGLES_CONTAINER.maybeGet(hat).isPresent()) {
                 FPVRacing.GOGGLES_CONTAINER.get(hat).setEnabled(enable);
             }
 
-            player.playSound(enable ? SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, 1.0f, 1.0f);
+//            player.playSound(enable ? SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, 1.0f, 1.0f);
         });
     }
 

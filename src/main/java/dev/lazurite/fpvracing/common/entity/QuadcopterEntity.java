@@ -4,7 +4,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import dev.lazurite.fpvracing.client.input.Mode;
-import dev.lazurite.fpvracing.client.input.tick.InputTick;
 import dev.lazurite.fpvracing.common.util.access.Matrix4fAccess;
 import dev.lazurite.fpvracing.client.input.frame.InputFrame;
 import dev.lazurite.fpvracing.FPVRacing;
@@ -22,7 +21,6 @@ import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -67,21 +65,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 	@Override
 	public void step(MinecraftSpace space) {
-		/* Update user input on the client */
-		if (getEntityWorld().isClient()) {
-			PlayerEntity player = MinecraftClient.getInstance().player;
-
-			if (player != null) {
-				ItemStack hand = player.getMainHandStack();
-
-				if (hand.getItem() instanceof TransmitterItem) {
-					if (isBound(FPVRacing.TRANSMITTER_CONTAINER.get(hand))) {
-						setInputFrame(InputTick.getInstance().getInputFrame());
-					}
-				}
-			}
-		}
-
 		/* Rotate the quadcopter based on user input */
 		if (!getInputFrame().isEmpty()) {
 			if (Mode.RATE.equals(getInputFrame().getMode())) {
@@ -146,14 +129,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 				getRigidBody().setPhysicsTransform(trans);
 				break;
 		}
-	}
-
-	public boolean isBound(Bindable bindable) {
-		if (bindable != null) {
-			return bindable.getBindId() == getBindId();
-		}
-
-		return false;
 	}
 
 	@Override
