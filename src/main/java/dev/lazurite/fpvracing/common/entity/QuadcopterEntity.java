@@ -66,13 +66,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	public abstract void dropSpawner();
 
 	@Override
-	public void tick() {
-//		prevYaw = yaw;
-//		yaw = QuaternionHelper.getYaw(getRigidBody().getPhysicsRotation(new Quaternion()));
-		super.tick();
-	}
-
-	@Override
 	public void step(MinecraftSpace space) {
 		/* Update user input on the client */
 		if (getEntityWorld().isClient()) {

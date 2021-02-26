@@ -1,6 +1,5 @@
 package dev.lazurite.fpvracing.client.render.entity;
 
-import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Quaternion;
 import dev.lazurite.fpvracing.client.render.model.VoyagerModel;
 import dev.lazurite.fpvracing.common.entity.quads.VoyagerEntity;
@@ -25,16 +24,16 @@ public class VoyagerEntityRenderer extends GeoEntityRenderer<VoyagerEntity> {
 
     @Override
     public void render(VoyagerEntity voyager, float entityYaw, float tickDelta, MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn) {
-        stack.push();
-        stack.translate(0, -voyager.getRigidBody().boundingBox(new BoundingBox()).getYExtent(), 0);
-        stack.multiply(QuaternionHelper.bulletToMinecraft(voyager.getPhysicsRotation(new Quaternion(), tickDelta)));
-
         float temp = voyager.bodyYaw;
         voyager.bodyYaw = 0;
         voyager.prevBodyYaw = 0;
 
+        stack.push();
+        stack.multiply(QuaternionHelper.bulletToMinecraft(voyager.getPhysicsRotation(new Quaternion(), tickDelta)));
+        stack.translate(0, -voyager.getBoundingBox().getYLength() / 2, 0);
         super.render(voyager, entityYaw, tickDelta, stack, bufferIn, packedLightIn);
-        voyager.bodyYaw = temp;
         stack.pop();
+
+        voyager.bodyYaw = temp;
     }
 }
