@@ -23,7 +23,6 @@ public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable
 
     public VoxelRacerOneEntity(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
-        this.setCameraAngle(50);
         this.getRigidBody().setMass(0.5f);
         this.getRigidBody().setDragCoefficient(0.04f);
     }

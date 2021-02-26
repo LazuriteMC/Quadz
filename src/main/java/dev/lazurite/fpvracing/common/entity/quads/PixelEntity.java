@@ -23,7 +23,6 @@ public class PixelEntity extends QuadcopterEntity implements IAnimatable {
 
     public PixelEntity(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
-        this.setCameraAngle(5);
         this.getRigidBody().setMass(0.02f);
         this.getRigidBody().setDragCoefficient(0.05f);
     }

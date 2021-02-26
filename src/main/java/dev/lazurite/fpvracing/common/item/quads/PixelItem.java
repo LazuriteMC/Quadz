@@ -45,6 +45,8 @@ public class PixelItem extends Item implements IAnimatable {
 				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), -user.yaw));
 
 				QuadcopterContainer item = FPVRacing.QUADCOPTER_CONTAINER.get(itemStack);
+				item.setCameraAngle(5);
+
 				CompoundTag tag = new CompoundTag();
 				item.writeToNbt(tag);
 				entity.readCustomDataFromTag(tag);

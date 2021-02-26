@@ -13,7 +13,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -46,6 +45,8 @@ public class VoxelRacerOneItem extends Item implements IAnimatable {
 				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), -user.yaw));
 
 				QuadcopterContainer item = FPVRacing.QUADCOPTER_CONTAINER.get(itemStack);
+				item.setCameraAngle(50);
+
 				CompoundTag tag = new CompoundTag();
 				item.writeToNbt(tag);
 				entity.readCustomDataFromTag(tag);
