@@ -31,7 +31,7 @@ public class VoyagerEntityRenderer extends GeoEntityRenderer<VoyagerEntity> {
         stack.push();
         stack.multiply(QuaternionHelper.bulletToMinecraft(voyager.getPhysicsRotation(new Quaternion(), tickDelta)));
         stack.translate(0, -voyager.getBoundingBox().getYLength() / 2, 0);
-        super.render(voyager, entityYaw, tickDelta, stack, bufferIn, packedLightIn);
+        super.render(voyager, 0, tickDelta, stack, bufferIn, packedLightIn);
         stack.pop();
 
         voyager.bodyYaw = temp;

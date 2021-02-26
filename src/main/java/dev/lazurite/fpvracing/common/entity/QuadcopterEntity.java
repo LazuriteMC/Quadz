@@ -45,8 +45,8 @@ import java.util.ArrayList;
 
 public abstract class QuadcopterEntity extends LivingEntity implements PhysicsElement, QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-	private static final TrackedData<State> STATE = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.STATE);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
+	private static final TrackedData<Boolean> ACTIVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
 	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
 	private static final TrackedData<Integer> CAMERA_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -60,7 +60,9 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	}
 
 	public abstract float getThrustForce();
+
 	public abstract float getThrustCurve();
+
 	public abstract void dropSpawner();
 
 	@Override
@@ -112,7 +114,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	public void rotate(Axis axis, float deg) {
 		Transform trans;
 
-		switch(axis) {
+		switch (axis) {
 			case X:
 				trans = getRigidBody().getTransform(new Transform());
 				trans.getRotation().set(QuaternionHelper.rotateX(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
@@ -222,8 +224,8 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	protected void initDataTracker() {
 		super.initDataTracker();
 		getDataTracker().startTracking(GOD_MODE, false);
-		getDataTracker().startTracking(STATE, State.DISARMED);
 		getDataTracker().startTracking(BIND_ID, -1);
+		getDataTracker().startTracking(ACTIVE, false);
 		getDataTracker().startTracking(FREQUENCY, new Frequency());
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
 		getDataTracker().startTracking(FIELD_OF_VIEW, 90);
@@ -318,17 +320,11 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		return getDataTracker().get(GOD_MODE);
 	}
 
-	public void setState(State state) {
-		getDataTracker().set(STATE, state);
+	public void setActive(boolean active) {
+		getDataTracker().set(ACTIVE, active);
 	}
 
-	public State getState() {
-		return getDataTracker().get(STATE);
-	}
-
-	public enum State {
-		ARMED,
-		DISARMED,
-		DISABLED
+	public boolean isActive() {
+		return getDataTracker().get(ACTIVE);
 	}
 }

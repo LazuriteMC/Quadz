@@ -59,14 +59,16 @@ public class PixelEntity extends QuadcopterEntity implements IAnimatable {
         super.kill();
     }
 
+    /* Called each frame */
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.pixel.armed", true));
-        return PlayState.CONTINUE;
+        return isActive() ? PlayState.CONTINUE : PlayState.STOP;
     }
 
     @Override
     public void registerControllers(AnimationData animationData) {
-        animationData.addAnimationController(new AnimationController<>(this, "pixel_entity_controller", 0, this::predicate));
+        AnimationController<PixelEntity> controller = new AnimationController<>(this, "pixel_entity_controller", 0, this::predicate);
+        controller.setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.pixel.armed", true));
+        animationData.addAnimationController(controller);
     }
 
     @Override

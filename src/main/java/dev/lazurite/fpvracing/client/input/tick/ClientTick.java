@@ -21,7 +21,7 @@ import net.minecraft.entity.Entity;
  * @see InputFrameC2S
  */
 @Environment(EnvType.CLIENT)
-public class TransmitterTick {
+public class ClientTick {
     public static void tick(MinecraftClient client) {
         if (client.player != null && client.world != null && !client.isPaused()) {
             if (client.player.getMainHandStack().getItem() instanceof TransmitterItem) {

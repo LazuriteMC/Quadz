@@ -18,7 +18,4 @@ public interface QuadcopterState extends Controllable, VideoCapable.Transmitter 
 
     void setGodMode(boolean godMode);
     boolean isInGodMode();
-
-    void setState(QuadcopterEntity.State state);
-    QuadcopterEntity.State getState();
 }

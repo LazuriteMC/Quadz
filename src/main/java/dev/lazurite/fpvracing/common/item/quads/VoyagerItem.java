@@ -16,10 +16,6 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
@@ -61,15 +57,8 @@ public class VoyagerItem extends Item implements IAnimatable {
 		return TypedActionResult.success(itemStack);
 	}
 
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voyager.armed", true));
-		return PlayState.CONTINUE;
-	}
-
 	@Override
-	public void registerControllers(AnimationData animationData) {
-		animationData.addAnimationController(new AnimationController<>(this, "voyager_item_controller", 0, this::predicate));
-	}
+	public void registerControllers(AnimationData animationData) { }
 
 	@Override
 	public AnimationFactory getFactory() {

@@ -31,7 +31,6 @@ dependencies {
 
 	// Gecko Lib
 	modImplementation "software.bernie.geckolib:${project.geckolib_version}:dev"
-	modImplementation "vazkii.patchouli:Patchouli:${project.patchouli_version}"
 
 	// Rayon
 	modImplementation "com.github.LazuriteMC:Rayon:${project.rayon_version}"

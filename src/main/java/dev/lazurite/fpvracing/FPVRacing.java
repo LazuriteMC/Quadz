@@ -5,11 +5,11 @@ import dev.lazurite.fpvracing.client.Config;
 import dev.lazurite.fpvracing.client.input.keybind.key.*;
 import dev.lazurite.fpvracing.client.input.frame.InputFrameC2S;
 import dev.lazurite.fpvracing.client.input.keybind.net.*;
+import dev.lazurite.fpvracing.client.input.tick.ClientTick;
 import dev.lazurite.fpvracing.client.render.ui.toast.ControllerToast;
 import dev.lazurite.fpvracing.common.entity.quads.PixelEntity;
 import dev.lazurite.fpvracing.common.item.quads.PixelItem;
-import dev.lazurite.fpvracing.common.tick.GogglesTick;
-import dev.lazurite.fpvracing.client.input.tick.TransmitterTick;
+import dev.lazurite.fpvracing.common.tick.ServerTick;
 import dev.lazurite.fpvracing.common.entity.quads.VoyagerEntity;
 import dev.lazurite.fpvracing.common.item.container.GogglesContainer;
 import dev.lazurite.fpvracing.common.entity.quads.VoxelRacerOneEntity;
@@ -124,7 +124,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 						.defaultAttributes(LivingEntity::createLivingAttributes)
 						.build());
 
-		ServerTickEvents.START_SERVER_TICK.register(GogglesTick::tick);
+		ServerTickEvents.START_SERVER_TICK.register(ServerTick::tick);
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public class FPVRacing implements ModInitializer, ClientModInitializer, ItemComp
 		JoystickEvents.JOYSTICK_DISCONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.disconnect"), name));
 
 		/* Register Client Tick Events */
-		ClientTickEvents.START_CLIENT_TICK.register(TransmitterTick::tick);
+		ClientTickEvents.START_CLIENT_TICK.register(ClientTick::tick);
 	}
 
 	@Override

@@ -12,7 +12,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
@@ -29,24 +28,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 	@Shadow @Final private MinecraftClient client;
-	@Shadow private boolean renderHand;
-
 	@Shadow @Final private Camera camera;
 
 	@Inject(method = "renderWorld", at = @At("HEAD"))
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
-		Entity cameraEntity = client.getCameraEntity();
-		this.renderHand = !(cameraEntity instanceof QuadcopterEntity);
-
 		/* Rotate the entire view to match the view of the quadcopter. */
-		if (cameraEntity instanceof QuadcopterEntity) {
-			QuadcopterEntity quadcopter = (QuadcopterEntity) cameraEntity;
+		if (camera.getFocusedEntity() instanceof QuadcopterEntity) {
+			QuadcopterEntity quadcopter = (QuadcopterEntity) camera.getFocusedEntity();
 
 			Quaternion q = quadcopter.getPhysicsRotation(new Quaternion(), tickDelta);
 			q.set(q.getX(), -q.getY(), q.getZ(), -q.getW());
 
 			/* Camera Angle */
-			q.set(QuaternionHelper.rotateX(q, ((QuadcopterEntity) cameraEntity).getCameraAngle()));
+			q.set(QuaternionHelper.rotateX(q, quadcopter.getCameraAngle()));
 
 			Matrix4f newMat = new Matrix4f(QuaternionHelper.bulletToMinecraft(q));
 			newMat.transpose();
@@ -71,13 +65,20 @@ public class GameRendererMixin {
 		}
 	}
 
+	@Inject(method = "renderHand", at = @At("HEAD"), cancellable = true)
+	private void renderHand(MatrixStack matrices, Camera camera, float tickDelta, CallbackInfo info) {
+		if (camera.getFocusedEntity() instanceof QuadcopterEntity) {
+			info.cancel();
+		}
+	}
+
 	@ModifyArg(
-			method = "renderWorld",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lnet/minecraft/util/math/Quaternion;)V",
-					ordinal = 3
-			)
+		method = "renderWorld",
+		at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lnet/minecraft/util/math/Quaternion;)V",
+				ordinal = 3
+		)
 	)
 	public net.minecraft.util.math.Quaternion multiplyYaw(net.minecraft.util.math.Quaternion quaternion) {
 		if (camera.getFocusedEntity() instanceof QuadcopterEntity) {

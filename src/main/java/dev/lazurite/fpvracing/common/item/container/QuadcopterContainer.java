@@ -18,7 +18,6 @@ import net.minecraft.nbt.CompoundTag;
 public class QuadcopterContainer implements ComponentV3, QuadcopterState {
     private final ItemStack stack;
 
-    private QuadcopterEntity.State state = QuadcopterEntity.State.DISARMED;
     private boolean godMode = false;
     private int bindId = -1;
 
@@ -67,16 +66,6 @@ public class QuadcopterContainer implements ComponentV3, QuadcopterState {
     @Override
     public boolean isInGodMode() {
         return this.godMode;
-    }
-
-    @Override
-    public void setState(QuadcopterEntity.State state) {
-        this.state = state;
-    }
-
-    @Override
-    public QuadcopterEntity.State getState() {
-        return this.state;
     }
 
     @Override

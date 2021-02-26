@@ -31,7 +31,7 @@ public class PixelEntityRenderer extends GeoEntityRenderer<PixelEntity> {
         stack.push();
         stack.multiply(QuaternionHelper.bulletToMinecraft(pixel.getPhysicsRotation(new Quaternion(), tickDelta)));
         stack.translate(0, -pixel.getBoundingBox().getYLength() / 2, 0);
-        super.render(pixel, entityYaw, tickDelta, stack, bufferIn, packedLightIn);
+        super.render(pixel, 0, tickDelta, stack, bufferIn, packedLightIn);
         stack.pop();
 
         pixel.bodyYaw = temp;
