@@ -3,7 +3,7 @@ package dev.lazurite.fpvracing.client.render.ui;
 import com.google.common.collect.Lists;
 import dev.lazurite.fpvracing.client.Config;
 import dev.lazurite.fpvracing.client.input.Mode;
-import dev.lazurite.fpvracing.client.input.tick.InputTick;
+import dev.lazurite.fpvracing.client.input.InputTick;
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import io.github.prospector.modmenu.api.ModMenuApi;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;

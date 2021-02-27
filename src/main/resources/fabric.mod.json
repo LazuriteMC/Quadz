@@ -26,7 +26,10 @@
     ]
   },
 
-  "mixins": [ "fpvracing.mixins.json" ],
+  "mixins": [
+    "fpvracing.client.mixins.json",
+    "fpvracing.common.mixins.json"
+  ],
 
   "depends": {
     "fabricloader": ">=0.7.4",

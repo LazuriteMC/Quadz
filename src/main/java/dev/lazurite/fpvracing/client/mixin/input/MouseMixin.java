@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.mixin.client.input;
+package dev.lazurite.fpvracing.client.mixin.input;
 
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;
 import net.minecraft.client.MinecraftClient;

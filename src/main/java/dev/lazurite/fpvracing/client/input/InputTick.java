@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.client.input.tick;
+package dev.lazurite.fpvracing.client.input;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

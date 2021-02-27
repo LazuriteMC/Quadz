@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.mixin.client.render;
+package dev.lazurite.fpvracing.client.mixin.render;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;

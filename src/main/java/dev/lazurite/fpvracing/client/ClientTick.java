@@ -1,8 +1,9 @@
-package dev.lazurite.fpvracing.client.input.tick;
+package dev.lazurite.fpvracing.client;
 
 import dev.lazurite.fpvracing.FPVRacing;
 import dev.lazurite.fpvracing.client.input.frame.InputFrame;
 import dev.lazurite.fpvracing.client.input.frame.InputFrameC2S;
+import dev.lazurite.fpvracing.client.input.InputTick;
 import dev.lazurite.fpvracing.common.item.TransmitterItem;
 import dev.lazurite.fpvracing.common.item.container.TransmitterContainer;
 import dev.lazurite.fpvracing.common.util.type.Controllable;

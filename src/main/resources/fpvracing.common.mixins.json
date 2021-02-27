@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.lazurite.fpvracing.common.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "Matrix4fMixin",
+    "player.PlayerManagerMixin",
+    "player.ServerPlayerEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

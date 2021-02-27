@@ -1,6 +1,6 @@
-package dev.lazurite.fpvracing.mixin.client;
+package dev.lazurite.fpvracing.client.mixin;
 
-import dev.lazurite.fpvracing.client.input.tick.InputTick;
+import dev.lazurite.fpvracing.client.input.InputTick;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;

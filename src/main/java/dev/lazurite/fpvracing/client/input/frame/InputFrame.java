@@ -1,7 +1,7 @@
 package dev.lazurite.fpvracing.client.input.frame;
 
 import dev.lazurite.fpvracing.client.input.Mode;
-import dev.lazurite.fpvracing.client.input.tick.InputTick;
+import dev.lazurite.fpvracing.client.input.InputTick;
 import dev.lazurite.fpvracing.common.util.BetaflightHelper;
 
 /**

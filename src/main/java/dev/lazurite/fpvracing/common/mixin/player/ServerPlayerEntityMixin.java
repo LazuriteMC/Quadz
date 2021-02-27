@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.mixin.common.player;
+package dev.lazurite.fpvracing.common.mixin.player;
 
 import com.mojang.authlib.GameProfile;
 import dev.lazurite.fpvracing.common.entity.QuadcopterEntity;

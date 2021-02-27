@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.common.tick;
+package dev.lazurite.fpvracing.common;
 
 import com.google.common.collect.Lists;
 import dev.lazurite.fpvracing.FPVRacing;
@@ -43,7 +43,8 @@ public class ServerTick {
 
             /* Goggles enabled, enter a quadcopter view if one is nearby */
             if (goggles.isPresent()) {
-                    if (goggles.get().isEnabled() && !(player.getCameraEntity() instanceof QuadcopterEntity) && !quads.isEmpty()) {
+                if (goggles.get().isEnabled()) {
+                    if (!(player.getCameraEntity() instanceof QuadcopterEntity) && !quads.isEmpty()) {
                         QuadcopterEntity entity = quads.get(0);
 
                         if (entity != null) {
@@ -64,8 +65,9 @@ public class ServerTick {
                                 }
                             }
                         }
+                    }
 
-                    /* Goggles disabled and player is in quadcopter view, reset view */
+                /* Goggles disabled and player is in quadcopter view, reset view */
                 } else if (player.getCameraEntity() instanceof QuadcopterEntity) {
                     QuadcopterEntity entity = (QuadcopterEntity) player.getCameraEntity();
 

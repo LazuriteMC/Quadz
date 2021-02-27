@@ -1,4 +1,4 @@
-package dev.lazurite.fpvracing.mixin.common;
+package dev.lazurite.fpvracing.common.mixin;
 
 import com.jme3.math.Vector3f;
 import dev.lazurite.fpvracing.common.util.access.Matrix4fAccess;
