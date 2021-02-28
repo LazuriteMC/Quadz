@@ -1,0 +1,61 @@
+{
+  "key.quadz.category" : "FPV Racing Keybindings",
+  "key.quadz.emp" : "Electro-Magnetic Pulse",
+  "key.quadz.noclip" : "No Clip",
+  "key.quadz.godmode" : "God Mode",
+  "key.quadz.powergoggles" : "Goggle Power",
+  "key.quadz.raise_camera": "Camera Angle - Increase",
+  "key.quadz.lower_camera": "Camera Angle - Decrease",
+
+  "entity.quadz.voxel_race_one" : "Voxel Racer 1",
+  "entity.quadz.voyager" : "Voyager",
+  "entity.quadz.pixel" : "Pixel",
+
+  "itemGroup.quadz.items" : "FPV Racing",
+  "item.quadz.goggles_item" : "Goggles",
+  "item.quadz.transmitter_item" : "Transmitter",
+  "item.quadz.channel_wand_item" : "Channel Wand",
+  "item.quadz.voxel_racer_one_item" : "Voxel Racer 1",
+  "item.quadz.voyager_item" : "Voyager",
+  "item.quadz.pixel_item" : "Pixel",
+
+  "message.quadz.drone_error" : "Must be holding a quadcopter or a bound transmitter.",
+  "message.fpvracing.goggles_error" : "Must be holding or wearing goggles.",
+  "message.quadz.emp" : "Destroyed drone.",
+  "message.quadz.godmode_on" : "God mode enabled.",
+  "message.quadz.godmode_off" : "God mode disabled.",
+  "message.quadz.noclip_on" : "No clip enabled.",
+  "message.quadz.noclip_off" : "No clip disabled.",
+  "message.quadz.goggles_on" : "Press %1$s or %2$s to power off goggles.",
+
+  "toast.quadz.controller.connect" : "Controller Connected!",
+  "toast.quadz.controller.disconnect" : "Controller Disconnected!",
+
+  "mode.quadz.rate" : "Rate",
+  "mode.quadz.angle" : "Angle",
+
+  "config.quadz.title" : "FPV Racing Settings",
+  "config.quadz.category.controller_axes" : "Controller Axes Setup",
+  "config.quadz.category.preferences" : "Stick Preferences",
+
+  "config.quadz.entry.controller_id" : "Controller ID",
+  "config.quadz.entry.controller_id.keyboard" : "Keyboard",
+  "config.quadz.entry.pitch_axis" : "Pitch",
+  "config.quadz.entry.yaw_axis" : "Yaw",
+  "config.quadz.entry.roll_axis" : "Roll",
+  "config.quadz.entry.throttle_axis" : "Throttle",
+
+  "config.quadz.entry.invert_pitch" : "Invert Pitch",
+  "config.quadz.entry.invert_yaw" : "Invert Yaw",
+  "config.quadz.entry.invert_roll" : "Invert Roll",
+  "config.quadz.entry.invert_throttle" : "Invert Throttle",
+  "config.quadz.entry.throttle_in_center" : "Throttle In Center",
+
+  "config.quadz.entry.mode" : "Mode",
+  "config.quadz.entry.max_angle" : "Max Angle",
+  "config.quadz.entry.follow_los" : "Follow LOS",
+  "config.quadz.entry.rate" : "Rate",
+  "config.quadz.entry.expo" : "Expo",
+  "config.quadz.entry.super_rate" : "Super Rate",
+  "config.quadz.entry.deadzone" : "Deadzone"
+}

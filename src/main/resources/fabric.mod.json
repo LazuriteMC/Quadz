@@ -1,34 +1,34 @@
 {
   "schemaVersion": 1,
-  "id": "fpvracing",
+  "id": "quadz",
   "version": "${version}",
 
-  "name": "FPV Racing Mod",
-  "description": "This mod adds FPV racing drones to Minecraft.",
+  "name": "Quadz",
+  "description": "An FPV drone simulator for Fabric.",
   "authors": [ "The Lazurite Team" ],
   "contact": {
     "homepage": "https://lazurite.dev",
-    "sources": "https://github.com/lazuritemc/fpv-racing-mod-fabric",
-    "issues": "https://github.com/lazuritemc/fpv-racing-mod-fabric/issues"
+    "sources": "https://github.com/lazuritemc/quadz",
+    "issues": "https://github.com/lazuritemc/quadz/issues"
   },
 
   "license": "MIT",
-  "icon": "assets/fpvracing/icon.png",
+  "icon": "assets/quadz/icon.png",
 
   "environment": "*",
   "entrypoints": {
-    "cardinal-components-item": [ "dev.lazurite.fpvracing.FPVRacing" ],
-    "modmenu": [ "dev.lazurite.fpvracing.client.render.ui.ConfigScreen" ],
-    "main": [ "dev.lazurite.fpvracing.FPVRacing" ],
+    "cardinal-components-item": [ "dev.lazurite.quadz.Quadz" ],
+    "modmenu": [ "dev.lazurite.quadz.client.render.ui.ConfigScreen" ],
+    "main": [ "dev.lazurite.quadz.Quadz" ],
     "client": [
-      "dev.lazurite.fpvracing.FPVRacing",
-      "dev.lazurite.fpvracing.client.render.RenderInitializer"
+      "dev.lazurite.quadz.Quadz",
+      "dev.lazurite.quadz.client.render.RenderInitializer"
     ]
   },
 
   "mixins": [
-    "fpvracing.client.mixins.json",
-    "fpvracing.common.mixins.json"
+    "quadz.client.mixins.json",
+    "quadz.common.mixins.json"
   ],
 
   "depends": {
@@ -43,9 +43,9 @@
 
   "custom": {
     "cardinal-components": [
-      "fpvracing:goggles_container",
-      "fpvracing:transmitter_container",
-      "fpvracing:quadcopter_container"
+      "quadz:goggles_container",
+      "quadz:transmitter_container",
+      "quadz:quadcopter_container"
     ]
   }
 }
