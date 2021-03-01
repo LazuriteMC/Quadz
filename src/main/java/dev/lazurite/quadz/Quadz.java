@@ -2,8 +2,10 @@ package dev.lazurite.quadz;
 
 import dev.lazurite.quadz.api.event.JoystickEvents;
 import dev.lazurite.quadz.client.Config;
+import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.keybind.key.*;
 import dev.lazurite.quadz.client.input.frame.InputFrameC2S;
+import dev.lazurite.quadz.client.input.keybind.key.ControlKeybinds;
 import dev.lazurite.quadz.client.input.keybind.net.*;
 import dev.lazurite.quadz.client.ClientTick;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerToast;
@@ -77,7 +79,6 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 		ServerPlayNetworking.registerGlobalReceiver(NoClipC2S.PACKET_ID, NoClipC2S::accept);
 		ServerPlayNetworking.registerGlobalReceiver(GodModeC2S.PACKET_ID, GodModeC2S::accept);
 		ServerPlayNetworking.registerGlobalReceiver(PowerGogglesC2S.PACKET_ID, PowerGogglesC2S::accept);
-		ServerPlayNetworking.registerGlobalReceiver(ElectromagneticPulseC2S.PACKET_ID, ElectromagneticPulseC2S::accept);
 		ServerPlayNetworking.registerGlobalReceiver(ChangeCameraAngleC2S.PACKET_ID, ChangeCameraAngleC2S::accept);
 		ServerPlayNetworking.registerGlobalReceiver(InputFrameC2S.PACKET_ID, InputFrameC2S::accept);
 
@@ -133,12 +134,11 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 		Config.getInstance().load();
 
 		/* Register Keybindings */
-		RaiseCameraAngleKeybind.register();
-		LowerCameraAngleKeybind.register();
+		ControlKeybinds.register();
+		CameraAngleKeybinds.register();
 		GogglePowerKeybind.register();
 		GodModeKeybind.register();
 		NoClipKeybind.register();
-		EMPKeybind.register();
 
 		/* Register Packets */
 		ClientPlayNetworking.registerGlobalReceiver(SelectedSlotS2C.PACKET_ID, SelectedSlotS2C::accept);
@@ -149,6 +149,7 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 
 		/* Register Client Tick Events */
 		ClientTickEvents.START_CLIENT_TICK.register(ClientTick::tick);
+		ClientTickEvents.START_CLIENT_TICK.register(InputTick.getInstance()::keyboardTick);
 	}
 
 	@Override

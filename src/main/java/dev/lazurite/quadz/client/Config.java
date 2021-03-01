@@ -82,7 +82,7 @@ public final class Config {
 
     private Config() {
         /* Defaults */
-        this.controllerId = 0;
+        this.controllerId = -1;
         this.throttle = 0;
         this.pitch = 2;
         this.roll = 1;
@@ -96,7 +96,7 @@ public final class Config {
         this.rate = 0.7f;
         this.superRate = 0.9f;
         this.expo = 0.1f;
-        this.maxAngle = 45;
+        this.maxAngle = 30;
         this.mode = Mode.RATE;
         this.followLOS = true;
     }

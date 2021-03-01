@@ -12,24 +12,35 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 @Environment(EnvType.CLIENT)
-public class LowerCameraAngleKeybind {
-    private static KeyBinding key;
+public class CameraAngleKeybinds {
+    private static KeyBinding up;
+    private static KeyBinding down;
 
     public static void callback(MinecraftClient client) {
-        if (key.wasPressed()) {
+        if (up.wasPressed()) {
+            ChangeCameraAngleC2S.send(5);
+        } else if (down.wasPressed()) {
             ChangeCameraAngleC2S.send(-5);
         }
     }
 
     public static void register() {
-        key = new KeyBinding(
-                "key." + Quadz.MODID + ".lower_camera",
+        up = new KeyBinding(
+                "key." + Quadz.MODID + ".camera.raise",
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_DOWN,
+                GLFW.GLFW_KEY_PERIOD,
                 "key." + Quadz.MODID + ".category"
         );
 
-        KeyBindingHelper.registerKeyBinding(key);
-        ClientTickEvents.END_CLIENT_TICK.register(LowerCameraAngleKeybind::callback);
+        down = new KeyBinding(
+                "key." + Quadz.MODID + ".camera.lower",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_COMMA,
+                "key." + Quadz.MODID + ".category"
+        );
+
+        KeyBindingHelper.registerKeyBinding(up);
+        KeyBindingHelper.registerKeyBinding(down);
+        ClientTickEvents.END_CLIENT_TICK.register(CameraAngleKeybinds::callback);
     }
 }

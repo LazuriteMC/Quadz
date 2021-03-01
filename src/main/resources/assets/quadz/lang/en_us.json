@@ -1,11 +1,14 @@
 {
   "key.quadz.category" : "FPV Racing Keybindings",
-  "key.quadz.emp" : "Electro-Magnetic Pulse",
   "key.quadz.noclip" : "No Clip",
   "key.quadz.godmode" : "God Mode",
   "key.quadz.powergoggles" : "Goggle Power",
-  "key.quadz.raise_camera": "Camera Angle - Increase",
-  "key.quadz.lower_camera": "Camera Angle - Decrease",
+  "key.quadz.camera.raise" : "Camera Angle - Increase",
+  "key.quadz.camera.lower" : "Camera Angle - Decrease",
+  "key.quadz.pitch.forward" : "Pitch Forward",
+  "key.quadz.pitch.backward" : "Pitch Backward",
+  "key.quadz.roll.left" : "Roll Left",
+  "key.quadz.roll.right" : "Roll Right",
 
   "entity.quadz.voxel_race_one" : "Voxel Racer 1",
   "entity.quadz.voyager" : "Voyager",
@@ -21,7 +24,6 @@
 
   "message.quadz.drone_error" : "Must be holding a quadcopter or a bound transmitter.",
   "message.fpvracing.goggles_error" : "Must be holding or wearing goggles.",
-  "message.quadz.emp" : "Destroyed drone.",
   "message.quadz.godmode_on" : "God mode enabled.",
   "message.quadz.godmode_off" : "God mode disabled.",
   "message.quadz.noclip_on" : "No clip enabled.",

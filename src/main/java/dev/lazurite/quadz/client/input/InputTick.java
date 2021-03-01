@@ -1,15 +1,15 @@
 package dev.lazurite.quadz.client.input;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import dev.lazurite.quadz.api.event.JoystickEvents;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.frame.InputFrame;
+import dev.lazurite.quadz.client.input.keybind.key.ControlKeybinds;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 
 import java.nio.FloatBuffer;
-import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -27,8 +27,7 @@ public final class InputTick {
     private boolean loaded = false;
     private long next;
 
-    private InputTick() {
-    }
+    private InputTick() { }
 
     public static InputTick getInstance() {
         return instance;
@@ -114,12 +113,55 @@ public final class InputTick {
         }
     }
 
+    public void keyboardTick(MinecraftClient client) {
+        if (Config.getInstance().controllerId == -1) { // keyboard
+            float throttle = getInputFrame().getThrottle();
+            float pitch = 0.0f;
+            float yaw = 0.0f;
+            float roll = 0.0f;
+
+            if (ControlKeybinds.pitchForward.isPressed()) {
+                pitch = 1.0f;
+            } else if (ControlKeybinds.pitchBackward.isPressed()) {
+                pitch = -1.0f;
+            }
+
+            if (ControlKeybinds.rollLeft.isPressed()) {
+                roll = -1.0f;
+            } else if (ControlKeybinds.rollRight.isPressed()) {
+                roll = 1.0f;
+            }
+
+            if (client.options.keyRight.isPressed()) {
+                yaw = -0.5f;
+            } else if (client.options.keyLeft.isPressed()) {
+                yaw = 0.5f;
+            }
+
+            if (client.options.keyForward.isPressed()) {
+                throttle += 0.05f;
+            } else if (client.options.keyBack.isPressed()) {
+                throttle -= 0.05f;
+            }
+
+            frame.set(
+                    throttle, pitch, yaw, roll,
+                    Config.getInstance().rate,
+                    Config.getInstance().superRate,
+                    Config.getInstance().expo,
+                    Config.getInstance().maxAngle,
+                    Mode.ANGLE);
+        }
+    }
+
     public InputFrame getInputFrame() {
         return new InputFrame(frame);
     }
 
-    public List<String> getJoysticks() {
-        return Lists.newArrayList(joysticks.values());
+    public Map<Integer, String> getJoysticks() {
+        Map<Integer, String> out = Maps.newHashMap(joysticks);
+        out.put(-1, "keyboard");
+        return out;
     }
 
     public static String getJoystickName(int id) {

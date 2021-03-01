@@ -1,6 +1,5 @@
 package dev.lazurite.quadz.client.render.ui;
 
-import com.google.common.collect.Lists;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.input.InputTick;
@@ -13,7 +12,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * Class for housing the methods which returns a new config screen made using Cloth Config.
@@ -32,8 +31,7 @@ public class ConfigScreen implements ModMenuApi {
 
     public static ConfigCategory getControllerSettings(ConfigBuilder builder) {
         ConfigCategory controllerSetup = builder.getOrCreateCategory(new LiteralText(""));
-        List<String> joysticks = Lists.newArrayList(InputTick.getInstance().getJoysticks());
-        joysticks.add("Keyboard");
+        Map <Integer, String> joysticks = InputTick.getInstance().getJoysticks();
 
         SubCategoryBuilder controllerAxes = builder.entryBuilder().startSubCategory(new TranslatableText("config.quadz.category.controller_axes"));
         SubCategoryBuilder preferences = builder.entryBuilder().startSubCategory(new TranslatableText("config.quadz.category.preferences"));
@@ -48,13 +46,13 @@ public class ConfigScreen implements ModMenuApi {
         preferences.add(builder.entryBuilder().startIntSlider(
                 new TranslatableText("config.quadz.entry.max_angle"), Config.getInstance().maxAngle, 0, 60)
                 .setSaveConsumer(value -> Config.getInstance().maxAngle = value)
-                .setDefaultValue(45)
+                .setDefaultValue(Config.getInstance().maxAngle)
                 .build());
 
         preferences.add(builder.entryBuilder().startBooleanToggle(
                 new TranslatableText("config.quadz.entry.follow_los"), Config.getInstance().followLOS)
-                .setSaveConsumer(value -> Config.getInstance().followLOS = value)
                 .setDefaultValue(Config.getInstance().followLOS)
+                .setSaveConsumer(value -> Config.getInstance().followLOS = value)
                 .build());
 
         preferences.add(builder.entryBuilder().startFloatField(
@@ -88,30 +86,20 @@ public class ConfigScreen implements ModMenuApi {
                 .setMin(0).build());
 
         controllerAxes.add(builder.entryBuilder().startSelector(
-                new TranslatableText("config.quadz.entry.controller_id"), joysticks.toArray(), Config.getInstance().controllerId)
+                new TranslatableText("config.quadz.entry.controller_id"), joysticks.keySet().toArray(), Config.getInstance().controllerId)
                 .setDefaultValue(Config.getInstance().controllerId)
-                .setNameProvider(value -> {
-                    String string = (String) value;
-
-                    if (string.equals("Keyboard")) {
-                        return new TranslatableText("config.quadz.entry.controller_id.keyboard");
-                    } else if (string.length() > 15) {
-                        return new LiteralText(string.substring(0, 15) + "...");
-                    } else {
-                        return new LiteralText(string);
-                    }
-                })
-                .setSaveConsumer(value -> {
-                    if (value.equals("Keyboard")) {
-                        Config.getInstance().controllerId = -1;
-                    } else {
-                        for (int i = 0; i < joysticks.toArray().length; i++) {
-                            if (value.equals(joysticks.toArray()[i])) {
-                                Config.getInstance().controllerId = i;
-                            }
-                        }
-                    }
-                })
+//                .setNameProvider(value -> {
+//                    String name = joysticks.get((int) value);
+//
+//                    if ((int) value == 0) {
+//                        return new TranslatableText("config.quadz.entry.controller_id.keyboard");
+//                    } else if (name.length() > 15) {
+//                        return new LiteralText(name.substring(0, 15) + "...");
+//                    } else {
+//                        return new LiteralText(name);
+//                    }
+//                })
+                .setSaveConsumer(value -> Config.getInstance().controllerId = (int) value)
                 .build());
 
         controllerAxes.add(builder.entryBuilder().startIntField(

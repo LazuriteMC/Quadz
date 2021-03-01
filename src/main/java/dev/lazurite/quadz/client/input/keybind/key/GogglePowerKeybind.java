@@ -42,7 +42,7 @@ public class GogglePowerKeybind {
             if (sentPowerOn) {
                 String sneakKey = KeyBindingHelper.getBoundKeyOf(MinecraftClient.getInstance().options.keySneak).getLocalizedText().getString().toUpperCase();
                 String enableKey = key.getBoundKeyLocalizedText().getString().toUpperCase();
-                client.player.sendMessage(new TranslatableText("message.fpvracing.goggles_on", sneakKey, enableKey), true);
+                client.player.sendMessage(new TranslatableText("message.quadz.goggles_on", sneakKey, enableKey), true);
             }
         }
     }

@@ -107,7 +107,11 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 			yawThrust.multLocal(Math.abs(getInputFrame().getYaw()));
 
 			/* Add up the net thrust and apply the force */
-			getRigidBody().applyCentralForce(thrust/*.add(yawThrust)*/.multLocal(-1));
+			if (Float.isFinite(thrust.length())) {
+				getRigidBody().applyCentralForce(thrust/*.add(yawThrust)*/.multLocal(-1));
+			} else {
+				Quadz.LOGGER.warn("Infinite thrust force prevented!");
+			}
 		}
 	}
 

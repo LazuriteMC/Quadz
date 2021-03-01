@@ -77,7 +77,7 @@ public class GameRendererMixin {
 		at = @At(
 				value = "INVOKE",
 				target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lnet/minecraft/util/math/Quaternion;)V",
-				ordinal = 3
+				ordinal = 2
 		)
 	)
 	public net.minecraft.util.math.Quaternion multiplyYaw(net.minecraft.util.math.Quaternion quaternion) {
@@ -88,12 +88,14 @@ public class GameRendererMixin {
 		return quaternion;
 	}
 
+	// TODO optifine goes borkus here
+
 	@ModifyArg(
 			method = "renderWorld",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lnet/minecraft/util/math/Quaternion;)V",
-					ordinal = 4
+					ordinal = 3
 			)
 	)
 	public net.minecraft.util.math.Quaternion multiplyPitch(net.minecraft.util.math.Quaternion quaternion) {
