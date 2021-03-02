@@ -88,17 +88,17 @@ public class ConfigScreen implements ModMenuApi {
         controllerAxes.add(builder.entryBuilder().startSelector(
                 new TranslatableText("config.quadz.entry.controller_id"), joysticks.keySet().toArray(), Config.getInstance().controllerId)
                 .setDefaultValue(Config.getInstance().controllerId)
-//                .setNameProvider(value -> {
-//                    String name = joysticks.get((int) value);
-//
-//                    if ((int) value == 0) {
-//                        return new TranslatableText("config.quadz.entry.controller_id.keyboard");
-//                    } else if (name.length() > 15) {
-//                        return new LiteralText(name.substring(0, 15) + "...");
-//                    } else {
-//                        return new LiteralText(name);
-//                    }
-//                })
+                .setNameProvider(value -> {
+                    String name = joysticks.get((int) value);
+
+                    if ((int) value == -1) {
+                        return new TranslatableText("config.quadz.entry.controller_id.keyboard");
+                    } else if (name.length() > 15) {
+                        return new LiteralText(name.substring(0, 15) + "...");
+                    } else {
+                        return new LiteralText(name);
+                    }
+                })
                 .setSaveConsumer(value -> Config.getInstance().controllerId = (int) value)
                 .build());
 

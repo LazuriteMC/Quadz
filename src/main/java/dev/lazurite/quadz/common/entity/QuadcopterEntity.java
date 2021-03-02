@@ -104,11 +104,11 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 			/* Calculate thrust from yaw spin */
 			Vector3f yawThrust = new Vector3f();
 			yawThrust.set(direction);
-			yawThrust.multLocal(Math.abs(getInputFrame().getYaw()));
+			yawThrust.multLocal(Math.abs(getInputFrame().calculateYaw(PhysicsThread.STEP_SIZE)));
 
 			/* Add up the net thrust and apply the force */
 			if (Float.isFinite(thrust.length())) {
-				getRigidBody().applyCentralForce(thrust/*.add(yawThrust)*/.multLocal(-1));
+				getRigidBody().applyCentralForce(thrust.add(yawThrust).multLocal(-1));
 			} else {
 				Quadz.LOGGER.warn("Infinite thrust force prevented!");
 			}

@@ -2,6 +2,7 @@ package dev.lazurite.quadz.common.entity.quads;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.item.container.QuadcopterContainer;
 import dev.lazurite.rayon.impl.bullet.body.ElementRigidBody;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -16,6 +17,8 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+
+import java.util.Optional;
 
 public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable {
     private final AnimationFactory factory = new AnimationFactory(this);
@@ -41,9 +44,12 @@ public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable
     public void dropSpawner() {
         if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
             ItemStack stack = new ItemStack(Quadz.VOXEL_RACER_ONE_ITEM);
+            Optional<QuadcopterContainer> container = Quadz.QUADCOPTER_CONTAINER.maybeGet(stack);
+
             CompoundTag tag = new CompoundTag();
             writeCustomDataToTag(tag);
-            Quadz.QUADCOPTER_CONTAINER.get(stack).readFromNbt(tag);
+            container.ifPresent(quadcopterContainer -> quadcopterContainer.readFromNbt(tag));
+
             dropStack(stack);
         }
     }

@@ -25,7 +25,7 @@ dependencies {
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// Cardinal Components - Item
+	// Cardinal Components - Item (the rest is included with Rayon)
 	modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-item:${project.cca_version}"
 	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-item:${project.cca_version}"
 
@@ -35,6 +35,15 @@ dependencies {
 	// Rayon
 	modImplementation "com.github.LazuriteMC:Rayon:${project.rayon_version}"
 	include "com.github.LazuriteMC:Rayon:${project.rayon_version}"
+
+	// Mod Menu
+	modImplementation ("io.github.prospector:modmenu:${project.modmenu_version}") { exclude(group: "net.fabricmc.fabric-api") }
+
+	// Cloth + Fiber
+	modApi ("me.shedaniel.cloth:config-2:${project.cloth_version}") { exclude(group: "net.fabricmc.fabric-api") }
+	include "me.shedaniel.cloth:config-2:${project.cloth_version}"
+	modApi "me.zeroeightsix:fiber:${project.fiber_version}"
+	include "me.zeroeightsix:fiber:${project.fiber_version}"
 }
 
 processResources {
