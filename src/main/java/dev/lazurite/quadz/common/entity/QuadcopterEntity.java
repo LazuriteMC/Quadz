@@ -110,7 +110,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 			if (Float.isFinite(thrust.length())) {
 				getRigidBody().applyCentralForce(thrust.add(yawThrust).multLocal(-1));
 			} else {
-				Quadz.LOGGER.warn("Infinite thrust force prevented!");
+				Quadz.LOGGER.warn("Infinite thrust force!");
 			}
 		}
 	}
@@ -241,9 +241,16 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		return QuaternionHelper.getYaw(getPhysicsRotation(new Quaternion(), tickDelta));
 	}
 
+	/**
+	 * Provides the pitch + the camera angle
+	 * @param tickDelta
+	 * @return
+	 */
 	@Override
 	public float getPitch(float tickDelta) {
-		return QuaternionHelper.getPitch(getPhysicsRotation(new Quaternion(), tickDelta));
+		return QuaternionHelper.getPitch(QuaternionHelper.rotateX(
+				getPhysicsRotation(new Quaternion(), tickDelta),
+				-getCameraAngle()));
 	}
 
 	@Override
