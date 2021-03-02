@@ -47,6 +47,7 @@ public class VoyagerItem extends Item implements IAnimatable {
 				item.writeToNbt(tag);
 				entity.readCustomDataFromTag(tag);
 
+				entity.getRigidBody().prioritize(user);
 				world.spawnEntity(entity);
 			}
 

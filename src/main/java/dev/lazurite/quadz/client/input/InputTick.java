@@ -22,7 +22,7 @@ import static org.lwjgl.glfw.GLFW.*;
 @Environment(EnvType.CLIENT)
 public final class InputTick {
     private static final InputTick instance = new InputTick();
-    private final Map<Integer, String> joysticks = Maps.newHashMap();
+    private final Map<Integer, String> joysticks = Maps.newConcurrentMap();
     private final InputFrame frame = new InputFrame();
     private boolean loaded = false;
     private long next;

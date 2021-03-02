@@ -10,11 +10,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
-public class ControllerToast implements Toast {
+public class ControllerConnectedToast implements Toast {
     private final Text message;
     private final String controllerName;
 
-    public ControllerToast(Text message, String controllerName) {
+    public ControllerConnectedToast(Text message, String controllerName) {
         this.message = message;
 
         if (controllerName.length() > 25) {
@@ -42,6 +42,6 @@ public class ControllerToast implements Toast {
 
     public static void add(Text message, String name) {
         ToastManager manager = MinecraftClient.getInstance().getToastManager();
-        manager.add(new ControllerToast(message, name));
+        manager.add(new ControllerConnectedToast(message, name));
     }
 }

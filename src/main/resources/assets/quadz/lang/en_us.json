@@ -32,6 +32,7 @@
 
   "toast.quadz.controller.connect" : "Controller Connected!",
   "toast.quadz.controller.disconnect" : "Controller Disconnected!",
+  "toast.quadz.controller.notfound" : "Controller Not found!",
 
   "mode.quadz.rate" : "Rate",
   "mode.quadz.angle" : "Angle",

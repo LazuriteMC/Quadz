@@ -3,7 +3,9 @@ package dev.lazurite.quadz.common.entity;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
+import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
+import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
 import dev.lazurite.quadz.common.util.access.Matrix4fAccess;
 import dev.lazurite.quadz.client.input.frame.InputFrame;
 import dev.lazurite.quadz.Quadz;
@@ -104,7 +106,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 			/* Calculate thrust from yaw spin */
 			Vector3f yawThrust = new Vector3f();
 			yawThrust.set(direction);
-			yawThrust.multLocal(Math.abs(getInputFrame().calculateYaw(PhysicsThread.STEP_SIZE)));
+			yawThrust.multLocal(Math.abs(getInputFrame().calculateYaw(PhysicsThread.STEP_SIZE) * 0.01f * getThrustForce()));
 
 			/* Add up the net thrust and apply the force */
 			if (Float.isFinite(thrust.length())) {
@@ -153,16 +155,13 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	}
 
 	@Override
-	public void travel(Vec3d pos) {
-	}
+	public void travel(Vec3d pos) { }
 
 	@Override
-	protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
-	}
+	protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) { }
 
 	@Override
-	protected void playStepSound(BlockPos pos, BlockState blockIn) {
-	}
+	protected void playStepSound(BlockPos pos, BlockState blockIn) { }
 
 	@Override
 	public Iterable<ItemStack> getArmorItems() {
@@ -175,8 +174,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	}
 
 	@Override
-	public void equipStack(EquipmentSlot slot, ItemStack stack) {
-	}
+	public void equipStack(EquipmentSlot slot, ItemStack stack) { }
 
 	@Override
 	public ActionResult interact(PlayerEntity player, Hand hand) {
@@ -190,9 +188,13 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 				Frequency frequency = getFrequency();
 				player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), true);
 			}
+		} else {
+			if (stack.getItem() instanceof TransmitterItem) {
+				if (!InputTick.controllerExists()) {
+					ControllerNotFoundToast.add();
+				}
+			}
 		}
-
-		// TODO transmitter not found message (toast maybe?)
 
 		return ActionResult.SUCCESS;
 	}

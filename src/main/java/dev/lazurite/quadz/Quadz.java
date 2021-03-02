@@ -8,7 +8,7 @@ import dev.lazurite.quadz.client.input.frame.InputFrameC2S;
 import dev.lazurite.quadz.client.input.keybind.key.ControlKeybinds;
 import dev.lazurite.quadz.client.input.keybind.net.*;
 import dev.lazurite.quadz.client.ClientTick;
-import dev.lazurite.quadz.client.render.ui.toast.ControllerToast;
+import dev.lazurite.quadz.client.render.ui.toast.ControllerConnectedToast;
 import dev.lazurite.quadz.common.entity.quads.PixelEntity;
 import dev.lazurite.quadz.common.item.quads.PixelItem;
 import dev.lazurite.quadz.common.ServerTick;
@@ -144,8 +144,8 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 		ClientPlayNetworking.registerGlobalReceiver(SelectedSlotS2C.PACKET_ID, SelectedSlotS2C::accept);
 
 		/* Register Toast Events */
-		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.connect"), name));
-		JoystickEvents.JOYSTICK_DISCONNECT.register((id, name) -> ControllerToast.add(new TranslatableText("toast.fpvracing.controller.disconnect"), name));
+		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerConnectedToast.add(new TranslatableText("toast.quadz.controller.connect"), name));
+		JoystickEvents.JOYSTICK_DISCONNECT.register((id, name) -> ControllerConnectedToast.add(new TranslatableText("toast.quadz.controller.disconnect"), name));
 
 		/* Register Client Tick Events */
 		ClientTickEvents.START_CLIENT_TICK.register(ClientTick::tick);
