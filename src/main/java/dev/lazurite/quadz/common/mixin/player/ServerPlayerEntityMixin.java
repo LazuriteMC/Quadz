@@ -41,23 +41,6 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     }
 
     /**
-     * Does the same things as {@link ServerPlayerEntity#setCameraEntity(Entity)} but excludes the
-     * {@link ServerPlayerEntity#requestTeleport(double, double, double)} method call towards the end.
-     * @param entity the entity that will be set as the player's camera entity
-     * @param info required by every mixin injection
-     */
-    @Inject(at = @At("HEAD"), method = "setCameraEntity", cancellable = true)
-    public void setCameraEntity(Entity entity, CallbackInfo info) {
-        Entity entity2 = this.getCameraEntity();
-        this.cameraEntity = (Entity)(entity == null ? this : entity);
-        if (entity2 != this.cameraEntity) {
-            this.networkHandler.sendPacket(new SetCameraEntityS2CPacket(this.cameraEntity));
-        }
-
-        info.cancel();
-    }
-
-    /**
      * Changes the behavior of sneaking as the player so that when the player
      * is flying a drone, they cannot exit from the goggles at this point in the code.
      * @param player the player on which this method was originally called
@@ -73,22 +56,6 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         } else {
             return player.isSneaking();
         }
-    }
-
-    /**
-     * At this specific method call within {@link ServerPlayerEntity#tick()}, do not execute
-     * the intended code (i.e. redirect to nothing).
-     */
-    @Redirect(
-            method = "tick",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;updatePositionAndAngles(DDDFF)V",
-                    ordinal = 0
-            )
-    )
-    public void updatePositionAndAngles(ServerPlayerEntity entity, double x, double y, double z, float yaw, float pitch) {
-        // Don't move plz
     }
 
 //    @Override

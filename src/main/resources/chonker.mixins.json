@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.lazurite.chonker.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "common.EntityTrackerMixin",
+    "common.ServerPlayerEntityMixin",
+    "common.ThreadedAnvilChunkStorageMixin"
+  ],
+  "client": [
+    "client.ClientChunkMapMixin",
+    "client.MinecraftClientMixin",
+    "client.WorldRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
