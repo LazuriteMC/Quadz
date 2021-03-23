@@ -37,6 +37,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -176,6 +177,11 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 	@Override
 	public void equipStack(EquipmentSlot slot, ItemStack stack) {
+	}
+
+	@Override
+	public Direction getHorizontalFacing() {
+		return Direction.fromRotation(QuaternionHelper.getYaw(getRigidBody().getPhysicsRotation(new Quaternion())));
 	}
 
 	@Override
