@@ -35,6 +35,10 @@ dependencies {
 	// Rayon
 	modImplementation "com.github.LazuriteMC:Rayon:${project.rayon_version}"
 	include "com.github.LazuriteMC:Rayon:${project.rayon_version}"
+
+	// Lattice
+	modImplementation "com.github.LazuriteMC:Lattice:${project.lattice_version}"
+	include "com.github.LazuriteMC:Lattice:${project.lattice_version}"
 }
 
 processResources {

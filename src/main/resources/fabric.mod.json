@@ -27,7 +27,6 @@
   },
 
   "mixins": [
-    "chonker.mixins.json",
     "quadz.client.mixins.json",
     "quadz.common.mixins.json"
   ],
