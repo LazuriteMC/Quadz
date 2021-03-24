@@ -4,9 +4,9 @@ import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.input.frame.InputFrame;
 import dev.lazurite.quadz.client.input.frame.InputFrameC2S;
 import dev.lazurite.quadz.client.input.InputTick;
+import dev.lazurite.quadz.common.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.item.TransmitterItem;
 import dev.lazurite.quadz.common.item.container.TransmitterContainer;
-import dev.lazurite.quadz.common.util.type.Controllable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -28,27 +28,27 @@ public class ClientTick {
             if (client.player.getMainHandStack().getItem() instanceof TransmitterItem) {
                 TransmitterContainer transmitter = Quadz.TRANSMITTER_CONTAINER.get(client.player.getMainHandStack());
 
-                if (client.getCameraEntity() instanceof Controllable) {
-                    Controllable controllable = (Controllable) client.getCameraEntity();
+                if (client.getCameraEntity() instanceof QuadcopterEntity) {
+                    QuadcopterEntity quadcopter = (QuadcopterEntity) client.getCameraEntity();
 
-                    if (controllable.getBindId() == transmitter.getBindId()) {
+                    if (quadcopter.getBindId() == transmitter.getBindId()) {
                         /* Get a new InputFrame from InputTick. */
-                        controllable.setInputFrame(InputTick.getInstance().getInputFrame());
+                        quadcopter.setInputFrame(InputTick.getInstance().getInputFrame());
 
                         /* Send that InputFrame to the server. */
-                        InputFrameC2S.send(client.getCameraEntity(), controllable.getInputFrame());
+                        InputFrameC2S.send(client.getCameraEntity(), quadcopter.getInputFrame());
                     }
                 } else {
                     for (Entity entity : client.world.getEntities()) {
-                        if (entity instanceof Controllable) {
-                            Controllable controllable = (Controllable) entity;
+                        if (entity instanceof QuadcopterEntity) {
+                            QuadcopterEntity quadcopter = (QuadcopterEntity) entity;
 
-                            if (controllable.getBindId() == transmitter.getBindId()) {
+                            if (quadcopter.getBindId() == transmitter.getBindId()) {
                                 /* Get a new InputFrame from InputTick. */
-                                controllable.setInputFrame(InputTick.getInstance().getInputFrame());
+                                quadcopter.setInputFrame(InputTick.getInstance().getInputFrame());
 
                                 /* Send that InputFrame to the server. */
-                                InputFrameC2S.send(client.getCameraEntity(), controllable.getInputFrame());
+                                InputFrameC2S.send(client.getCameraEntity(), quadcopter.getInputFrame());
                                 break;
                             }
                         }

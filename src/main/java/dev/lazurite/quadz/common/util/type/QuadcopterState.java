@@ -7,7 +7,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public interface QuadcopterState extends Controllable, VideoCapable.Transmitter {
+public interface QuadcopterState extends Bindable, VideoDevice {
     static QuadcopterEntity findQuadcopter(World world, Vec3d origin, int bindId, int range) {
         return world.getClosestEntity(
                 QuadcopterEntity.class,
@@ -17,5 +17,10 @@ public interface QuadcopterState extends Controllable, VideoCapable.Transmitter 
     }
 
     void setGodMode(boolean godMode);
+    void setPower(int power);
+    void setCameraAngle(int cameraAngle);
+
     boolean isInGodMode();
+    int getPower();
+    int getCameraAngle();
 }

@@ -1,16 +1,17 @@
 package dev.lazurite.quadz.common.item.container;
 
-import dev.lazurite.quadz.common.util.type.VideoCapable;
 import dev.lazurite.quadz.common.util.Frequency;
+import dev.lazurite.quadz.common.util.type.VideoDevice;
 import dev.onyxstudios.cca.api.v3.item.ItemComponent;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 
 /**
  * A dumping ground for goggles information. Mainly for storing
  * frequency and whether or not the goggles are powered on.
- * @see VideoCapable
+ * @see VideoDevice
  */
-public class GogglesContainer extends ItemComponent implements VideoCapable {
+public class GogglesContainer extends ItemComponent implements VideoDevice {
     private final ItemStack stack;
 
     public GogglesContainer(ItemStack stack) {

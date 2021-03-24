@@ -74,12 +74,6 @@ public class ConfigScreen implements ModMenuApi {
                 .setMin(0).build());
 
         preferences.add(builder.entryBuilder().startFloatField(
-                new TranslatableText("config.quadz.entry.super_rate"), Config.getInstance().superRate)
-                .setDefaultValue(Config.getInstance().superRate)
-                .setSaveConsumer(value -> Config.getInstance().superRate = value)
-                .setMin(0).build());
-
-        preferences.add(builder.entryBuilder().startFloatField(
                 new TranslatableText("config.quadz.entry.deadzone"), Config.getInstance().deadzone)
                 .setDefaultValue(Config.getInstance().deadzone)
                 .setSaveConsumer(value -> Config.getInstance().deadzone = value)

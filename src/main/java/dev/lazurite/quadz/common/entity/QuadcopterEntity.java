@@ -6,7 +6,7 @@ import com.jme3.math.Vector3f;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
-import dev.lazurite.quadz.common.util.access.Matrix4fAccess;
+import dev.lazurite.quadz.common.util.type.access.Matrix4fAccess;
 import dev.lazurite.quadz.client.input.frame.InputFrame;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.util.type.Bindable;
@@ -17,7 +17,6 @@ import dev.lazurite.quadz.common.util.Axis;
 import dev.lazurite.quadz.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.rayon.api.element.PhysicsElement;
-import dev.lazurite.rayon.impl.bullet.thread.PhysicsThread;
 import dev.lazurite.rayon.impl.bullet.world.MinecraftSpace;
 import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
@@ -53,7 +52,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 
 	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
 	private static final TrackedData<Integer> CAMERA_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	private static final TrackedData<Integer> FIELD_OF_VIEW = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Integer> POWER = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
 	private final InputFrame inputFrame = new InputFrame();
@@ -73,9 +71,9 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		/* Rotate the quadcopter based on user input */
 		if (!getInputFrame().isEmpty()) {
 			if (Mode.RATE.equals(getInputFrame().getMode())) {
-				rotate(Axis.X, getInputFrame().calculatePitch(PhysicsThread.STEP_SIZE));
-				rotate(Axis.Y, getInputFrame().calculateYaw(PhysicsThread.STEP_SIZE));
-				rotate(Axis.Z, getInputFrame().calculateRoll(PhysicsThread.STEP_SIZE));
+				rotate(Axis.X, getInputFrame().calculatePitch(space.getThread().getStepRate()));
+				rotate(Axis.Y, getInputFrame().calculateYaw(space.getThread().getStepRate()));
+				rotate(Axis.Z, getInputFrame().calculateRoll(space.getThread().getStepRate()));
 			} else if (Mode.ANGLE.equals(getInputFrame().getMode())) {
 				float targetPitch = -getInputFrame().getPitch() * getInputFrame().getMaxAngle();
 				float targetRoll = -getInputFrame().getRoll() * getInputFrame().getMaxAngle();
@@ -84,7 +82,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 				float currentRoll = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(getRigidBody().getPhysicsRotation(new Quaternion())).x);
 
 				rotate(Axis.X, currentPitch - targetPitch);
-				rotate(Axis.Y, getInputFrame().calculateYaw(PhysicsThread.STEP_SIZE));
+				rotate(Axis.Y, getInputFrame().calculateYaw(space.getThread().getStepRate()));
 				rotate(Axis.Z, currentRoll - targetRoll);
 			}
 
@@ -107,7 +105,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 			/* Calculate thrust from yaw spin */
 			Vector3f yawThrust = new Vector3f();
 			yawThrust.set(direction);
-			yawThrust.multLocal(Math.abs(getInputFrame().calculateYaw(PhysicsThread.STEP_SIZE) * 0.01f * getThrustForce()));
+			yawThrust.multLocal(Math.abs(getInputFrame().calculateYaw(space.getThread().getStepRate()) * 0.01f * getThrustForce()));
 
 			/* Add up the net thrust and apply the force */
 			if (Float.isFinite(thrust.length())) {
@@ -211,7 +209,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		setBindId(tag.getInt("bind_id"));
 		setFrequency(new Frequency((char) tag.getInt("band"), tag.getInt("channel")));
 		setCameraAngle(tag.getInt("camera_angle"));
-		setFieldOfView(tag.getInt("field_of_view"));
 		setPower(tag.getInt("power"));
 	}
 
@@ -222,7 +219,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		tag.putInt("band", getFrequency().getBand());
 		tag.putInt("channel", getFrequency().getChannel());
 		tag.putInt("camera_angle", getCameraAngle());
-		tag.putInt("field_of_view", getFieldOfView());
 		tag.putInt("power", getPower());
 	}
 
@@ -240,7 +236,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		getDataTracker().startTracking(ACTIVE, false);
 		getDataTracker().startTracking(FREQUENCY, new Frequency());
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
-		getDataTracker().startTracking(FIELD_OF_VIEW, 90);
 		getDataTracker().startTracking(POWER, 25);
 	}
 
@@ -281,12 +276,10 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 		return getDataTracker().get(BIND_ID);
 	}
 
-	@Override
 	public void setInputFrame(InputFrame frame) {
 		this.inputFrame.set(frame);
 	}
 
-	@Override
 	public InputFrame getInputFrame() {
 		return this.inputFrame;
 	}
@@ -309,16 +302,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements PhysicsEl
 	@Override
 	public int getPower() {
 		return getDataTracker().get(POWER);
-	}
-
-	@Override
-	public void setFieldOfView(int fieldOfView) {
-		getDataTracker().set(FIELD_OF_VIEW, fieldOfView);
-	}
-
-	@Override
-	public int getFieldOfView() {
-		return getDataTracker().get(FIELD_OF_VIEW);
 	}
 
 	@Override

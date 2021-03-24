@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ServerTick {
-    public static int RANGE = 100;
+    public static int RANGE = 300;
 
     public static void tick(MinecraftServer server) {
         List<QuadcopterEntity> toActivate = Lists.newArrayList();
@@ -56,7 +56,7 @@ public class ServerTick {
 
                                     if (transmitter.isPresent()) {
                                         if (entity.getBindId() == transmitter.get().getBindId()) {
-//                                            entity.getRigidBody().prioritize(player);
+                                            entity.getRigidBody().prioritize(player);
                                             SelectedSlotS2C.send(player, i);
                                         }
                                     }
@@ -72,7 +72,7 @@ public class ServerTick {
                     QuadcopterEntity entity = (QuadcopterEntity) player.getCameraEntity();
 
                     if (player.equals(entity.getRigidBody().getPriorityPlayer())) {
-//                        entity.getRigidBody().prioritize(null);
+                        entity.getRigidBody().prioritize(null);
                     }
 
                     player.setCameraEntity(player);

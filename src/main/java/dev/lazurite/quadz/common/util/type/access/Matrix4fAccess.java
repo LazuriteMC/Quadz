@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.common.util.access;
+package dev.lazurite.quadz.common.util.type.access;
 
 import com.jme3.math.Vector3f;
 import net.minecraft.util.math.Matrix4f;

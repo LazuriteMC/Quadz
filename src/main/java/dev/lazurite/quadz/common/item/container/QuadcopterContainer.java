@@ -1,6 +1,5 @@
 package dev.lazurite.quadz.common.item.container;
 
-import dev.lazurite.quadz.client.input.frame.InputFrame;
 import dev.lazurite.quadz.common.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.item.quads.VoxelRacerOneItem;
 import dev.lazurite.quadz.common.util.type.QuadcopterState;
@@ -23,7 +22,6 @@ public class QuadcopterContainer implements ComponentV3, QuadcopterState {
 
     private final Frequency frequency = new Frequency();
     private int cameraAngle = 0;
-    private int fieldOfView = 90;
     private int power = 25;
 
     public QuadcopterContainer(ItemStack stack) {
@@ -42,7 +40,6 @@ public class QuadcopterContainer implements ComponentV3, QuadcopterState {
         frequency.setBand((char) tag.getInt("band"));
         frequency.setChannel(tag.getInt("channel"));
         cameraAngle = tag.getInt("camera_angle");
-        fieldOfView = tag.getInt("field_of_view");
         power = tag.getInt("power");
     }
 
@@ -54,7 +51,6 @@ public class QuadcopterContainer implements ComponentV3, QuadcopterState {
         tag.putInt("band", frequency.getBand());
         tag.putInt("channel", frequency.getChannel());
         tag.putInt("camera_angle", cameraAngle);
-        tag.putInt("field_of_view", fieldOfView);
         tag.putInt("power", power);
     }
 
@@ -79,15 +75,6 @@ public class QuadcopterContainer implements ComponentV3, QuadcopterState {
     }
 
     @Override
-    public void setInputFrame(InputFrame frame) {
-
-    }
-
-    public InputFrame getInputFrame() {
-        return null;
-    }
-
-    @Override
     public void setFrequency(Frequency frequency) {
         this.frequency.set(frequency);
     }
@@ -105,16 +92,6 @@ public class QuadcopterContainer implements ComponentV3, QuadcopterState {
     @Override
     public int getPower() {
         return this.power;
-    }
-
-    @Override
-    public void setFieldOfView(int fieldOfView) {
-        this.fieldOfView = fieldOfView;
-    }
-
-    @Override
-    public int getFieldOfView() {
-        return this.fieldOfView;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.common.mixin;
 
 import com.jme3.math.Vector3f;
-import dev.lazurite.quadz.common.util.access.Matrix4fAccess;
+import dev.lazurite.quadz.common.util.type.access.Matrix4fAccess;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
 import org.spongepowered.asm.mixin.Mixin;

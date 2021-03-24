@@ -2,8 +2,8 @@ package dev.lazurite.quadz.client.input.frame;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.input.Mode;
+import dev.lazurite.quadz.common.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.item.container.TransmitterContainer;
-import dev.lazurite.quadz.common.util.type.Controllable;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -35,9 +35,9 @@ public class InputFrameC2S {
                 TransmitterContainer transmitter = Quadz.TRANSMITTER_CONTAINER.get(player.getMainHandStack());
                 Entity entity = player.getEntityWorld().getEntityById(entityId);
 
-                if (entity instanceof Controllable) {
-                    if (((Controllable) entity).getBindId() == transmitter.getBindId()) {
-                        ((Controllable) entity).setInputFrame(frame);
+                if (entity instanceof QuadcopterEntity) {
+                    if (((QuadcopterEntity) entity).getBindId() == transmitter.getBindId()) {
+                        ((QuadcopterEntity) entity).setInputFrame(frame);
                     }
                 }
             }
