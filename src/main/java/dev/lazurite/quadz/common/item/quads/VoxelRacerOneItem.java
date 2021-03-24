@@ -4,7 +4,7 @@ import com.jme3.math.Quaternion;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.entity.quads.VoxelRacerOneEntity;
 import dev.lazurite.quadz.common.item.container.QuadcopterContainer;
-import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
+import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

@@ -3,7 +3,7 @@ package dev.lazurite.quadz.client.render.entity;
 import com.jme3.math.Quaternion;
 import dev.lazurite.quadz.client.render.model.PixelModel;
 import dev.lazurite.quadz.common.entity.quads.PixelEntity;
-import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
+import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;

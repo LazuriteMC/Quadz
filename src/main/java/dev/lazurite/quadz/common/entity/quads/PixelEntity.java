@@ -3,7 +3,7 @@ package dev.lazurite.quadz.common.entity.quads;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.item.container.QuadcopterContainer;
-import dev.lazurite.rayon.impl.bullet.body.ElementRigidBody;
+import dev.lazurite.rayon.core.impl.physics.space.body.ElementRigidBody;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;

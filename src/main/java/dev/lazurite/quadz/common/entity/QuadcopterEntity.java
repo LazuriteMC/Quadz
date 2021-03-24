@@ -16,9 +16,9 @@ import dev.lazurite.quadz.common.item.TransmitterItem;
 import dev.lazurite.quadz.common.util.Axis;
 import dev.lazurite.quadz.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.quadz.common.util.Frequency;
-import dev.lazurite.rayon.api.element.PhysicsElement;
-import dev.lazurite.rayon.impl.bullet.world.MinecraftSpace;
-import dev.lazurite.rayon.impl.util.math.QuaternionHelper;
+import dev.lazurite.rayon.core.impl.physics.space.MinecraftSpace;
+import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
+import dev.lazurite.rayon.entity.api.EntityPhysicsElement;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -45,7 +45,7 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
-public abstract class QuadcopterEntity extends LivingEntity implements PhysicsElement, QuadcopterState {
+public abstract class QuadcopterEntity extends LivingEntity implements EntityPhysicsElement, QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Boolean> ACTIVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
