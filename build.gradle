@@ -44,6 +44,10 @@ dependencies {
 	include "me.shedaniel.cloth:config-2:${project.cloth_version}"
 	modApi "me.zeroeightsix:fiber:${project.fiber_version}"
 	include "me.zeroeightsix:fiber:${project.fiber_version}"
+
+	// Lattice
+	modImplementation "com.github.LazuriteMC:Lattice:${project.lattice_version}"
+	include "com.github.LazuriteMC:Lattice:${project.lattice_version}"
 }
 
 processResources {
