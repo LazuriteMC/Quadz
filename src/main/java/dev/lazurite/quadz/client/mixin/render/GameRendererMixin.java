@@ -72,6 +72,11 @@ public class GameRendererMixin {
 		}
 	}
 
+	/**
+	 * Prevents the screen from rotating using the entity's yaw.
+	 * @param quaternion
+	 * @return
+	 */
 	@ModifyArg(
 		method = "renderWorld",
 		at = @At(
@@ -90,6 +95,11 @@ public class GameRendererMixin {
 
 	// TODO optifine goes borkus here
 
+	/**
+	 * Prevents the screen from rotating use the entity's pitch.
+	 * @param quaternion
+	 * @return
+	 */
 	@ModifyArg(
 			method = "renderWorld",
 			at = @At(

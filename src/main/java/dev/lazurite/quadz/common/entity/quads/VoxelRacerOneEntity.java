@@ -20,6 +20,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.Optional;
 
+@SuppressWarnings("EntityConstructor")
 public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable {
     private final AnimationFactory factory = new AnimationFactory(this);
     private final ElementRigidBody rigidBody = new ElementRigidBody(this);

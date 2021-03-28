@@ -13,7 +13,6 @@ import dev.lazurite.quadz.common.util.type.Bindable;
 import dev.lazurite.quadz.common.util.type.QuadcopterState;
 import dev.lazurite.quadz.common.item.ChannelWandItem;
 import dev.lazurite.quadz.common.item.TransmitterItem;
-import dev.lazurite.quadz.common.util.Axis;
 import dev.lazurite.quadz.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.rayon.core.impl.physics.space.MinecraftSpace;
@@ -21,7 +20,6 @@ import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import dev.lazurite.rayon.entity.api.EntityPhysicsElement;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -37,14 +35,13 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("EntityConstructor")
 public abstract class QuadcopterEntity extends LivingEntity implements EntityPhysicsElement, QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -68,46 +65,45 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 
 	@Override
 	public void step(MinecraftSpace space) {
+		InputFrame frame = new InputFrame(getInputFrame());
+		float delta = 0.05f;
+
 		/* Rotate the quadcopter based on user input */
-		if (!getInputFrame().isEmpty()) {
-			if (Mode.RATE.equals(getInputFrame().getMode())) {
-				rotate(Axis.X, getInputFrame().calculatePitch(space.getThread().getStepRate()));
-				rotate(Axis.Y, getInputFrame().calculateYaw(space.getThread().getStepRate()));
-				rotate(Axis.Z, getInputFrame().calculateRoll(space.getThread().getStepRate()));
-			} else if (Mode.ANGLE.equals(getInputFrame().getMode())) {
-				float targetPitch = -getInputFrame().getPitch() * getInputFrame().getMaxAngle();
-				float targetRoll = -getInputFrame().getRoll() * getInputFrame().getMaxAngle();
+		if (!frame.isEmpty()) {
+			if (Mode.RATE.equals(frame.getMode())) {
+				rotate(frame.calculatePitch(delta), frame.calculateYaw(delta), frame.calculateRoll(delta));
+			} else if (Mode.ANGLE.equals(frame.getMode())) {
+				float targetPitch = -frame.getPitch() * frame.getMaxAngle();
+				float targetRoll = -frame.getRoll() * frame.getMaxAngle();
 
 				float currentPitch = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(getRigidBody().getPhysicsRotation(new Quaternion())).y);
 				float currentRoll = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(getRigidBody().getPhysicsRotation(new Quaternion())).x);
 
-				rotate(Axis.X, currentPitch - targetPitch);
-				rotate(Axis.Y, getInputFrame().calculateYaw(space.getThread().getStepRate()));
-				rotate(Axis.Z, currentRoll - targetRoll);
+				rotate(currentPitch - targetPitch, frame.calculateYaw(delta), currentRoll - targetRoll);
 			}
 
 			/* Decrease angular velocity hack */
-			if (getInputFrame().getThrottle() > 0.1f) {
-				getRigidBody().setAngularVelocity(getRigidBody().getAngularVelocity(new Vector3f()).multLocal(0.5f * getInputFrame().getThrottle()));
+			if (frame.getThrottle() > 0.1f) {
+				getRigidBody().setAngularVelocity(getRigidBody().getAngularVelocity(new Vector3f()).multLocal(0.5f * frame.getThrottle()));
 			}
 
-			/* Get the thrust direction vector */
+			/* Get the thrust unit vector */
 			Matrix4f mat = new Matrix4f();
 			Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.bulletToMinecraft(
 					QuaternionHelper.rotateX(getRigidBody().getPhysicsRotation(new Quaternion()), 90)));
-			Vector3f direction = Matrix4fAccess.from(mat).matrixToVector();
+			Vector3f unit = Matrix4fAccess.from(mat).matrixToVector();
 
 			/* Calculate basic thrust */
 			Vector3f thrust = new Vector3f();
-			thrust.set(direction);
-			thrust.multLocal((float) (getThrustForce() * (Math.pow(getInputFrame().getThrottle(), getThrustCurve()))));
+			thrust.set(unit);
+			thrust.multLocal((float) (getThrustForce() * (Math.pow(frame.getThrottle(), getThrustCurve()))));
 
 			/* Calculate thrust from yaw spin */
 			Vector3f yawThrust = new Vector3f();
-			yawThrust.set(direction);
-			yawThrust.multLocal(Math.abs(getInputFrame().calculateYaw(space.getThread().getStepRate()) * 0.01f * getThrustForce()));
+			yawThrust.set(unit);
 
 			/* Add up the net thrust and apply the force */
+			yawThrust.multLocal(Math.abs(frame.calculateYaw(delta) * 0.01f * getThrustForce()));
 			if (Float.isFinite(thrust.length())) {
 				getRigidBody().applyCentralForce(thrust.add(yawThrust).multLocal(-1));
 			} else {
@@ -116,26 +112,15 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 		}
 	}
 
-	public void rotate(Axis axis, float deg) {
-		Transform trans;
+	public void rotate(float x, float y, float z) {
+		Quaternion rot = new Quaternion();
+		QuaternionHelper.rotateX(rot, x);
+		QuaternionHelper.rotateX(rot, y);
+		QuaternionHelper.rotateX(rot, z);
 
-		switch (axis) {
-			case X:
-				trans = getRigidBody().getTransform(new Transform());
-				trans.getRotation().set(QuaternionHelper.rotateX(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
-				getRigidBody().setPhysicsTransform(trans);
-				break;
-			case Y:
-				trans = getRigidBody().getTransform(new Transform());
-				trans.getRotation().set(QuaternionHelper.rotateY(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
-				getRigidBody().setPhysicsTransform(trans);
-				break;
-			case Z:
-				trans = getRigidBody().getTransform(new Transform());
-				trans.getRotation().set(QuaternionHelper.rotateZ(getRigidBody().getPhysicsRotation(new Quaternion()), deg));
-				getRigidBody().setPhysicsTransform(trans);
-				break;
-		}
+		Transform trans = getRigidBody().getTransform(new Transform());
+		trans.getRotation().set(trans.getRotation().mult(rot));
+		getRigidBody().setPhysicsTransform(trans);
 	}
 
 	@Override
@@ -152,15 +137,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 
 		return !isInGodMode();
 	}
-
-	@Override
-	public void travel(Vec3d pos) { }
-
-	@Override
-	protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) { }
-
-	@Override
-	protected void playStepSound(BlockPos pos, BlockState blockIn) { }
 
 	@Override
 	public Iterable<ItemStack> getArmorItems() {
@@ -244,11 +220,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 		return QuaternionHelper.getYaw(getPhysicsRotation(new Quaternion(), tickDelta));
 	}
 
-	/**
-	 * Provides the pitch + the camera angle
-	 * @param tickDelta
-	 * @return
-	 */
 	@Override
 	public float getPitch(float tickDelta) {
 		return QuaternionHelper.getPitch(QuaternionHelper.rotateX(

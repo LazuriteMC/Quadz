@@ -7,6 +7,8 @@ import dev.lazurite.quadz.common.item.TransmitterItem;
 import dev.lazurite.quadz.common.item.container.GogglesContainer;
 import dev.lazurite.quadz.common.item.container.TransmitterContainer;
 import dev.lazurite.quadz.common.util.net.SelectedSlotS2C;
+import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
+import dev.lazurite.rayon.core.impl.physics.space.MinecraftSpace;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Box;
@@ -56,7 +58,7 @@ public class ServerTick {
 
                                     if (transmitter.isPresent()) {
                                         if (entity.getBindId() == transmitter.get().getBindId()) {
-                                            entity.getRigidBody().prioritize(player);
+                                            PhysicsThread.get(server).execute(() -> entity.getRigidBody().prioritize(player));
                                             SelectedSlotS2C.send(player, i);
                                         }
                                     }
@@ -72,7 +74,7 @@ public class ServerTick {
                     QuadcopterEntity entity = (QuadcopterEntity) player.getCameraEntity();
 
                     if (player.equals(entity.getRigidBody().getPriorityPlayer())) {
-                        entity.getRigidBody().prioritize(null);
+                        PhysicsThread.get(server).execute(() -> entity.getRigidBody().prioritize(null));
                     }
 
                     player.setCameraEntity(player);
