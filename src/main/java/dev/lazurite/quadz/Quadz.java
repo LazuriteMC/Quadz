@@ -19,10 +19,8 @@ import dev.lazurite.quadz.common.item.container.QuadcopterContainer;
 import dev.lazurite.quadz.common.item.container.TransmitterContainer;
 import dev.lazurite.quadz.common.item.quads.VoyagerItem;
 import dev.lazurite.quadz.common.util.net.SelectedSlotS2C;
-import dev.lazurite.quadz.common.item.ChannelWandItem;
 import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.item.quads.VoxelRacerOneItem;
-import dev.lazurite.quadz.common.item.TransmitterItem;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
 import dev.onyxstudios.cca.api.v3.item.ItemComponentFactoryRegistry;
@@ -59,8 +57,8 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 
 	/* Items */
 	public static GogglesItem GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
-	public static TransmitterItem TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new TransmitterItem(new Item.Settings().maxCount(1)));
-	public static ChannelWandItem CHANNEL_WAND_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "channel_wand_item"), new ChannelWandItem(new Item.Settings().maxCount(1)));
+	public static Item TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new Item(new Item.Settings().maxCount(1)));
+	public static Item CHANNEL_WAND_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "channel_wand_item"), new Item(new Item.Settings().maxCount(1)));
 	public static ItemGroup ITEM_GROUP;
 
 	/* Quadcopter Items */

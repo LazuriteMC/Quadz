@@ -3,24 +3,16 @@ package dev.lazurite.quadz.common.item.container;
 import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.quadz.common.util.type.VideoDevice;
 import dev.onyxstudios.cca.api.v3.item.ItemComponent;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 
 /**
- * A dumping ground for goggles information. Mainly for storing
- * frequency and whether or not the goggles are powered on.
+ * Stores the frequency and power state of the goggles using the {@link VideoDevice} interface.
  * @see VideoDevice
  */
 public class GogglesContainer extends ItemComponent implements VideoDevice {
-    private final ItemStack stack;
-
     public GogglesContainer(ItemStack stack) {
         super(stack);
-        this.stack = stack;
-    }
-
-    public ItemStack getStack() {
-        return this.stack;
     }
 
     @Override
@@ -31,6 +23,14 @@ public class GogglesContainer extends ItemComponent implements VideoDevice {
 
     @Override
     public Frequency getFrequency() {
+        if (!this.hasTag("channel", NbtType.INT)) {
+            this.putInt("channel", 1);
+        }
+
+        if (!this.hasTag("band", NbtType.INT)) {
+            this.putInt("band", 'R');
+        }
+
         return new Frequency((char) getInt("band"), getInt("channel"));
     }
 
@@ -39,6 +39,10 @@ public class GogglesContainer extends ItemComponent implements VideoDevice {
     }
 
     public boolean isEnabled() {
+        if (!this.hasTag("enabled", NbtType.BYTE)) {
+            this.setEnabled(false);
+        }
+
         return getBoolean("enabled");
     }
 

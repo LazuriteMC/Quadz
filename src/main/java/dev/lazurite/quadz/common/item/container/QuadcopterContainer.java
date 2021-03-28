@@ -1,107 +1,80 @@
 package dev.lazurite.quadz.common.item.container;
 
-import dev.lazurite.quadz.common.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.item.quads.VoxelRacerOneItem;
 import dev.lazurite.quadz.common.util.type.QuadcopterState;
 import dev.lazurite.quadz.common.util.Frequency;
-import dev.onyxstudios.cca.api.v3.component.ComponentV3;
+import dev.onyxstudios.cca.api.v3.item.ItemComponent;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 
 /**
- * A dumping ground for {@link QuadcopterState} information. The same
- * information found here also goes in {@link QuadcopterEntity}.
+ * Stores all relevant quadcopter information in quadcopter spawner items
+ * through the {@link QuadcopterState} interface.
  * @see QuadcopterState
- * @see VoxelRacerOneItem
  */
-public class QuadcopterContainer implements ComponentV3, QuadcopterState {
-    private final ItemStack stack;
-
-    private boolean godMode = false;
-    private int bindId = -1;
-
-    private final Frequency frequency = new Frequency();
-    private int cameraAngle = 0;
-    private int power = 25;
-
+public class QuadcopterContainer extends ItemComponent implements QuadcopterState {
     public QuadcopterContainer(ItemStack stack) {
-        this.stack = stack;
-    }
-
-    public ItemStack getStack() {
-        return this.stack;
-    }
-
-    @Override
-    public void readFromNbt(CompoundTag tag) {
-        godMode = tag.getBoolean("god_mode");
-        bindId = tag.getInt("bind_id");
-
-        frequency.setBand((char) tag.getInt("band"));
-        frequency.setChannel(tag.getInt("channel"));
-        cameraAngle = tag.getInt("camera_angle");
-        power = tag.getInt("power");
-    }
-
-    @Override
-    public void writeToNbt(CompoundTag tag) {
-        tag.putBoolean("god_mode", godMode);
-        tag.putInt("bind_id", bindId);
-
-        tag.putInt("band", frequency.getBand());
-        tag.putInt("channel", frequency.getChannel());
-        tag.putInt("camera_angle", cameraAngle);
-        tag.putInt("power", power);
+        super(stack);
     }
 
     @Override
     public void setGodMode(boolean godMode) {
-        this.godMode = godMode;
+        this.putBoolean("godmode", godMode);
     }
 
     @Override
     public boolean isInGodMode() {
-        return this.godMode;
+        if (!this.hasTag("godmode", NbtType.BYTE)) {
+            this.setGodMode(false);
+        }
+
+        return this.getBoolean("godmode");
     }
 
     @Override
     public void setBindId(int bindId) {
-        this.bindId = bindId;
+        this.putInt("bind_id", bindId);
     }
 
     @Override
     public int getBindId() {
-        return bindId;
+        if (!this.hasTag("bind_id", NbtType.INT)) {
+            this.setBindId(-1);
+        }
+
+        return this.getInt("bind_id");
     }
 
     @Override
     public void setFrequency(Frequency frequency) {
-        this.frequency.set(frequency);
+        putInt("channel", frequency.getChannel());
+        putInt("band", frequency.getBand());
     }
 
     @Override
     public Frequency getFrequency() {
-        return frequency;
-    }
+        if (!this.hasTag("channel", NbtType.INT)) {
+            this.putInt("channel", 1);
+        }
 
-    @Override
-    public void setPower(int power) {
-        this.power = power;
-    }
+        if (!this.hasTag("band", NbtType.INT)) {
+            this.putInt("band", 'R');
+        }
 
-    @Override
-    public int getPower() {
-        return this.power;
+        return new Frequency((char) getInt("band"), getInt("channel"));
     }
 
     @Override
     public void setCameraAngle(int cameraAngle) {
-        this.cameraAngle = cameraAngle;
+        this.putInt("camera_angle", cameraAngle);
     }
 
     @Override
     public int getCameraAngle() {
-        return this.cameraAngle;
+        if (!this.hasTag("camera_angle", NbtType.INT)) {
+            this.setCameraAngle(0);
+        }
+
+        return this.getInt("camera_angle");
     }
 
     @Override

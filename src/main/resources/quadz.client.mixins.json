@@ -6,7 +6,6 @@
   "client": [
     "MinecraftClientMixin",
     "input.MouseMixin",
-    "render.CameraMixin",
     "render.GameRendererMixin",
     "render.InGameHudMixin",
     "render.WorldRendererMixin"

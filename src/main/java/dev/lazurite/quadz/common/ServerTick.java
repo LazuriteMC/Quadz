@@ -3,12 +3,10 @@ package dev.lazurite.quadz.common;
 import com.google.common.collect.Lists;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.item.TransmitterItem;
 import dev.lazurite.quadz.common.item.container.GogglesContainer;
 import dev.lazurite.quadz.common.item.container.TransmitterContainer;
 import dev.lazurite.quadz.common.util.net.SelectedSlotS2C;
 import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
-import dev.lazurite.rayon.core.impl.physics.space.MinecraftSpace;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Box;
@@ -31,7 +29,7 @@ public class ServerTick {
 
             quads.forEach(quadcopter -> quadcopter.setActive(false));
 
-            if (player.getMainHandStack().getItem() instanceof TransmitterItem) {
+            if (player.getMainHandStack().getItem().equals(Quadz.TRANSMITTER_ITEM)) {
                 TransmitterContainer transmitter = Quadz.TRANSMITTER_CONTAINER.get(player.getMainHandStack());
 
                 for (QuadcopterEntity quadcopter : quads) {

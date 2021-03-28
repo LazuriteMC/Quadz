@@ -2,7 +2,6 @@ package dev.lazurite.quadz.client.input.keybind.net;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.item.TransmitterItem;
 import dev.lazurite.quadz.common.item.container.TransmitterContainer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -24,7 +23,7 @@ public class NoClipC2S {
         ItemStack hand = player.getMainHandStack();
 
         server.execute(() -> {
-            if (hand.getItem() instanceof TransmitterItem) {
+            if (hand.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
                 TransmitterContainer transmitter = Quadz.TRANSMITTER_CONTAINER.get(hand);
                 List<QuadcopterEntity> quadcopters = player.getEntityWorld().getEntitiesByClass(QuadcopterEntity.class, new Box(player.getBlockPos()).expand(80), null);
 

@@ -16,11 +16,16 @@ public interface QuadcopterState extends Bindable, VideoDevice {
                 new Box(new BlockPos(origin)).expand(range));
     }
 
+    default void copyFrom(QuadcopterState quadcopter) {
+        this.setGodMode(quadcopter.isInGodMode());
+        this.setBindId(quadcopter.getBindId());
+        this.setFrequency(quadcopter.getFrequency());
+        this.setCameraAngle(quadcopter.getCameraAngle());
+    }
+
     void setGodMode(boolean godMode);
-    void setPower(int power);
     void setCameraAngle(int cameraAngle);
 
     boolean isInGodMode();
-    int getPower();
     int getCameraAngle();
 }

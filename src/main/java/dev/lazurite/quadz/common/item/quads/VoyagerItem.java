@@ -9,7 +9,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.HitResult;
@@ -18,6 +17,8 @@ import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+
+import java.util.Optional;
 
 public class VoyagerItem extends Item implements IAnimatable {
 	public AnimationFactory factory = new AnimationFactory(this);
@@ -39,13 +40,10 @@ public class VoyagerItem extends Item implements IAnimatable {
 				VoyagerEntity entity = new VoyagerEntity(Quadz.VOYAGER, world);
 				entity.updatePosition(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
 				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), -user.yaw));
+				entity.setCameraAngle(30);
 
-				QuadcopterContainer item = Quadz.QUADCOPTER_CONTAINER.get(itemStack);
-				item.setCameraAngle(30);
-
-				CompoundTag tag = new CompoundTag();
-				item.writeToNbt(tag);
-				entity.readCustomDataFromTag(tag);
+				Optional<QuadcopterContainer> item = Quadz.QUADCOPTER_CONTAINER.maybeGet(itemStack);
+				item.ifPresent(entity::copyFrom);
 				world.spawnEntity(entity);
 			}
 

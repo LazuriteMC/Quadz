@@ -5,7 +5,6 @@ import dev.lazurite.quadz.client.input.frame.InputFrame;
 import dev.lazurite.quadz.client.input.frame.InputFrameC2S;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.common.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.item.TransmitterItem;
 import dev.lazurite.quadz.common.item.container.TransmitterContainer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -25,7 +24,7 @@ import net.minecraft.entity.Entity;
 public class ClientTick {
     public static void tick(MinecraftClient client) {
         if (client.player != null && client.world != null && !client.isPaused()) {
-            if (client.player.getMainHandStack().getItem() instanceof TransmitterItem) {
+            if (client.player.getMainHandStack().getItem().equals(Quadz.TRANSMITTER_ITEM)) {
                 TransmitterContainer transmitter = Quadz.TRANSMITTER_CONTAINER.get(client.player.getMainHandStack());
 
                 if (client.getCameraEntity() instanceof QuadcopterEntity) {

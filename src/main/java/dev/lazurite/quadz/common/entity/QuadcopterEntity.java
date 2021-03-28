@@ -11,8 +11,6 @@ import dev.lazurite.quadz.client.input.frame.InputFrame;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.util.type.Bindable;
 import dev.lazurite.quadz.common.util.type.QuadcopterState;
-import dev.lazurite.quadz.common.item.ChannelWandItem;
-import dev.lazurite.quadz.common.item.TransmitterItem;
 import dev.lazurite.quadz.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.rayon.core.impl.physics.space.MinecraftSpace;
@@ -46,10 +44,8 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Boolean> ACTIVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-
 	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
 	private static final TrackedData<Integer> CAMERA_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	private static final TrackedData<Integer> POWER = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
 	private final InputFrame inputFrame = new InputFrame();
 
@@ -161,15 +157,15 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 		ItemStack stack = player.inventory.getMainHandStack();
 
 		if (!world.isClient()) {
-			if (stack.getItem() instanceof TransmitterItem) {
+			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
 				Bindable.bind(this, Quadz.TRANSMITTER_CONTAINER.get(stack));
 				player.sendMessage(new LiteralText("Transmitter bound"), true);
-			} else if (stack.getItem() instanceof ChannelWandItem) {
+			} else if (stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM)) {
 				Frequency frequency = getFrequency();
 				player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), true);
 			}
 		} else {
-			if (stack.getItem() instanceof TransmitterItem) {
+			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
 				if (!InputTick.controllerExists()) {
 					ControllerNotFoundToast.add();
 				}
@@ -185,7 +181,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 		setBindId(tag.getInt("bind_id"));
 		setFrequency(new Frequency((char) tag.getInt("band"), tag.getInt("channel")));
 		setCameraAngle(tag.getInt("camera_angle"));
-		setPower(tag.getInt("power"));
 	}
 
 	@Override
@@ -195,7 +190,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 		tag.putInt("band", getFrequency().getBand());
 		tag.putInt("channel", getFrequency().getChannel());
 		tag.putInt("camera_angle", getCameraAngle());
-		tag.putInt("power", getPower());
 	}
 
 	@Override
@@ -212,7 +206,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 		getDataTracker().startTracking(ACTIVE, false);
 		getDataTracker().startTracking(FREQUENCY, new Frequency());
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
-		getDataTracker().startTracking(POWER, 25);
 	}
 
 	@Override
@@ -263,16 +256,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 	@Override
 	public Frequency getFrequency() {
 		return getDataTracker().get(FREQUENCY);
-	}
-
-	@Override
-	public void setPower(int milliWatts) {
-		getDataTracker().set(POWER, milliWatts);
-	}
-
-	@Override
-	public int getPower() {
-		return getDataTracker().get(POWER);
 	}
 
 	@Override

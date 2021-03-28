@@ -7,7 +7,6 @@ import dev.lazurite.rayon.core.impl.physics.space.body.ElementRigidBody;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -46,11 +45,7 @@ public class VoyagerEntity extends QuadcopterEntity implements IAnimatable {
         if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
             ItemStack stack = new ItemStack(Quadz.VOYAGER_ITEM);
             Optional<QuadcopterContainer> container = Quadz.QUADCOPTER_CONTAINER.maybeGet(stack);
-
-            CompoundTag tag = new CompoundTag();
-            writeCustomDataToTag(tag);
-            container.ifPresent(quadcopterContainer -> quadcopterContainer.readFromNbt(tag));
-
+            container.ifPresent(quadcopter -> quadcopter.copyFrom(this));
             dropStack(stack);
         }
     }
