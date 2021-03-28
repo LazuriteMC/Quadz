@@ -3,6 +3,7 @@ package dev.lazurite.quadz.common.entity;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
+import dev.lazurite.lattice.api.entity.Viewable;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
@@ -42,7 +43,7 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 
 @SuppressWarnings("EntityConstructor")
-public abstract class QuadcopterEntity extends LivingEntity implements EntityPhysicsElement, QuadcopterState {
+public abstract class QuadcopterEntity extends LivingEntity implements EntityPhysicsElement, Viewable, QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Boolean> ACTIVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -299,5 +300,15 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 
 	public boolean isActive() {
 		return getDataTracker().get(ACTIVE);
+	}
+
+	@Override
+	public boolean shouldRenderSelf() {
+		return false; // for now
+	}
+
+	@Override
+	public boolean shouldRenderPlayer() {
+		return true;
 	}
 }
