@@ -1,5 +1,6 @@
 package dev.lazurite.quadz.common.item.container;
 
+import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.quadz.common.util.type.VideoDevice;
 import dev.onyxstudios.cca.api.v3.item.ItemComponent;
@@ -12,7 +13,7 @@ import net.minecraft.item.ItemStack;
  */
 public class GogglesContainer extends ItemComponent implements VideoDevice {
     public GogglesContainer(ItemStack stack) {
-        super(stack);
+        super(stack, Quadz.GOGGLES_CONTAINER);
     }
 
     @Override

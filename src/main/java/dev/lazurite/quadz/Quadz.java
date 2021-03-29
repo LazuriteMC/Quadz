@@ -152,10 +152,10 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 
 	@Override
 	public void registerItemComponentFactories(ItemComponentFactoryRegistry registry) {
-		registry.registerFor(new Identifier(MODID, "goggles_item"), GOGGLES_CONTAINER, GogglesContainer::new);
-		registry.registerFor(new Identifier(MODID, "transmitter_item"), TRANSMITTER_CONTAINER, TransmitterContainer::new);
-		registry.registerFor(new Identifier(MODID, "voxel_racer_one_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
-		registry.registerFor(new Identifier(MODID, "voyager_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
-		registry.registerFor(new Identifier(MODID, "pixel_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
+		registry.registerFor(GOGGLES_ITEM, GOGGLES_CONTAINER, GogglesContainer::new);
+		registry.registerFor(TRANSMITTER_ITEM, TRANSMITTER_CONTAINER, TransmitterContainer::new);
+		registry.registerFor(VOXEL_RACER_ONE_ITEM, QUADCOPTER_CONTAINER, QuadcopterContainer::new);
+		registry.registerFor(VOYAGER_ITEM, QUADCOPTER_CONTAINER, QuadcopterContainer::new);
+		registry.registerFor(PIXEL_ITEM, QUADCOPTER_CONTAINER, QuadcopterContainer::new);
 	}
 }

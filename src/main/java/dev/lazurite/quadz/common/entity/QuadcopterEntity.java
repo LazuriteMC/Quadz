@@ -161,6 +161,10 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
 				Bindable.bind(this, Quadz.TRANSMITTER_CONTAINER.get(stack));
 				player.sendMessage(new LiteralText("Transmitter bound"), true);
+
+
+
+				System.out.println(Quadz.TRANSMITTER_CONTAINER.get(stack).getBindId() + " == " + this.getBindId());
 			} else if (stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM)) {
 				Frequency frequency = getFrequency();
 				player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), true);

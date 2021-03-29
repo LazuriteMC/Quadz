@@ -1,8 +1,8 @@
 package dev.lazurite.quadz.common.item.container;
 
+import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.util.type.Bindable;
 import dev.onyxstudios.cca.api.v3.item.ItemComponent;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
  */
 public class TransmitterContainer extends ItemComponent implements Bindable {
     public TransmitterContainer(ItemStack stack) {
-        super(stack);
+        super(stack, Quadz.TRANSMITTER_CONTAINER);
     }
 
     @Override
@@ -21,7 +21,7 @@ public class TransmitterContainer extends ItemComponent implements Bindable {
 
     @Override
     public int getBindId() {
-        if (!this.hasTag("bind_id", NbtType.INT)) {
+        if (!this.hasTag("bind_id")) {
             this.setBindId(-1);
         }
 

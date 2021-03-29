@@ -1,5 +1,6 @@
 package dev.lazurite.quadz.common.item.container;
 
+import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.util.type.QuadcopterState;
 import dev.lazurite.quadz.common.util.Frequency;
 import dev.onyxstudios.cca.api.v3.item.ItemComponent;
@@ -13,7 +14,7 @@ import net.minecraft.item.ItemStack;
  */
 public class QuadcopterContainer extends ItemComponent implements QuadcopterState {
     public QuadcopterContainer(ItemStack stack) {
-        super(stack);
+        super(stack, Quadz.QUADCOPTER_CONTAINER);
     }
 
     @Override
