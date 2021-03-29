@@ -4,7 +4,6 @@ import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.quadz.common.util.type.VideoDevice;
 import dev.onyxstudios.cca.api.v3.item.ItemComponent;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -24,11 +23,11 @@ public class GogglesContainer extends ItemComponent implements VideoDevice {
 
     @Override
     public Frequency getFrequency() {
-        if (!this.hasTag("channel", NbtType.INT)) {
+        if (!this.hasTag("channel")) {
             this.putInt("channel", 1);
         }
 
-        if (!this.hasTag("band", NbtType.INT)) {
+        if (!this.hasTag("band")) {
             this.putInt("band", 'R');
         }
 
@@ -40,7 +39,7 @@ public class GogglesContainer extends ItemComponent implements VideoDevice {
     }
 
     public boolean isEnabled() {
-        if (!this.hasTag("enabled", NbtType.BYTE)) {
+        if (!this.hasTag("enabled")) {
             this.setEnabled(false);
         }
 

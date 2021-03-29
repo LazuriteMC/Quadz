@@ -20,9 +20,9 @@ import dev.lazurite.quadz.common.item.quads.VoyagerItem;
 import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.item.quads.VoxelRacerOneItem;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
 import dev.onyxstudios.cca.api.v3.item.ItemComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.item.ItemComponentInitializer;
+import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -49,9 +49,9 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 	public static final Logger LOGGER = LogManager.getLogger("Quadz");
 
 	/* CCA Component Keys */
-	public static final ComponentKey<GogglesContainer> GOGGLES_CONTAINER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "goggles_container"), GogglesContainer.class);
-	public static final ComponentKey<TransmitterContainer> TRANSMITTER_CONTAINER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "transmitter_container"), TransmitterContainer.class);
-	public static final ComponentKey<QuadcopterContainer> QUADCOPTER_CONTAINER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "quadcopter_container"), QuadcopterContainer.class);
+	public static final ComponentKey<GogglesContainer> GOGGLES_CONTAINER = ComponentRegistry.getOrCreate(new Identifier(MODID, "goggles_container"), GogglesContainer.class);
+	public static final ComponentKey<TransmitterContainer> TRANSMITTER_CONTAINER = ComponentRegistry.getOrCreate(new Identifier(MODID, "transmitter_container"), TransmitterContainer.class);
+	public static final ComponentKey<QuadcopterContainer> QUADCOPTER_CONTAINER = ComponentRegistry.getOrCreate(new Identifier(MODID, "quadcopter_container"), QuadcopterContainer.class);
 
 	/* Packet Identifiers */
 	public static final Identifier SELECTED_SLOT_S2C = new Identifier(MODID, "selected_slot_s2c");
@@ -115,7 +115,7 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 				FabricEntityTypeBuilder.createLiving()
 						.entityFactory(VoyagerEntity::new)
 						.spawnGroup(SpawnGroup.MISC)
-						.dimensions(EntityDimensions.changing(1.1F, 0.25F))
+						.dimensions(EntityDimensions.changing(1.0F, 0.225F))
 						.defaultAttributes(LivingEntity::createLivingAttributes)
 						.build());
 
@@ -158,10 +158,10 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 
 	@Override
 	public void registerItemComponentFactories(ItemComponentFactoryRegistry registry) {
-		registry.registerFor(GOGGLES_ITEM, GOGGLES_CONTAINER, GogglesContainer::new);
-		registry.registerFor(TRANSMITTER_ITEM, TRANSMITTER_CONTAINER, TransmitterContainer::new);
-		registry.registerFor(VOXEL_RACER_ONE_ITEM, QUADCOPTER_CONTAINER, QuadcopterContainer::new);
-		registry.registerFor(VOYAGER_ITEM, QUADCOPTER_CONTAINER, QuadcopterContainer::new);
-		registry.registerFor(PIXEL_ITEM, QUADCOPTER_CONTAINER, QuadcopterContainer::new);
+		registry.registerFor(new Identifier(MODID, "goggles_item"), GOGGLES_CONTAINER, GogglesContainer::new);
+		registry.registerFor(new Identifier(MODID, "transmitter_item"), TRANSMITTER_CONTAINER, TransmitterContainer::new);
+		registry.registerFor(new Identifier(MODID, "voyager_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
+		registry.registerFor(new Identifier(MODID, "voxel_racer_one_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
+		registry.registerFor(new Identifier(MODID, "pixel_item"), QUADCOPTER_CONTAINER, QuadcopterContainer::new);
 	}
 }

@@ -22,29 +22,29 @@ public class ClientTick {
     public static void tick(MinecraftClient client) {
         if (client.player != null && client.world != null && !client.isPaused()) {
             Quadz.TRANSMITTER_CONTAINER.maybeGet(client.player.getMainHandStack()).ifPresent(transmitter -> {
-                if (client.getCameraEntity() instanceof QuadcopterEntity) {
-                    QuadcopterEntity quadcopter = (QuadcopterEntity) client.getCameraEntity();
+//                if (client.getCameraEntity() instanceof QuadcopterEntity) {
+//                    QuadcopterEntity quadcopter = (QuadcopterEntity) client.getCameraEntity();
+//
+//                    if (transmitter.isBoundTo(quadcopter)) {
+//                        /* Get a new InputFrame from InputTick. */
+//                        quadcopter.getInputFrame().set(InputTick.getInstance().getInputFrame());
+//
+//                        /* Send that InputFrame to the server. */
+//                        quadcopter.sendInputFrame();
+//                    }
+//                }
 
-                    if (transmitter.isBoundTo(quadcopter)) {
-                        /* Get a new InputFrame from InputTick. */
-                        quadcopter.getInputFrame().set(InputTick.getInstance().getInputFrame());
+                for (Entity entity : client.world.getEntities()) {
+                    if (entity instanceof QuadcopterEntity) {
+                        QuadcopterEntity quadcopter = (QuadcopterEntity) entity;
 
-                        /* Send that InputFrame to the server. */
-                        quadcopter.sendInputFrame();
-                    }
-                } else {
-                    for (Entity entity : client.world.getEntities()) {
-                        if (entity instanceof QuadcopterEntity) {
-                            QuadcopterEntity quadcopter = (QuadcopterEntity) entity;
+                        if (transmitter.isBoundTo(quadcopter)) {
+                            /* Get a new InputFrame from InputTick. */
+                            quadcopter.getInputFrame().set(InputTick.getInstance().getInputFrame());
 
-                            if (transmitter.isBoundTo(quadcopter)) {
-                                /* Get a new InputFrame from InputTick. */
-                                quadcopter.getInputFrame().set(InputTick.getInstance().getInputFrame());
-
-                                /* Send that InputFrame to the server. */
-                                quadcopter.sendInputFrame();
-                                break;
-                            }
+                            /* Send that InputFrame to the server. */
+                            quadcopter.sendInputFrame();
+                            break;
                         }
                     }
                 }

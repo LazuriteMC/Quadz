@@ -4,7 +4,6 @@ import com.jme3.math.Quaternion;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.entity.quads.PixelEntity;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
-import dev.lazurite.quadz.common.item.container.QuadcopterContainer;
 import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

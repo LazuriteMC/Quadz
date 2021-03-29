@@ -5,7 +5,6 @@ import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.util.type.QuadcopterState;
 import dev.lazurite.quadz.common.util.Frequency;
 import dev.onyxstudios.cca.api.v3.item.ItemComponent;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -25,7 +24,7 @@ public class QuadcopterContainer extends ItemComponent implements QuadcopterStat
 
     @Override
     public boolean isInGodMode() {
-        if (!this.hasTag("godmode", NbtType.BYTE)) {
+        if (!this.hasTag("godmode")) {
             this.setGodMode(false);
         }
 
@@ -39,7 +38,7 @@ public class QuadcopterContainer extends ItemComponent implements QuadcopterStat
 
     @Override
     public int getBindId() {
-        if (!this.hasTag("bind_id", NbtType.INT)) {
+        if (!this.hasTag("bind_id")) {
             this.setBindId(-1);
         }
 
@@ -48,17 +47,17 @@ public class QuadcopterContainer extends ItemComponent implements QuadcopterStat
 
     @Override
     public void setFrequency(Frequency frequency) {
-        putInt("channel", frequency.getChannel());
-        putInt("band", frequency.getBand());
+        this.putInt("channel", frequency.getChannel());
+        this.putInt("band", frequency.getBand());
     }
 
     @Override
     public Frequency getFrequency() {
-        if (!this.hasTag("channel", NbtType.INT)) {
+        if (!this.hasTag("channel")) {
             this.putInt("channel", 1);
         }
 
-        if (!this.hasTag("band", NbtType.INT)) {
+        if (!this.hasTag("band")) {
             this.putInt("band", 'R');
         }
 
@@ -72,7 +71,7 @@ public class QuadcopterContainer extends ItemComponent implements QuadcopterStat
 
     @Override
     public int getCameraAngle() {
-        if (!this.hasTag("camera_angle", NbtType.INT)) {
+        if (!this.hasTag("camera_angle")) {
             if (stack.getItem() instanceof QuadcopterItem) {
                 this.setCameraAngle(((QuadcopterItem) stack.getItem()).getCameraAngle());
             } else {
@@ -86,7 +85,11 @@ public class QuadcopterContainer extends ItemComponent implements QuadcopterStat
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof QuadcopterContainer) {
-            return getBindId() == ((QuadcopterContainer) obj).getBindId();
+            QuadcopterContainer container = (QuadcopterContainer) obj;
+            return getBindId() == container.getBindId() &&
+                    getCameraAngle() == container.getCameraAngle() &&
+                    isInGodMode() == container.isInGodMode() &&
+                    getFrequency().equals(container.getFrequency());
         }
 
         return false;

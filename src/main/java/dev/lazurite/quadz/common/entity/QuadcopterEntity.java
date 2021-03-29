@@ -146,14 +146,16 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 
 	@Override
 	public boolean damage(DamageSource source, float amount) {
-		if (source.equals(DamageSource.OUT_OF_WORLD)) {
-			this.remove();
-			return true;
-		}
+		if (!world.isClient()) {
+			if (source.equals(DamageSource.OUT_OF_WORLD)) {
+				this.remove();
+				return true;
+			}
 
-		if (source.getAttacker() instanceof PlayerEntity) {
-			this.dropSpawner();
-			this.remove();
+			if (source.getAttacker() instanceof PlayerEntity) {
+				this.dropSpawner();
+				this.remove();
+			}
 		}
 
 		return !isInGodMode();

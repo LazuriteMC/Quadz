@@ -48,7 +48,7 @@ public class GogglePowerKeybind {
                 buf.writeBoolean(pressedKey.equals(key) && !prevPower);
                 ClientPlayNetworking.send(Quadz.POWER_GOGGLES_C2S, buf);
 
-                if (!prevPower) {
+                if (!prevPower && key.equals(pressedKey)) {
                     String sneakKey = KeyBindingHelper.getBoundKeyOf(MinecraftClient.getInstance().options.keySneak).getLocalizedText().getString().toUpperCase();
                     String powerKey = key.getBoundKeyLocalizedText().getString().toUpperCase();
                     player.sendMessage(new TranslatableText("message.quadz.goggles_on", sneakKey, powerKey), true);
