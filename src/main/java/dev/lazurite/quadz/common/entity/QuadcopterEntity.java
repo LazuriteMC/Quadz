@@ -112,8 +112,8 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 	public void rotate(float x, float y, float z) {
 		Quaternion rot = new Quaternion();
 		QuaternionHelper.rotateX(rot, x);
-		QuaternionHelper.rotateX(rot, y);
-		QuaternionHelper.rotateX(rot, z);
+		QuaternionHelper.rotateY(rot, y);
+		QuaternionHelper.rotateZ(rot, z);
 
 		Transform trans = getRigidBody().getTransform(new Transform());
 		trans.getRotation().set(trans.getRotation().mult(rot));
