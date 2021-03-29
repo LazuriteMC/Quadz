@@ -3,14 +3,15 @@
 	"animations": {
 		"animation.fpvracing.voxel_racer_one.armed": {
 			"loop": true,
+			"animation_length": 0.24,
 			"bones": {
 				"front_right": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
 						},
-						"0.6": {
-							"vector": [0, 360, 0]
+						"0.24": {
+							"vector": [0, 270, 0]
 						}
 					}
 				},
@@ -19,8 +20,8 @@
 						"0.0": {
 							"vector": [0, 0, 0]
 						},
-						"0.6": {
-							"vector": [0, -360, 0]
+						"0.24": {
+							"vector": [0, -270, 0]
 						}
 					}
 				},
@@ -29,8 +30,8 @@
 						"0.0": {
 							"vector": [0, 0, 0]
 						},
-						"0.6": {
-							"vector": [0, 360, 0]
+						"0.24": {
+							"vector": [0, 270, 0]
 						}
 					}
 				},
@@ -39,8 +40,8 @@
 						"0.0": {
 							"vector": [0, 0, 0]
 						},
-						"0.6": {
-							"vector": [0, -360, 0]
+						"0.24": {
+							"vector": [0, -270, 0]
 						}
 					}
 				}

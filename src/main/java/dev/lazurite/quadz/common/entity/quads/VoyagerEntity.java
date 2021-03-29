@@ -66,6 +66,7 @@ public class VoyagerEntity extends QuadcopterEntity implements IAnimatable {
     public void registerControllers(AnimationData animationData) {
         AnimationController<VoyagerEntity> controller = new AnimationController<>(this, "voyager_entity_controller", 0, this::predicate);
         controller.setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voyager.armed", true));
+        controller.transitionLengthTicks = 0;
         animationData.addAnimationController(controller);
     }
 

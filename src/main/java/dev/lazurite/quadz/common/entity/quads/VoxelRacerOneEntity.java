@@ -66,6 +66,7 @@ public class VoxelRacerOneEntity extends QuadcopterEntity implements IAnimatable
     public void registerControllers(AnimationData animationData) {
         AnimationController<VoxelRacerOneEntity> controller = new AnimationController<>(this, "voxel_racer_one_entity_controller", 0, this::predicate);
         controller.setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.voxel_racer_one.armed", true));
+        controller.transitionLengthTicks = 0;
         animationData.addAnimationController(controller);
     }
 

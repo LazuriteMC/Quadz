@@ -66,6 +66,7 @@ public class PixelEntity extends QuadcopterEntity implements IAnimatable {
     public void registerControllers(AnimationData animationData) {
         AnimationController<PixelEntity> controller = new AnimationController<>(this, "pixel_entity_controller", 0, this::predicate);
         controller.setAnimation(new AnimationBuilder().addAnimation("animation.fpvracing.pixel.armed", true));
+        controller.transitionLengthTicks = 0;
         animationData.addAnimationController(controller);
     }
 
