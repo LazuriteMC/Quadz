@@ -7,8 +7,7 @@
     "MinecraftClientMixin",
     "input.MouseMixin",
     "render.GameRendererMixin",
-    "render.InGameHudMixin",
-    "render.WorldRendererMixin"
+    "render.InGameHudMixin"
   ],
   "injectors": {
     "defaultRequire": 1
