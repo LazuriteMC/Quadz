@@ -11,7 +11,7 @@ public interface QuadcopterState extends Bindable, VideoDevice {
     static QuadcopterEntity findQuadcopter(World world, Vec3d origin, int bindId, int range) {
         return world.getClosestEntity(
                 QuadcopterEntity.class,
-                TargetPredicate.DEFAULT.setPredicate(quad -> ((QuadcopterEntity) quad).getBindId() == bindId),
+                TargetPredicate.DEFAULT.setPredicate(quad -> ((QuadcopterEntity) quad).isBoundTo(bindId)),
                 null, origin.x, origin.y, origin.z,
                 new Box(new BlockPos(origin)).expand(range));
     }

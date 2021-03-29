@@ -47,21 +47,19 @@ public class GameRendererMixin {
 			matrix.peek().getModel().multiply(newMat);
 
 		/* Rotate the player's yaw and pitch to follow the quadcopter in the world. */
-		} else if (Config.getInstance().followLOS && Quadz.TRANSMITTER_CONTAINER.maybeGet(client.player.getMainHandStack()).isPresent()) {
-			QuadcopterEntity quad = QuadcopterState.findQuadcopter(
-					client.world,
-					client.player.getPos(),
-					Quadz.TRANSMITTER_CONTAINER.get(client.player.getMainHandStack()).getBindId(),
-					100);
+		} else if (Config.getInstance().followLOS) {
+			Quadz.TRANSMITTER_CONTAINER.maybeGet(client.player.getMainHandStack()).ifPresent(transmitter -> {
+				QuadcopterEntity quad = QuadcopterState.findQuadcopter(client.world, client.player.getPos(), transmitter.getBindId(), 100);
 
-			if (quad != null && client.player.canSee(quad)) {
-				/* Get the difference in position between the camera and the quad */
-				Vec3d delta = client.gameRenderer.getCamera().getPos().subtract(VectorHelper.vector3fToVec3d(quad.getPhysicsLocation(new Vector3f(), tickDelta)));
+				if (quad != null && client.player.canSee(quad)) {
+					/* Get the difference in position between the camera and the quad */
+					Vec3d delta = client.gameRenderer.getCamera().getPos().subtract(VectorHelper.vector3fToVec3d(quad.getPhysicsLocation(new Vector3f(), tickDelta)));
 
-				/* Set new pitch and yaw */
-				client.player.yaw = (float) Math.toDegrees(Math.atan2(delta.z, delta.x)) + 90;
-				client.player.pitch = 20 + (float) Math.toDegrees(Math.atan2(delta.y, Math.sqrt(delta.x * delta.x + delta.z * delta.z)));
-			}
+					/* Set new pitch and yaw */
+					client.player.yaw = (float) Math.toDegrees(Math.atan2(delta.z, delta.x)) + 90;
+					client.player.pitch = 20 + (float) Math.toDegrees(Math.atan2(delta.y, Math.sqrt(delta.x * delta.x + delta.z * delta.z)));
+				}
+			});
 		}
 	}
 

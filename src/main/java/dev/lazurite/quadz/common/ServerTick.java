@@ -3,8 +3,6 @@ package dev.lazurite.quadz.common;
 import com.google.common.collect.Lists;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.item.container.GogglesContainer;
-import dev.lazurite.quadz.common.item.container.TransmitterContainer;
 import dev.lazurite.quadz.common.util.net.SelectedSlotS2C;
 import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
 import net.minecraft.server.MinecraftServer;
@@ -12,7 +10,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Box;
 
 import java.util.List;
-import java.util.Optional;
 
 public class ServerTick {
     public static int RANGE = 300;
@@ -29,37 +26,33 @@ public class ServerTick {
 
             quads.forEach(quadcopter -> quadcopter.setActive(false));
 
-            if (player.getMainHandStack().getItem().equals(Quadz.TRANSMITTER_ITEM)) {
-                TransmitterContainer transmitter = Quadz.TRANSMITTER_CONTAINER.get(player.getMainHandStack());
-
+            Quadz.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack()).ifPresent(transmitter -> {
                 for (QuadcopterEntity quadcopter : quads) {
-                    if (quadcopter.getBindId() == transmitter.getBindId()) {
+                    if (transmitter.isBoundTo(quadcopter)) {
                         toActivate.add(quadcopter);
                     }
                 }
-            }
-
-            Optional<GogglesContainer> goggles = Quadz.GOGGLES_CONTAINER.maybeGet(player.inventory.armor.get(3));
+            });
 
             /* Goggles enabled, enter a quadcopter view if one is nearby */
-            if (goggles.isPresent()) {
-                if (goggles.get().isEnabled()) {
+            Quadz.GOGGLES_CONTAINER.maybeGet(player.inventory.armor.get(3)).ifPresent(goggles -> {
+                if (goggles.isEnabled()) {
                     if (!(player.getCameraEntity() instanceof QuadcopterEntity) && !quads.isEmpty()) {
-                        QuadcopterEntity entity = quads.get(0);
+                        QuadcopterEntity quadcopter = quads.get(0);
 
-                        if (entity != null) {
-                            player.setCameraEntity(entity);
+                        if (quadcopter != null) {
+                            player.setCameraEntity(quadcopter);
 
                             for (int i = 0; i < player.inventory.main.size(); i++) {
                                 if (player.inventory.main.get(i).getItem().equals(Quadz.TRANSMITTER_ITEM)) {
-                                    Optional<TransmitterContainer> transmitter = Quadz.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack());
+                                    int j = i;
 
-                                    if (transmitter.isPresent()) {
-                                        if (entity.getBindId() == transmitter.get().getBindId()) {
-                                            PhysicsThread.get(server).execute(() -> entity.getRigidBody().prioritize(player));
-                                            SelectedSlotS2C.send(player, i);
+                                    Quadz.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack()).ifPresent(transmitter -> {
+                                        if (transmitter.isBoundTo(quadcopter)) {
+                                            PhysicsThread.get(server).execute(() -> quadcopter.getRigidBody().prioritize(player));
+                                            SelectedSlotS2C.send(player, j);
                                         }
-                                    }
+                                    });
 
                                     break;
                                 }
@@ -77,7 +70,7 @@ public class ServerTick {
 
                     player.setCameraEntity(player);
                 }
-            }
+            });
         }
 
         toActivate.forEach(quadcopter -> quadcopter.setActive(true));

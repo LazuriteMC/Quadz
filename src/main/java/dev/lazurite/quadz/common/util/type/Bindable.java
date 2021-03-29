@@ -10,6 +10,14 @@ public interface Bindable {
         b2.setBindId(bindId);
     }
 
+    default boolean isBoundTo(Bindable bindable) {
+        return isBoundTo(bindable.getBindId());
+    }
+
+    default boolean isBoundTo(int bindId) {
+        return getBindId() != -1 && getBindId() == bindId;
+    }
+
     void setBindId(int bindId);
     int getBindId();
 }

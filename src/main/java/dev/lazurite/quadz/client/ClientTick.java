@@ -24,13 +24,11 @@ import net.minecraft.entity.Entity;
 public class ClientTick {
     public static void tick(MinecraftClient client) {
         if (client.player != null && client.world != null && !client.isPaused()) {
-            if (client.player.getMainHandStack().getItem().equals(Quadz.TRANSMITTER_ITEM)) {
-                TransmitterContainer transmitter = Quadz.TRANSMITTER_CONTAINER.get(client.player.getMainHandStack());
-
+            Quadz.TRANSMITTER_CONTAINER.maybeGet(client.player.getMainHandStack()).ifPresent(transmitter -> {
                 if (client.getCameraEntity() instanceof QuadcopterEntity) {
                     QuadcopterEntity quadcopter = (QuadcopterEntity) client.getCameraEntity();
 
-                    if (quadcopter.getBindId() == transmitter.getBindId()) {
+                    if (transmitter.isBoundTo(quadcopter)) {
                         /* Get a new InputFrame from InputTick. */
                         quadcopter.setInputFrame(InputTick.getInstance().getInputFrame());
 
@@ -42,7 +40,7 @@ public class ClientTick {
                         if (entity instanceof QuadcopterEntity) {
                             QuadcopterEntity quadcopter = (QuadcopterEntity) entity;
 
-                            if (quadcopter.getBindId() == transmitter.getBindId()) {
+                            if (transmitter.isBoundTo(quadcopter)) {
                                 /* Get a new InputFrame from InputTick. */
                                 quadcopter.setInputFrame(InputTick.getInstance().getInputFrame());
 
@@ -53,7 +51,7 @@ public class ClientTick {
                         }
                     }
                 }
-            }
+            });
         }
     }
 }
