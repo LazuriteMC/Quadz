@@ -36,8 +36,8 @@ public class InputFrameC2S {
                 Entity entity = player.getEntityWorld().getEntityById(entityId);
 
                 if (entity instanceof QuadcopterEntity) {
-                    if (((QuadcopterEntity) entity).getBindId() == transmitter.getBindId()) {
-                        ((QuadcopterEntity) entity).setInputFrame(frame);
+                    if (((QuadcopterEntity) entity).isBoundTo(transmitter)) {
+                        ((QuadcopterEntity) entity).getInputFrame().set(frame);
                     }
                 }
             }

@@ -17,13 +17,13 @@
 
   "environment": "*",
   "entrypoints": {
-    "cardinal-components-item": [ "dev.lazurite.quadz.Quadz" ],
-    "modmenu": [ "dev.lazurite.quadz.client.render.ui.ConfigScreen" ],
     "main": [ "dev.lazurite.quadz.Quadz" ],
     "client": [
       "dev.lazurite.quadz.Quadz",
       "dev.lazurite.quadz.client.render.RenderInitializer"
-    ]
+    ],
+    "cardinal-components-item": [ "dev.lazurite.quadz.Quadz" ],
+    "modmenu": [ "dev.lazurite.quadz.compat.ModMenuCompat" ]
   },
 
   "mixins": [
@@ -33,7 +33,7 @@
 
   "depends": {
     "fabricloader": ">=0.7.4",
-    "fabric": "*",
+    "fabric": ">=0.28.0",
     "minecraft": "1.16.x"
   },
 
@@ -42,6 +42,12 @@
   },
 
   "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/NNPPHN7b3P"
+      }
+    },
+
     "cardinal-components": [
       "quadz:goggles_container",
       "quadz:transmitter_container",

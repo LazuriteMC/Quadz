@@ -30,7 +30,7 @@ public class ClientTick {
 
                     if (transmitter.isBoundTo(quadcopter)) {
                         /* Get a new InputFrame from InputTick. */
-                        quadcopter.setInputFrame(InputTick.getInstance().getInputFrame());
+                        quadcopter.getInputFrame().set(InputTick.getInstance().getInputFrame());
 
                         /* Send that InputFrame to the server. */
                         InputFrameC2S.send(client.getCameraEntity(), quadcopter.getInputFrame());
@@ -42,7 +42,7 @@ public class ClientTick {
 
                             if (transmitter.isBoundTo(quadcopter)) {
                                 /* Get a new InputFrame from InputTick. */
-                                quadcopter.setInputFrame(InputTick.getInstance().getInputFrame());
+                                quadcopter.getInputFrame().set(InputTick.getInstance().getInputFrame());
 
                                 /* Send that InputFrame to the server. */
                                 InputFrameC2S.send(client.getCameraEntity(), quadcopter.getInputFrame());

@@ -21,6 +21,7 @@ The old forge repository can be found [here](https://github.com/ethanejohnsons/F
 ### Dependencies
 In order to use this mod, you'll have to download a few other things as well:
 * [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api)
+* [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config)
 * [Geckolib](https://www.curseforge.com/minecraft/mc-mods/geckolib-fabric)
 * [Rayon](https://www.curseforge.com/minecraft/mc-mods/rayon)
 

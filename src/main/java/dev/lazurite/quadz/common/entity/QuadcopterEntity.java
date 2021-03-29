@@ -150,7 +150,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 
 	@Override
 	public Direction getHorizontalFacing() {
-		return Direction.fromRotation(QuaternionHelper.getYaw(getRigidBody().getPhysicsRotation(new Quaternion())));
+		return Direction.fromRotation(QuaternionHelper.getYaw(getPhysicsRotation(new Quaternion(), 1.0f)));
 	}
 
 	@Override
@@ -178,6 +178,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 
 	@Override
 	public void readCustomDataFromTag(CompoundTag tag) {
+		super.readCustomDataFromTag(tag);
 		setGodMode(tag.getBoolean("god_mode"));
 		setBindId(tag.getInt("bind_id"));
 		setFrequency(new Frequency((char) tag.getInt("band"), tag.getInt("channel")));
@@ -186,6 +187,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 
 	@Override
 	public void writeCustomDataToTag(CompoundTag tag) {
+		super.writeCustomDataToTag(tag);
 		tag.putBoolean("god_mode", isInGodMode());
 		tag.putInt("bind_id", getBindId());
 		tag.putInt("band", getFrequency().getBand());
@@ -241,10 +243,6 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 		return getDataTracker().get(BIND_ID);
 	}
 
-	public void setInputFrame(InputFrame frame) {
-		this.inputFrame.set(frame);
-	}
-
 	public InputFrame getInputFrame() {
 		return this.inputFrame;
 	}
@@ -287,7 +285,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 
 	@Override
 	public boolean shouldRenderSelf() {
-		return false; // for now
+		return true; // for now
 	}
 
 	@Override

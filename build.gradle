@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.5-SNAPSHOT'
+	id 'fabric-loom' version '0.6-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -12,9 +12,12 @@ group = project.maven_group
 
 repositories {
 	maven { url 'https://jitpack.io/' }
+	maven { url "https://maven.shedaniel.me/" }
 	maven { url 'https://maven.blamejared.com/' }
+	maven { url 'https://hephaestus.dev/release' }
+	maven { url "https://maven.terraformersmc.com/releases/" }
+	maven { url 'https://ladysnake.jfrog.io/artifactory/mods' }
 	maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib/' }
-	maven { url "https://hephaestus.dev/release" }
 }
 
 dependencies {
@@ -42,12 +45,9 @@ dependencies {
 	modImplementation "com.github.LazuriteMC:Lattice:${project.lattice_version}"
 	include "com.github.LazuriteMC:Lattice:${project.lattice_version}"
 
-	// Mod Menu
-	modImplementation ("io.github.prospector:modmenu:${project.modmenu_version}") { exclude(group: "net.fabricmc.fabric-api") }
-
-	// Cloth
-	modImplementation ("me.shedaniel.cloth:config-2:${project.cloth_version}") { exclude(group: "net.fabricmc.fabric-api") }
-	include "me.shedaniel.cloth:config-2:${project.cloth_version}"
+	// Mod Menu + Cloth
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") { exclude(group: "net.fabricmc.fabric-api") }
 
 	// Fiber
 	modImplementation "me.zeroeightsix:fiber:${project.fiber_version}"
@@ -78,10 +78,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
 	from "LICENSE"
-}
-
-remapJar {
-
 }
 
 publishing {

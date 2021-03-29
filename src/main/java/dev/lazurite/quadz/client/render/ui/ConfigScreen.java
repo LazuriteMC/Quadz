@@ -3,8 +3,6 @@ package dev.lazurite.quadz.client.render.ui;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.input.InputTick;
-import io.github.prospector.modmenu.api.ConfigScreenFactory;
-import io.github.prospector.modmenu.api.ModMenuApi;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
@@ -16,10 +14,9 @@ import java.util.Map;
 
 /**
  * Class for housing the methods which returns a new config screen made using Cloth Config.
- * @see ConfigScreen#getModConfigScreenFactory()
  * @see Config
  */
-public class ConfigScreen implements ModMenuApi {
+public class ConfigScreen {
     public static Screen create(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
@@ -153,10 +150,5 @@ public class ConfigScreen implements ModMenuApi {
         controllerSetup.addEntry(preferences.setExpanded(true).build());
         controllerSetup.addEntry(controllerAxes.build());
         return controllerSetup;
-    }
-
-    @Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return ConfigScreen::create;
     }
 }
