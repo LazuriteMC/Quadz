@@ -1,14 +1,13 @@
 package dev.lazurite.quadz;
 
 import dev.lazurite.quadz.api.event.JoystickEvents;
+import dev.lazurite.quadz.client.ClientNetworkHandler;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.InputTick;
-import dev.lazurite.quadz.client.input.keybind.key.*;
-import dev.lazurite.quadz.client.input.frame.InputFrameC2S;
-import dev.lazurite.quadz.client.input.keybind.key.ControlKeybinds;
-import dev.lazurite.quadz.client.input.keybind.net.*;
+import dev.lazurite.quadz.client.input.keybind.*;
 import dev.lazurite.quadz.client.ClientTick;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerConnectedToast;
+import dev.lazurite.quadz.common.CommonNetworkHandler;
 import dev.lazurite.quadz.common.entity.quads.PixelEntity;
 import dev.lazurite.quadz.common.item.quads.PixelItem;
 import dev.lazurite.quadz.common.ServerTick;
@@ -18,7 +17,6 @@ import dev.lazurite.quadz.common.entity.quads.VoxelRacerOneEntity;
 import dev.lazurite.quadz.common.item.container.QuadcopterContainer;
 import dev.lazurite.quadz.common.item.container.TransmitterContainer;
 import dev.lazurite.quadz.common.item.quads.VoyagerItem;
-import dev.lazurite.quadz.common.util.net.SelectedSlotS2C;
 import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.item.quads.VoxelRacerOneItem;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
@@ -55,6 +53,14 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 	public static final ComponentKey<TransmitterContainer> TRANSMITTER_CONTAINER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "transmitter_container"), TransmitterContainer.class);
 	public static final ComponentKey<QuadcopterContainer> QUADCOPTER_CONTAINER = ComponentRegistryV3.INSTANCE.getOrCreate(new Identifier(MODID, "quadcopter_container"), QuadcopterContainer.class);
 
+	/* Packet Identifiers */
+	public static final Identifier SELECTED_SLOT_S2C = new Identifier(MODID, "selected_slot_s2c");
+	public static final Identifier NOCLIP_C2S = new Identifier(MODID, "noclip_c2s");
+	public static final Identifier CHANGE_CAMERA_ANGLE_C2S = new Identifier(MODID, "change_camera_angle_c2s");
+	public static final Identifier POWER_GOGGLES_C2S = new Identifier(MODID, "power_goggles_c2s");
+	public static final Identifier GOD_MODE_C2S = new Identifier(MODID, "godmode_c2s");
+	public static final Identifier INPUT_FRAME_C2S = new Identifier(MODID, "input_frame_c2s");
+
 	/* Items */
 	public static GogglesItem GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
 	public static Item TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new Item(new Item.Settings().maxCount(1)));
@@ -74,11 +80,11 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 	@Override
 	public void onInitialize() {
 		/* Register Packets */
-		ServerPlayNetworking.registerGlobalReceiver(NoClipC2S.PACKET_ID, NoClipC2S::accept);
-		ServerPlayNetworking.registerGlobalReceiver(GodModeC2S.PACKET_ID, GodModeC2S::accept);
-		ServerPlayNetworking.registerGlobalReceiver(PowerGogglesC2S.PACKET_ID, PowerGogglesC2S::accept);
-		ServerPlayNetworking.registerGlobalReceiver(ChangeCameraAngleC2S.PACKET_ID, ChangeCameraAngleC2S::accept);
-		ServerPlayNetworking.registerGlobalReceiver(InputFrameC2S.PACKET_ID, InputFrameC2S::accept);
+		ServerPlayNetworking.registerGlobalReceiver(NOCLIP_C2S, CommonNetworkHandler::onNoClipKey);
+		ServerPlayNetworking.registerGlobalReceiver(CHANGE_CAMERA_ANGLE_C2S, CommonNetworkHandler::onChangeCameraAngleKey);
+		ServerPlayNetworking.registerGlobalReceiver(GOD_MODE_C2S, CommonNetworkHandler::onGodModeKey);
+		ServerPlayNetworking.registerGlobalReceiver(POWER_GOGGLES_C2S, CommonNetworkHandler::onPowerGogglesKey);
+		ServerPlayNetworking.registerGlobalReceiver(INPUT_FRAME_C2S, CommonNetworkHandler::onInputFrame);
 
 		/* Register Creative Tab */
 		ITEM_GROUP = FabricItemGroupBuilder.create(new Identifier(MODID, "items"))
@@ -139,7 +145,7 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 		NoClipKeybind.register();
 
 		/* Register Packets */
-		ClientPlayNetworking.registerGlobalReceiver(SelectedSlotS2C.PACKET_ID, SelectedSlotS2C::accept);
+		ClientPlayNetworking.registerGlobalReceiver(SELECTED_SLOT_S2C, ClientNetworkHandler::onSelectSlot);
 
 		/* Register Toast Events */
 		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerConnectedToast.add(new TranslatableText("toast.quadz.controller.connect"), name));

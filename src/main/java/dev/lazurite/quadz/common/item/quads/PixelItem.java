@@ -3,6 +3,7 @@ package dev.lazurite.quadz.common.item.quads;
 import com.jme3.math.Quaternion;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.entity.quads.PixelEntity;
+import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.item.container.QuadcopterContainer;
 import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,9 +19,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-import java.util.Optional;
-
-public class PixelItem extends Item implements IAnimatable {
+public class PixelItem extends Item implements QuadcopterItem, IAnimatable {
 	public AnimationFactory factory = new AnimationFactory(this);
 
 	public PixelItem(Settings settings) {
@@ -40,10 +39,8 @@ public class PixelItem extends Item implements IAnimatable {
 				PixelEntity entity = new PixelEntity(Quadz.PIXEL, world);
 				entity.updatePosition(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
 				entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), -user.yaw));
-				entity.setCameraAngle(5);
 
-				Optional<QuadcopterContainer> item = Quadz.QUADCOPTER_CONTAINER.maybeGet(itemStack);
-				item.ifPresent(entity::copyFrom);
+				Quadz.QUADCOPTER_CONTAINER.maybeGet(itemStack).ifPresent(entity::copyFrom);
 				world.spawnEntity(entity);
 			}
 
@@ -60,5 +57,10 @@ public class PixelItem extends Item implements IAnimatable {
 	@Override
 	public AnimationFactory getFactory() {
 		return this.factory;
+	}
+
+	@Override
+	public int getCameraAngle() {
+		return 5;
 	}
 }

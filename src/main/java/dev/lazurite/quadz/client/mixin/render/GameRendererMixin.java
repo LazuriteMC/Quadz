@@ -49,7 +49,7 @@ public class GameRendererMixin {
 		/* Rotate the player's yaw and pitch to follow the quadcopter in the world. */
 		} else if (Config.getInstance().followLOS) {
 			Quadz.TRANSMITTER_CONTAINER.maybeGet(client.player.getMainHandStack()).ifPresent(transmitter -> {
-				QuadcopterEntity quad = QuadcopterState.findQuadcopter(client.world, client.player.getPos(), transmitter.getBindId(), 100);
+				QuadcopterEntity quad = QuadcopterState.findQuadcopter(client.world, client.player.getPos(), transmitter.getBindId(), QuadcopterState.RANGE);
 
 				if (quad != null && client.player.canSee(quad)) {
 					/* Get the difference in position between the camera and the quad */

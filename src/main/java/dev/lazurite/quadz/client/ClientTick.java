@@ -1,11 +1,9 @@
 package dev.lazurite.quadz.client;
 
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.client.input.frame.InputFrame;
-import dev.lazurite.quadz.client.input.frame.InputFrameC2S;
+import dev.lazurite.quadz.common.util.InputFrame;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.common.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.item.container.TransmitterContainer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -18,7 +16,6 @@ import net.minecraft.entity.Entity;
  * within range.
  * @see InputTick
  * @see InputFrame
- * @see InputFrameC2S
  */
 @Environment(EnvType.CLIENT)
 public class ClientTick {
@@ -33,7 +30,7 @@ public class ClientTick {
                         quadcopter.getInputFrame().set(InputTick.getInstance().getInputFrame());
 
                         /* Send that InputFrame to the server. */
-                        InputFrameC2S.send(client.getCameraEntity(), quadcopter.getInputFrame());
+                        quadcopter.sendInputFrame();
                     }
                 } else {
                     for (Entity entity : client.world.getEntities()) {
@@ -45,7 +42,7 @@ public class ClientTick {
                                 quadcopter.getInputFrame().set(InputTick.getInstance().getInputFrame());
 
                                 /* Send that InputFrame to the server. */
-                                InputFrameC2S.send(client.getCameraEntity(), quadcopter.getInputFrame());
+                                quadcopter.sendInputFrame();
                                 break;
                             }
                         }

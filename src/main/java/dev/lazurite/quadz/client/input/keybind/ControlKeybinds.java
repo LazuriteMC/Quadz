@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.client.input.keybind.key;
+package dev.lazurite.quadz.client.input.keybind;
 
 import dev.lazurite.quadz.Quadz;
 import net.fabricmc.api.EnvType;

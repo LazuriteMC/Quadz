@@ -8,7 +8,7 @@ import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
 import dev.lazurite.quadz.common.util.type.access.Matrix4fAccess;
-import dev.lazurite.quadz.client.input.frame.InputFrame;
+import dev.lazurite.quadz.common.util.InputFrame;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.util.type.Bindable;
 import dev.lazurite.quadz.common.util.type.QuadcopterState;
@@ -19,6 +19,8 @@ import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import dev.lazurite.rayon.entity.api.EntityPhysicsElement;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -30,6 +32,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
@@ -42,6 +45,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings("EntityConstructor")
 public abstract class QuadcopterEntity extends LivingEntity implements EntityPhysicsElement, Viewable, QuadcopterState {
+
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Boolean> ACTIVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -118,6 +122,26 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 		Transform trans = getRigidBody().getTransform(new Transform());
 		trans.getRotation().set(trans.getRotation().mult(rot));
 		getRigidBody().setPhysicsTransform(trans);
+	}
+
+	@Environment(EnvType.CLIENT)
+	public void sendInputFrame() {
+		InputFrame frame = getInputFrame();
+
+		if (!frame.isEmpty()) {
+			PacketByteBuf buf = PacketByteBufs.create();
+			buf.writeInt(getEntityId());
+			buf.writeFloat(frame.getThrottle());
+			buf.writeFloat(frame.getPitch());
+			buf.writeFloat(frame.getYaw());
+			buf.writeFloat(frame.getRoll());
+			buf.writeFloat(frame.getRate());
+			buf.writeFloat(frame.getSuperRate());
+			buf.writeFloat(frame.getExpo());
+			buf.writeFloat(frame.getMaxAngle());
+			buf.writeEnumConstant(frame.getMode());
+			ClientPlayNetworking.send(Quadz.INPUT_FRAME_C2S, buf);
+		}
 	}
 
 	@Override
@@ -285,7 +309,7 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 
 	@Override
 	public boolean shouldRenderSelf() {
-		return true; // for now
+		return false; // for now
 	}
 
 	@Override

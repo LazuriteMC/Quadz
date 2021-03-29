@@ -1,6 +1,7 @@
 package dev.lazurite.quadz.common.item.container;
 
 import dev.lazurite.quadz.Quadz;
+import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.util.type.QuadcopterState;
 import dev.lazurite.quadz.common.util.Frequency;
 import dev.onyxstudios.cca.api.v3.item.ItemComponent;
@@ -72,7 +73,11 @@ public class QuadcopterContainer extends ItemComponent implements QuadcopterStat
     @Override
     public int getCameraAngle() {
         if (!this.hasTag("camera_angle", NbtType.INT)) {
-            this.setCameraAngle(0);
+            if (stack.getItem() instanceof QuadcopterItem) {
+                this.setCameraAngle(((QuadcopterItem) stack.getItem()).getCameraAngle());
+            } else {
+                this.setCameraAngle(0);
+            }
         }
 
         return this.getInt("camera_angle");

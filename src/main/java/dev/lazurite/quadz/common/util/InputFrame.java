@@ -1,8 +1,7 @@
-package dev.lazurite.quadz.client.input.frame;
+package dev.lazurite.quadz.common.util;
 
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.input.InputTick;
-import dev.lazurite.quadz.common.util.BetaflightHelper;
 
 /**
  * This represents one "frame" of time when

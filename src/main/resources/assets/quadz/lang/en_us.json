@@ -24,10 +24,10 @@
 
   "message.quadz.drone_error" : "Must be holding a quadcopter or a bound transmitter.",
   "message.fpvracing.goggles_error" : "Must be holding or wearing goggles.",
-  "message.quadz.godmode_on" : "God mode enabled.",
-  "message.quadz.godmode_off" : "God mode disabled.",
-  "message.quadz.noclip_on" : "No clip enabled.",
-  "message.quadz.noclip_off" : "No clip disabled.",
+  "message.quadz.godmode_on" : "God Mode Enabled",
+  "message.quadz.godmode_off" : "God Mode Disabled",
+  "message.quadz.noclip_on" : "No Clip Enabled",
+  "message.quadz.noclip_off" : "No Clip Disabled",
   "message.quadz.goggles_on" : "Press %1$s or %2$s to power off goggles.",
 
   "toast.quadz.controller.connect" : "Controller Connected!",

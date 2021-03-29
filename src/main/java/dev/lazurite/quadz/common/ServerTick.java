@@ -3,8 +3,10 @@ package dev.lazurite.quadz.common;
 import com.google.common.collect.Lists;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.util.net.SelectedSlotS2C;
 import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Box;
@@ -50,7 +52,10 @@ public class ServerTick {
                                     Quadz.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack()).ifPresent(transmitter -> {
                                         if (transmitter.isBoundTo(quadcopter)) {
                                             PhysicsThread.get(server).execute(() -> quadcopter.getRigidBody().prioritize(player));
-                                            SelectedSlotS2C.send(player, j);
+
+                                            PacketByteBuf buf = PacketByteBufs.create();
+                                            buf.writeInt(j);
+                                            ServerPlayNetworking.send(player, Quadz.SELECTED_SLOT_S2C, buf);
                                         }
                                     });
 
