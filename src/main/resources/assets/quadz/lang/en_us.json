@@ -3,6 +3,7 @@
   "key.quadz.noclip" : "No Clip",
   "key.quadz.godmode" : "God Mode",
   "key.quadz.powergoggles" : "Goggle Power",
+  "key.quadz.follow" : "Follow LOS",
   "key.quadz.camera.raise" : "Camera Angle - Increase",
   "key.quadz.camera.lower" : "Camera Angle - Decrease",
   "key.quadz.pitch.forward" : "Pitch Forward",
@@ -28,6 +29,8 @@
   "message.quadz.godmode_off" : "God Mode Disabled",
   "message.quadz.noclip_on" : "No Clip Enabled",
   "message.quadz.noclip_off" : "No Clip Disabled",
+  "message.quadz.follow_on" : "Follow LOS Enabled",
+  "message.quadz.follow_off" : "Follow LOS Disabled",
   "message.quadz.goggles_on" : "Press %1$s or %2$s to power off goggles.",
 
   "toast.quadz.controller.connect" : "Controller Connected!",

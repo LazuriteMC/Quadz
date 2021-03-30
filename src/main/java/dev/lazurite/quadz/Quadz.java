@@ -143,6 +143,7 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 		GogglePowerKeybind.register();
 		GodModeKeybind.register();
 		NoClipKeybind.register();
+		FollowKeybind.register();
 
 		/* Register Packets */
 		ClientPlayNetworking.registerGlobalReceiver(SELECTED_SLOT_S2C, ClientNetworkHandler::onSelectSlot);
