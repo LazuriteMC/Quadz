@@ -31,7 +31,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -116,7 +115,7 @@ public class Quadz implements ModInitializer, ClientModInitializer, ItemComponen
 				FabricEntityTypeBuilder.createLiving()
 						.entityFactory(VoyagerEntity::new)
 						.spawnGroup(SpawnGroup.MISC)
-						.dimensions(EntityDimensions.changing(1.0F, 0.225F))
+						.dimensions(EntityDimensions.changing(0.9F, 0.2F))
 						.defaultAttributes(LivingEntity::createLivingAttributes)
 						.build());
 

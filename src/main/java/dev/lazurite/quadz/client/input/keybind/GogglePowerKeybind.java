@@ -1,7 +1,9 @@
 package dev.lazurite.quadz.client.input.keybind;
 
 import dev.lazurite.quadz.Quadz;
+import dev.lazurite.quadz.common.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.item.container.GogglesContainer;
+import dev.lazurite.quadz.common.util.type.QuadcopterState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -12,6 +14,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.TranslatableText;
@@ -48,13 +51,15 @@ public class GogglePowerKeybind {
                 buf.writeBoolean(pressedKey.equals(key) && !prevPower);
                 ClientPlayNetworking.send(Quadz.POWER_GOGGLES_C2S, buf);
 
-                if (!prevPower && key.equals(pressedKey)) {
-                    String sneakKey = KeyBindingHelper.getBoundKeyOf(MinecraftClient.getInstance().options.keySneak).getLocalizedText().getString().toUpperCase();
-                    String powerKey = key.getBoundKeyLocalizedText().getString().toUpperCase();
-                    player.sendMessage(new TranslatableText("message.quadz.goggles_on", sneakKey, powerKey), true);
+                for (Entity entity : MinecraftClient.getInstance().world.getEntities()) {
+                    if (entity instanceof QuadcopterEntity && ((QuadcopterEntity) entity).getFrequency().equals(goggles.getFrequency()) && !prevPower && key.equals(pressedKey)) {
+                        String sneakKey = KeyBindingHelper.getBoundKeyOf(MinecraftClient.getInstance().options.keySneak).getLocalizedText().getString().toUpperCase();
+                        String powerKey = key.getBoundKeyLocalizedText().getString().toUpperCase();
+                        player.sendMessage(new TranslatableText("message.quadz.goggles_on", sneakKey, powerKey), true);
+                        break;
+                    }
                 }
             }
-
         };
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

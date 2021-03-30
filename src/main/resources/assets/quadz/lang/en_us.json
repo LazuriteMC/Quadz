@@ -23,7 +23,7 @@
   "item.quadz.pixel_item" : "Pixel",
 
   "message.quadz.drone_error" : "Must be holding a quadcopter or a bound transmitter.",
-  "message.fpvracing.goggles_error" : "Must be holding or wearing goggles.",
+  "message.quadz.goggles_error" : "Must be holding or wearing goggles.",
   "message.quadz.godmode_on" : "God Mode Enabled",
   "message.quadz.godmode_off" : "God Mode Disabled",
   "message.quadz.noclip_on" : "No Clip Enabled",
