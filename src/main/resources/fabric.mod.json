@@ -28,7 +28,8 @@
 
   "mixins": [
     "quadz.client.mixins.json",
-    "quadz.common.mixins.json"
+    "quadz.common.mixins.json",
+    "quadz.compat.mixins.json"
   ],
 
   "depends": {
@@ -46,6 +47,10 @@
       "links": {
         "modmenu.discord": "https://discord.gg/NNPPHN7b3P"
       }
+    },
+
+    "vanguard": {
+      "curse-project-id": "410234"
     },
 
     "cardinal-components": [

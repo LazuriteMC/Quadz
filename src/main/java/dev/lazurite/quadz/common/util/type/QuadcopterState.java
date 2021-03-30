@@ -8,8 +8,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public interface QuadcopterState extends Bindable, VideoDevice {
-    int RANGE = 100;
-
     static QuadcopterEntity findQuadcopter(World world, Vec3d origin, int bindId, int range) {
         return world.getClosestEntity(
                 QuadcopterEntity.class,

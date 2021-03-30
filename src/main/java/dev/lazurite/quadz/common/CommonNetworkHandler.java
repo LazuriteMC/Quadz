@@ -21,10 +21,11 @@ public class CommonNetworkHandler {
     public static void onNoClipKey(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
         server.execute(() -> {
             Quadz.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack()).ifPresent(transmitter -> {
-                QuadcopterEntity quadcopter = QuadcopterState.findQuadcopter(player.getEntityWorld(), player.getPos(), transmitter.getBindId(), QuadcopterEntity.RANGE);
+                QuadcopterEntity quadcopter = QuadcopterState.findQuadcopter(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance());
 
                 boolean lastNoClip = quadcopter.getRigidBody().shouldDoTerrainLoading();
                 quadcopter.getRigidBody().setDoTerrainLoading(!lastNoClip);
+                quadcopter.getRigidBody().setDoEntityLoading(!lastNoClip);
 
                 if (lastNoClip) {
                     player.sendMessage(new TranslatableText("message.quadz.noclip_on"), true);
@@ -47,7 +48,7 @@ public class CommonNetworkHandler {
                         quadcopter.setCameraAngle(quadcopter.getCameraAngle() + amount);
                     }
                 } else {
-                    QuadcopterEntity quadcopter = QuadcopterState.findQuadcopter(player.getEntityWorld(), player.getPos(), transmitter.getBindId(), QuadcopterState.RANGE);
+                    QuadcopterEntity quadcopter = QuadcopterState.findQuadcopter(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance());
                     quadcopter.setCameraAngle(quadcopter.getCameraAngle() + amount);
                 }
             });
@@ -84,7 +85,7 @@ public class CommonNetworkHandler {
 
             Quadz.QUADCOPTER_CONTAINER.maybeGet(hand).ifPresent(changeGodMode);
             Quadz.TRANSMITTER_CONTAINER.maybeGet(hand).ifPresent(transmitter ->
-                changeGodMode.accept(QuadcopterState.findQuadcopter(player.getEntityWorld(), player.getPos(), transmitter.getBindId(), QuadcopterState.RANGE)));
+                changeGodMode.accept(QuadcopterState.findQuadcopter(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance())));
         });
     }
 

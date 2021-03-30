@@ -95,16 +95,14 @@ public abstract class QuadcopterEntity extends LivingEntity implements EntityPhy
 			Vector3f unit = Matrix4fAccess.from(mat).matrixToVector();
 
 			/* Calculate basic thrust */
-			Vector3f thrust = new Vector3f();
-			thrust.set(unit);
-			thrust.multLocal((float) (getThrustForce() * (Math.pow(frame.getThrottle(), getThrustCurve()))));
+			Vector3f thrust = new Vector3f().set(unit)
+					.multLocal((float) (getThrustForce() * (Math.pow(frame.getThrottle(), getThrustCurve()))));
 
 			/* Calculate thrust from yaw spin */
-			Vector3f yawThrust = new Vector3f();
-			yawThrust.set(unit);
+			Vector3f yawThrust = new Vector3f().set(unit)
+					.multLocal(Math.abs(frame.calculateYaw(delta) * getThrustForce() * 0.002f));
 
 			/* Add up the net thrust and apply the force */
-			yawThrust.multLocal(Math.abs(frame.calculateYaw(delta) * 0.01f * getThrustForce()));
 			if (Float.isFinite(thrust.length())) {
 				getRigidBody().applyCentralForce(thrust.add(yawThrust).multLocal(-1));
 			} else {
