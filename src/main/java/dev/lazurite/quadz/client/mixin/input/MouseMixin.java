@@ -1,6 +1,6 @@
 package dev.lazurite.quadz.client.mixin.input;
 
-import dev.lazurite.quadz.common.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.network.ClientPlayerEntity;

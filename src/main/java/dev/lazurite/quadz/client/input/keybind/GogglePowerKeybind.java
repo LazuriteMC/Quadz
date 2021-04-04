@@ -1,9 +1,8 @@
 package dev.lazurite.quadz.client.input.keybind;
 
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.item.container.GogglesContainer;
-import dev.lazurite.quadz.common.util.type.QuadcopterState;
+import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.util.Frequency;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -37,22 +36,22 @@ public class GogglePowerKeybind {
         BiConsumer<ClientPlayerEntity, KeyBinding> sendPacket = (player, pressedKey) -> {
             ItemStack hand = player.getMainHandStack();
             ItemStack hat = player.inventory.armor.get(3);
-            GogglesContainer goggles = null;
+            ItemStack goggles = null;
 
-            if (Quadz.GOGGLES_CONTAINER.maybeGet(hand).isPresent()) {
-                goggles = Quadz.GOGGLES_CONTAINER.get(hand);
-            } else if (Quadz.GOGGLES_CONTAINER.maybeGet(hat).isPresent()) {
-                goggles = Quadz.GOGGLES_CONTAINER.get(hat);
+            if (hand.getItem().equals(Quadz.GOGGLES_ITEM)) {
+                goggles = hand;
+            } else if (hat.getItem().equals(Quadz.GOGGLES_ITEM)) {
+                goggles = hat;
             }
 
             if (goggles != null) {
-                boolean prevPower = goggles.isEnabled();
+                boolean prevPower = goggles.getOrCreateTag().getBoolean("enabled");
                 PacketByteBuf buf = PacketByteBufs.create();
                 buf.writeBoolean(pressedKey.equals(key) && !prevPower);
                 ClientPlayNetworking.send(Quadz.POWER_GOGGLES_C2S, buf);
 
                 for (Entity entity : MinecraftClient.getInstance().world.getEntities()) {
-                    if (entity instanceof QuadcopterEntity && ((QuadcopterEntity) entity).getFrequency().equals(goggles.getFrequency()) && !prevPower && key.equals(pressedKey)) {
+                    if (entity instanceof QuadcopterEntity && ((QuadcopterEntity) entity).getFrequency().equals(Frequency.from(goggles)) && !prevPower && key.equals(pressedKey)) {
                         String sneakKey = KeyBindingHelper.getBoundKeyOf(MinecraftClient.getInstance().options.keySneak).getLocalizedText().getString().toUpperCase();
                         String powerKey = key.getBoundKeyLocalizedText().getString().toUpperCase();
                         player.sendMessage(new TranslatableText("message.quadz.goggles_on", sneakKey, powerKey), true);

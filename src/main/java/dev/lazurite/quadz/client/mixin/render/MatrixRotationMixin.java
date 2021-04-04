@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.client.mixin.render;
 
 import com.jme3.math.Quaternion;
-import dev.lazurite.quadz.common.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;

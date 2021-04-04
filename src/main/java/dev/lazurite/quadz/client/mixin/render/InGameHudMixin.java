@@ -1,6 +1,6 @@
 package dev.lazurite.quadz.client.mixin.render;
 
-import dev.lazurite.quadz.common.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;

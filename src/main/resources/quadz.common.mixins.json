@@ -5,6 +5,9 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "Matrix4fMixin",
+    "entity.EntityMixin",
+    "item.ItemMixin",
+    "player.PlayerManagerMixin",
     "player.ServerPlayerEntityMixin"
   ],
   "injectors": {

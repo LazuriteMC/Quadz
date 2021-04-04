@@ -8,7 +8,10 @@
     "input.MouseMixin",
     "render.GameRendererMixin",
     "render.InGameHudMixin",
-    "render.MatrixRotationMixin"
+    "render.ItemRendererMixin",
+    "render.MatrixRotationMixin",
+    "resource.TextureManagerMixin",
+    "resource.TranslationStorageMixin"
   ],
   "injectors": {
     "defaultRequire": 1

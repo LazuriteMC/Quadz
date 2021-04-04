@@ -4,7 +4,8 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.Config;
-import dev.lazurite.quadz.common.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.state.Bindable;
+import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import dev.lazurite.rayon.core.impl.util.math.VectorHelper;
 import net.minecraft.client.MinecraftClient;
@@ -47,7 +48,7 @@ public class GameRendererMixin {
 
 		/* Rotate the player's yaw and pitch to follow the quadcopter in the world. */
 		} else if (Config.getInstance().followLOS) {
-			Quadz.TRANSMITTER_CONTAINER.maybeGet(client.player.getMainHandStack()).ifPresent(transmitter -> {
+			Bindable.get(client.player.getMainHandStack()).ifPresent(transmitter -> {
 				for (Entity entity : client.world.getEntities()) {
 					if (entity instanceof QuadcopterEntity && ((QuadcopterEntity) entity).isBoundTo(transmitter) && client.player.canSee(entity)) {
 						/* Get the difference in position between the camera and the quad */

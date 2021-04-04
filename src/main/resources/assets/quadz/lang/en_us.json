@@ -19,9 +19,6 @@
   "item.quadz.goggles_item" : "Goggles",
   "item.quadz.transmitter_item" : "Transmitter",
   "item.quadz.channel_wand_item" : "Channel Wand",
-  "item.quadz.voxel_racer_one_item" : "Voxel Racer 1",
-  "item.quadz.voyager_item" : "Voyager",
-  "item.quadz.pixel_item" : "Pixel",
 
   "message.quadz.drone_error" : "Must be holding a quadcopter or a bound transmitter.",
   "message.quadz.goggles_error" : "Must be holding or wearing goggles.",

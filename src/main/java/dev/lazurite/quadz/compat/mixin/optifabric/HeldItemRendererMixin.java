@@ -1,6 +1,6 @@
 package dev.lazurite.quadz.compat.mixin.optifabric;
 
-import dev.lazurite.quadz.common.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;

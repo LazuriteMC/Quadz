@@ -10,12 +10,16 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
+minecraft {
+	accessWidener = file("src/main/resources/quadz.accesswidener")
+}
+
 repositories {
 	maven { url 'https://jitpack.io/' }
-	maven { url "https://maven.shedaniel.me/" }
+	maven { url 'https://maven.shedaniel.me/' }
 	maven { url 'https://maven.blamejared.com/' }
 	maven { url 'https://hephaestus.dev/release' }
-	maven { url "https://maven.terraformersmc.com/releases/" }
+	maven { url 'https://maven.terraformersmc.com/releases/' }
 	maven { url 'https://ladysnake.jfrog.io/artifactory/mods' }
 	maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib/' }
 }
@@ -28,12 +32,6 @@ dependencies {
 	// Fabric
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	// Cardinal Components
-	modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cca_version}"
-	modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-item:${project.cca_version}"
-	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cca_version}"
-	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-item:${project.cca_version}"
 
 	// Gecko Lib (not jij)
 	modImplementation "software.bernie.geckolib:${project.geckolib_version}:dev"

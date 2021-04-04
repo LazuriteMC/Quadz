@@ -1,5 +1,7 @@
 package dev.lazurite.quadz.common.util;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.MathHelper;
 
 /**
@@ -100,6 +102,18 @@ public class Frequency {
         }
 
         return -1;
+    }
+
+    public static Frequency from(ItemStack stack) {
+        CompoundTag tag = stack.getSubTag("frequency");
+
+        if (tag != null) {
+            return new Frequency(
+                (char) tag.getInt("band"),
+                tag.getInt("channel"));
+        }
+
+        return null;
     }
 
     @Override

@@ -14,15 +14,12 @@
 
   "license": "MIT",
   "icon": "assets/quadz/icon.png",
+  "accessWidener" : "quadz.accesswidener",
 
   "environment": "*",
   "entrypoints": {
     "main": [ "dev.lazurite.quadz.Quadz" ],
-    "client": [
-      "dev.lazurite.quadz.Quadz",
-      "dev.lazurite.quadz.client.render.RenderInitializer"
-    ],
-    "cardinal-components-item": [ "dev.lazurite.quadz.Quadz" ],
+    "client": [ "dev.lazurite.quadz.Quadz" ],
     "modmenu": [ "dev.lazurite.quadz.compat.ModMenuCompat" ]
   },
 
@@ -51,12 +48,6 @@
 
     "vanguard": {
       "curse-project-id": "410234"
-    },
-
-    "cardinal-components": [
-      "quadz:goggles_container",
-      "quadz:transmitter_container",
-      "quadz:quadcopter_container"
-    ]
+    }
   }
 }

@@ -3,7 +3,7 @@ package dev.lazurite.quadz.client.input;
 import com.google.common.collect.Maps;
 import dev.lazurite.quadz.api.event.JoystickEvents;
 import dev.lazurite.quadz.client.Config;
-import dev.lazurite.quadz.common.util.InputFrame;
+import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.client.input.keybind.ControlKeybinds;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

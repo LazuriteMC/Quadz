@@ -2,9 +2,12 @@ package dev.lazurite.quadz.common;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.input.Mode;
-import dev.lazurite.quadz.common.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.util.InputFrame;
-import dev.lazurite.quadz.common.util.type.QuadcopterState;
+import dev.lazurite.quadz.common.data.DataDriver;
+import dev.lazurite.quadz.common.data.model.Template;
+import dev.lazurite.quadz.common.state.Bindable;
+import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.util.input.InputFrame;
+import dev.lazurite.quadz.common.state.QuadcopterState;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -18,19 +21,26 @@ import net.minecraft.text.TranslatableText;
 import java.util.function.Consumer;
 
 public class CommonNetworkHandler {
+    public static void onTemplateReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+        Template template = Template.deserialize(buf);
+        server.execute(() -> DataDriver.load(template));
+    }
+
     public static void onNoClipKey(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
         server.execute(() -> {
-            Quadz.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack()).ifPresent(transmitter -> {
+            Bindable.get(player.getMainHandStack()).ifPresent(transmitter -> {
                 QuadcopterEntity quadcopter = QuadcopterState.findQuadcopter(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance());
 
-                boolean lastNoClip = quadcopter.getRigidBody().shouldDoTerrainLoading();
-                quadcopter.getRigidBody().setDoTerrainLoading(!lastNoClip);
-                quadcopter.getRigidBody().setDoEntityLoading(!lastNoClip);
+                if (quadcopter != null) {
+                    boolean lastNoClip = quadcopter.getRigidBody().shouldDoTerrainLoading();
+                    quadcopter.getRigidBody().setDoTerrainLoading(!lastNoClip);
+                    quadcopter.getRigidBody().setDoEntityLoading(!lastNoClip);
 
-                if (lastNoClip) {
-                    player.sendMessage(new TranslatableText("message.quadz.noclip_on"), true);
-                } else {
-                    player.sendMessage(new TranslatableText("message.quadz.noclip_off"), true);
+                    if (lastNoClip) {
+                        player.sendMessage(new TranslatableText("message.quadz.noclip_on"), true);
+                    } else {
+                        player.sendMessage(new TranslatableText("message.quadz.noclip_off"), true);
+                    }
                 }
             });
         });
@@ -40,7 +50,7 @@ public class CommonNetworkHandler {
         int amount = buf.readInt();
 
         server.execute(() -> {
-            Quadz.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack()).ifPresent(transmitter -> {
+            Bindable.get(player.getMainHandStack()).ifPresent(transmitter -> {
                 if (player.getCameraEntity() instanceof QuadcopterEntity) {
                     QuadcopterEntity quadcopter = (QuadcopterEntity) player.getCameraEntity();
 
@@ -61,9 +71,17 @@ public class CommonNetworkHandler {
         server.execute(() -> {
             ItemStack hat = player.inventory.armor.get(3);
             ItemStack hand = player.inventory.getMainHandStack();
+            ItemStack goggles = null;
 
-            Quadz.GOGGLES_CONTAINER.maybeGet(hand).ifPresent(goggles -> goggles.setEnabled(enable));
-            Quadz.GOGGLES_CONTAINER.maybeGet(hat).ifPresent(goggles -> goggles.setEnabled(enable));
+            if (hand.getItem().equals(Quadz.GOGGLES_ITEM)) {
+                goggles = hand;
+            } else if (hat.getItem().equals(Quadz.GOGGLES_ITEM)) {
+                goggles = hat;
+            }
+
+            if (goggles != null) {
+                goggles.getOrCreateTag().putBoolean("enabled", enable);
+            }
 
             player.playSound(enable ? SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, 1.0f, 1.0f);
         });
@@ -83,8 +101,8 @@ public class CommonNetworkHandler {
                 }
             };
 
-            Quadz.QUADCOPTER_CONTAINER.maybeGet(hand).ifPresent(changeGodMode);
-            Quadz.TRANSMITTER_CONTAINER.maybeGet(hand).ifPresent(transmitter ->
+            QuadcopterState.get(hand).ifPresent(changeGodMode);
+            Bindable.get(hand).ifPresent(transmitter ->
                 changeGodMode.accept(QuadcopterState.findQuadcopter(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance())));
         });
     }
@@ -103,7 +121,7 @@ public class CommonNetworkHandler {
                 buf.readEnumConstant(Mode.class));
 
         server.execute(() -> {
-            Quadz.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack()).ifPresent(transmitter -> {
+            Bindable.get(player.getMainHandStack()).ifPresent(transmitter -> {
                 Entity entity = player.getEntityWorld().getEntityById(entityId);
 
                 if (entity instanceof QuadcopterEntity) {

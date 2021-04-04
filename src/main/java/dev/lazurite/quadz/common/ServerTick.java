@@ -2,10 +2,12 @@ package dev.lazurite.quadz.common;
 
 import com.google.common.collect.Lists;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.state.Bindable;
+import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -28,7 +30,7 @@ public class ServerTick {
 
             quads.forEach(quadcopter -> quadcopter.setActive(false));
 
-            Quadz.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack()).ifPresent(transmitter -> {
+            Bindable.get(player.getMainHandStack()).ifPresent(transmitter -> {
                 for (QuadcopterEntity quadcopter : quads) {
                     if (transmitter.isBoundTo(quadcopter)) {
                         toActivate.add(quadcopter);
@@ -37,45 +39,45 @@ public class ServerTick {
             });
 
             /* Goggles enabled, enter a quadcopter view if one is nearby */
-            Quadz.GOGGLES_CONTAINER.maybeGet(player.inventory.armor.get(3)).ifPresent(goggles -> {
-                if (goggles.isEnabled()) {
-                    if (!(player.getCameraEntity() instanceof QuadcopterEntity) && !quads.isEmpty()) {
-                        QuadcopterEntity quadcopter = quads.get(0);
+            ItemStack goggles = player.inventory.armor.get(3).getItem().equals(Quadz.GOGGLES_ITEM) ? player.inventory.armor.get(3) : null;
 
-                        if (quadcopter != null) {
-                            player.setCameraEntity(quadcopter);
+            if (goggles != null && goggles.getOrCreateTag().getBoolean("enabled")) {
+                if (!(player.getCameraEntity() instanceof QuadcopterEntity) && !quads.isEmpty()) {
+                    QuadcopterEntity quadcopter = quads.get(0);
 
-                            for (int i = 0; i < player.inventory.main.size(); i++) {
-                                if (player.inventory.main.get(i).getItem().equals(Quadz.TRANSMITTER_ITEM)) {
-                                    int j = i;
+                    if (quadcopter != null) {
+                        player.setCameraEntity(quadcopter);
 
-                                    Quadz.TRANSMITTER_CONTAINER.maybeGet(player.getMainHandStack()).ifPresent(transmitter -> {
-                                        if (transmitter.isBoundTo(quadcopter)) {
-                                            PhysicsThread.get(server).execute(() -> quadcopter.getRigidBody().prioritize(player));
+                        for (int i = 0; i < player.inventory.main.size(); i++) {
+                            if (player.inventory.main.get(i).getItem().equals(Quadz.TRANSMITTER_ITEM)) {
+                                int j = i;
 
-                                            PacketByteBuf buf = PacketByteBufs.create();
-                                            buf.writeInt(j);
-                                            ServerPlayNetworking.send(player, Quadz.SELECTED_SLOT_S2C, buf);
-                                        }
-                                    });
+                                Bindable.get(player.getMainHandStack()).ifPresent(transmitter -> {
+                                    if (transmitter.isBoundTo(quadcopter)) {
+                                        PhysicsThread.get(server).execute(() -> quadcopter.getRigidBody().prioritize(player));
 
-                                    break;
-                                }
+                                        PacketByteBuf buf = PacketByteBufs.create();
+                                        buf.writeInt(j);
+                                        ServerPlayNetworking.send(player, Quadz.SELECTED_SLOT_S2C, buf);
+                                    }
+                                });
+
+                                break;
                             }
                         }
                     }
-
-                /* Goggles disabled and player is in quadcopter view, reset view */
-                } else if (player.getCameraEntity() instanceof QuadcopterEntity) {
-                    QuadcopterEntity entity = (QuadcopterEntity) player.getCameraEntity();
-
-                    if (player.equals(entity.getRigidBody().getPriorityPlayer())) {
-                        PhysicsThread.get(server).execute(() -> entity.getRigidBody().prioritize(null));
-                    }
-
-                    player.setCameraEntity(player);
                 }
-            });
+
+            /* Goggles disabled and player is in quadcopter view, reset view */
+            } else if (player.getCameraEntity() instanceof QuadcopterEntity) {
+                QuadcopterEntity entity = (QuadcopterEntity) player.getCameraEntity();
+
+                if (player.equals(entity.getRigidBody().getPriorityPlayer())) {
+                    PhysicsThread.get(server).execute(() -> entity.getRigidBody().prioritize(null));
+                }
+
+                player.setCameraEntity(player);
+            }
         }
 
         toActivate.forEach(quadcopter -> quadcopter.setActive(true));
