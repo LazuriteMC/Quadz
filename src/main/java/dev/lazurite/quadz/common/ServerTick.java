@@ -16,13 +16,12 @@ import net.minecraft.util.math.Box;
 import java.util.List;
 
 public class ServerTick {
-    public static int RANGE = 300;
-
     public static void tick(MinecraftServer server) {
+        int range = server.getPlayerManager().getViewDistance() * 16;
         List<QuadcopterEntity> toActivate = Lists.newArrayList();
 
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-            List<QuadcopterEntity> quads = player.getEntityWorld().getEntitiesByClass(QuadcopterEntity.class, new Box(player.getBlockPos()).expand(RANGE), null);
+            List<QuadcopterEntity> quads = player.getEntityWorld().getEntitiesByClass(QuadcopterEntity.class, new Box(player.getBlockPos()).expand(range), null);
 
             if (player.getCameraEntity() instanceof QuadcopterEntity) {
                 quads.add((QuadcopterEntity) player.getCameraEntity());

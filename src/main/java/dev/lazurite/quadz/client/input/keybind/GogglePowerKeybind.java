@@ -1,22 +1,17 @@
 package dev.lazurite.quadz.client.input.keybind;
 
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.util.Frequency;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.TranslatableText;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.BiConsumer;
@@ -49,15 +44,6 @@ public class GogglePowerKeybind {
                 PacketByteBuf buf = PacketByteBufs.create();
                 buf.writeBoolean(pressedKey.equals(key) && !prevPower);
                 ClientPlayNetworking.send(Quadz.POWER_GOGGLES_C2S, buf);
-
-                for (Entity entity : MinecraftClient.getInstance().world.getEntities()) {
-                    if (entity instanceof QuadcopterEntity && ((QuadcopterEntity) entity).getFrequency().equals(Frequency.from(goggles)) && !prevPower && key.equals(pressedKey)) {
-                        String sneakKey = KeyBindingHelper.getBoundKeyOf(MinecraftClient.getInstance().options.keySneak).getLocalizedText().getString().toUpperCase();
-                        String powerKey = key.getBoundKeyLocalizedText().getString().toUpperCase();
-                        player.sendMessage(new TranslatableText("message.quadz.goggles_on", sneakKey, powerKey), true);
-                        break;
-                    }
-                }
             }
         };
 
