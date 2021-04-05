@@ -1,5 +1,5 @@
 {
-  "key.quadz.category" : "FPV Racing Keybindings",
+  "key.quadz.category" : "Quadz Keybindings",
   "key.quadz.noclip" : "No Clip",
   "key.quadz.godmode" : "God Mode",
   "key.quadz.powergoggles" : "Goggle Power",
@@ -11,11 +11,9 @@
   "key.quadz.roll.left" : "Roll Left",
   "key.quadz.roll.right" : "Roll Right",
 
-  "entity.quadz.voxel_race_one" : "Voxel Racer 1",
-  "entity.quadz.voyager" : "Voyager",
-  "entity.quadz.pixel" : "Pixel",
+  "entity.quadz.quadcopter" : "Quadcopter",
 
-  "itemGroup.quadz.items" : "FPV Racing",
+  "itemGroup.quadz.items" : "Quadz",
   "item.quadz.goggles_item" : "Goggles",
   "item.quadz.transmitter_item" : "Transmitter",
   "item.quadz.channel_wand_item" : "Channel Wand",
@@ -37,8 +35,8 @@
   "mode.quadz.rate" : "Rate",
   "mode.quadz.angle" : "Angle",
 
-  "config.quadz.title" : "FPV Racing Settings",
-  "config.quadz.category.controller_axes" : "Controller Axes Setup",
+  "config.quadz.title" : "Quadz Settings",
+  "config.quadz.category.setup" : "Controller Setup",
   "config.quadz.category.preferences" : "Stick Preferences",
 
   "config.quadz.entry.controller_id" : "Controller ID",
