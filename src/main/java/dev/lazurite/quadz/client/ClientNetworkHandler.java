@@ -1,10 +1,8 @@
 package dev.lazurite.quadz.client;
 
-import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.render.QuadzRendering;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -17,7 +15,6 @@ public class ClientNetworkHandler {
         Template template = Template.deserialize(buf);
 
         client.execute(() -> {
-            DataDriver.getTemplates().forEach(t -> ClientPlayNetworking.send(Quadz.TEMPLATE, t.serialize()));
             DataDriver.load(template);
             CompletableFuture.runAsync(() -> QuadzRendering.templateLoader.load(template));
         });

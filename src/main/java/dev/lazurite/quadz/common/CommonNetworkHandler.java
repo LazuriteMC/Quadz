@@ -9,6 +9,8 @@ import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.common.state.QuadcopterState;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -23,7 +25,16 @@ import java.util.function.Consumer;
 public class CommonNetworkHandler {
     public static void onTemplateReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
         Template template = Template.deserialize(buf);
-        server.execute(() -> DataDriver.load(template));
+
+        server.execute(() -> {
+            PlayerLookup.all(server).forEach(p -> {
+                if (!p.equals(player)) {
+                    ServerPlayNetworking.send(p, Quadz.TEMPLATE, template.serialize());
+                }
+            });
+
+            DataDriver.load(template);
+        });
     }
 
     public static void onNoClipKey(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {

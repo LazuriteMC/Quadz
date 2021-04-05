@@ -19,6 +19,7 @@ import dev.lazurite.rayon.core.impl.util.event.BetterClientLifecycleEvents;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -78,8 +79,9 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		DataDriver.initialize();
 
 		ServerTickEvents.START_SERVER_TICK.register(ServerTick::tick);
-		ServerPlayConnectionEvents.JOIN.register(((handler, sender, server) ->
-			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()))));
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()));
+		});
 
 		ServerPlayNetworking.registerGlobalReceiver(TEMPLATE, CommonNetworkHandler::onTemplateReceived);
 		ServerPlayNetworking.registerGlobalReceiver(NOCLIP_C2S, CommonNetworkHandler::onNoClipKey);
@@ -116,7 +118,9 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		ClientTickEvents.START_CLIENT_TICK.register(ClientTick::tick);
 		ClientTickEvents.START_CLIENT_TICK.register(InputTick.getInstance()::keyboardTick);
 
-		/* Remove any remote templates */
 		BetterClientLifecycleEvents.DISCONNECT.register((client, world) -> DataDriver.clearRemoteTemplates());
+		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()));
+		});
 	}
 }

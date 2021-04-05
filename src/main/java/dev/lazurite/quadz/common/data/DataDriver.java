@@ -8,6 +8,7 @@ import dev.lazurite.quadz.common.data.model.Settings;
 import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
 import dev.lazurite.quadz.common.state.QuadcopterState;
+import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemStack;
 
@@ -23,8 +24,15 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * This is the main housing for all of the quadcopter templates loaded
+ * into the game. It handles loading from template zip files and contains
+ * a map of all {@link Template} objects which can be referenced at any
+ * time throughout execution. As such, templates aren't stored anywhere
+ * except here - even {@link QuadcopterEntity} objects only store the ID
+ * of the template so that it may look it up here.
+ */
 public class DataDriver {
-    public static final Path QUADZ_DIR = Paths.get("quadz");
     private static Map<String, Template> templates;
 
     public static void initialize() {
@@ -34,21 +42,28 @@ public class DataDriver {
 
     public static void load(Template template) {
         if (templates.containsKey(template.getId())) {
-            Quadz.LOGGER.info("Quadcopter template already exists! Skipping...");
+            Quadz.LOGGER.info("{} template already exists! Skipping...", template.getId());
             return;
         }
 
+        Quadz.LOGGER.info("Loading {} template...", template.getId());
         templates.put(template.getId(), template);
 
-        ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
-        QuadcopterState.get(stack).ifPresent(state -> state.setTemplate(template.getId()));
-        ItemGroupHandler.getInstance().register(stack);
+        /*
+         * Only add to inventory if the template originated on the server or your own client. Other
+         * players' templates are not included in your inventory, but can be obtained from them.
+         */
+        if (template.getOriginDistance() < 2) {
+            ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
+            QuadcopterState.get(stack).ifPresent(state -> state.setTemplate(template.getId()));
+            ItemGroupHandler.getInstance().register(stack);
+        }
     }
 
     private static void readFromDisk() {
         try {
-            Quadz.LOGGER.info("Reading quadz templates...");
-            Path source = FabricLoader.getInstance().getGameDir().normalize().resolve(QUADZ_DIR);
+            Quadz.LOGGER.info("Reading templates...");
+            Path source = FabricLoader.getInstance().getGameDir().normalize().resolve(Paths.get("quadz"));
 
             if (!Files.exists(source)) {
                 Files.createDirectory(source);
@@ -62,7 +77,6 @@ public class DataDriver {
                     JsonObject animation = null;
                     byte[] texture = null;
 
-                    Quadz.LOGGER.info("Loading {} template...", zip.getName());
 
                     Enumeration<? extends ZipEntry> entries = zip.entries();
                     while (entries.hasMoreElements()) {
@@ -91,7 +105,7 @@ public class DataDriver {
                     }
 
                     try {
-                        load(new Template(settings, geo, animation, texture, true));
+                        load(new Template(settings, geo, animation, texture, 0));
                     } catch (RuntimeException e) {
                         Quadz.LOGGER.error(e.getMessage());
                     }
@@ -106,15 +120,17 @@ public class DataDriver {
     }
 
     public static Template getTemplate(String id) {
-        Template out = templates.get(id);
-        return out == null ? templates.get("missing") : out;
+        return templates.get(id);
     }
 
     public static List<Template> getTemplates() {
         return new ArrayList<>(templates.values());
     }
 
+    /**
+     * Removes any templates that are from anywhere besides this instance of the game.
+     */
     public static void clearRemoteTemplates() {
-        templates.values().removeIf(template -> !template.isOriginal());
+        templates.values().removeIf(template -> template.getOriginDistance() > 0);
     }
 }

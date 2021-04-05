@@ -1,6 +1,5 @@
 package dev.lazurite.quadz.common.data.model;
 
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
 
 public class Settings {
@@ -28,8 +27,7 @@ public class Settings {
         this.cameraAngle = cameraAngle;
     }
 
-    public PacketByteBuf serialize() {
-        PacketByteBuf buf = PacketByteBufs.create();
+    public PacketByteBuf serialize(PacketByteBuf buf) {
         buf.writeString(id);
         buf.writeString(name);
         buf.writeString(author);

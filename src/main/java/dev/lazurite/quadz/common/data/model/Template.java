@@ -2,6 +2,7 @@ package dev.lazurite.quadz.common.data.model;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
 
 public class Template {
@@ -9,9 +10,9 @@ public class Template {
     private final JsonObject geo;
     private final JsonObject animation;
     private final byte[] texture;
-    private final boolean original;
+    private final int originDistance;
 
-    public Template(Settings settings, JsonObject geo, JsonObject animation, byte[] texture, boolean original) throws RuntimeException {
+    public Template(Settings settings, JsonObject geo, JsonObject animation, byte[] texture, int originDistance) throws RuntimeException {
         if (geo == null || animation == null || texture == null) {
             throw new RuntimeException("Quadcopter template is missing information.");
         }
@@ -20,25 +21,26 @@ public class Template {
         this.geo = geo;
         this.animation = animation;
         this.texture = texture;
-        this.original = original;
+        this.originDistance = originDistance;
     }
 
     public PacketByteBuf serialize() {
-        PacketByteBuf buf = settings.serialize();
+        PacketByteBuf buf = PacketByteBufs.create();
+        settings.serialize(buf);
         buf.writeString(geo.toString());
         buf.writeString(animation.toString());
         buf.writeByteArray(texture);
-
+        buf.writeInt(originDistance + 1);
         return buf;
     }
 
     public static Template deserialize(PacketByteBuf buf) {
-        Settings settings = Settings.deserialize(buf);
-        JsonObject geo = new JsonParser().parse(buf.readString(32767)).getAsJsonObject();
-        JsonObject animation = new JsonParser().parse(buf.readString(32767)).getAsJsonObject();
-        byte[] texture = buf.readByteArray();
-
-        return new Template(settings, geo, animation, texture, false);
+        return new Template(
+            Settings.deserialize(buf),
+            new JsonParser().parse(buf.readString(32767)).getAsJsonObject(),
+            new JsonParser().parse(buf.readString(32767)).getAsJsonObject(),
+            buf.readByteArray(),
+            buf.readInt());
     }
 
     public String getId() {
@@ -61,7 +63,7 @@ public class Template {
         return this.texture;
     }
 
-    public boolean isOriginal() {
-        return this.original;
+    public int getOriginDistance() {
+        return this.originDistance;
     }
 }
