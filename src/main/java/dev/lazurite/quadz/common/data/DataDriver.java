@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -27,7 +28,7 @@ public class DataDriver {
     private static Map<String, Template> templates;
 
     public static void initialize() {
-        templates = new HashMap<>();
+        templates = new ConcurrentHashMap<>();
         readFromDisk();
     }
 

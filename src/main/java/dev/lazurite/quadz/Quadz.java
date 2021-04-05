@@ -15,7 +15,6 @@ import dev.lazurite.quadz.common.ServerTick;
 import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.util.event.BetterServerJoinEvents;
 import dev.lazurite.rayon.core.impl.util.event.BetterClientLifecycleEvents;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
@@ -79,11 +78,8 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		DataDriver.initialize();
 
 		ServerTickEvents.START_SERVER_TICK.register(ServerTick::tick);
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-			DataDriver.getTemplates().forEach(template -> {
-				sender.sendPacket(Quadz.TEMPLATE, template.serialize());
-			});
-		});
+		ServerPlayConnectionEvents.JOIN.register(((handler, sender, server) ->
+			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()))));
 
 		ServerPlayNetworking.registerGlobalReceiver(TEMPLATE, CommonNetworkHandler::onTemplateReceived);
 		ServerPlayNetworking.registerGlobalReceiver(NOCLIP_C2S, CommonNetworkHandler::onNoClipKey);
@@ -119,15 +115,6 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		/* Register Client Tick Events */
 		ClientTickEvents.START_CLIENT_TICK.register(ClientTick::tick);
 		ClientTickEvents.START_CLIENT_TICK.register(InputTick.getInstance()::keyboardTick);
-
-		/* Register Game Join Events */
-		BetterClientLifecycleEvents.GAME_JOIN.register((client, world, player) -> {
-			if (client.getServer() == null) {
-				DataDriver.getTemplates().forEach(template -> {
-					ClientPlayNetworking.send(Quadz.TEMPLATE, template.serialize());
-				});
-			}
-		});
 
 		/* Remove any remote templates */
 		BetterClientLifecycleEvents.DISCONNECT.register((client, world) -> DataDriver.clearRemoteTemplates());

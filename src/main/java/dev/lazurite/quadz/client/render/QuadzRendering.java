@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.client.render;
 
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.client.render.quadcopter.QuadcopterEntityRenderer;
+import dev.lazurite.quadz.client.render.entity.QuadcopterEntityRenderer;
 import dev.lazurite.quadz.common.data.util.SplashResourceLoader;
 import dev.lazurite.quadz.common.data.util.TemplateResourceLoader;
 import net.fabricmc.api.EnvType;

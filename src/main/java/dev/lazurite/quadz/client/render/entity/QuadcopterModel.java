@@ -1,7 +1,9 @@
-package dev.lazurite.quadz.client.render.quadcopter;
+package dev.lazurite.quadz.client.render.entity;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
@@ -11,6 +13,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
  * template it is assigned. It also caches the {@link GeoModel} object
  * since during a reload, it is possible for it to return null.
  */
+@Environment(EnvType.CLIENT)
 public class QuadcopterModel extends AnimatedGeoModel<QuadcopterEntity> {
     private GeoModel cachedModel;
 
