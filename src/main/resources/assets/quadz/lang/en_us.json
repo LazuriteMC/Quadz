@@ -37,7 +37,8 @@
 
   "config.quadz.title" : "Quadz Settings",
   "config.quadz.category.setup" : "Controller Setup",
-  "config.quadz.category.preferences" : "Stick Preferences",
+  "config.quadz.category.stick_feel" : "Stick Preferences",
+  "config.quadz.category.flight" : "Flight Preferences",
 
   "config.quadz.entry.controller_id" : "Controller ID",
   "config.quadz.entry.controller_id.keyboard" : "Keyboard",

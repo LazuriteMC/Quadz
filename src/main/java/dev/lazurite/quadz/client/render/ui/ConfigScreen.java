@@ -23,7 +23,8 @@ public class ConfigScreen {
                 .setSavingRunnable(Config.getInstance()::save);
 
         ConfigCategory controllerSetup = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.setup"));
-        ConfigCategory controllerPreferences = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.preferences"));
+        ConfigCategory controllerPreferences = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.stick_feel"));
+        ConfigCategory flightPreferences = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.flight"));
         Map <Integer, String> joysticks = InputTick.getInstance().getJoysticks();
 
         controllerPreferences.addEntry(builder.entryBuilder().startEnumSelector(
@@ -39,13 +40,13 @@ public class ConfigScreen {
                 .setDefaultValue(Config.getInstance().maxAngle)
                 .build());
 
-        controllerPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
+        flightPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
                 new TranslatableText("config.quadz.entry.follow_los"), Config.getInstance().followLOS)
                 .setDefaultValue(Config.getInstance().followLOS)
                 .setSaveConsumer(value -> Config.getInstance().followLOS = value)
                 .build());
 
-        controllerPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
+        flightPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
                 new TranslatableText("config.quadz.entry.render_first_person"), Config.getInstance().renderFirstPerson)
                 .setDefaultValue(Config.getInstance().renderFirstPerson)
                 .setSaveConsumer(value -> Config.getInstance().renderFirstPerson = value)
