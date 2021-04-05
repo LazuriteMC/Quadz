@@ -388,7 +388,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	@Override
 	@Environment(EnvType.CLIENT)
 	public boolean shouldRenderSelf() {
-		return true;//Config.getInstance().renderFirstPerson;
+		return Config.getInstance().renderFirstPerson;
 	}
 
 	@Override

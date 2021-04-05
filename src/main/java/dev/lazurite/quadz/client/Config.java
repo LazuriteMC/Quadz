@@ -102,7 +102,7 @@ public final class Config {
         this.maxAngle = 30;
         this.mode = Mode.RATE;
         this.followLOS = true;
-        this.renderFirstPerson = false;
+        this.renderFirstPerson = true;
     }
 
     public static Config getInstance() {
