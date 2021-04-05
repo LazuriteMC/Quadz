@@ -8,18 +8,22 @@ public class Settings {
     private final String author;
     private final float width;
     private final float height;
+    private final float cameraX;
+    private final float cameraY;
     private final float mass;
     private final float dragCoefficient;
     private final float thrust;
     private final float thrustCurve;
     private final int cameraAngle;
 
-    public Settings(String id, String name, String author, float width, float height, float mass, float dragCoefficient, float thrust, float thrustCurve, int cameraAngle) {
+    public Settings(String id, String name, String author, float width, float height, float cameraX, float cameraY, float mass, float dragCoefficient, float thrust, float thrustCurve, int cameraAngle) {
         this.id = id;
         this.name = name;
         this.author = author;
         this.width = width;
         this.height = height;
+        this.cameraX = cameraX;
+        this.cameraY = cameraY;
         this.mass = mass;
         this.dragCoefficient = dragCoefficient;
         this.thrust = thrust;
@@ -33,6 +37,8 @@ public class Settings {
         buf.writeString(author);
         buf.writeFloat(width);
         buf.writeFloat(height);
+        buf.writeFloat(cameraX);
+        buf.writeFloat(cameraY);
         buf.writeFloat(mass);
         buf.writeFloat(dragCoefficient);
         buf.writeFloat(thrust);
@@ -46,6 +52,8 @@ public class Settings {
                 buf.readString(32767),
                 buf.readString(32767),
                 buf.readString(32767),
+                buf.readFloat(),
+                buf.readFloat(),
                 buf.readFloat(),
                 buf.readFloat(),
                 buf.readFloat(),
@@ -75,6 +83,14 @@ public class Settings {
         return height;
     }
 
+    public float getCameraX() {
+        return cameraX;
+    }
+
+    public float getCameraY() {
+        return cameraY;
+    }
+
     public float getMass() {
         return mass;
     }
@@ -92,6 +108,6 @@ public class Settings {
     }
 
     public int getCameraAngle() {
-        return this.cameraAngle;
+        return cameraAngle;
     }
 }

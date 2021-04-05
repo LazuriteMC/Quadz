@@ -4,6 +4,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import dev.lazurite.lattice.api.entity.Viewable;
+import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
@@ -387,7 +388,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	@Override
 	@Environment(EnvType.CLIENT)
 	public boolean shouldRenderSelf() {
-		return false; // for now
+		return true;//Config.getInstance().renderFirstPerson;
 	}
 
 	@Override

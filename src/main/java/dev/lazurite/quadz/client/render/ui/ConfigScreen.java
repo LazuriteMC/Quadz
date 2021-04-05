@@ -45,6 +45,12 @@ public class ConfigScreen {
                 .setSaveConsumer(value -> Config.getInstance().followLOS = value)
                 .build());
 
+        controllerPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
+                new TranslatableText("config.quadz.entry.render_first_person"), Config.getInstance().renderFirstPerson)
+                .setDefaultValue(Config.getInstance().renderFirstPerson)
+                .setSaveConsumer(value -> Config.getInstance().renderFirstPerson = value)
+                .build());
+
         controllerPreferences.addEntry(builder.entryBuilder().startFloatField(
                 new TranslatableText("config.quadz.entry.rate"), Config.getInstance().rate)
                 .setDefaultValue(Config.getInstance().rate)

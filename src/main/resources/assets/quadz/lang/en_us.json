@@ -55,6 +55,7 @@
   "config.quadz.entry.mode" : "Mode",
   "config.quadz.entry.max_angle" : "Max Angle",
   "config.quadz.entry.follow_los" : "Follow LOS",
+  "config.quadz.entry.render_first_person" : "Render First Person",
   "config.quadz.entry.rate" : "Rate",
   "config.quadz.entry.expo" : "Expo",
   "config.quadz.entry.super_rate" : "Super Rate",

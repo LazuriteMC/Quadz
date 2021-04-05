@@ -80,6 +80,9 @@ public final class Config {
     @Setting
     public boolean followLOS;
 
+    @Setting
+    public boolean renderFirstPerson;
+
     private Config() {
         /* Defaults */
         this.controllerId = -1;
@@ -99,6 +102,7 @@ public final class Config {
         this.maxAngle = 30;
         this.mode = Mode.RATE;
         this.followLOS = true;
+        this.renderFirstPerson = false;
     }
 
     public static Config getInstance() {
