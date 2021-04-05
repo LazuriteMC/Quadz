@@ -64,9 +64,20 @@ public class DataDriver {
         try {
             Quadz.LOGGER.info("Reading templates...");
             Path source = FabricLoader.getInstance().getGameDir().normalize().resolve(Paths.get("quadz"));
+            Path internal = FabricLoader.getInstance().getModContainer("quadz").get().getRootPath().resolve("assets").resolve("quadz").resolve("templates");
 
-            if (!Files.exists(source)) {
-                Files.createDirectory(source);
+            if (!Files.exists(Paths.get("voyager.zip"))) {
+                for (Path path : Files.walk(internal).collect(Collectors.toList())) {
+                    Path file = source.resolve(internal.relativize(path).getFileName().toString());
+
+                    if (!Files.exists(file)) {
+                        if (!Files.exists(file.getParent())) {
+                            Files.createDirectories(file.getParent());
+                        }
+
+                        Files.copy(path, file);
+                    }
+                }
             }
 
             for (Path path : Files.walk(source).collect(Collectors.toList())) {
@@ -76,7 +87,6 @@ public class DataDriver {
                     JsonObject geo = null;
                     JsonObject animation = null;
                     byte[] texture = null;
-
 
                     Enumeration<? extends ZipEntry> entries = zip.entries();
                     while (entries.hasMoreElements()) {
@@ -106,12 +116,12 @@ public class DataDriver {
 
                     try {
                         load(new Template(settings, geo, animation, texture, 0));
-                    } catch (RuntimeException e) {
+                    } catch (NoSuchElementException e) {
                         Quadz.LOGGER.error(e.getMessage());
                     }
                 }
             }
-        } catch (IOException | NoSuchElementException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Unable to load quadcopter templates.");
         } finally {
