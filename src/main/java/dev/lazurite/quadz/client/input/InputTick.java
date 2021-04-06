@@ -58,6 +58,10 @@ public final class InputTick {
             loaded = true;
         }
 
+        if (getJoysticks().isEmpty()) {
+            Config.getInstance().controllerId = -1;
+        }
+
         if (controllerExists()) {
             FloatBuffer buffer = glfwGetJoystickAxes(Config.getInstance().controllerId);
             frame.set(

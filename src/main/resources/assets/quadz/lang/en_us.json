@@ -18,6 +18,8 @@
   "item.quadz.transmitter_item" : "Transmitter",
   "item.quadz.channel_wand_item" : "Channel Wand",
 
+  "item.quadz.transmitter_item.bound" : "Transmitter Bound",
+
   "message.quadz.drone_error" : "Must be holding a quadcopter or a bound transmitter.",
   "message.quadz.goggles_error" : "Must be holding or wearing goggles.",
   "message.quadz.godmode_on" : "God Mode Enabled",
