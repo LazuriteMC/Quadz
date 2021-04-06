@@ -32,7 +32,7 @@ public abstract class CameraMixin {
             net.minecraft.client.util.math.Vector3f vec = VectorHelper.bulletToMinecraft(point);
             vec.rotate(QuaternionHelper.bulletToMinecraft(rotation));
             vec.add(VectorHelper.bulletToMinecraft(location));
-            setPos(vec.getX(),vec.getY(), vec.getZ());
+            setPos(vec.getX(), vec.getY(), vec.getZ());
         }
     }
 }
