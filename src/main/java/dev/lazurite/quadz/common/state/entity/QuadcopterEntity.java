@@ -73,12 +73,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 
 	public QuadcopterEntity(World world) {
 		super(Quadz.QUADCOPTER_ENTITY, world);
-	}
-
-	public QuadcopterEntity(World world, String template) {
-		this(world);
 		this.ignoreCameraFrustum = true;
-		setTemplate(template);
 	}
 
 	@Override
