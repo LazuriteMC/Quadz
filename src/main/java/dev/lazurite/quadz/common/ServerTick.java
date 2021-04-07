@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -41,10 +42,8 @@ public class ServerTick {
             ItemStack goggles = player.inventory.armor.get(3).getItem().equals(Quadz.GOGGLES_ITEM) ? player.inventory.armor.get(3) : null;
 
             if (goggles != null && goggles.getOrCreateTag().getBoolean("enabled")) {
-                if (!(player.getCameraEntity() instanceof QuadcopterEntity) && !quads.isEmpty()) {
-                    QuadcopterEntity quadcopter = quads.get(0);
-
-                    if (quadcopter != null) {
+                if (!(player.getCameraEntity() instanceof QuadcopterEntity)) {
+                    quads.stream().filter(quadcopter -> quadcopter.getFrequency().equals(Frequency.from(player))).findAny().ifPresent(quadcopter -> {
                         player.setCameraEntity(quadcopter);
 
                         for (int i = 0; i < player.inventory.main.size(); i++) {
@@ -64,7 +63,7 @@ public class ServerTick {
                                 break;
                             }
                         }
-                    }
+                    });
                 }
 
             /* Goggles disabled and player is in quadcopter view, reset view */

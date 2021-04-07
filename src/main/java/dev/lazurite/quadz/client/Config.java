@@ -42,6 +42,8 @@ public final class Config {
     @Setting public float thirdPersonOffsetX;
     @Setting public float thirdPersonOffsetY;
     @Setting public int thirdPersonAngle;
+    @Setting public int channel;
+    @Setting public char band;
 
     private Config() {
         /* Defaults */
@@ -66,6 +68,8 @@ public final class Config {
         this.thirdPersonOffsetX = 3.0f;
         this.thirdPersonOffsetY = 0.0f;
         this.thirdPersonAngle = 0;
+        this.channel = 1;
+        this.band = 'R';
     }
 
     public static Config getInstance() {

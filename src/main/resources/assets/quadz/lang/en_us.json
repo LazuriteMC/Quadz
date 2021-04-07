@@ -40,7 +40,7 @@
   "config.quadz.title" : "Quadz Settings",
   "config.quadz.category.setup" : "Controller Setup",
   "config.quadz.category.stick_feel" : "Stick Preferences",
-  "config.quadz.category.flight" : "Flight Preferences",
+  "config.quadz.category.camera" : "Camera Preferences",
 
   "config.quadz.entry.controller_id" : "Controller ID",
   "config.quadz.entry.controller_id.keyboard" : "Keyboard",
@@ -62,6 +62,9 @@
   "config.quadz.entry.third_person_offset_x": "Third Person X Offset",
   "config.quadz.entry.third_person_offset_y": "Third Person Y Offset",
   "config.quadz.entry.third_person_angle": "Third Person Angle",
+  "config.quadz.entry.band" : "Band",
+  "config.quadz.entry.channel" : "Channel",
+
   "config.quadz.entry.rate" : "Rate",
   "config.quadz.entry.expo" : "Expo",
   "config.quadz.entry.super_rate" : "Super Rate",

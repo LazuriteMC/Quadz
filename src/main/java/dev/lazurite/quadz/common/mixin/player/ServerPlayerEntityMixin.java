@@ -1,8 +1,10 @@
 package dev.lazurite.quadz.common.mixin.player;
 
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.util.Frequency;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -11,7 +13,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
  * is flying a drone, they cannot exit from the goggles at this point in the code.
  */
 @Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin {
+public class ServerPlayerEntityMixin implements Frequency.Storage {
+    @Unique private Frequency frequency;
+
     @Redirect(
             method = "tick",
             at = @At(
@@ -25,5 +29,15 @@ public abstract class ServerPlayerEntityMixin {
         } else {
             return player.isSneaking();
         }
+    }
+
+    @Override
+    public void setFrequency(Frequency frequency) {
+        this.frequency = frequency;
+    }
+
+    @Override
+    public Frequency getFrequency() {
+        return this.frequency;
     }
 }

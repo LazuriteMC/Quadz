@@ -1,7 +1,6 @@
 package dev.lazurite.quadz.common.util;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.MathHelper;
 
 /**
@@ -33,7 +32,7 @@ public class Frequency {
 
     public Frequency(int frequency) {
         band = getBand(frequency);
-        channel = getBand(frequency);
+        channel = getChannel(frequency);
     }
 
     public Frequency(char band, int channel) {
@@ -104,16 +103,22 @@ public class Frequency {
         return -1;
     }
 
-    public static Frequency from(ItemStack stack) {
-        CompoundTag tag = stack.getSubTag("frequency");
-
-        if (tag != null) {
-            return new Frequency(
-                (char) tag.getInt("band"),
-                tag.getInt("channel"));
+    public static int getBandIndex(char band) {
+        for (int i = 0; i < BANDS.length; i++) {
+            if (BANDS[i] == band) {
+                return i;
+            }
         }
 
-        return null;
+        return -1;
+    }
+
+    public static Frequency from(ServerPlayerEntity player) {
+        return ((Storage) player).getFrequency();
+    }
+
+    public void to(ServerPlayerEntity player) {
+        ((Storage) player).setFrequency(this);
     }
 
     @Override
@@ -126,5 +131,10 @@ public class Frequency {
     @Override
     public String toString() {
         return "freq: " + getFrequency();
+    }
+
+    public interface Storage {
+        void setFrequency(Frequency frequency);
+        Frequency getFrequency();
     }
 }

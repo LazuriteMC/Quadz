@@ -19,8 +19,19 @@ import net.minecraft.entity.Entity;
  */
 @Environment(EnvType.CLIENT)
 public class ClientTick {
+    public static int desiredCameraEntity = -1;
+
     public static void tick(MinecraftClient client) {
         if (client.player != null && client.world != null && !client.isPaused()) {
+            if (desiredCameraEntity != -1) {
+                Entity entity = client.world.getEntityById(desiredCameraEntity);
+
+                if (entity != null) {
+                    client.setCameraEntity(entity);
+                    desiredCameraEntity = -1;
+                }
+            }
+
             Bindable.get(client.player.getMainHandStack()).ifPresent(transmitter -> {
                 for (Entity entity : client.world.getEntities()) {
                     if (entity instanceof QuadcopterEntity) {

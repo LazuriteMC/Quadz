@@ -23,6 +23,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -34,6 +35,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -52,6 +54,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 	public static final Identifier POWER_GOGGLES_C2S = new Identifier(MODID, "power_goggles_c2s");
 	public static final Identifier GOD_MODE_C2S = new Identifier(MODID, "godmode_c2s");
 	public static final Identifier INPUT_FRAME_C2S = new Identifier(MODID, "input_frame_c2s");
+	public static final Identifier FREQUENCY_C2S = new Identifier(MODID, "frequency_c2s");
 
 	/* Items */
 	public static QuadcopterItem QUADCOPTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "quadcopter_item"), new QuadcopterItem(new Item.Settings().maxCount(1)));
@@ -93,7 +96,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 				if (!quadcopter.getEntityWorld().isClient()) {
 					Block blockType = block.getBlockState().getBlock();
 
-					if (impulse > 5 || blockType.equals(Blocks.CACTUS) || blockType.equals(Blocks.MAGMA_BLOCK)) {
+					if (impulse > 10 || blockType.equals(Blocks.CACTUS) || blockType.equals(Blocks.MAGMA_BLOCK)) {
 						System.out.println("impulse: " + impulse);
 						executor.execute(quadcopter::disable);
 					}
@@ -107,6 +110,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		ServerPlayNetworking.registerGlobalReceiver(GOD_MODE_C2S, CommonNetworkHandler::onGodModeKey);
 		ServerPlayNetworking.registerGlobalReceiver(POWER_GOGGLES_C2S, CommonNetworkHandler::onPowerGogglesKey);
 		ServerPlayNetworking.registerGlobalReceiver(INPUT_FRAME_C2S, CommonNetworkHandler::onInputFrame);
+		ServerPlayNetworking.registerGlobalReceiver(FREQUENCY_C2S, CommonNetworkHandler::onFrequencyReceived);
 	}
 
 	@Override
@@ -138,6 +142,10 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 		BetterClientLifecycleEvents.DISCONNECT.register((client, world) -> DataDriver.clearRemoteTemplates());
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+			PacketByteBuf buf = PacketByteBufs.create();
+			buf.writeChar(Config.getInstance().band);
+			buf.writeInt(Config.getInstance().channel);
+			sender.sendPacket(FREQUENCY_C2S, buf);
 			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()));
 		});
 	}

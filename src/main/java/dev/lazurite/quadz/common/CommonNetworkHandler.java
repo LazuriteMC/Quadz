@@ -6,6 +6,7 @@ import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.common.state.QuadcopterState;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -23,6 +24,11 @@ import net.minecraft.text.TranslatableText;
 import java.util.function.Consumer;
 
 public class CommonNetworkHandler {
+    public static void onFrequencyReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+        Frequency frequency = new Frequency(buf.readChar(), buf.readInt());
+        server.execute(() -> frequency.to(player));
+    }
+
     public static void onTemplateReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
         Template template = Template.deserialize(buf);
 

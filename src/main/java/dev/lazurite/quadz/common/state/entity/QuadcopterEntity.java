@@ -40,6 +40,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -264,6 +265,8 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
 				Bindable.get(stack).ifPresent(bindable -> {
 					Bindable.bind(this, bindable);
+					System.out.println(Frequency.from((ServerPlayerEntity) player));
+					setFrequency(Frequency.from((ServerPlayerEntity) player));
 					player.sendMessage(new TranslatableText("item.quadz.transmitter_item.bound"), true);
 				});
 			} else if (stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM)) {

@@ -4,6 +4,7 @@
   "package": "dev.lazurite.quadz.client.mixin",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "ClientPlayNetworkHandlerMixin",
     "MinecraftClientMixin",
     "input.MouseMixin",
     "render.CameraMixin",

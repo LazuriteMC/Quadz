@@ -1,11 +1,16 @@
 package dev.lazurite.quadz.client.render.ui;
 
+import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.input.InputTick;
+import dev.lazurite.quadz.common.util.Frequency;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
@@ -24,7 +29,7 @@ public class ConfigScreen {
 
         ConfigCategory controllerSetup = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.setup"));
         ConfigCategory controllerPreferences = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.stick_feel"));
-        ConfigCategory flightPreferences = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.flight"));
+        ConfigCategory cameraPreferences = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.camera"));
         Map <Integer, String> joysticks = InputTick.getInstance().getJoysticks();
 
         controllerPreferences.addEntry(builder.entryBuilder().startEnumSelector(
@@ -40,33 +45,58 @@ public class ConfigScreen {
                 .setDefaultValue(Config.getInstance().maxAngle)
                 .build());
 
-        flightPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
+        cameraPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
                 new TranslatableText("config.quadz.entry.follow_los"), Config.getInstance().followLOS)
                 .setDefaultValue(Config.getInstance().followLOS)
                 .setSaveConsumer(value -> Config.getInstance().followLOS = value)
                 .build());
 
-        flightPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
+        cameraPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
                 new TranslatableText("config.quadz.entry.render_first_person"), Config.getInstance().renderFirstPerson)
                 .setDefaultValue(Config.getInstance().renderFirstPerson)
                 .setSaveConsumer(value -> Config.getInstance().renderFirstPerson = value)
                 .build());
 
-        flightPreferences.addEntry(builder.entryBuilder().startIntSlider(
+        cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
+                new TranslatableText("config.quadz.entry.band"), Frequency.getBandIndex(Config.getInstance().band), 0, 4)
+                .setDefaultValue(Frequency.getBandIndex(Config.getInstance().band))
+                .setTextGetter(value -> new LiteralText(String.valueOf(Frequency.BANDS[value])))
+                .setSaveConsumer(value -> {
+                    Config.getInstance().band = Frequency.BANDS[value];
+                    PacketByteBuf buf = PacketByteBufs.create();
+                    buf.writeChar(Config.getInstance().band);
+                    buf.writeInt(Config.getInstance().channel);
+                    ClientPlayNetworking.send(Quadz.FREQUENCY_C2S, buf);
+                })
+                .build());
+
+        cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
+                new TranslatableText("config.quadz.entry.channel"), Config.getInstance().channel, 1, 8)
+                .setDefaultValue(Config.getInstance().channel)
+                .setSaveConsumer(value -> {
+                    Config.getInstance().channel = value;
+                    PacketByteBuf buf = PacketByteBufs.create();
+                    buf.writeChar(Config.getInstance().band);
+                    buf.writeInt(Config.getInstance().channel);
+                    ClientPlayNetworking.send(Quadz.FREQUENCY_C2S, buf);
+                })
+                .build());
+
+        cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
                 new TranslatableText("config.quadz.entry.third_person_offset_x"), (int) Config.getInstance().thirdPersonOffsetX * 10, 0, 100)
                 .setDefaultValue(30)
                 .setTextGetter(value -> new LiteralText(String.valueOf(value / 10f)))
                 .setSaveConsumer(value -> Config.getInstance().thirdPersonOffsetX = value / 10.0f)
                 .build());
 
-        flightPreferences.addEntry(builder.entryBuilder().startIntSlider(
+        cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
                 new TranslatableText("config.quadz.entry.third_person_offset_y"), (int) Config.getInstance().thirdPersonOffsetY * 10, -25, 25)
                 .setDefaultValue(0)
                 .setTextGetter(value -> new LiteralText(String.valueOf(value / 10f)))
                 .setSaveConsumer(value -> Config.getInstance().thirdPersonOffsetY = value / 10.0f)
                 .build());
 
-        flightPreferences.addEntry(builder.entryBuilder().startIntSlider(
+        cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
                 new TranslatableText("config.quadz.entry.third_person_angle"), Config.getInstance().thirdPersonAngle / 5, -18, 18)
                 .setDefaultValue(0)
                 .setTextGetter(value -> new LiteralText(String.valueOf(value * 5)))
