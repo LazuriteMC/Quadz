@@ -2,7 +2,6 @@ package dev.lazurite.quadz.client.mixin.render;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
@@ -39,16 +38,18 @@ public class GameRendererMixin {
 			Quaternion q = quadcopter.getPhysicsRotation(new Quaternion(), tickDelta);
 			q.set(q.getX(), -q.getY(), q.getZ(), -q.getW());
 
-			/* Camera Angle */
-			q.set(QuaternionHelper.rotateX(q, quadcopter.getCameraAngle()));
-
 			/* Third Person */
 			if (!client.options.getPerspective().isFirstPerson()) {
 				if (client.options.getPerspective().isFrontView()) {
-					q.set(QuaternionHelper.rotateY(q, 180));
+					QuaternionHelper.rotateY(q, 180);
+					QuaternionHelper.rotateX(q, -quadcopter.getCameraAngle());
+				} else {
+					QuaternionHelper.rotateX(q, quadcopter.getCameraAngle());
 				}
 
-				q.set(QuaternionHelper.rotateX(q, -Config.getInstance().thirdPersonAngle));
+				QuaternionHelper.rotateX(q, -Config.getInstance().thirdPersonAngle);
+			} else {
+				QuaternionHelper.rotateX(q, quadcopter.getCameraAngle());
 			}
 
 			Matrix4f newMat = new Matrix4f(QuaternionHelper.bulletToMinecraft(q));

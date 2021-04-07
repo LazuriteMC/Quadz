@@ -9,6 +9,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 import software.bernie.geckolib3.renderer.geo.GeoEntityRenderer;
 
 /**
@@ -28,6 +30,8 @@ public class QuadcopterEntityRenderer extends GeoEntityRenderer<QuadcopterEntity
     @Override
     public void render(QuadcopterEntity quadcopter, float entityYaw, float tickDelta, MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn) {
         if (DataDriver.getTemplate(quadcopter.getTemplate()) != null) {
+            this.shadowRadius = quadcopter.dimensions.width * quadcopter.dimensions.height * 2;
+
             float temp = quadcopter.bodyYaw;
             quadcopter.bodyYaw = 0;
             quadcopter.prevBodyYaw = 0;

@@ -15,15 +15,28 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class TemplateTextureManager implements ResourceManager {
+    private final ResourceManager original;
+
+    public TemplateTextureManager(ResourceManager original) {
+        this.original = original;
+    }
+
     @Override
     public Set<String> getAllNamespaces() {
         return new HashSet<>();
     }
 
     @Override
-    public Resource getResource(Identifier id) {
+    public Resource getResource(Identifier id) throws IOException {
+        if (id.getPath().endsWith("_n.png") || id.getPath().endsWith("_s.png")) {
+            return getOriginal().getResource(id);
+        }
+
         Template template = DataDriver.getTemplate(id.getPath());
-        return new ResourceImpl(template.getId(), id, new ByteArrayInputStream(template.getTexture()), null);
+        return new ResourceImpl(
+                template.getId(), id,
+                new ByteArrayInputStream(template.getTexture()),
+                new ByteArrayInputStream(template.getTexture()));
     }
 
     @Override
@@ -32,7 +45,7 @@ public class TemplateTextureManager implements ResourceManager {
     }
 
     @Override
-    public List<Resource> getAllResources(Identifier id) throws IOException {
+    public List<Resource> getAllResources(Identifier id) {
         return new ArrayList<>();
     }
 
@@ -44,5 +57,9 @@ public class TemplateTextureManager implements ResourceManager {
     @Override
     public Stream<ResourcePack> streamResourcePacks() {
         return null;
+    }
+
+    public ResourceManager getOriginal() {
+        return this.original;
     }
 }

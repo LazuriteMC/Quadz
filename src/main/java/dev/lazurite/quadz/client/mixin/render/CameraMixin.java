@@ -10,7 +10,11 @@ import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import dev.lazurite.rayon.core.impl.util.math.VectorHelper;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.RaycastContext;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,7 +28,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(Camera.class)
 public abstract class CameraMixin {
-    @Shadow protected abstract void setPos(double x, double y, double z);
+    @Shadow private BlockView area;
+    @Shadow private Entity focusedEntity;
+    @Shadow protected abstract void setPos(Vec3d pos);
+
+    @Shadow private Vec3d pos;
+
+    @Shadow @Final private net.minecraft.client.util.math.Vector3f horizontalPlane;
 
     @Inject(method = "update", at = @At("TAIL"))
     public void update(BlockView area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo info) {
@@ -38,6 +48,8 @@ public abstract class CameraMixin {
             net.minecraft.client.util.math.Vector3f vec = VectorHelper.bulletToMinecraft(point);
 
             if (thirdPerson) {
+                QuaternionHelper.rotateX(rotation, -quadcopter.getCameraAngle());
+
                 if (inverseView) {
                     QuaternionHelper.rotateX(rotation, -Config.getInstance().thirdPersonAngle);
                     vec.add(VectorHelper.bulletToMinecraft(new Vector3f(0.0f,
@@ -53,11 +65,18 @@ public abstract class CameraMixin {
 
             vec.rotate(QuaternionHelper.bulletToMinecraft(rotation));
             vec.add(VectorHelper.bulletToMinecraft(location));
-            setPos(vec.getX(), vec.getY(), vec.getZ());
+            setPos(clip(VectorHelper.vector3fToVec3d(location), VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec))));
         }
     }
 
-    public void clip(net.minecraft.client.util.math.Vector3f vec) {
+    public Vec3d clip(Vec3d quadcopter, Vec3d target) {
+        HitResult hitResult = this.area.raycast(new RaycastContext(quadcopter, target, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, this.focusedEntity));
 
+        if (hitResult.getType() != HitResult.Type.MISS) {
+            Vec3d unit = target.subtract(quadcopter).normalize().multiply(1.25);
+            target = hitResult.getPos().subtract(unit);
+        }
+
+        return target;
     }
 }

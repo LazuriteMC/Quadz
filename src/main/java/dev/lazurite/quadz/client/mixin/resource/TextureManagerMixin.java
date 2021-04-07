@@ -6,26 +6,28 @@ import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.io.IOException;
-
 @Mixin(TextureManager.class)
-public class TextureManagerMixin {
+public abstract class TextureManagerMixin {
+    @Shadow @Final private ResourceManager resourceContainer;
+
     @Redirect(
             method = "method_24303",
             at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/texture/AbstractTexture;load(Lnet/minecraft/resource/ResourceManager;)V"
+                    value = "FIELD",
+                    target = "Lnet/minecraft/client/texture/TextureManager;resourceContainer:Lnet/minecraft/resource/ResourceManager;"
             )
     )
-    private void method_24303(AbstractTexture abstractTexture, ResourceManager manager, Identifier identifier) throws IOException {
+    public ResourceManager getResourceContainer(TextureManager manager, Identifier identifier, AbstractTexture texture) {
         if (identifier.getNamespace().equals(Quadz.MODID)) {
-            abstractTexture.load(new TemplateTextureManager());
-        } else {
-            abstractTexture.load(manager);
+            return new TemplateTextureManager(resourceContainer);
         }
+
+        return resourceContainer;
     }
 }
