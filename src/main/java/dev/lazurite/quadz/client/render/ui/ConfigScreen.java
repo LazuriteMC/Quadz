@@ -52,6 +52,27 @@ public class ConfigScreen {
                 .setSaveConsumer(value -> Config.getInstance().renderFirstPerson = value)
                 .build());
 
+        flightPreferences.addEntry(builder.entryBuilder().startIntSlider(
+                new TranslatableText("config.quadz.entry.third_person_offset_x"), (int) Config.getInstance().thirdPersonOffsetX * 10, 0, 100)
+                .setDefaultValue(30)
+                .setTextGetter(value -> new LiteralText(String.valueOf(value / 10f)))
+                .setSaveConsumer(value -> Config.getInstance().thirdPersonOffsetX = value / 10.0f)
+                .build());
+
+        flightPreferences.addEntry(builder.entryBuilder().startIntSlider(
+                new TranslatableText("config.quadz.entry.third_person_offset_y"), (int) Config.getInstance().thirdPersonOffsetY * 10, -25, 25)
+                .setDefaultValue(0)
+                .setTextGetter(value -> new LiteralText(String.valueOf(value / 10f)))
+                .setSaveConsumer(value -> Config.getInstance().thirdPersonOffsetY = value / 10.0f)
+                .build());
+
+        flightPreferences.addEntry(builder.entryBuilder().startIntSlider(
+                new TranslatableText("config.quadz.entry.third_person_angle"), Config.getInstance().thirdPersonAngle / 5, -18, 18)
+                .setDefaultValue(0)
+                .setTextGetter(value -> new LiteralText(String.valueOf(value * 5)))
+                .setSaveConsumer(value -> Config.getInstance().thirdPersonAngle = value * 5)
+                .build());
+
         controllerPreferences.addEntry(builder.entryBuilder().startFloatField(
                 new TranslatableText("config.quadz.entry.rate"), Config.getInstance().rate)
                 .setDefaultValue(Config.getInstance().rate)

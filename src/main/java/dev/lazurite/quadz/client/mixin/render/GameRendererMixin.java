@@ -42,6 +42,15 @@ public class GameRendererMixin {
 			/* Camera Angle */
 			q.set(QuaternionHelper.rotateX(q, quadcopter.getCameraAngle()));
 
+			/* Third Person */
+			if (!client.options.getPerspective().isFirstPerson()) {
+				if (client.options.getPerspective().isFrontView()) {
+					q.set(QuaternionHelper.rotateY(q, 180));
+				}
+
+				q.set(QuaternionHelper.rotateX(q, -Config.getInstance().thirdPersonAngle));
+			}
+
 			Matrix4f newMat = new Matrix4f(QuaternionHelper.bulletToMinecraft(q));
 			newMat.transpose();
 			matrix.peek().getModel().multiply(newMat);

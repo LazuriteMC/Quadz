@@ -70,7 +70,10 @@ public class CommonNetworkHandler {
                     }
                 } else {
                     QuadcopterEntity quadcopter = QuadcopterState.findQuadcopter(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance());
-                    quadcopter.setCameraAngle(quadcopter.getCameraAngle() + amount);
+
+                    if (quadcopter != null) {
+                        quadcopter.setCameraAngle(quadcopter.getCameraAngle() + amount);
+                    }
                 }
             });
         });

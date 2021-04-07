@@ -19,69 +19,29 @@ public final class Config {
     private static final Config instance = new Config();
     private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("quadz.json");
 
-    @Setting
-    @Setting.Constrain.Range(min = -1)
-    public int controllerId;
+    @Setting @Setting.Constrain.Range(min = -1) public int controllerId;
+    @Setting @Setting.Constrain.Range(min = 0) public int throttle;
+    @Setting @Setting.Constrain.Range(min = 0) public int pitch;
+    @Setting @Setting.Constrain.Range(min = 0) public int roll;
+    @Setting @Setting.Constrain.Range(min = 0) public int yaw;
+    @Setting @Setting.Constrain.Range(min = 0, max = 1) public float deadzone;
+    @Setting public boolean invertThrottle;
+    @Setting public boolean invertPitch;
+    @Setting public boolean invertRoll;
+    @Setting public boolean invertYaw;
+    @Setting public boolean throttleInCenter;
 
-    @Setting
-    @Setting.Constrain.Range(min = 0)
-    public int throttle;
+    @Setting @Setting.Constrain.Range(min = 0.0f) public float rate;
+    @Setting @Setting.Constrain.Range(min = 0.0f) public float superRate;
+    @Setting @Setting.Constrain.Range(min = 0.0f) public float expo;
+    @Setting @Setting.Constrain.Range(min = 0, max = 60) public int maxAngle;
+    @Setting public Mode mode;
 
-    @Setting
-    @Setting.Constrain.Range(min = 0)
-    public int pitch;
-
-    @Setting
-    @Setting.Constrain.Range(min = 0)
-    public int roll;
-
-    @Setting
-    @Setting.Constrain.Range(min = 0)
-    public int yaw;
-
-    @Setting
-    @Setting.Constrain.Range(min = 0, max = 1)
-    public float deadzone;
-
-    @Setting
-    public boolean invertThrottle;
-
-    @Setting
-    public boolean invertPitch;
-
-    @Setting
-    public boolean invertRoll;
-
-    @Setting
-    public boolean invertYaw;
-
-    @Setting
-    public boolean throttleInCenter;
-
-    @Setting
-    @Setting.Constrain.Range(min = 0.0f)
-    public float rate;
-
-    @Setting
-    @Setting.Constrain.Range(min = 0.0f)
-    public float superRate;
-
-    @Setting
-    @Setting.Constrain.Range(min = 0.0f)
-    public float expo;
-
-    @Setting
-    @Setting.Constrain.Range(min = 0, max = 60)
-    public int maxAngle;
-
-    @Setting
-    public Mode mode;
-
-    @Setting
-    public boolean followLOS;
-
-    @Setting
-    public boolean renderFirstPerson;
+    @Setting public boolean followLOS;
+    @Setting public boolean renderFirstPerson;
+    @Setting public float thirdPersonOffsetX;
+    @Setting public float thirdPersonOffsetY;
+    @Setting public int thirdPersonAngle;
 
     private Config() {
         /* Defaults */
@@ -103,6 +63,9 @@ public final class Config {
         this.mode = Mode.RATE;
         this.followLOS = true;
         this.renderFirstPerson = true;
+        this.thirdPersonOffsetX = 3.0f;
+        this.thirdPersonOffsetY = 0.0f;
+        this.thirdPersonAngle = 0;
     }
 
     public static Config getInstance() {
