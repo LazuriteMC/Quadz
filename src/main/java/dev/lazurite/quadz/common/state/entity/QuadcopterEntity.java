@@ -105,8 +105,12 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 				this.disable();
 			}
 		} else if (isDisabled()) {
-			world.addImportantParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / 3.0D * (double)(random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / 3.0D * (double)(random.nextBoolean() ? 1 : -1), 0.0D, 0.07D, 0.0D);
-			world.addParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / 3.0D * (double)(random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / 3.0D * (double)(random.nextBoolean() ? 1 : -1), 0.0D, 0.005D, 0.0D);
+			float width = 1 / this.dimensions.width * 2;
+			world.addImportantParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), 0.0D, 0.07D, 0.0D);
+
+			if (width <= 3.0) {
+				world.addParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), 0.0D, 0.005D, 0.0D);
+			}
 		}
 
 		super.tick();
