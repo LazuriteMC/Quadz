@@ -7,14 +7,14 @@ import net.minecraft.network.PacketByteBuf;
 public class CustomTrackedDataHandlerRegistry {
     public static final TrackedDataHandler<Frequency> FREQUENCY = new TrackedDataHandler<Frequency>() {
         public void write(PacketByteBuf buf, Frequency frequency) {
-            buf.writeChar(frequency.getBand());
+            buf.writeInt(frequency.getBand());
             buf.writeInt(frequency.getChannel());
         }
 
         public Frequency read(PacketByteBuf buf) {
-            char band = buf.readChar();
+            int band = buf.readInt();
             int channel = buf.readInt();
-            return new Frequency(band, channel);
+            return new Frequency((char) band, channel);
         }
 
         public Frequency copy(Frequency frequency) {

@@ -10,6 +10,7 @@ import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
+import dev.lazurite.quadz.common.state.item.StackQuadcopterState;
 import dev.lazurite.quadz.common.util.Matrix4fAccess;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.Quadz;
@@ -38,6 +39,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -59,10 +61,11 @@ import java.util.ArrayList;
 @SuppressWarnings("EntityConstructor")
 public class QuadcopterEntity extends LivingEntity implements IAnimatable, EntityPhysicsElement, Viewable, QuadcopterState {
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Boolean> ACTIVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
+	private static final TrackedData<Boolean> DISABLED = DataTracker.registerData(QuadcopterEntity.class,  TrackedDataHandlerRegistry.BOOLEAN);
+	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Integer> CAMERA_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
+	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
 	private static final TrackedData<String> TEMPLATE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.STRING);
 	private static final TrackedData<Float> THRUST = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
 	private static final TrackedData<Float> THRUST_CURVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
@@ -97,6 +100,15 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 			}
 		}
 
+		if (!world.isClient) {
+			if (!isInGodMode() && (isTouchingWaterOrRain() || isInLava() || isSubmergedInWater())) {
+				this.disable();
+			}
+		} else if (isDisabled()) {
+			world.addImportantParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / 3.0D * (double)(random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / 3.0D * (double)(random.nextBoolean() ? 1 : -1), 0.0D, 0.07D, 0.0D);
+			world.addParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / 3.0D * (double)(random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / 3.0D * (double)(random.nextBoolean() ? 1 : -1), 0.0D, 0.005D, 0.0D);
+		}
+
 		super.tick();
 	}
 
@@ -104,7 +116,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	public void step(MinecraftSpace space) {
 		InputFrame frame = new InputFrame(getInputFrame());
 
-		if (!frame.isEmpty()) {
+		if (!frame.isEmpty() && !isDisabled()) {
 
 			/* Rate Mode */
 			if (Mode.RATE.equals(frame.getMode())) {
@@ -183,20 +195,37 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	@Override
 	public boolean damage(DamageSource source, float amount) {
 		if (!world.isClient()) {
-			if (source.equals(DamageSource.OUT_OF_WORLD)) {
-				this.remove();
-				return true;
-			}
-
 			if (source.getAttacker() instanceof PlayerEntity) {
-				this.dropSpawner();
-				this.remove();
+				this.kill();
+			} else if (!isInGodMode() && canBeDamagedBy(source)) {
+				this.disable();
 			}
 		}
 
 		return !isInGodMode();
 	}
 
+	public void disable() {
+		getDataTracker().set(DISABLED, true);
+	}
+
+	@Override
+	public void kill() {
+		this.dropSpawner();
+		this.remove();
+	}
+
+	public boolean canBeDamagedBy(DamageSource source) {
+		return source.equals(DamageSource.CACTUS) || source.equals(DamageSource.WITHER) ||
+				source.equals(DamageSource.DRAGON_BREATH) || source.equals(DamageSource.ON_FIRE) ||
+				source.equals(DamageSource.LIGHTNING_BOLT);
+	}
+
+	/**
+	 * Copies the {@link Template} along with other
+	 * necessary information from this {@link QuadcopterState}
+	 * to the new {@link StackQuadcopterState}.
+	 */
 	public void dropSpawner() {
 		ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
 		QuadcopterState.get(stack).ifPresent(state -> {
@@ -256,6 +285,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 		setFrequency(new Frequency((char) tag.getInt("band"), tag.getInt("channel")));
 		setCameraAngle(tag.getInt("camera_angle"));
 		setTemplate(tag.getString("template"));
+		if (tag.getBoolean("disabled")) this.disable();
 	}
 
 	@Override
@@ -267,6 +297,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 		tag.putInt("channel", getFrequency().getChannel());
 		tag.putInt("camera_angle", getCameraAngle());
 		tag.putString("template", getTemplate());
+		tag.putBoolean("disabled", isDisabled());
 	}
 
 	@Override
@@ -279,10 +310,11 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	protected void initDataTracker() {
 		super.initDataTracker();
 		getDataTracker().startTracking(GOD_MODE, false);
-		getDataTracker().startTracking(BIND_ID, -1);
 		getDataTracker().startTracking(ACTIVE, false);
-		getDataTracker().startTracking(FREQUENCY, new Frequency());
+		getDataTracker().startTracking(DISABLED, false);
+		getDataTracker().startTracking(BIND_ID, -1);
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
+		getDataTracker().startTracking(FREQUENCY, new Frequency());
 		getDataTracker().startTracking(TEMPLATE, "");
 		getDataTracker().startTracking(THRUST, 0.0f);
 		getDataTracker().startTracking(THRUST_CURVE, 0.0f);
@@ -357,6 +389,10 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 		return getDataTracker().get(GOD_MODE);
 	}
 
+	public boolean isDisabled() {
+		return getDataTracker().get(DISABLED);
+	}
+
 	public void setActive(boolean active) {
 		getDataTracker().set(ACTIVE, active);
 	}
@@ -395,7 +431,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 
 	/* Called each frame */
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-		return isActive() ? PlayState.CONTINUE : PlayState.STOP;
+		return isActive() && !isDisabled() ? PlayState.CONTINUE : PlayState.STOP;
 	}
 
 	@Override

@@ -33,10 +33,7 @@ public class TemplateTextureManager implements ResourceManager {
         }
 
         Template template = DataDriver.getTemplate(id.getPath());
-        return new ResourceImpl(
-                template.getId(), id,
-                new ByteArrayInputStream(template.getTexture()),
-                new ByteArrayInputStream(template.getTexture()));
+        return new ResourceImpl(template.getId(), id, new ByteArrayInputStream(template.getTexture()), null);
     }
 
     @Override

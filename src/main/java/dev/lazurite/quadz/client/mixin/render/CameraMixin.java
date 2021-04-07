@@ -73,8 +73,7 @@ public abstract class CameraMixin {
         HitResult hitResult = this.area.raycast(new RaycastContext(quadcopter, target, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, this.focusedEntity));
 
         if (hitResult.getType() != HitResult.Type.MISS) {
-            Vec3d unit = target.subtract(quadcopter).normalize().multiply(1.25);
-            target = hitResult.getPos().subtract(unit);
+            target = hitResult.getPos().subtract(target.subtract(quadcopter).normalize());
         }
 
         return target;

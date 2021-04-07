@@ -15,6 +15,7 @@ import dev.lazurite.quadz.common.ServerTick;
 import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.rayon.core.api.event.ElementCollisionEvents;
 import dev.lazurite.rayon.core.impl.util.event.BetterClientLifecycleEvents;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
@@ -25,6 +26,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -81,6 +84,21 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		ServerTickEvents.START_SERVER_TICK.register(ServerTick::tick);
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()));
+		});
+
+		ElementCollisionEvents.BLOCK_COLLISION.register((executor, element, block, impulse) -> {
+			if (element instanceof QuadcopterEntity){
+				QuadcopterEntity quadcopter = (QuadcopterEntity) element;
+
+				if (!quadcopter.getEntityWorld().isClient()) {
+					Block blockType = block.getBlockState().getBlock();
+
+					if (impulse > 5 || blockType.equals(Blocks.CACTUS) || blockType.equals(Blocks.MAGMA_BLOCK)) {
+						System.out.println("impulse: " + impulse);
+						executor.execute(quadcopter::disable);
+					}
+				}
+			}
 		});
 
 		ServerPlayNetworking.registerGlobalReceiver(TEMPLATE, CommonNetworkHandler::onTemplateReceived);
