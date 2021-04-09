@@ -7,6 +7,7 @@ import dev.lazurite.quadz.common.data.util.TemplateResourceLoader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
+import net.minecraft.client.MinecraftClient;
 import software.bernie.geckolib3.GeckoLib;
 
 @Environment(EnvType.CLIENT)
@@ -17,5 +18,9 @@ public class QuadzRendering {
     public static void initialize() {
         GeckoLib.initialize();
         EntityRendererRegistry.INSTANCE.register(Quadz.QUADCOPTER_ENTITY, (entityRenderDispatcher, context) -> new QuadcopterEntityRenderer(entityRenderDispatcher));
+    }
+
+    public static boolean isInThirdPerson() {
+        return !MinecraftClient.getInstance().options.getPerspective().isFirstPerson();
     }
 }

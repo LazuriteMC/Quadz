@@ -7,6 +7,7 @@ import dev.lazurite.lattice.api.entity.Viewable;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
+import dev.lazurite.quadz.client.render.QuadzRendering;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
@@ -427,7 +428,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	@Override
 	@Environment(EnvType.CLIENT)
 	public boolean shouldRenderSelf() {
-		return Config.getInstance().renderFirstPerson;
+		return Config.getInstance().renderFirstPerson || QuadzRendering.isInThirdPerson();
 	}
 
 	@Override

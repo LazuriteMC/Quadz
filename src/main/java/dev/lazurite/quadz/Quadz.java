@@ -12,7 +12,6 @@ import dev.lazurite.quadz.common.CommonNetworkHandler;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.ServerTick;
-import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.core.api.event.ElementCollisionEvents;
@@ -29,10 +28,9 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.*;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -58,7 +56,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 	/* Items */
 	public static QuadcopterItem QUADCOPTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "quadcopter_item"), new QuadcopterItem(new Item.Settings().maxCount(1)));
-	public static GogglesItem GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
+	public static ArmorItem GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new ArmorItem(ArmorMaterials.LEATHER, EquipmentSlot.HEAD, new Item.Settings().maxCount(1)));
 	public static Item TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new Item(new Item.Settings().maxCount(1)));
 	public static Item CHANNEL_WAND_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "channel_wand_item"), new Item(new Item.Settings().maxCount(1)));
 
@@ -96,7 +94,8 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 				if (!quadcopter.getEntityWorld().isClient()) {
 					Block blockType = block.getBlockState().getBlock();
 
-					if (impulse > 10 || blockType.equals(Blocks.CACTUS) || blockType.equals(Blocks.MAGMA_BLOCK)) {
+					// TODO this is weird
+					if (impulse > 5 || blockType.equals(Blocks.CACTUS) || blockType.equals(Blocks.MAGMA_BLOCK)) {
 						System.out.println("impulse: " + impulse);
 						executor.execute(quadcopter::disable);
 					}

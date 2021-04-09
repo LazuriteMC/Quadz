@@ -14,7 +14,6 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.RaycastContext;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,10 +31,6 @@ public abstract class CameraMixin {
     @Shadow private Entity focusedEntity;
     @Shadow protected abstract void setPos(Vec3d pos);
 
-    @Shadow private Vec3d pos;
-
-    @Shadow @Final private net.minecraft.client.util.math.Vector3f horizontalPlane;
-
     @Inject(method = "update", at = @At("TAIL"))
     public void update(BlockView area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo info) {
         if (focusedEntity instanceof QuadcopterEntity) {
@@ -44,7 +39,6 @@ public abstract class CameraMixin {
             Quaternion rotation = quadcopter.getPhysicsRotation(new Quaternion(), tickDelta);
             Template template = DataDriver.getTemplate(quadcopter.getTemplate());
             Vector3f point = new Vector3f(0.0f, template.getSettings().getCameraY(), template.getSettings().getCameraX());
-
             net.minecraft.client.util.math.Vector3f vec = VectorHelper.bulletToMinecraft(point);
 
             if (thirdPerson) {
@@ -61,11 +55,15 @@ public abstract class CameraMixin {
                             Config.getInstance().thirdPersonOffsetY,
                             -Config.getInstance().thirdPersonOffsetX)));
                 }
-            }
 
-            vec.rotate(QuaternionHelper.bulletToMinecraft(rotation));
-            vec.add(VectorHelper.bulletToMinecraft(location));
-            setPos(clip(VectorHelper.vector3fToVec3d(location), VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec))));
+                vec.rotate(QuaternionHelper.bulletToMinecraft(rotation));
+                vec.add(VectorHelper.bulletToMinecraft(location));
+                setPos(clip(VectorHelper.vector3fToVec3d(location), VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec))));
+            } else {
+                vec.rotate(QuaternionHelper.bulletToMinecraft(rotation));
+                vec.add(VectorHelper.bulletToMinecraft(location));
+                setPos(VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec)));
+            }
         }
     }
 
