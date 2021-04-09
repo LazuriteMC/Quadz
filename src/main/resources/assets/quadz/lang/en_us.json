@@ -68,5 +68,13 @@
   "config.quadz.entry.rate" : "Rate",
   "config.quadz.entry.expo" : "Expo",
   "config.quadz.entry.super_rate" : "Super Rate",
-  "config.quadz.entry.deadzone" : "Deadzone"
+  "config.quadz.entry.deadzone" : "Deadzone",
+
+  "quadconfig.quadz.entry.camera_angle" : "Camera Angle",
+  "quadconfig.quadz.entry.mass" : "Mass",
+  "quadconfig.quadz.entry.drag_coefficient" : "Drag Coefficient",
+  "quadconfig.quadz.entry.thrust" : "Thrust",
+  "quadconfig.quadz.entry.thrust_curve" : "Thrust Curve",
+  "quadconfig.quadz.entry.width" : "Width",
+  "quadconfig.quadz.entry.height" : "Height"
 }

@@ -7,6 +7,8 @@ import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.common.util.Frequency;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.gui.screen.Screen;
@@ -20,7 +22,8 @@ import java.util.Map;
  * Class for housing the methods which returns a new config screen made using Cloth Config.
  * @see Config
  */
-public class ConfigScreen {
+@Environment(EnvType.CLIENT)
+public class GeneralConfigScreen {
     public static Screen create(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)

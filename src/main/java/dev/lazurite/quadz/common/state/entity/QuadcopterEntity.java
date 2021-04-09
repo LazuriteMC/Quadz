@@ -8,6 +8,7 @@ import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.QuadzRendering;
+import dev.lazurite.quadz.client.render.ui.QuadcopterConfigScreen;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
@@ -22,7 +23,6 @@ import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
 import dev.lazurite.rayon.core.impl.physics.space.MinecraftSpace;
 import dev.lazurite.rayon.core.impl.physics.space.body.ElementRigidBody;
-import dev.lazurite.rayon.core.impl.physics.space.body.shape.BoundingBoxShape;
 import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import dev.lazurite.rayon.entity.api.EntityPhysicsElement;
 import net.fabricmc.api.EnvType;
@@ -71,6 +71,8 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	private static final TrackedData<String> TEMPLATE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.STRING);
 	private static final TrackedData<Float> THRUST = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
 	private static final TrackedData<Float> THRUST_CURVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
+	private static final TrackedData<Float> WIDTH = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
+	private static final TrackedData<Float> HEIGHT = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
 	private final AnimationFactory animationFactory = new AnimationFactory(this);
 	private final ElementRigidBody rigidBody = new ElementRigidBody(this);
@@ -89,7 +91,10 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 			Template template = DataDriver.getTemplate(getTemplate());
 
 			if (template != null) {
+				setWidth(template.getSettings().getWidth());
+				setHeight(template.getSettings().getHeight());
 				calculateDimensions();
+
 				setCameraAngle(template.getSettings().getCameraAngle());
 				setThrust(template.getSettings().getThrust());
 				setThrustCurve(template.getSettings().getThrustCurve());
@@ -97,7 +102,6 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 				PhysicsThread.get(world).execute(() -> {
 					getRigidBody().setMass(template.getSettings().getMass());
 					getRigidBody().setDragCoefficient(template.getSettings().getDragCoefficient());
-					getRigidBody().setCollisionShape(new BoundingBoxShape(getBoundingBox()));
 				});
 			}
 		}
@@ -266,7 +270,6 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
 				Bindable.get(stack).ifPresent(bindable -> {
 					Bindable.bind(this, bindable);
-					System.out.println(Frequency.from((ServerPlayerEntity) player));
 					setFrequency(Frequency.from((ServerPlayerEntity) player));
 					player.sendMessage(new TranslatableText("item.quadz.transmitter_item.bound"), true);
 				});
@@ -279,6 +282,8 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 				if (!InputTick.controllerExists()) {
 					ControllerNotFoundToast.add();
 				}
+			} else if (!stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM) && !getTemplate().equals("")) {
+				QuadcopterConfigScreen.show(this);
 			}
 		}
 
@@ -326,6 +331,8 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 		getDataTracker().startTracking(TEMPLATE, "");
 		getDataTracker().startTracking(THRUST, 0.0f);
 		getDataTracker().startTracking(THRUST_CURVE, 0.0f);
+		getDataTracker().startTracking(WIDTH, -1.0f);
+		getDataTracker().startTracking(HEIGHT, -1.0f);
 	}
 
 	@Override
@@ -365,13 +372,13 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	}
 
 	@Override
-	public void setFrequency(Frequency frequency) {
-		getDataTracker().set(FREQUENCY, frequency);
+	public void setTemplate(String template) {
+		getDataTracker().set(TEMPLATE, template);
 	}
 
 	@Override
-	public void setTemplate(String template) {
-		getDataTracker().set(TEMPLATE, template);
+	public void setFrequency(Frequency frequency) {
+		getDataTracker().set(FREQUENCY, frequency);
 	}
 
 	@Override
@@ -423,6 +430,24 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 
 	public float getThrustCurve() {
 		return getDataTracker().get(THRUST_CURVE);
+	}
+
+	public void setWidth(float width) {
+		getDataTracker().set(WIDTH, width);
+	}
+
+	@Override
+	public float getWidth() {
+		return getDataTracker().get(WIDTH);
+	}
+
+	public void setHeight(float height) {
+		getDataTracker().set(HEIGHT, height);
+	}
+
+	@Override
+	public float getHeight() {
+		return getDataTracker().get(HEIGHT);
 	}
 
 	@Override

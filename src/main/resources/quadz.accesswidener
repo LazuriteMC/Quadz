@@ -3,3 +3,5 @@ accessible field net/minecraft/entity/Entity dimensions Lnet/minecraft/entity/En
 accessible field net/minecraft/client/resource/SplashTextResourceSupplier splashTexts Ljava/util/List;
 accessible field net/minecraft/client/resource/language/TranslationStorage translations Ljava/util/Map;
 accessible method net/minecraft/client/resource/language/TranslationStorage <init> (Ljava/util/Map;Z)V
+extendable method net/minecraft/entity/Entity getWidth ()F
+extendable method net/minecraft/entity/Entity getHeight ()F

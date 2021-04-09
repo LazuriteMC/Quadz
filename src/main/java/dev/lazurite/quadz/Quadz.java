@@ -8,11 +8,12 @@ import dev.lazurite.quadz.client.input.keybind.*;
 import dev.lazurite.quadz.client.ClientTick;
 import dev.lazurite.quadz.client.render.QuadzRendering;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerConnectedToast;
-import dev.lazurite.quadz.common.CommonNetworkHandler;
+import dev.lazurite.quadz.common.network.CommonNetworkHandler;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.ServerTick;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
+import dev.lazurite.quadz.common.network.KeybindNetworkHandler;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.core.api.event.ElementCollisionEvents;
 import dev.lazurite.rayon.core.impl.util.event.BetterClientLifecycleEvents;
@@ -45,14 +46,16 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger("Quadz");
 
 	/* Packet Identifiers */
+	public static final Identifier QUADCOPTER_SETTINGS_C2S = new Identifier(MODID, "quadcopter_settings_c2s");
+	public static final Identifier FREQUENCY_C2S = new Identifier(MODID, "frequency_c2s");
 	public static final Identifier TEMPLATE = new Identifier(MODID, "template_s2c");
+	public static final Identifier INPUT_FRAME_C2S = new Identifier(MODID, "input_frame_c2s");
+
 	public static final Identifier SELECTED_SLOT_S2C = new Identifier(MODID, "selected_slot_s2c");
 	public static final Identifier NOCLIP_C2S = new Identifier(MODID, "noclip_c2s");
 	public static final Identifier CHANGE_CAMERA_ANGLE_C2S = new Identifier(MODID, "change_camera_angle_c2s");
 	public static final Identifier POWER_GOGGLES_C2S = new Identifier(MODID, "power_goggles_c2s");
 	public static final Identifier GOD_MODE_C2S = new Identifier(MODID, "godmode_c2s");
-	public static final Identifier INPUT_FRAME_C2S = new Identifier(MODID, "input_frame_c2s");
-	public static final Identifier FREQUENCY_C2S = new Identifier(MODID, "frequency_c2s");
 
 	/* Items */
 	public static QuadcopterItem QUADCOPTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "quadcopter_item"), new QuadcopterItem(new Item.Settings().maxCount(1)));
@@ -103,13 +106,15 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 			}
 		});
 
-		ServerPlayNetworking.registerGlobalReceiver(TEMPLATE, CommonNetworkHandler::onTemplateReceived);
-		ServerPlayNetworking.registerGlobalReceiver(NOCLIP_C2S, CommonNetworkHandler::onNoClipKey);
-		ServerPlayNetworking.registerGlobalReceiver(CHANGE_CAMERA_ANGLE_C2S, CommonNetworkHandler::onChangeCameraAngleKey);
-		ServerPlayNetworking.registerGlobalReceiver(GOD_MODE_C2S, CommonNetworkHandler::onGodModeKey);
-		ServerPlayNetworking.registerGlobalReceiver(POWER_GOGGLES_C2S, CommonNetworkHandler::onPowerGogglesKey);
-		ServerPlayNetworking.registerGlobalReceiver(INPUT_FRAME_C2S, CommonNetworkHandler::onInputFrame);
+		ServerPlayNetworking.registerGlobalReceiver(QUADCOPTER_SETTINGS_C2S, CommonNetworkHandler::onQuadcopterSettingsReceived);
 		ServerPlayNetworking.registerGlobalReceiver(FREQUENCY_C2S, CommonNetworkHandler::onFrequencyReceived);
+		ServerPlayNetworking.registerGlobalReceiver(TEMPLATE, CommonNetworkHandler::onTemplateReceived);
+		ServerPlayNetworking.registerGlobalReceiver(INPUT_FRAME_C2S, CommonNetworkHandler::onInputFrame);
+
+		ServerPlayNetworking.registerGlobalReceiver(NOCLIP_C2S, KeybindNetworkHandler::onNoClipKey);
+		ServerPlayNetworking.registerGlobalReceiver(CHANGE_CAMERA_ANGLE_C2S, KeybindNetworkHandler::onChangeCameraAngleKey);
+		ServerPlayNetworking.registerGlobalReceiver(GOD_MODE_C2S, KeybindNetworkHandler::onGodModeKey);
+		ServerPlayNetworking.registerGlobalReceiver(POWER_GOGGLES_C2S, KeybindNetworkHandler::onPowerGogglesKey);
 	}
 
 	@Override
