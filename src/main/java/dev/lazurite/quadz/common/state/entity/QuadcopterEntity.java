@@ -8,7 +8,7 @@ import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.QuadzRendering;
-import dev.lazurite.quadz.client.render.ui.QuadcopterConfigScreen;
+import dev.lazurite.quadz.client.render.ui.ProfileScreen;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
@@ -276,6 +276,8 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 			} else if (stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM)) {
 				Frequency frequency = getFrequency();
 				player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), true);
+//			} else if (stack.getItem().equals(Quadz.PROFILE_ITEM)) {
+				// TODO apply profile
 			}
 		} else {
 			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
@@ -283,7 +285,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 					ControllerNotFoundToast.add();
 				}
 			} else if (!stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM) && !getTemplate().equals("")) {
-				QuadcopterConfigScreen.show(this);
+				ProfileScreen.show(this);
 			}
 		}
 

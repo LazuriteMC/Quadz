@@ -8,6 +8,7 @@ import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import dev.lazurite.rayon.core.impl.util.math.VectorHelper;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -19,6 +20,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
@@ -78,5 +80,20 @@ public class GameRendererMixin {
 		if (camera.getFocusedEntity() instanceof QuadcopterEntity) {
 			info.cancel();
 		}
+	}
+
+	@Redirect(
+			method = "getFov",
+			at = @At(
+					value = "FIELD",
+					target = "Lnet/minecraft/client/options/GameOptions;fov:D"
+			)
+	)
+	public double getFov(GameOptions options) {
+		if (client.getCameraEntity() instanceof QuadcopterEntity && Config.getInstance().firstPersonFOV > 30) {
+			return Config.getInstance().firstPersonFOV;
+		}
+
+		return options.fov;
 	}
 }

@@ -39,6 +39,7 @@ public final class Config {
 
     @Setting public boolean followLOS;
     @Setting public boolean renderFirstPerson;
+    @Setting public int firstPersonFOV;
     @Setting public float thirdPersonOffsetX;
     @Setting public float thirdPersonOffsetY;
     @Setting public int thirdPersonAngle;
@@ -65,6 +66,7 @@ public final class Config {
         this.mode = Mode.RATE;
         this.followLOS = true;
         this.renderFirstPerson = true;
+        this.firstPersonFOV = 30;
         this.thirdPersonOffsetX = 3.0f;
         this.thirdPersonOffsetY = 0.0f;
         this.thirdPersonAngle = 0;

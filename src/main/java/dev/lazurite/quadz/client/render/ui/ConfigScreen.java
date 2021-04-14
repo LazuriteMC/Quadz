@@ -11,6 +11,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.LiteralText;
@@ -23,7 +24,7 @@ import java.util.Map;
  * @see Config
  */
 @Environment(EnvType.CLIENT)
-public class GeneralConfigScreen {
+public class ConfigScreen {
     public static Screen create(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
@@ -61,6 +62,13 @@ public class GeneralConfigScreen {
                 .build());
 
         cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
+                new TranslatableText("config.quadz.entry.first_person_fov"), Config.getInstance().firstPersonFOV, 30, 135)
+                .setTextGetter(value -> value == 30 ? new LiteralText("Match Player") : new LiteralText(value + "°"))
+                .setDefaultValue((int) MinecraftClient.getInstance().options.fov)
+                .setSaveConsumer(value -> Config.getInstance().firstPersonFOV = value)
+                .build());
+
+        cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
                 new TranslatableText("config.quadz.entry.band"), Frequency.getBandIndex(Config.getInstance().band), 0, 4)
                 .setDefaultValue(Frequency.getBandIndex(Config.getInstance().band))
                 .setTextGetter(value -> new LiteralText(String.valueOf(Frequency.BANDS[value])))
@@ -70,8 +78,7 @@ public class GeneralConfigScreen {
                     buf.writeChar(Config.getInstance().band);
                     buf.writeInt(Config.getInstance().channel);
                     ClientPlayNetworking.send(Quadz.FREQUENCY_C2S, buf);
-                })
-                .build());
+                }).build());
 
         cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
                 new TranslatableText("config.quadz.entry.channel"), Config.getInstance().channel, 1, 8)
@@ -82,8 +89,7 @@ public class GeneralConfigScreen {
                     buf.writeChar(Config.getInstance().band);
                     buf.writeInt(Config.getInstance().channel);
                     ClientPlayNetworking.send(Quadz.FREQUENCY_C2S, buf);
-                })
-                .build());
+                }).build());
 
         cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
                 new TranslatableText("config.quadz.entry.third_person_offset_x"), (int) Config.getInstance().thirdPersonOffsetX * 10, 0, 100)

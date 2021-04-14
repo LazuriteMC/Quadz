@@ -70,7 +70,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 				FabricEntityTypeBuilder.createLiving()
 						.entityFactory((type, world) -> new QuadcopterEntity(world))
 						.spawnGroup(SpawnGroup.MISC)
-						.dimensions(EntityDimensions.changing(0.55F, 0.3F))
+						.dimensions(EntityDimensions.changing(0.5F, 0.2F))
 						.defaultAttributes(LivingEntity::createLivingAttributes)
 						.build());
 
@@ -90,21 +90,21 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()));
 		});
 
-		ElementCollisionEvents.BLOCK_COLLISION.register((executor, element, block, impulse) -> {
-			if (element instanceof QuadcopterEntity){
-				QuadcopterEntity quadcopter = (QuadcopterEntity) element;
-
-				if (!quadcopter.getEntityWorld().isClient()) {
-					Block blockType = block.getBlockState().getBlock();
-
-					// TODO this is weird
-					if (impulse > 5 || blockType.equals(Blocks.CACTUS) || blockType.equals(Blocks.MAGMA_BLOCK)) {
-						System.out.println("impulse: " + impulse);
-						executor.execute(quadcopter::disable);
-					}
-				}
-			}
-		});
+//		ElementCollisionEvents.BLOCK_COLLISION.register((executor, element, block, impulse) -> {
+//			if (element instanceof QuadcopterEntity){
+//				QuadcopterEntity quadcopter = (QuadcopterEntity) element;
+//
+//				if (!quadcopter.getEntityWorld().isClient()) {
+//					Block blockType = block.getBlockState().getBlock();
+//
+//					 TODO this is weird
+//					if (impulse > 5 || blockType.equals(Blocks.CACTUS) || blockType.equals(Blocks.MAGMA_BLOCK)) {
+//						System.out.println("impulse: " + impulse);
+//						executor.execute(quadcopter::disable);
+//					}
+//				}
+//			}
+//		});
 
 		ServerPlayNetworking.registerGlobalReceiver(QUADCOPTER_SETTINGS_C2S, CommonNetworkHandler::onQuadcopterSettingsReceived);
 		ServerPlayNetworking.registerGlobalReceiver(FREQUENCY_C2S, CommonNetworkHandler::onFrequencyReceived);

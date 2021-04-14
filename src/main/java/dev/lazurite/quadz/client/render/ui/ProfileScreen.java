@@ -18,7 +18,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
 @Environment(EnvType.CLIENT)
-public class QuadcopterConfigScreen {
+public class ProfileScreen {
     public static void show(QuadcopterEntity entity) {
         Settings settings = DataDriver.getTemplate(entity.getTemplate()).getSettings();
         TempSettings temp = new TempSettings(entity);
