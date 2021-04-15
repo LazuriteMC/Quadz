@@ -60,9 +60,11 @@ public abstract class CameraMixin {
                 vec.add(VectorHelper.bulletToMinecraft(location));
                 setPos(clip(VectorHelper.vector3fToVec3d(location), VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec))));
             } else {
+//                QuaternionHelper.rotateX(rotation, -quadcopter.getCameraAngle());
                 vec.rotate(QuaternionHelper.bulletToMinecraft(rotation));
                 vec.add(VectorHelper.bulletToMinecraft(location));
-                setPos(VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec)));
+                setPos(clip(VectorHelper.vector3fToVec3d(location), VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec))));
+//                setPos(VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec)));
             }
         }
     }
@@ -71,7 +73,7 @@ public abstract class CameraMixin {
         HitResult hitResult = this.area.raycast(new RaycastContext(quadcopter, target, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, this.focusedEntity));
 
         if (hitResult.getType() != HitResult.Type.MISS) {
-            target = hitResult.getPos().subtract(target.subtract(quadcopter).normalize());
+            target = hitResult.getPos().subtract(target.subtract(quadcopter));
         }
 
         return target;

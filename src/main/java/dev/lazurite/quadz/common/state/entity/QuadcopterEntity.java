@@ -145,7 +145,12 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 
 			/* Decrease angular velocity */
 			if (frame.getThrottle() > 0.1f) {
-				getRigidBody().setAngularVelocity(getRigidBody().getAngularVelocity(new Vector3f()).multLocal(0.5f * frame.getThrottle()));
+				Vector3f correction = getRigidBody().getAngularVelocity(new Vector3f()).multLocal(0.5f * frame.getThrottle());
+
+				// eye roll
+				if (Float.isFinite(correction.lengthSquared())) {
+					getRigidBody().setAngularVelocity(correction);
+				}
 			}
 
 			/* Get the thrust unit vector */
