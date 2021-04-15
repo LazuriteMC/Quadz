@@ -5,6 +5,7 @@ import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.common.util.Frequency;
+import dev.lazurite.rayon.core.impl.physics.space.MinecraftSpace;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import net.fabricmc.api.EnvType;
@@ -73,22 +74,26 @@ public class ConfigScreen {
                 .setDefaultValue(Frequency.getBandIndex(Config.getInstance().band))
                 .setTextGetter(value -> new LiteralText(String.valueOf(Frequency.BANDS[value])))
                 .setSaveConsumer(value -> {
-                    Config.getInstance().band = Frequency.BANDS[value];
-                    PacketByteBuf buf = PacketByteBufs.create();
-                    buf.writeChar(Config.getInstance().band);
-                    buf.writeInt(Config.getInstance().channel);
-                    ClientPlayNetworking.send(Quadz.FREQUENCY_C2S, buf);
+                    if (MinecraftClient.getInstance().world != null) {
+                        Config.getInstance().band = Frequency.BANDS[value];
+                        PacketByteBuf buf = PacketByteBufs.create();
+                        buf.writeChar(Config.getInstance().band);
+                        buf.writeInt(Config.getInstance().channel);
+                        ClientPlayNetworking.send(Quadz.FREQUENCY_C2S, buf);
+                    }
                 }).build());
 
         cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
                 new TranslatableText("config.quadz.entry.channel"), Config.getInstance().channel, 1, 8)
                 .setDefaultValue(Config.getInstance().channel)
                 .setSaveConsumer(value -> {
-                    Config.getInstance().channel = value;
-                    PacketByteBuf buf = PacketByteBufs.create();
-                    buf.writeChar(Config.getInstance().band);
-                    buf.writeInt(Config.getInstance().channel);
-                    ClientPlayNetworking.send(Quadz.FREQUENCY_C2S, buf);
+                    if (MinecraftClient.getInstance().world != null) {
+                        Config.getInstance().channel = value;
+                        PacketByteBuf buf = PacketByteBufs.create();
+                        buf.writeChar(Config.getInstance().band);
+                        buf.writeInt(Config.getInstance().channel);
+                        ClientPlayNetworking.send(Quadz.FREQUENCY_C2S, buf);
+                    }
                 }).build());
 
         cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
