@@ -3,16 +3,17 @@ package dev.lazurite.quadz.common;
 import com.google.common.collect.Lists;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.Bindable;
+import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.Box;
 
 import java.util.List;
 
@@ -21,9 +22,10 @@ public class ServerTick {
         int range = server.getPlayerManager().getViewDistance() * 16;
         List<QuadcopterEntity> toActivate = Lists.newArrayList();
 
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-            List<QuadcopterEntity> quads = player.getEntityWorld().getEntitiesByClass(QuadcopterEntity.class, new Box(player.getBlockPos()).expand(range), null);
+        for (ServerPlayerEntity player : PlayerLookup.all(server)) {
+            List<QuadcopterEntity> quads = QuadcopterState.getQuadcoptersInRange(player.getEntityWorld(), player.getPos(), range);
 
+            /* Don't forget the camera! */
             if (player.getCameraEntity() instanceof QuadcopterEntity) {
                 quads.add((QuadcopterEntity) player.getCameraEntity());
             }
@@ -43,17 +45,23 @@ public class ServerTick {
 
             if (goggles != null && goggles.getOrCreateTag().getBoolean("enabled")) {
                 if (!(player.getCameraEntity() instanceof QuadcopterEntity)) {
-                    quads.stream().filter(quadcopter -> quadcopter.getFrequency().equals(Frequency.from(player))).findAny().ifPresent(quadcopter -> {
+                    QuadcopterEntity quadcopter = QuadcopterState.getNearestQuadcopter(player.getEntityWorld(), player.getPos(), range,
+                            quad -> ((QuadcopterEntity) quad).getFrequency().equals(Frequency.from(player)));
+
+                    if (quadcopter != null) {
                         player.setCameraEntity(quadcopter);
 
+                        /* Check hotbar for transmitter */
                         for (int i = 0; i < player.inventory.main.size(); i++) {
                             if (player.inventory.main.get(i).getItem().equals(Quadz.TRANSMITTER_ITEM)) {
                                 int j = i;
 
+                                /* If there is a transmitter, check if it's bound to a quadcopter */
                                 Bindable.get(player.getMainHandStack()).ifPresent(transmitter -> {
                                     if (transmitter.isBoundTo(quadcopter)) {
                                         PhysicsThread.get(server).execute(() -> quadcopter.getRigidBody().prioritize(player));
 
+                                        /* Tell the client to switch slots */
                                         PacketByteBuf buf = PacketByteBufs.create();
                                         buf.writeInt(j);
                                         ServerPlayNetworking.send(player, Quadz.SELECTED_SLOT_S2C, buf);
@@ -63,7 +71,7 @@ public class ServerTick {
                                 break;
                             }
                         }
-                    });
+                    }
                 }
 
             /* Goggles disabled and player is in quadcopter view, reset view */
