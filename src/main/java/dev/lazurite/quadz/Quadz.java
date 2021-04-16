@@ -8,6 +8,7 @@ import dev.lazurite.quadz.client.input.keybind.*;
 import dev.lazurite.quadz.client.ClientTick;
 import dev.lazurite.quadz.client.render.QuadzRendering;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerConnectedToast;
+import dev.lazurite.quadz.common.QuadSaver;
 import dev.lazurite.quadz.common.network.CommonNetworkHandler;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
@@ -15,6 +16,7 @@ import dev.lazurite.quadz.common.ServerTick;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
 import dev.lazurite.quadz.common.network.KeybindNetworkHandler;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.rayon.core.api.event.PhysicsSpaceEvents;
 import dev.lazurite.rayon.core.impl.util.event.BetterClientLifecycleEvents;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
@@ -80,6 +82,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 		DataDriver.initialize();
 
+		PhysicsSpaceEvents.STEP.register(QuadSaver::step);
 		ServerTickEvents.START_SERVER_TICK.register(ServerTick::tick);
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()));

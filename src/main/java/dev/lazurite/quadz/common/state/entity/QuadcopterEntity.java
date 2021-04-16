@@ -85,6 +85,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	private final ElementRigidBody rigidBody = new ElementRigidBody(this);
 	private final InputFrame inputFrame = new InputFrame();
 	private String prevTemplate;
+	public int stuckTicks;
 
 	public QuadcopterEntity(World world) {
 		super(Quadz.QUADCOPTER_ENTITY, world);

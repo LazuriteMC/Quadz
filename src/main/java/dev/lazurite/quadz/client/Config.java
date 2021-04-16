@@ -13,6 +13,7 @@ import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigTree;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 
 import java.io.IOException;
@@ -121,10 +122,12 @@ public final class Config {
     }
 
     public void sendPlayerData() {
-        PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeInt(band);
-        buf.writeInt(channel);
-        buf.writeString(callSign);
-        ClientPlayNetworking.send(Quadz.PLAYER_DATA_C2S, buf);
+        if (MinecraftClient.getInstance().world != null) {
+            PacketByteBuf buf = PacketByteBufs.create();
+            buf.writeInt(band);
+            buf.writeInt(channel);
+            buf.writeString(callSign);
+            ClientPlayNetworking.send(Quadz.PLAYER_DATA_C2S, buf);
+        }
     }
 }

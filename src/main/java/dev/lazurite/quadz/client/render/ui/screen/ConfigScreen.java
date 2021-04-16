@@ -42,7 +42,7 @@ public class ConfigScreen {
 
         onScreenDisplayPreferences.addEntry(builder.entryBuilder().startTextField(
                 new TranslatableText("config.quadz.entry.call_sign"), Config.getInstance().callSign)
-                .setDefaultValue(Config.getInstance().callSign)
+                .setDefaultValue(MinecraftClient.getInstance().player == null ? "" : MinecraftClient.getInstance().player.getName().asString())
                 .setSaveConsumer(value -> Config.getInstance().callSign = value)
                 .build());
 
