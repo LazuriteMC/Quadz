@@ -19,7 +19,6 @@ import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.QuadcopterState;
-import dev.lazurite.quadz.common.util.CustomTrackedDataHandlerRegistry;
 import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
 import dev.lazurite.rayon.core.impl.physics.space.MinecraftSpace;
@@ -71,7 +70,8 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 
 	/* Data */
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
+	private static final TrackedData<Integer> BAND = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
+	private static final TrackedData<Integer> CHANNEL = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<String> CALL_SIGN = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.STRING);
 
 	/* Physical Attributes */
@@ -347,7 +347,8 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 		getDataTracker().startTracking(TEMPLATE, "");
 
 		getDataTracker().startTracking(BIND_ID, -1);
-		getDataTracker().startTracking(FREQUENCY, new Frequency());
+		getDataTracker().startTracking(BAND, (int) 'R');
+		getDataTracker().startTracking(CHANNEL, 1);
 		getDataTracker().startTracking(CALL_SIGN, "");
 
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
@@ -400,12 +401,13 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 
 	@Override
 	public void setFrequency(Frequency frequency) {
-		getDataTracker().set(FREQUENCY, frequency);
+		getDataTracker().set(BAND, (int) frequency.getBand());
+		getDataTracker().set(CHANNEL, frequency.getChannel());
 	}
 
 	@Override
 	public Frequency getFrequency() {
-		return getDataTracker().get(FREQUENCY);
+		return new Frequency((char) getDataTracker().get(BAND).intValue(), getDataTracker().get(CHANNEL));
 	}
 
 	@Override
