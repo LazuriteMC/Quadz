@@ -7,6 +7,7 @@ import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.Frequency;
+import dev.lazurite.quadz.common.util.PlayerStorage;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -53,9 +54,14 @@ public class CommonNetworkHandler {
         });
     }
 
-    public static void onFrequencyReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-        Frequency frequency = new Frequency(buf.readChar(), buf.readInt());
-        server.execute(() -> frequency.to(player));
+    public static void onPlayerDataReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+        Frequency frequency = new Frequency((char) buf.readInt(), buf.readInt());
+        String callSign = buf.readString(32767);
+
+        server.execute(() -> {
+            ((PlayerStorage) player).setFrequency(frequency);
+            ((PlayerStorage) player).setCallSign(callSign);
+        });
     }
 
     public static void onTemplateReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {

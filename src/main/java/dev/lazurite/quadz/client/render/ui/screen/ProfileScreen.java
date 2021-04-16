@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.client.render.ui;
+package dev.lazurite.quadz.client.render.ui.screen;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.Config;

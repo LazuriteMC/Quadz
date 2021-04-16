@@ -15,7 +15,6 @@ import dev.lazurite.quadz.common.ServerTick;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
 import dev.lazurite.quadz.common.network.KeybindNetworkHandler;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.api.event.ElementCollisionEvents;
 import dev.lazurite.rayon.core.impl.util.event.BetterClientLifecycleEvents;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
@@ -23,18 +22,14 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -47,7 +42,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 	/* Packet Identifiers */
 	public static final Identifier QUADCOPTER_SETTINGS_C2S = new Identifier(MODID, "quadcopter_settings_c2s");
-	public static final Identifier FREQUENCY_C2S = new Identifier(MODID, "frequency_c2s");
+	public static final Identifier PLAYER_DATA_C2S = new Identifier(MODID, "player_data_c2s");
 	public static final Identifier TEMPLATE = new Identifier(MODID, "template_s2c");
 	public static final Identifier INPUT_FRAME_C2S = new Identifier(MODID, "input_frame_c2s");
 
@@ -90,24 +85,8 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()));
 		});
 
-//		ElementCollisionEvents.BLOCK_COLLISION.register((executor, element, block, impulse) -> {
-//			if (element instanceof QuadcopterEntity){
-//				QuadcopterEntity quadcopter = (QuadcopterEntity) element;
-//
-//				if (!quadcopter.getEntityWorld().isClient()) {
-//					Block blockType = block.getBlockState().getBlock();
-//
-//					 TODO this is weird
-//					if (impulse > 5 || blockType.equals(Blocks.CACTUS) || blockType.equals(Blocks.MAGMA_BLOCK)) {
-//						System.out.println("impulse: " + impulse);
-//						executor.execute(quadcopter::disable);
-//					}
-//				}
-//			}
-//		});
-
 		ServerPlayNetworking.registerGlobalReceiver(QUADCOPTER_SETTINGS_C2S, CommonNetworkHandler::onQuadcopterSettingsReceived);
-		ServerPlayNetworking.registerGlobalReceiver(FREQUENCY_C2S, CommonNetworkHandler::onFrequencyReceived);
+		ServerPlayNetworking.registerGlobalReceiver(PLAYER_DATA_C2S, CommonNetworkHandler::onPlayerDataReceived);
 		ServerPlayNetworking.registerGlobalReceiver(TEMPLATE, CommonNetworkHandler::onTemplateReceived);
 		ServerPlayNetworking.registerGlobalReceiver(INPUT_FRAME_C2S, CommonNetworkHandler::onInputFrame);
 
@@ -146,10 +125,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 		BetterClientLifecycleEvents.DISCONNECT.register((client, world) -> DataDriver.clearRemoteTemplates());
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-			PacketByteBuf buf = PacketByteBufs.create();
-			buf.writeChar(Config.getInstance().band);
-			buf.writeInt(Config.getInstance().channel);
-			sender.sendPacket(FREQUENCY_C2S, buf);
+			Config.getInstance().sendPlayerData();
 			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()));
 		});
 	}

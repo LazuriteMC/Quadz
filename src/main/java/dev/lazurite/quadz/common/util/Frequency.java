@@ -114,11 +114,7 @@ public class Frequency {
     }
 
     public static Frequency from(ServerPlayerEntity player) {
-        return ((Storage) player).getFrequency();
-    }
-
-    public void to(ServerPlayerEntity player) {
-        ((Storage) player).setFrequency(this);
+        return ((PlayerStorage) player).getFrequency();
     }
 
     @Override
@@ -131,10 +127,5 @@ public class Frequency {
     @Override
     public String toString() {
         return "freq: " + getFrequency();
-    }
-
-    public interface Storage {
-        void setFrequency(Frequency frequency);
-        Frequency getFrequency();
     }
 }

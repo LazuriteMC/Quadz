@@ -1,6 +1,8 @@
 package dev.lazurite.quadz.client;
 
+import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.input.Mode;
+import dev.lazurite.quadz.client.render.ui.osd.OnScreenDisplay;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.AnnotatedSettings;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.Setting;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.Settings;
@@ -8,7 +10,10 @@ import io.github.fablabsmc.fablabs.api.fiber.v1.exception.FiberException;
 import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.FiberSerialization;
 import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.JanksonValueSerializer;
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigTree;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.network.PacketByteBuf;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -46,6 +51,10 @@ public final class Config {
     @Setting public int channel;
     @Setting public char band;
 
+    @Setting public boolean osdEnabled;
+    @Setting public String callSign;
+    @Setting public OnScreenDisplay.VelocityUnit velocityUnit;
+
     private Config() {
         /* Defaults */
         this.controllerId = -1;
@@ -72,6 +81,9 @@ public final class Config {
         this.thirdPersonAngle = 0;
         this.channel = 1;
         this.band = 'R';
+        this.osdEnabled = true;
+        this.callSign = "";
+        this.velocityUnit = OnScreenDisplay.VelocityUnit.METERS_PER_SECOND;
     }
 
     public static Config getInstance() {
@@ -95,6 +107,8 @@ public final class Config {
     }
 
     public void save() {
+        this.sendPlayerData();
+
         try {
             FiberSerialization.serialize(
                     ConfigTree.builder().applyFromPojo(instance, AnnotatedSettings.builder().build()).build(),
@@ -104,5 +118,13 @@ public final class Config {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendPlayerData() {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeInt(band);
+        buf.writeInt(channel);
+        buf.writeString(callSign);
+        ClientPlayNetworking.send(Quadz.PLAYER_DATA_C2S, buf);
     }
 }

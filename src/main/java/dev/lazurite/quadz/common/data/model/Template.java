@@ -5,6 +5,8 @@ import com.google.gson.JsonParser;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
 
+import java.util.Arrays;
+
 public class Template {
     private final Settings settings;
     private final JsonObject geo;
@@ -65,5 +67,18 @@ public class Template {
 
     public int getOriginDistance() {
         return this.originDistance;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Template) {
+            Template template = (Template) obj;
+            return template.settings.equals(settings) &&
+                    template.animation.equals(animation) &&
+                    template.geo.equals(geo) &&
+                    Arrays.equals(template.texture, texture);
+        }
+
+        return false;
     }
 }

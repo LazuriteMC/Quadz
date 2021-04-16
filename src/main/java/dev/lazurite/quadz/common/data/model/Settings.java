@@ -31,7 +31,7 @@ public class Settings {
         this.cameraAngle = cameraAngle;
     }
 
-    public PacketByteBuf serialize(PacketByteBuf buf) {
+    public void serialize(PacketByteBuf buf) {
         buf.writeString(id);
         buf.writeString(name);
         buf.writeString(author);
@@ -44,7 +44,6 @@ public class Settings {
         buf.writeFloat(thrust);
         buf.writeFloat(thrustCurve);
         buf.writeInt(cameraAngle);
-        return buf;
     }
 
     public static Settings deserialize(PacketByteBuf buf) {
@@ -109,5 +108,26 @@ public class Settings {
 
     public int getCameraAngle() {
         return cameraAngle;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Settings) {
+            Settings settings = (Settings) obj;
+            return settings.id.equals(id) &&
+                    settings.author.equals(author) &&
+                    settings.name.equals(name) &&
+                    settings.cameraAngle == cameraAngle &&
+                    settings.cameraX == cameraX &&
+                    settings.cameraY == cameraY &&
+                    settings.mass == mass &&
+                    settings.width == width &&
+                    settings.height == height &&
+                    settings.dragCoefficient == dragCoefficient &&
+                    settings.thrust == thrust &&
+                    settings.thrustCurve == thrustCurve;
+        }
+
+        return false;
     }
 }

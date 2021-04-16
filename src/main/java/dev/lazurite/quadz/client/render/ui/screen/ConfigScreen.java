@@ -1,20 +1,16 @@
-package dev.lazurite.quadz.client.render.ui;
+package dev.lazurite.quadz.client.render.ui.screen;
 
-import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.input.InputTick;
+import dev.lazurite.quadz.client.render.ui.osd.OnScreenDisplay;
 import dev.lazurite.quadz.common.util.Frequency;
-import dev.lazurite.rayon.core.impl.physics.space.MinecraftSpace;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
@@ -35,7 +31,27 @@ public class ConfigScreen {
         ConfigCategory controllerSetup = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.setup"));
         ConfigCategory controllerPreferences = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.stick_feel"));
         ConfigCategory cameraPreferences = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.camera"));
+        ConfigCategory onScreenDisplayPreferences = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.osd"));
         Map <Integer, String> joysticks = InputTick.getInstance().getJoysticks();
+
+        onScreenDisplayPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
+                new TranslatableText("config.quadz.entry.osd_enabled"), Config.getInstance().osdEnabled)
+                .setDefaultValue(Config.getInstance().osdEnabled)
+                .setSaveConsumer(value -> Config.getInstance().osdEnabled = value)
+                .build());
+
+        onScreenDisplayPreferences.addEntry(builder.entryBuilder().startTextField(
+                new TranslatableText("config.quadz.entry.call_sign"), Config.getInstance().callSign)
+                .setDefaultValue(Config.getInstance().callSign)
+                .setSaveConsumer(value -> Config.getInstance().callSign = value)
+                .build());
+
+        onScreenDisplayPreferences.addEntry(builder.entryBuilder().startEnumSelector(
+                new TranslatableText("config.quadz.entry.velocity_unit"), OnScreenDisplay.VelocityUnit.class, Config.getInstance().velocityUnit)
+                .setDefaultValue(Config.getInstance().velocityUnit)
+                .setEnumNameProvider(value -> ((OnScreenDisplay.VelocityUnit) value).getTranslation())
+                .setSaveConsumer(value -> Config.getInstance().velocityUnit = value)
+                .build());
 
         controllerPreferences.addEntry(builder.entryBuilder().startEnumSelector(
                 new TranslatableText("config.quadz.entry.mode"), Mode.class, Config.getInstance().mode)
@@ -73,28 +89,14 @@ public class ConfigScreen {
                 new TranslatableText("config.quadz.entry.band"), Frequency.getBandIndex(Config.getInstance().band), 0, 4)
                 .setDefaultValue(Frequency.getBandIndex(Config.getInstance().band))
                 .setTextGetter(value -> new LiteralText(String.valueOf(Frequency.BANDS[value])))
-                .setSaveConsumer(value -> {
-                    if (MinecraftClient.getInstance().world != null) {
-                        Config.getInstance().band = Frequency.BANDS[value];
-                        PacketByteBuf buf = PacketByteBufs.create();
-                        buf.writeChar(Config.getInstance().band);
-                        buf.writeInt(Config.getInstance().channel);
-                        ClientPlayNetworking.send(Quadz.FREQUENCY_C2S, buf);
-                    }
-                }).build());
+                .setSaveConsumer(value -> Config.getInstance().band = Frequency.BANDS[value])
+                .build());
 
         cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
                 new TranslatableText("config.quadz.entry.channel"), Config.getInstance().channel, 1, 8)
                 .setDefaultValue(Config.getInstance().channel)
-                .setSaveConsumer(value -> {
-                    if (MinecraftClient.getInstance().world != null) {
-                        Config.getInstance().channel = value;
-                        PacketByteBuf buf = PacketByteBufs.create();
-                        buf.writeChar(Config.getInstance().band);
-                        buf.writeInt(Config.getInstance().channel);
-                        ClientPlayNetworking.send(Quadz.FREQUENCY_C2S, buf);
-                    }
-                }).build());
+                .setSaveConsumer(value -> Config.getInstance().channel = value)
+                .build());
 
         cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
                 new TranslatableText("config.quadz.entry.third_person_offset_x"), (int) Config.getInstance().thirdPersonOffsetX * 10, 0, 100)

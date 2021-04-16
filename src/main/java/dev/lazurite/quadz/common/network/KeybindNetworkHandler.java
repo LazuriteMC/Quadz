@@ -10,7 +10,6 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.TranslatableText;
 
 import java.util.function.Consumer;
@@ -75,8 +74,6 @@ public class KeybindNetworkHandler {
             if (goggles != null) {
                 goggles.getOrCreateTag().putBoolean("enabled", enable);
             }
-
-            player.playSound(enable ? SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, 1.0f, 1.0f);
         });
     }
 

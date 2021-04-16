@@ -41,22 +41,23 @@ public class DataDriver {
     }
 
     public static void load(Template template) {
-        if (templates.containsKey(template.getId())) {
+        if (!templates.containsKey(template.getId()) || (templates.containsKey(template.getId()) && template.getOriginDistance() == 1)) {
+            boolean willReplace = templates.containsKey(template.getId());
+
+            Quadz.LOGGER.info("Loading {} template...", template.getId());
+            templates.put(template.getId(), template);
+
+            /*
+             * Only add to inventory if the template originated on the server or your own client. Other
+             * players' templates are not included in your inventory, but can be obtained from the player themself.
+             */
+            if (!willReplace && template.getOriginDistance() < 2) {
+                ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
+                QuadcopterState.get(stack).ifPresent(state -> state.setTemplate(template.getId()));
+                ItemGroupHandler.getInstance().register(stack);
+            }
+        } else {
             Quadz.LOGGER.info("{} template already exists! Skipping...", template.getId());
-            return;
-        }
-
-        Quadz.LOGGER.info("Loading {} template...", template.getId());
-        templates.put(template.getId(), template);
-
-        /*
-         * Only add to inventory if the template originated on the server or your own client. Other
-         * players' templates are not included in your inventory, but can be obtained from them.
-         */
-        if (template.getOriginDistance() < 2) {
-            ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
-            QuadcopterState.get(stack).ifPresent(state -> state.setTemplate(template.getId()));
-            ItemGroupHandler.getInstance().register(stack);
         }
     }
 

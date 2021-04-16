@@ -8,12 +8,13 @@ import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.QuadzRendering;
-import dev.lazurite.quadz.client.render.ui.ProfileScreen;
+import dev.lazurite.quadz.client.render.ui.screen.ProfileScreen;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.item.StackQuadcopterState;
 import dev.lazurite.quadz.common.util.Matrix4fAccess;
+import dev.lazurite.quadz.common.util.PlayerStorage;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.Bindable;
@@ -62,13 +63,19 @@ import java.util.ArrayList;
 
 @SuppressWarnings("EntityConstructor")
 public class QuadcopterEntity extends LivingEntity implements IAnimatable, EntityPhysicsElement, Viewable, QuadcopterState {
+	/* States */
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<Boolean> ACTIVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<Boolean> DISABLED = DataTracker.registerData(QuadcopterEntity.class,  TrackedDataHandlerRegistry.BOOLEAN);
-	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	private static final TrackedData<Integer> CAMERA_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
 	private static final TrackedData<String> TEMPLATE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.STRING);
+
+	/* Data */
+	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
+	private static final TrackedData<Frequency> FREQUENCY = DataTracker.registerData(QuadcopterEntity.class, CustomTrackedDataHandlerRegistry.FREQUENCY);
+	private static final TrackedData<String> CALL_SIGN = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.STRING);
+
+	/* Physical Attributes */
+	private static final TrackedData<Integer> CAMERA_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<Float> THRUST = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
 	private static final TrackedData<Float> THRUST_CURVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
 	private static final TrackedData<Float> WIDTH = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
@@ -276,13 +283,12 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 				Bindable.get(stack).ifPresent(bindable -> {
 					Bindable.bind(this, bindable);
 					setFrequency(Frequency.from((ServerPlayerEntity) player));
+					setCallSign(((PlayerStorage) player).getCallSign());
 					player.sendMessage(new TranslatableText("item.quadz.transmitter_item.bound"), true);
 				});
 			} else if (stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM)) {
 				Frequency frequency = getFrequency();
 				player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), true);
-//			} else if (stack.getItem().equals(Quadz.PROFILE_ITEM)) {
-				// TODO apply profile
 			}
 		} else {
 			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
@@ -300,24 +306,30 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	@Override
 	public void readCustomDataFromTag(CompoundTag tag) {
 		super.readCustomDataFromTag(tag);
+
 		setGodMode(tag.getBoolean("god_mode"));
+		setTemplate(tag.getString("template"));
+		if (tag.getBoolean("disabled")) this.disable();
+
 		setBindId(tag.getInt("bind_id"));
 		setFrequency(new Frequency((char) tag.getInt("band"), tag.getInt("channel")));
 		setCameraAngle(tag.getInt("camera_angle"));
-		setTemplate(tag.getString("template"));
-		if (tag.getBoolean("disabled")) this.disable();
+		setCallSign(tag.getString("call_sign"));
 	}
 
 	@Override
 	public void writeCustomDataToTag(CompoundTag tag) {
 		super.writeCustomDataToTag(tag);
+
 		tag.putBoolean("god_mode", isInGodMode());
+		tag.putString("template", getTemplate());
+		tag.putBoolean("disabled", isDisabled());
+
 		tag.putInt("bind_id", getBindId());
 		tag.putInt("band", getFrequency().getBand());
 		tag.putInt("channel", getFrequency().getChannel());
 		tag.putInt("camera_angle", getCameraAngle());
-		tag.putString("template", getTemplate());
-		tag.putBoolean("disabled", isDisabled());
+		tag.putString("call_sign", getCallSign());
 	}
 
 	@Override
@@ -332,10 +344,13 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 		getDataTracker().startTracking(GOD_MODE, false);
 		getDataTracker().startTracking(ACTIVE, false);
 		getDataTracker().startTracking(DISABLED, false);
-		getDataTracker().startTracking(BIND_ID, -1);
-		getDataTracker().startTracking(CAMERA_ANGLE, 0);
-		getDataTracker().startTracking(FREQUENCY, new Frequency());
 		getDataTracker().startTracking(TEMPLATE, "");
+
+		getDataTracker().startTracking(BIND_ID, -1);
+		getDataTracker().startTracking(FREQUENCY, new Frequency());
+		getDataTracker().startTracking(CALL_SIGN, "");
+
+		getDataTracker().startTracking(CAMERA_ANGLE, 0);
 		getDataTracker().startTracking(THRUST, 0.0f);
 		getDataTracker().startTracking(THRUST_CURVE, 0.0f);
 		getDataTracker().startTracking(WIDTH, -1.0f);
@@ -421,6 +436,14 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 
 	public boolean isActive() {
 		return getDataTracker().get(ACTIVE);
+	}
+
+	public void setCallSign(String callSign) {
+		getDataTracker().set(CALL_SIGN, callSign);
+	}
+
+	public String getCallSign() {
+		return getDataTracker().get(CALL_SIGN);
 	}
 
 	public void setThrust(float thrust) {
