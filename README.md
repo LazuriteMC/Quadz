@@ -21,13 +21,17 @@ The old forge repository can be found [here](https://github.com/ethanejohnsons/F
 ### Dependencies
 In order to use this mod, you'll have to download a few other things as well:
 * [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api)
-* [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config)
 * [Geckolib](https://www.curseforge.com/minecraft/mc-mods/geckolib-fabric)
 * [Rayon](https://www.curseforge.com/minecraft/mc-mods/rayon)
+  
+### Optional Dependencies (Highly Recommended)
+The following dependencies allow you to configure Quadz using its config screen.
+* [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config)
+* [Mod Menu](https://www.curseforge.com/minecraft/mc-mods/modmenu)
 
 ### Special Thanks
-FPV Racing wouldn't be possible without the following Fabric libraries:
-* [OnyxStudios/Cardinal-Components-API](https://github.com/OnyxStudios/Cardinal-Components-API)
+Quadz wouldn't be possible without the following mods and libs:
+* [FabricMC/fabric](https://github.com/FabricMC/fabric)
 * [FabLabsMc/Fiber](https://github.com/FabLabsMC/fiber)
 * [shedaniel/Cloth-Config](https://github.com/shedaniel/cloth-config)
 * [TerraformersMC/ModMenu](https://github.com/TerraformersMC/ModMenu)
