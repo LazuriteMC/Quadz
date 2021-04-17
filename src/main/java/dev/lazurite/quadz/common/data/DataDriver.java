@@ -67,20 +67,24 @@ public class DataDriver {
             Path source = FabricLoader.getInstance().getGameDir().normalize().resolve(Paths.get("quadz"));
             Path internal = FabricLoader.getInstance().getModContainer("quadz").get().getRootPath().resolve("assets").resolve("quadz").resolve("templates");
 
-            if (!Files.exists(Paths.get("voyager.zip"))) {
+            /* Copy out of jar */
+            if (!Files.exists(Paths.get("voyager.zip")) || !Files.exists(Paths.get("voxel_racer_one.zip")) || !Files.exists(Paths.get("pixel.zip"))) {
                 for (Path path : Files.walk(internal).collect(Collectors.toList())) {
-                    Path file = source.resolve(internal.relativize(path).getFileName().toString());
+                    if (!Files.isDirectory(path)) {
+                        Path file = source.resolve(internal.relativize(path).getFileName().toString());
 
-                    if (!Files.exists(file)) {
-                        if (!Files.exists(file.getParent())) {
-                            Files.createDirectories(file.getParent());
+                        if (!Files.exists(file)) {
+                            if (!Files.exists(file.getParent())) {
+                                Files.createDirectories(file.getParent());
+                            }
+
+                            Files.copy(path, file);
                         }
-
-                        Files.copy(path, file);
                     }
                 }
             }
 
+            /* Read from quadz/ */
             for (Path path : Files.walk(source).collect(Collectors.toList())) {
                 if (path.getFileName().toString().contains(".zip")) {
                     ZipFile zip = new ZipFile(path.toFile());
