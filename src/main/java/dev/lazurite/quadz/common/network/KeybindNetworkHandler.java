@@ -1,6 +1,6 @@
 package dev.lazurite.quadz.common.network;
 
-import dev.lazurite.quadz.Quadz;
+import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
@@ -62,17 +62,9 @@ public class KeybindNetworkHandler {
 
         server.execute(() -> {
             ItemStack hat = player.inventory.armor.get(3);
-            ItemStack hand = player.inventory.getMainHandStack();
-            ItemStack goggles = null;
 
-            if (hand.getItem().equals(Quadz.GOGGLES_ITEM)) {
-                goggles = hand;
-            } else if (hat.getItem().equals(Quadz.GOGGLES_ITEM)) {
-                goggles = hat;
-            }
-
-            if (goggles != null) {
-                goggles.getOrCreateTag().putBoolean("enabled", enable);
+            if (hat.getItem() instanceof GogglesItem) {
+                hat.getOrCreateTag().putBoolean("enabled", enable);
             }
         });
     }

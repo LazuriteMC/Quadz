@@ -1,6 +1,7 @@
 package dev.lazurite.quadz.client.input.keybind;
 
 import dev.lazurite.quadz.Quadz;
+import dev.lazurite.quadz.common.item.GogglesItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -29,18 +30,10 @@ public class GogglePowerKeybind {
         KeyBindingHelper.registerKeyBinding(key);
 
         BiConsumer<ClientPlayerEntity, KeyBinding> sendPacket = (player, pressedKey) -> {
-            ItemStack hand = player.getMainHandStack();
             ItemStack hat = player.inventory.armor.get(3);
-            ItemStack goggles = null;
 
-            if (hand.getItem().equals(Quadz.GOGGLES_ITEM)) {
-                goggles = hand;
-            } else if (hat.getItem().equals(Quadz.GOGGLES_ITEM)) {
-                goggles = hat;
-            }
-
-            if (goggles != null) {
-                boolean prevPower = goggles.getOrCreateTag().getBoolean("enabled");
+            if (hat.getItem() instanceof GogglesItem) {
+                boolean prevPower = hat.getOrCreateTag().getBoolean("enabled");
                 PacketByteBuf buf = PacketByteBufs.create();
                 buf.writeBoolean(pressedKey.equals(key) && !prevPower);
                 ClientPlayNetworking.send(Quadz.POWER_GOGGLES_C2S, buf);

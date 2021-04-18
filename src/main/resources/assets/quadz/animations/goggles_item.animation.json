@@ -1,8 +1,29 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"empty": {
-			"loop": true
+		"up": {
+			"loop": true,
+			"animation_length": 0.5,
+			"bones": {
+				"goggles": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-12.5, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 2, -1]
+						}
+					}
+				}
+			}
 		}
 	}
 }

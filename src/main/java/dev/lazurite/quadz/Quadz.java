@@ -9,6 +9,7 @@ import dev.lazurite.quadz.client.ClientTick;
 import dev.lazurite.quadz.client.render.QuadzRendering;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerConnectedToast;
 import dev.lazurite.quadz.common.QuadSaver;
+import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.network.CommonNetworkHandler;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
@@ -28,8 +29,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.*;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TranslatableText;
@@ -56,7 +55,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 	/* Items */
 	public static QuadcopterItem QUADCOPTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "quadcopter_item"), new QuadcopterItem(new Item.Settings().maxCount(1)));
-	public static ArmorItem GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new ArmorItem(ArmorMaterials.LEATHER, EquipmentSlot.HEAD, new Item.Settings().maxCount(1)));
+	public static GogglesItem GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
 	public static Item TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new Item(new Item.Settings().maxCount(1)));
 	public static Item CHANNEL_WAND_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "channel_wand_item"), new Item(new Item.Settings().maxCount(1)));
 
@@ -84,9 +83,8 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 		PhysicsSpaceEvents.STEP.register(QuadSaver::step);
 		ServerTickEvents.START_SERVER_TICK.register(ServerTick::tick);
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()));
-		});
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
+			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize())));
 
 		ServerPlayNetworking.registerGlobalReceiver(QUADCOPTER_SETTINGS_C2S, CommonNetworkHandler::onQuadcopterSettingsReceived);
 		ServerPlayNetworking.registerGlobalReceiver(PLAYER_DATA_C2S, CommonNetworkHandler::onPlayerDataReceived);
