@@ -50,7 +50,7 @@ public class DataDriver {
              */
             if (env == EnvType.CLIENT && template.getOriginDistance() < 2) {
                 ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
-                QuadcopterState.get(stack).ifPresent(state -> state.setTemplate(template.getId()));
+                QuadcopterState.fromStack(stack).ifPresent(state -> state.setTemplate(template.getId()));
                 ItemGroupHandler.getInstance().register(stack);
             }
         } else {

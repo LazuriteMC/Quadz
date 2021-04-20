@@ -45,7 +45,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 	public static final Identifier TEMPLATE = new Identifier(MODID, "template_s2c");
 	public static final Identifier QUADCOPTER_SETTINGS_C2S = new Identifier(MODID, "quadcopter_settings_c2s");
 	public static final Identifier PLAYER_DATA_C2S = new Identifier(MODID, "player_data_c2s");
-	public static final Identifier INPUT_FRAME_C2S = new Identifier(MODID, "input_frame_c2s");
+	public static final Identifier INPUT_FRAME = new Identifier(MODID, "input_frame");
 
 	public static final Identifier SELECTED_SLOT_S2C = new Identifier(MODID, "selected_slot_s2c");
 	public static final Identifier NOCLIP_C2S = new Identifier(MODID, "noclip_c2s");
@@ -89,7 +89,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		ServerPlayNetworking.registerGlobalReceiver(QUADCOPTER_SETTINGS_C2S, CommonNetworkHandler::onQuadcopterSettingsReceived);
 		ServerPlayNetworking.registerGlobalReceiver(PLAYER_DATA_C2S, CommonNetworkHandler::onPlayerDataReceived);
 		ServerPlayNetworking.registerGlobalReceiver(TEMPLATE, CommonNetworkHandler::onTemplateReceived);
-		ServerPlayNetworking.registerGlobalReceiver(INPUT_FRAME_C2S, CommonNetworkHandler::onInputFrame);
+		ServerPlayNetworking.registerGlobalReceiver(INPUT_FRAME, CommonNetworkHandler::onInputFrame);
 
 		ServerPlayNetworking.registerGlobalReceiver(NOCLIP_C2S, KeybindNetworkHandler::onNoClipKey);
 		ServerPlayNetworking.registerGlobalReceiver(CHANGE_CAMERA_ANGLE_C2S, KeybindNetworkHandler::onChangeCameraAngleKey);
@@ -116,6 +116,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		/* Register Packets */
 		ClientPlayNetworking.registerGlobalReceiver(SELECTED_SLOT_S2C, ClientNetworkHandler::onSelectSlot);
 		ClientPlayNetworking.registerGlobalReceiver(TEMPLATE, ClientNetworkHandler::onTemplateReceived);
+		ClientPlayNetworking.registerGlobalReceiver(INPUT_FRAME, ClientNetworkHandler::onInputFrameReceived);
 
 		/* Register Toast Events */
 		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerConnectedToast.add(new TranslatableText("toast.quadz.controller.connect"), name));

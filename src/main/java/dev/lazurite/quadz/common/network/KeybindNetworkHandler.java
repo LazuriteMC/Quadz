@@ -83,7 +83,7 @@ public class KeybindNetworkHandler {
                 }
             };
 
-            QuadcopterState.get(hand).ifPresent(changeGodMode);
+            QuadcopterState.fromStack(hand).ifPresent(changeGodMode);
             Bindable.get(hand).ifPresent(transmitter ->
                     changeGodMode.accept(QuadcopterState.getQuadcopterByBindId(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance())));
         });

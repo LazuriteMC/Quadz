@@ -1,12 +1,16 @@
 package dev.lazurite.quadz.common.state;
 
 import dev.lazurite.quadz.common.item.QuadcopterItem;
+import dev.lazurite.quadz.common.mixin.player.ServerPlayerEntityMixin;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.state.item.StackQuadcopterState;
 import dev.lazurite.quadz.common.util.Frequency;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -16,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * This interface represents the state of any given quadcopter
@@ -48,12 +53,12 @@ public interface QuadcopterState extends Bindable {
      * @param predicate a predicate to narrow the search
      * @return the nearest {@link QuadcopterEntity} (null if not found)
      */
-    @Nullable static QuadcopterEntity getNearestQuadcopter(World world, Vec3d origin, int range, @Nullable Predicate<LivingEntity> predicate) {
-        return world.getClosestEntity(
+    static Optional<QuadcopterEntity> getNearestQuadcopter(World world, Vec3d origin, int range, @Nullable Predicate<LivingEntity> predicate) {
+        return Optional.ofNullable(world.getClosestEntity(
                 QuadcopterEntity.class,
                 TargetPredicate.DEFAULT.setPredicate(predicate),
                 null, origin.x, origin.y, origin.z,
-                new Box(new BlockPos(origin)).expand(range));
+                new Box(new BlockPos(origin)).expand(range)));
     }
 
     /**
@@ -67,7 +72,19 @@ public interface QuadcopterState extends Bindable {
         return world.getEntitiesByClass(QuadcopterEntity.class, new Box(new BlockPos(origin)).expand(range), null);
     }
 
-    static Optional<QuadcopterState> get(ItemStack stack) {
+    /**
+     * Finds a {@link PlayerEntity} based on the given {@link QuadcopterEntity} and its bind ID.
+     * @param quadcopter the {@link QuadcopterEntity} to find a matching player for
+     * @return the matching {@link PlayerEntity}
+     */
+    static Optional<ServerPlayerEntity> reverseLookup(QuadcopterEntity quadcopter) {
+        return PlayerLookup.tracking(quadcopter).stream()
+                .filter(player -> Bindable.get(player.getMainHandStack())
+                .filter(transmitter -> transmitter.getBindId() == quadcopter.getBindId())
+                .isPresent()).findFirst();
+    }
+
+    static Optional<QuadcopterState> fromStack(ItemStack stack) {
         QuadcopterState state = null;
 
         if (stack.getItem() instanceof QuadcopterItem) {

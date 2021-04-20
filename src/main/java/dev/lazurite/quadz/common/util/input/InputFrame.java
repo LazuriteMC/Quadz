@@ -23,6 +23,7 @@ public class InputFrame {
     private Mode mode;
 
     public InputFrame() {
+        this.mode = Mode.RATE;
     }
 
     public InputFrame(InputFrame frame) {
@@ -50,9 +51,7 @@ public class InputFrame {
     }
 
     public boolean isEmpty() {
-        return this.throttle == 0 && this.pitch == 0 && this.yaw == 0 && this.roll == 0 &&
-                this.rate == 0 && this.superRate == 0 && this.expo == 0 &&
-                this.maxAngle == 0 && this.mode == null;
+        return this.throttle == 0 && this.pitch == 0 && this.yaw == 0 && this.roll == 0;
     }
 
     public void setThrottle(float throttle) {
@@ -117,10 +116,6 @@ public class InputFrame {
 
     public float calculateRoll(float delta) {
         return (float) BetaflightHelper.calculateRates(roll, rate, expo, superRate, delta);
-    }
-
-    public boolean isIdle() {
-        return throttle == 0 && pitch == 0 && yaw == 0 && roll == 0;
     }
 
     @Override

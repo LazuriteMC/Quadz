@@ -32,7 +32,7 @@ public class QuadcopterItem extends Item {
             return TypedActionResult.success(itemStack);
         } else {
             QuadcopterEntity entity = new QuadcopterEntity(world);
-            QuadcopterState.get(itemStack).ifPresent(entity::copyFrom);
+            QuadcopterState.fromStack(itemStack).ifPresent(entity::copyFrom);
 
             if (hitResult.getType() == HitResult.Type.BLOCK) {
                 entity.updatePosition(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);

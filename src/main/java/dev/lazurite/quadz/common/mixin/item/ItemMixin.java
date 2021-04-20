@@ -14,7 +14,7 @@ public class ItemMixin {
     @Inject(method = "getTranslationKey(Lnet/minecraft/item/ItemStack;)Ljava/lang/String;", at = @At("RETURN"), cancellable = true)
     public void getTranslationKey(ItemStack itemStack, CallbackInfoReturnable<String> info) {
         if ((Item) (Object) this instanceof QuadcopterItem) {
-            QuadcopterState.get(itemStack).ifPresent(state ->
+            QuadcopterState.fromStack(itemStack).ifPresent(state ->
                 info.setReturnValue("template.quadz." + state.getTemplate()));
         }
     }

@@ -29,6 +29,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -59,6 +61,7 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @SuppressWarnings("EntityConstructor")
 public class QuadcopterEntity extends LivingEntity implements IAnimatable, EntityPhysicsElement, Viewable, QuadcopterState {
@@ -84,6 +87,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	private final AnimationFactory animationFactory = new AnimationFactory(this);
 	private final ElementRigidBody rigidBody = new ElementRigidBody(this);
 	private final InputFrame inputFrame = new InputFrame();
+	private ServerPlayerEntity lastPlayer;
 	private String prevTemplate;
 	public int stuckTicks;
 
@@ -118,6 +122,16 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 			if (!isInGodMode() && (isTouchingWaterOrRain() || isInLava() || isSubmergedInWater())) {
 				this.disable();
 			}
+
+			Optional<ServerPlayerEntity> player = QuadcopterState.reverseLookup(this);
+
+			if (player.isPresent()) {
+				lastPlayer = player.get();
+			} else if (lastPlayer != null) {
+				this.inputFrame.set(new InputFrame());
+				this.sendInputFrame();
+				lastPlayer = null;
+			}
 		} else if (isDisabled()) {
 			float width = 1 / this.dimensions.width * 2;
 			world.addImportantParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), 0.0D, 0.07D, 0.0D);
@@ -135,7 +149,6 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 		InputFrame frame = new InputFrame(getInputFrame());
 
 		if (!frame.isEmpty() && !isDisabled()) {
-
 			/* Rate Mode */
 			if (Mode.RATE.equals(frame.getMode())) {
 				rotate(frame.calculatePitch(0.05f), frame.calculateYaw(0.05f), frame.calculateRoll(0.05f));
@@ -172,8 +185,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 					.multLocal((float) (getThrust() * (Math.pow(frame.getThrottle(), getThrustCurve()))));
 
 			/* Calculate thrust from yaw spin */
-			Vector3f yawThrust = new Vector3f().set(unit)
-					.multLocal(Math.abs(frame.calculateYaw(0.05f) * getThrust() * 0.002f));
+			Vector3f yawThrust = new Vector3f().set(unit).multLocal(Math.abs(frame.calculateYaw(0.05f) * getThrust() * 0.002f));
 
 			/* Add up the net thrust and apply the force */
 			if (Float.isFinite(thrust.length())) {
@@ -195,11 +207,10 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 		getRigidBody().setPhysicsTransform(trans);
 	}
 
-	@Environment(EnvType.CLIENT)
 	public void sendInputFrame() {
 		InputFrame frame = getInputFrame();
 
-		if (!frame.isEmpty()) {
+		if (frame != null) {
 			PacketByteBuf buf = PacketByteBufs.create();
 			buf.writeInt(getEntityId());
 			buf.writeFloat(frame.getThrottle());
@@ -211,7 +222,12 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 			buf.writeFloat(frame.getExpo());
 			buf.writeFloat(frame.getMaxAngle());
 			buf.writeEnumConstant(frame.getMode());
-			ClientPlayNetworking.send(Quadz.INPUT_FRAME_C2S, buf);
+
+			if (world.isClient()) {
+				ClientPlayNetworking.send(Quadz.INPUT_FRAME, buf);
+			} else {
+				PlayerLookup.tracking(this).forEach(player -> ServerPlayNetworking.send(player, Quadz.INPUT_FRAME, buf));
+			}
 		}
 	}
 
@@ -251,7 +267,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	 */
 	public void dropSpawner() {
 		ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
-		QuadcopterState.get(stack).ifPresent(state -> {
+		QuadcopterState.fromStack(stack).ifPresent(state -> {
 			state.copyFrom(this);
 			this.dropStack(stack);
 		});

@@ -2,7 +2,6 @@ package dev.lazurite.quadz.common.util.tick;
 
 import com.google.common.collect.Lists;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
@@ -46,10 +45,10 @@ public class ServerTick {
 
             if (goggles != null && goggles.getOrCreateTag().getBoolean("enabled")) {
                 if (!(player.getCameraEntity() instanceof QuadcopterEntity)) {
-                    QuadcopterEntity quadcopter = QuadcopterState.getNearestQuadcopter(player.getEntityWorld(), player.getPos(), range,
-                            quad -> ((QuadcopterEntity) quad).getFrequency().equals(Frequency.from(player)));
-
-                    if (quadcopter != null) {
+                    QuadcopterState.getNearestQuadcopter(
+                            player.getEntityWorld(), player.getPos(), range,
+                            quad -> ((QuadcopterEntity) quad).getFrequency().equals(Frequency.from(player)))
+                            .ifPresent(quadcopter -> {
                         player.setCameraEntity(quadcopter);
 
                         /* Check hotbar for transmitter */
@@ -72,7 +71,7 @@ public class ServerTick {
                                 break;
                             }
                         }
-                    }
+                    });
                 }
 
             /* Goggles disabled and player is in quadcopter view, reset view */
