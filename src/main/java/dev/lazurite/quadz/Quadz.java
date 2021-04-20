@@ -1,19 +1,19 @@
 package dev.lazurite.quadz;
 
 import dev.lazurite.quadz.api.event.JoystickEvents;
-import dev.lazurite.quadz.client.ClientNetworkHandler;
+import dev.lazurite.quadz.client.network.ClientNetworkHandler;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.keybind.*;
-import dev.lazurite.quadz.client.ClientTick;
+import dev.lazurite.quadz.client.util.ClientTick;
 import dev.lazurite.quadz.client.render.QuadzRendering;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerConnectedToast;
-import dev.lazurite.quadz.common.QuadSaver;
+import dev.lazurite.quadz.common.util.tick.QuadSaver;
 import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.network.CommonNetworkHandler;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
-import dev.lazurite.quadz.common.ServerTick;
+import dev.lazurite.quadz.common.util.tick.ServerTick;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
 import dev.lazurite.quadz.common.network.KeybindNetworkHandler;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
@@ -42,9 +42,9 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger("Quadz");
 
 	/* Packet Identifiers */
+	public static final Identifier TEMPLATE = new Identifier(MODID, "template_s2c");
 	public static final Identifier QUADCOPTER_SETTINGS_C2S = new Identifier(MODID, "quadcopter_settings_c2s");
 	public static final Identifier PLAYER_DATA_C2S = new Identifier(MODID, "player_data_c2s");
-	public static final Identifier TEMPLATE = new Identifier(MODID, "template_s2c");
 	public static final Identifier INPUT_FRAME_C2S = new Identifier(MODID, "input_frame_c2s");
 
 	public static final Identifier SELECTED_SLOT_S2C = new Identifier(MODID, "selected_slot_s2c");
@@ -111,6 +111,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		GodModeKeybind.register();
 		NoClipKeybind.register();
 		FollowKeybind.register();
+		QuadConfigKeybind.register();
 
 		/* Register Packets */
 		ClientPlayNetworking.registerGlobalReceiver(SELECTED_SLOT_S2C, ClientNetworkHandler::onSelectSlot);

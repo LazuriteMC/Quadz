@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.client;
+package dev.lazurite.quadz.client.network;
 
 import dev.lazurite.quadz.client.render.QuadzRendering;
 import dev.lazurite.quadz.common.data.DataDriver;

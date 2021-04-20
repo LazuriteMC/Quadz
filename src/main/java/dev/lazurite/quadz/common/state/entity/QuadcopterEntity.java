@@ -8,13 +8,13 @@ import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.QuadzRendering;
-import dev.lazurite.quadz.client.render.ui.screen.ProfileScreen;
+import dev.lazurite.quadz.client.render.ui.screen.QuadcopterScreen;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.item.StackQuadcopterState;
 import dev.lazurite.quadz.common.util.Matrix4fAccess;
-import dev.lazurite.quadz.common.util.PlayerStorage;
+import dev.lazurite.quadz.common.util.PlayerData;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.Bindable;
@@ -284,7 +284,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 				Bindable.get(stack).ifPresent(bindable -> {
 					Bindable.bind(this, bindable);
 					setFrequency(Frequency.from((ServerPlayerEntity) player));
-					setCallSign(((PlayerStorage) player).getCallSign());
+					setCallSign(((PlayerData) player).getCallSign());
 					player.sendMessage(new TranslatableText("item.quadz.transmitter_item.bound"), true);
 				});
 			} else if (stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM)) {
@@ -296,8 +296,8 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 				if (!InputTick.controllerExists()) {
 					ControllerNotFoundToast.add();
 				}
-			} else if (!stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM) && !getTemplate().equals("")) {
-				ProfileScreen.show(this);
+			} else if (!stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM) && !getTemplate().isEmpty()) {
+				QuadcopterScreen.show(this);
 			}
 		}
 

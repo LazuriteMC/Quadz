@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.client.mixin.resource;
 
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.data.util.TemplateTextureManager;
+import dev.lazurite.quadz.client.resource.TemplateTextureManager;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.resource.ResourceManager;

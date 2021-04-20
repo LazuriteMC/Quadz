@@ -4,11 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.data.model.Settings;
 import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
 import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemStack;
 
@@ -35,23 +35,20 @@ import java.util.zip.ZipFile;
 public class DataDriver {
     private static Map<String, Template> templates;
 
-    public static void initialize() {
-        templates = new ConcurrentHashMap<>();
-        readFromDisk();
-    }
-
     public static void load(Template template) {
-        if (!templates.containsKey(template.getId()) || (templates.containsKey(template.getId()) && template.getOriginDistance() == 1)) {
-            boolean willReplace = templates.containsKey(template.getId());
+        String id = template.getId();
+        Template loaded = templates.get(id);
 
+        if (!templates.containsKey(id) || (templates.containsKey(id) && !loaded.equals(template))) {
             Quadz.LOGGER.info("Loading {} template...", template.getId());
+            EnvType env = FabricLoader.getInstance().getEnvironmentType();
             templates.put(template.getId(), template);
 
             /*
              * Only add to inventory if the template originated on the server or your own client. Other
              * players' templates are not included in your inventory, but can be obtained from the player themself.
              */
-            if (!willReplace && template.getOriginDistance() < 2) {
+            if (env == EnvType.CLIENT && template.getOriginDistance() < 2) {
                 ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
                 QuadcopterState.get(stack).ifPresent(state -> state.setTemplate(template.getId()));
                 ItemGroupHandler.getInstance().register(stack);
@@ -61,46 +58,43 @@ public class DataDriver {
         }
     }
 
-    private static void readFromDisk() {
+    public static void initialize() {
+        templates = new ConcurrentHashMap<>();
+
         try {
             Quadz.LOGGER.info("Reading templates...");
-            Path source = FabricLoader.getInstance().getGameDir().normalize().resolve(Paths.get("quadz"));
-            Path internal = FabricLoader.getInstance().getModContainer("quadz").get().getRootPath().resolve("assets").resolve("quadz").resolve("templates");
 
-            /* Copy out of jar */
-            if (!Files.exists(Paths.get("voyager.zip")) || !Files.exists(Paths.get("voxel_racer_one.zip")) || !Files.exists(Paths.get("pixel.zip"))) {
-                for (Path path : Files.walk(internal).collect(Collectors.toList())) {
-                    if (!Files.isDirectory(path)) {
-                        Path file = source.resolve(internal.relativize(path).getFileName().toString());
+            // Set up directories
+            Path quadz = FabricLoader.getInstance().getGameDir().normalize().resolve(Paths.get("quadz"));
+            Path jar = FabricLoader.getInstance().getModContainer("quadz").get().getRootPath().resolve("assets").resolve("quadz").resolve("templates");
 
-                        if (!Files.exists(file)) {
-                            if (!Files.exists(file.getParent())) {
-                                Files.createDirectories(file.getParent());
-                            }
-
-                            Files.copy(path, file);
-                        }
-                    }
-                }
+            // Make the quadz folder if it doesn't exist
+            if (!Files.exists(quadz)) {
+                Files.createDirectories(quadz);
             }
 
-            /* Read from quadz/ */
-            for (Path path : Files.walk(source).collect(Collectors.toList())) {
-                if (path.getFileName().toString().contains(".zip")) {
-                    ZipFile zip = new ZipFile(path.toFile());
-                    Settings settings = null;
-                    JsonObject geo = null;
-                    JsonObject animation = null;
-                    byte[] texture = null;
+            // Collect all paths and iterate
+            List<Path> templatePaths = new ArrayList<>();
+            templatePaths.addAll(Files.walk(jar).collect(Collectors.toList()));
+            templatePaths.addAll(Files.walk(quadz).collect(Collectors.toList()));
 
+            for (Path path : templatePaths) {
+                Template.Settings settings = null;
+                JsonObject geo = null;
+                JsonObject animation = null;
+                byte[] texture = null;
+
+                if ((path.getParent().equals(quadz) || path.getParent().equals(jar)) && path.getFileName().toString().contains(".zip")) {
+                    ZipFile zip = new ZipFile(path.toFile());
                     Enumeration<? extends ZipEntry> entries = zip.entries();
+
                     while (entries.hasMoreElements()) {
                         ZipEntry entry = entries.nextElement();
 
                         if (!entry.isDirectory()) {
                             /* Settings */
                             if (entry.getName().contains(".settings.json")) {
-                                settings = new Gson().fromJson(new InputStreamReader(zip.getInputStream(entry)), Settings.class);
+                                settings = new Gson().fromJson(new InputStreamReader(zip.getInputStream(entry)), Template.Settings.class);
 
                             /* Geo Model */
                             } else if (entry.getName().contains(".geo.json")) {
@@ -122,7 +116,36 @@ public class DataDriver {
                     try {
                         load(new Template(settings, geo, animation, texture, 0));
                     } catch (NoSuchElementException e) {
-                        Quadz.LOGGER.error(e.getMessage());
+                        Quadz.LOGGER.error("Error reading from zip: " + path, e);
+                    }
+                } else if (path.getParent().equals(quadz) && Files.isDirectory(path)) {
+                    List<Path> files = Files.walk(path).filter(file -> !Files.isDirectory(file)).collect(Collectors.toList());
+
+                    for (Path file : files) {
+                        /* Settings */
+                        if (file.toString().contains(".settings.json")) {
+                            settings = new Gson().fromJson(new InputStreamReader(Files.newInputStream(file)), Template.Settings.class);
+
+                        /* Geo Model */
+                        } else if (file.toString().contains(".geo.json")) {
+                            geo = new JsonParser().parse(new InputStreamReader(Files.newInputStream(file))).getAsJsonObject();
+
+                        /* Animation */
+                        } else if (file.toString().contains(".animation.json")) {
+                            animation = new JsonParser().parse(new InputStreamReader(Files.newInputStream(file))).getAsJsonObject();
+
+                        /* Texture */
+                        } else if (file.toString().contains(".png")) {
+                            InputStream stream = Files.newInputStream(file);
+                            texture = new byte[stream.available()];
+                            stream.read(texture);
+                        }
+                    }
+
+                    try {
+                        load(new Template(settings, geo, animation, texture, 0));
+                    } catch (NoSuchElementException e) {
+                        Quadz.LOGGER.error("Error reading from directory: " + path, e);
                     }
                 }
             }

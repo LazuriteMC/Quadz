@@ -10,6 +10,8 @@ import io.github.fablabsmc.fablabs.api.fiber.v1.exception.FiberException;
 import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.FiberSerialization;
 import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.JanksonValueSerializer;
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigTree;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.loader.api.FabricLoader;
@@ -20,10 +22,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Environment(EnvType.CLIENT)
 @Settings(onlyAnnotated = true)
 public final class Config {
     private static final Config instance = new Config();
     private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("quadz.json");
+
+    @Setting public String lastSelectedCategory;
 
     @Setting @Setting.Constrain.Range(min = -1) public int controllerId;
     @Setting @Setting.Constrain.Range(min = 0) public int throttle;
@@ -58,6 +63,7 @@ public final class Config {
 
     private Config() {
         /* Defaults */
+        this.lastSelectedCategory = "";
         this.controllerId = -1;
         this.throttle = 0;
         this.pitch = 2;

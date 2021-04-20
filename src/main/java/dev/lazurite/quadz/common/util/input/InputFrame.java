@@ -119,6 +119,10 @@ public class InputFrame {
         return (float) BetaflightHelper.calculateRates(roll, rate, expo, superRate, delta);
     }
 
+    public boolean isIdle() {
+        return throttle == 0 && pitch == 0 && yaw == 0 && roll == 0;
+    }
+
     @Override
     public String toString() {
         return "[throttle: " + throttle + " pitch: " + pitch + " yaw: " + yaw + " roll: " + roll + "]";

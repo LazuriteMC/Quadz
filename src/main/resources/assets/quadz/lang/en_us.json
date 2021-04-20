@@ -41,7 +41,6 @@
   "config.quadz.category.setup" : "Controller Setup",
   "config.quadz.category.stick_feel" : "Stick Preferences",
   "config.quadz.category.camera" : "Camera Preferences",
-  "config.quadz.category.osd" : "OSD Preferences",
 
   "config.quadz.entry.controller_id" : "Controller ID",
   "config.quadz.entry.controller_id.keyboard" : "Keyboard",
@@ -66,6 +65,7 @@
   "config.quadz.entry.third_person_angle": "Third Person Angle",
   "config.quadz.entry.band" : "Band",
   "config.quadz.entry.channel" : "Channel",
+  "config.quadz.entry.camera_angle" : "Camera Angle",
 
   "config.quadz.entry.rate" : "Rate",
   "config.quadz.entry.expo" : "Expo",
@@ -78,13 +78,5 @@
 
   "config.quadz.velocity.meters_per_second" :  "Meters Per Second",
   "config.quadz.velocity.kilometers_per_hour" : "Kilometers Per Hour",
-  "config.quadz.velocity.miles_per_hour" : "Miles Per Hour",
-
-  "quadconfig.quadz.entry.camera_angle" : "Camera Angle",
-  "quadconfig.quadz.entry.mass" : "Mass",
-  "quadconfig.quadz.entry.drag_coefficient" : "Drag Coefficient",
-  "quadconfig.quadz.entry.thrust" : "Thrust",
-  "quadconfig.quadz.entry.thrust_curve" : "Thrust Curve",
-  "quadconfig.quadz.entry.width" : "Width",
-  "quadconfig.quadz.entry.height" : "Height"
+  "config.quadz.velocity.miles_per_hour" : "Miles Per Hour"
 }

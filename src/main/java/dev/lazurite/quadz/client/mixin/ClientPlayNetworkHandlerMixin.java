@@ -1,6 +1,6 @@
 package dev.lazurite.quadz.client.mixin;
 
-import dev.lazurite.quadz.client.ClientTick;
+import dev.lazurite.quadz.client.util.ClientTick;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.SetCameraEntityS2CPacket;

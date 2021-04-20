@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.common;
+package dev.lazurite.quadz.common.util.tick;
 
 import com.jme3.math.Vector3f;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;

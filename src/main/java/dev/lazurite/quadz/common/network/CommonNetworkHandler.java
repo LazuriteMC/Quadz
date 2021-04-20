@@ -7,9 +7,8 @@ import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.Frequency;
-import dev.lazurite.quadz.common.util.PlayerStorage;
+import dev.lazurite.quadz.common.util.PlayerData;
 import dev.lazurite.quadz.common.util.input.InputFrame;
-import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -23,12 +22,6 @@ public class CommonNetworkHandler {
     public static void onQuadcopterSettingsReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
         int entityId = buf.readInt();
         int cameraAngle = buf.readInt();
-        float mass = buf.readFloat();
-        float dragCoefficient = buf.readFloat();
-        float thrust = buf.readFloat();
-        float thrustCurve = buf.readFloat();
-        float width = buf.readFloat();
-        float height = buf.readFloat();
         int band = buf.readInt();
         int channel = buf.readInt();
 
@@ -36,20 +29,8 @@ public class CommonNetworkHandler {
             Entity entity = player.getEntityWorld().getEntityById(entityId);
 
             if (entity instanceof QuadcopterEntity) {
-                QuadcopterEntity quadcopter = (QuadcopterEntity) entity;
-
-                quadcopter.setCameraAngle(cameraAngle);
-                quadcopter.setThrust(thrust);
-                quadcopter.setThrustCurve(thrustCurve);
-                quadcopter.setWidth(width);
-                quadcopter.setHeight(height);
-                quadcopter.calculateDimensions();
-                quadcopter.setFrequency(new Frequency((char) band, channel));
-
-                PhysicsThread.get(server).execute(() -> {
-                    quadcopter.getRigidBody().setMass(mass);
-                    quadcopter.getRigidBody().setDragCoefficient(dragCoefficient);
-                });
+                ((QuadcopterEntity) entity).setCameraAngle(cameraAngle);
+                ((QuadcopterEntity) entity).setFrequency(new Frequency((char) band, channel));
             }
         });
     }
@@ -59,8 +40,8 @@ public class CommonNetworkHandler {
         String callSign = buf.readString(32767);
 
         server.execute(() -> {
-            ((PlayerStorage) player).setFrequency(frequency);
-            ((PlayerStorage) player).setCallSign(callSign);
+            ((PlayerData) player).setFrequency(frequency);
+            ((PlayerData) player).setCallSign(callSign);
         });
     }
 

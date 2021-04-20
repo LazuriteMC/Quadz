@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.common.data.util;
+package dev.lazurite.quadz.client.resource;
 
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;

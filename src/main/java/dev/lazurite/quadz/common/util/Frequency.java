@@ -114,7 +114,7 @@ public class Frequency {
     }
 
     public static Frequency from(ServerPlayerEntity player) {
-        return ((PlayerStorage) player).getFrequency();
+        return ((PlayerData) player).getFrequency();
     }
 
     @Override

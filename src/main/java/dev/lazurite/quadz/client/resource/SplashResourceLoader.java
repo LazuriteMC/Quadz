@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.common.data.util;
+package dev.lazurite.quadz.client.resource;
 
 import dev.lazurite.quadz.Quadz;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;

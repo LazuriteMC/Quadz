@@ -3,7 +3,7 @@ package dev.lazurite.quadz.client.render;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.render.entity.QuadcopterEntityRenderer;
 import dev.lazurite.quadz.client.render.item.GogglesItemRenderer;
-import dev.lazurite.quadz.common.data.util.SplashResourceLoader;
+import dev.lazurite.quadz.client.resource.SplashResourceLoader;
 import dev.lazurite.quadz.common.data.util.TemplateResourceLoader;
 import dev.lazurite.quadz.common.item.GogglesItem;
 import net.fabricmc.api.EnvType;

@@ -1,6 +1,6 @@
 package dev.lazurite.quadz.common.util;
 
-public interface PlayerStorage {
+public interface PlayerData {
     void setFrequency(Frequency frequency);
     Frequency getFrequency();
 

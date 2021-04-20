@@ -2,7 +2,7 @@ package dev.lazurite.quadz.common.mixin.player;
 
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.Frequency;
-import dev.lazurite.quadz.common.util.PlayerStorage;
+import dev.lazurite.quadz.common.util.PlayerData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ServerPlayerEntity.class)
-public class ServerPlayerEntityMixin implements PlayerStorage {
+public class ServerPlayerEntityMixin implements PlayerData {
     @Unique private Frequency frequency;
     @Unique private String callSign;
 

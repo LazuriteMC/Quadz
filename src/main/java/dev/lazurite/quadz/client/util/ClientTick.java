@@ -1,6 +1,7 @@
-package dev.lazurite.quadz.client;
+package dev.lazurite.quadz.client.util;
 
 import dev.lazurite.quadz.common.state.Bindable;
+import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
@@ -33,19 +34,11 @@ public class ClientTick {
             }
 
             Bindable.get(client.player.getMainHandStack()).ifPresent(transmitter -> {
-                for (Entity entity : client.world.getEntities()) {
-                    if (entity instanceof QuadcopterEntity) {
-                        QuadcopterEntity quadcopter = (QuadcopterEntity) entity;
+                QuadcopterEntity quadcopter = QuadcopterState.getQuadcopterByBindId(client.world, client.player.getPos(), transmitter.getBindId(), (int) client.gameRenderer.getViewDistance());
 
-                        if (transmitter.isBoundTo(quadcopter)) {
-                            /* Get a new InputFrame from InputTick. */
-                            quadcopter.getInputFrame().set(InputTick.getInstance().getInputFrame());
-
-                            /* Send that InputFrame to the server. */
-                            quadcopter.sendInputFrame();
-                            break;
-                        }
-                    }
+                if (quadcopter != null) {
+                    quadcopter.getInputFrame().set(InputTick.getInstance().getInputFrame());
+                    quadcopter.sendInputFrame();
                 }
             });
         }
