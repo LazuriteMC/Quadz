@@ -181,8 +181,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 			Vector3f unit = Matrix4fAccess.from(mat).matrixToVector();
 
 			/* Calculate basic thrust */
-			Vector3f thrust = new Vector3f().set(unit)
-					.multLocal((float) (getThrust() * (Math.pow(frame.getThrottle(), getThrustCurve()))));
+			Vector3f thrust = new Vector3f().set(unit).multLocal((float) (getThrust() * (Math.pow(frame.getThrottle(), getThrustCurve()))));
 
 			/* Calculate thrust from yaw spin */
 			Vector3f yawThrust = new Vector3f().set(unit).multLocal(Math.abs(frame.calculateYaw(0.05f) * getThrust() * 0.002f));
@@ -309,7 +308,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 			}
 		} else {
 			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
-				if (!InputTick.controllerExists()) {
+				if (!InputTick.controllerExists() && Config.getInstance().controllerId != -1) {
 					ControllerNotFoundToast.add();
 				}
 			} else if (!stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM) && !getTemplate().isEmpty()) {

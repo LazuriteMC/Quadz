@@ -33,7 +33,7 @@ public class GameRendererMixin {
 
 	@Inject(method = "renderWorld", at = @At("HEAD"))
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo info) {
-		/* Rotate the entire view to match the view of the quadcopter. */
+		/* Rotate the entire view to match the view of the quadcopter */
 		if (camera.getFocusedEntity() instanceof QuadcopterEntity) {
 			QuadcopterEntity quadcopter = (QuadcopterEntity) camera.getFocusedEntity();
 
@@ -58,7 +58,7 @@ public class GameRendererMixin {
 			newMat.transpose();
 			matrix.peek().getModel().multiply(newMat);
 
-		/* Rotate the player's yaw and pitch to follow the quadcopter in the world. */
+		/* Rotate the player's yaw and pitch to follow the quadcopter */
 		} else if (Config.getInstance().followLOS) {
 			Bindable.get(client.player.getMainHandStack()).ifPresent(transmitter -> {
 				for (Entity entity : client.world.getEntities()) {

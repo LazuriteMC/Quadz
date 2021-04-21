@@ -1,6 +1,7 @@
-package dev.lazurite.quadz.client.render.entity;
+package dev.lazurite.quadz.client.render.renderer;
 
 import com.jme3.math.Quaternion;
+import dev.lazurite.quadz.client.render.model.QuadcopterModel;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;

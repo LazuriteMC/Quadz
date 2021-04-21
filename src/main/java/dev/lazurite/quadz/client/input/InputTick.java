@@ -3,11 +3,13 @@ package dev.lazurite.quadz.client.input;
 import com.google.common.collect.Maps;
 import dev.lazurite.quadz.api.event.JoystickEvents;
 import dev.lazurite.quadz.client.Config;
+import dev.lazurite.quadz.client.util.ClientTick;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.client.input.keybind.ControlKeybinds;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.math.MathHelper;
 
 import java.nio.FloatBuffer;
 import java.util.Map;
@@ -42,24 +44,16 @@ public final class InputTick {
                 if (glfwJoystickPresent(i)) {
                     joysticks.put(i, getJoystickName(i));
 
-                    if (!lastJoysticks.containsKey(i)) {
-                        if (loaded) {
-                            JoystickEvents.JOYSTICK_CONNECT.invoker().onConnect(i, getJoystickName(i));
-                        }
+                    if (!lastJoysticks.containsKey(i) && loaded) {
+                        JoystickEvents.JOYSTICK_CONNECT.invoker().onConnect(i, getJoystickName(i));
                     }
-                } else if (lastJoysticks.containsKey(i)) {
-                    if (loaded) {
-                        JoystickEvents.JOYSTICK_DISCONNECT.invoker().onDisconnect(i, lastJoysticks.get(i));
-                    }
+                } else if (lastJoysticks.containsKey(i) && loaded) {
+                    JoystickEvents.JOYSTICK_DISCONNECT.invoker().onDisconnect(i, lastJoysticks.get(i));
                 }
             }
 
             next = System.currentTimeMillis() + 500;
             loaded = true;
-        }
-
-        if (getJoysticks().isEmpty()) {
-            Config.getInstance().controllerId = -1;
         }
 
         if (controllerExists()) {
@@ -114,20 +108,24 @@ public final class InputTick {
                     frame.setRoll(0);
                 }
             }
+        } else {
+            Config.getInstance().controllerId = -1;
         }
     }
 
-    public void keyboardTick(MinecraftClient client) {
-        if (Config.getInstance().controllerId == -1) { // keyboard
+    public void tickKeyboard(MinecraftClient client) {
+        if (Config.getInstance().controllerId == -1) {
+            ClientTick.isUsingKeyboard = true;
+
             float throttle = getInputFrame().getThrottle();
             float pitch = 0.0f;
-            float yaw = 0.0f;
             float roll = 0.0f;
+            float yaw = 0.0f;
 
             if (ControlKeybinds.pitchForward.isPressed()) {
                 pitch = 1.0f;
             } else if (ControlKeybinds.pitchBackward.isPressed()) {
-                pitch = -1.0f;
+                pitch -= 1.0f;
             }
 
             if (ControlKeybinds.rollLeft.isPressed()) {
@@ -143,13 +141,12 @@ public final class InputTick {
             }
 
             if (client.options.keyForward.isPressed()) {
-                throttle += 0.05f;
+                throttle += 0.025f;
             } else if (client.options.keyBack.isPressed()) {
-                throttle -= 0.05f;
+                throttle -= 0.025f;
             }
 
-            frame.set(
-                    throttle, pitch, yaw, roll,
+            frame.set(MathHelper.clamp(throttle, 0.0f, 1.0f), pitch, yaw, roll,
                     Config.getInstance().rate,
                     Config.getInstance().superRate,
                     Config.getInstance().expo,
@@ -177,7 +174,6 @@ public final class InputTick {
     }
 
     public static boolean controllerExists() {
-        return Config.getInstance().controllerId != -1 &&
-                glfwJoystickPresent(Config.getInstance().controllerId);
+        return Config.getInstance().controllerId != -1 && glfwJoystickPresent(Config.getInstance().controllerId);
     }
 }

@@ -45,7 +45,7 @@ public final class Config {
     @Setting @Setting.Constrain.Range(min = 0.0f) public float rate;
     @Setting @Setting.Constrain.Range(min = 0.0f) public float superRate;
     @Setting @Setting.Constrain.Range(min = 0.0f) public float expo;
-    @Setting @Setting.Constrain.Range(min = 0, max = 60) public int maxAngle;
+    @Setting @Setting.Constrain.Range(min = 10, max = 45) public int maxAngle;
     @Setting public Mode mode;
 
     @Setting public boolean followLOS;

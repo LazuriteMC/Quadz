@@ -29,13 +29,9 @@ public class QuadConfigKeybind {
                 if (client.getCameraEntity() instanceof QuadcopterEntity) {
                     QuadcopterScreen.show((QuadcopterEntity) client.getCameraEntity());
                 } else {
-                    Bindable.get(client.player.getMainHandStack()).ifPresent(bindable -> {
-                        QuadcopterEntity quadcopter = QuadcopterState.getQuadcopterByBindId(client.world, client.player.getPos(), bindable.getBindId(), (int) client.gameRenderer.getViewDistance());
-
-                        if (quadcopter != null) {
-                            QuadcopterScreen.show(quadcopter);
-                        }
-                    });
+                    Bindable.get(client.player.getMainHandStack()).ifPresent(bindable -> QuadcopterState.getQuadcopterByBindId(
+                                client.world, client.player.getPos(), bindable.getBindId(), (int) client.gameRenderer.getViewDistance())
+                                .ifPresent(QuadcopterScreen::show));
                 }
             }
         });

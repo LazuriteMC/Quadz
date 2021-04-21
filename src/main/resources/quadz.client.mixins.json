@@ -5,12 +5,12 @@
   "compatibilityLevel": "JAVA_8",
   "client": [
     "ClientPlayNetworkHandlerMixin",
-    "MinecraftClientMixin",
+    "input.KeyboardInputMixin",
     "input.MouseMixin",
+    "MinecraftClientMixin",
     "render.CameraMixin",
     "render.GameRendererMixin",
     "render.InGameHudMixin",
-    "render.ItemRendererMixin",
     "render.MatrixRotationMixin",
     "resource.TextureManagerMixin",
     "resource.TranslationStorageMixin"

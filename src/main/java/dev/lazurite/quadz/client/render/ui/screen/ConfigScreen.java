@@ -8,7 +8,10 @@ import dev.lazurite.quadz.common.util.Frequency;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.gui.ClothConfigScreen;
+import me.shedaniel.clothconfig2.gui.entries.EnumListEntry;
 import me.shedaniel.clothconfig2.gui.entries.IntegerSliderEntry;
+import me.shedaniel.clothconfig2.gui.entries.SelectionListEntry;
+import me.shedaniel.clothconfig2.impl.builders.SelectorBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -17,6 +20,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Class for housing the methods which returns a new config screen made using Cloth Config.
@@ -125,23 +129,31 @@ public class ConfigScreen {
 
         // region controller preferences
 
+        SelectorBuilder controllerSelector = builder.entryBuilder().startSelector(
+                new TranslatableText("config.quadz.entry.controller_id"), joysticks.keySet().toArray(), Config.getInstance().controllerId)
+                .setDefaultValue(Config.getInstance().controllerId)
+                .setSaveConsumer(value -> Config.getInstance().controllerId = (int) value);
+
+        // hyper concern and gross
+        AtomicReference<SelectionListEntry> controllerSelectorBuilt = new AtomicReference<>();
+
         IntegerSliderEntry maxAngleEntry = builder.entryBuilder().startIntSlider(
-                new TranslatableText("config.quadz.entry.max_angle"), Config.getInstance().maxAngle, 0, 60)
+                new TranslatableText("config.quadz.entry.max_angle"), Config.getInstance().maxAngle, 10, 45)
                 .setSaveConsumer(value -> Config.getInstance().maxAngle = value)
                 .setDefaultValue(Config.getInstance().maxAngle)
                 .build();
 
-        controllerPreferences.addEntry(builder.entryBuilder().startEnumSelector(
+        EnumListEntry modeSelector = builder.entryBuilder().startEnumSelector(
                 new TranslatableText("config.quadz.entry.mode"), Mode.class, Config.getInstance().mode)
                 .setEnumNameProvider(value -> {
-                    maxAngleEntry.setEditable(value == Mode.ANGLE);
+                    maxAngleEntry.setEditable(value == Mode.ANGLE || (int) controllerSelectorBuilt.get().getValue() == -1);
                     return new TranslatableText(((Mode) value).getTranslation());
                 })
                 .setSaveConsumer(value -> Config.getInstance().mode = value)
                 .setDefaultValue(Config.getInstance().mode)
-                .build());
+                .build();
 
-        maxAngleEntry.setEditable(Config.getInstance().mode == Mode.ANGLE);
+        controllerPreferences.addEntry(modeSelector);
         controllerPreferences.addEntry(maxAngleEntry);
 
         controllerPreferences.addEntry(builder.entryBuilder().startFloatField(
@@ -172,22 +184,22 @@ public class ConfigScreen {
 
         // region controller setup
 
-        controllerSetup.addEntry(builder.entryBuilder().startSelector(
-                new TranslatableText("config.quadz.entry.controller_id"), joysticks.keySet().toArray(), Config.getInstance().controllerId)
-                .setDefaultValue(Config.getInstance().controllerId)
-                .setNameProvider(value -> {
-                    String name = joysticks.get((int) value);
+        // actual concern
+        controllerSelectorBuilt.set(controllerSelector.setNameProvider(value -> {
+            String name = joysticks.get((int) value);
+            modeSelector.setEditable((int) value != -1);
+            maxAngleEntry.setEditable((int) value == -1 || modeSelector.getValue() == Mode.ANGLE);
 
-                    if ((int) value == -1) {
-                        return new TranslatableText("config.quadz.entry.controller_id.keyboard");
-                    } else if (name.length() > 15) {
-                        return new LiteralText(name.substring(0, 15) + "...");
-                    } else {
-                        return new LiteralText(name);
-                    }
-                })
-                .setSaveConsumer(value -> Config.getInstance().controllerId = (int) value)
-                .build());
+            if ((int) value == -1) {
+                return new TranslatableText("config.quadz.entry.controller_id.keyboard");
+            } else if (name.length() > 15) {
+                return new LiteralText(name.substring(0, 15) + "...");
+            } else {
+                return new LiteralText(name);
+            }
+        }).build());
+
+        controllerSetup.addEntry(controllerSelectorBuilt.get());
 
         controllerSetup.addEntry(builder.entryBuilder().startIntField(
                 new TranslatableText("config.quadz.entry.pitch_axis"), Config.getInstance().pitch)

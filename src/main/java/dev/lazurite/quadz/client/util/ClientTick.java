@@ -1,14 +1,18 @@
 package dev.lazurite.quadz.client.util;
 
+import dev.lazurite.quadz.client.Config;
+import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.QuadcopterState;
+import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.client.input.InputTick;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
+
+import java.util.Optional;
 
 /**
  * This class is responsible for transmitting the player's controller input
@@ -21,6 +25,7 @@ import net.minecraft.entity.Entity;
 @Environment(EnvType.CLIENT)
 public class ClientTick {
     public static int desiredCameraEntity = -1;
+    public static boolean isUsingKeyboard = false;
 
     public static void tick(MinecraftClient client) {
         if (client.player != null && client.world != null && !client.isPaused()) {
@@ -33,12 +38,23 @@ public class ClientTick {
                 }
             }
 
-            Bindable.get(client.player.getMainHandStack()).ifPresent(transmitter -> {
-                QuadcopterEntity quadcopter = QuadcopterState.getQuadcopterByBindId(client.world, client.player.getPos(), transmitter.getBindId(), (int) client.gameRenderer.getViewDistance());
+            isUsingKeyboard = false;
 
-                if (quadcopter != null) {
-                    quadcopter.getInputFrame().set(InputTick.getInstance().getInputFrame());
-                    quadcopter.sendInputFrame();
+            Bindable.get(client.player.getMainHandStack()).ifPresent(transmitter -> {
+                Optional<QuadcopterEntity> optionalQuad = QuadcopterState.getQuadcopterByBindId(client.world, client.player.getPos(), transmitter.getBindId(), (int) client.gameRenderer.getViewDistance());
+
+                if (client.getCameraEntity() instanceof QuadcopterEntity) {
+                    InputTick.getInstance().tickKeyboard(client);
+                    QuadcopterEntity entity = (QuadcopterEntity) client.getCameraEntity();
+                    entity.getInputFrame().set(InputTick.getInstance().getInputFrame());
+                    entity.sendInputFrame();
+                } else if (optionalQuad.isPresent()) {
+                    if (Config.getInstance().followLOS) {
+                        InputTick.getInstance().tickKeyboard(client);
+                    }
+
+                    optionalQuad.get().getInputFrame().set(InputTick.getInstance().getInputFrame());
+                    optionalQuad.get().sendInputFrame();
                 }
             });
         }

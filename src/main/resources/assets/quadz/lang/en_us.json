@@ -41,6 +41,7 @@
   "config.quadz.category.setup" : "Controller Setup",
   "config.quadz.category.stick_feel" : "Stick Preferences",
   "config.quadz.category.camera" : "Camera Preferences",
+  "config.quadz.category.osd" : "OSD Preferences",
 
   "config.quadz.entry.controller_id" : "Controller ID",
   "config.quadz.entry.controller_id.keyboard" : "Keyboard",

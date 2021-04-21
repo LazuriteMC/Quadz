@@ -16,29 +16,25 @@ import java.util.function.Consumer;
 
 public class KeybindNetworkHandler {
     public static void onNoClipKey(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-        server.execute(() -> {
-            Bindable.get(player.getMainHandStack()).ifPresent(transmitter -> {
-                QuadcopterEntity quadcopter = QuadcopterState.getQuadcopterByBindId(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance());
+        server.execute(() ->
+            Bindable.get(player.getMainHandStack()).flatMap(transmitter -> QuadcopterState.getQuadcopterByBindId(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance())).ifPresent(quadcopter -> {
+                boolean lastNoClip = quadcopter.getRigidBody().shouldDoTerrainLoading();
+                quadcopter.getRigidBody().setDoTerrainLoading(!lastNoClip);
+                quadcopter.getRigidBody().setDoEntityLoading(!lastNoClip);
 
-                if (quadcopter != null) {
-                    boolean lastNoClip = quadcopter.getRigidBody().shouldDoTerrainLoading();
-                    quadcopter.getRigidBody().setDoTerrainLoading(!lastNoClip);
-                    quadcopter.getRigidBody().setDoEntityLoading(!lastNoClip);
-
-                    if (lastNoClip) {
-                        player.sendMessage(new TranslatableText("message.quadz.noclip_on"), true);
-                    } else {
-                        player.sendMessage(new TranslatableText("message.quadz.noclip_off"), true);
-                    }
+                if (lastNoClip) {
+                    player.sendMessage(new TranslatableText("message.quadz.noclip_on"), true);
+                } else {
+                    player.sendMessage(new TranslatableText("message.quadz.noclip_off"), true);
                 }
-            });
-        });
+            })
+        );
     }
 
     public static void onChangeCameraAngleKey(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
         int amount = buf.readInt();
 
-        server.execute(() -> {
+        server.execute(() ->
             Bindable.get(player.getMainHandStack()).ifPresent(transmitter -> {
                 if (player.getCameraEntity() instanceof QuadcopterEntity) {
                     QuadcopterEntity quadcopter = (QuadcopterEntity) player.getCameraEntity();
@@ -47,14 +43,11 @@ public class KeybindNetworkHandler {
                         quadcopter.setCameraAngle(quadcopter.getCameraAngle() + amount);
                     }
                 } else {
-                    QuadcopterEntity quadcopter = QuadcopterState.getQuadcopterByBindId(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance());
-
-                    if (quadcopter != null) {
-                        quadcopter.setCameraAngle(quadcopter.getCameraAngle() + amount);
-                    }
+                    QuadcopterState.getQuadcopterByBindId(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance())
+                            .ifPresent(quadcopter -> quadcopter.setCameraAngle(quadcopter.getCameraAngle() + amount));
                 }
-            });
-        });
+            })
+        );
     }
 
     public static void onPowerGogglesKey(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
@@ -84,8 +77,7 @@ public class KeybindNetworkHandler {
             };
 
             QuadcopterState.fromStack(hand).ifPresent(changeGodMode);
-            Bindable.get(hand).ifPresent(transmitter ->
-                    changeGodMode.accept(QuadcopterState.getQuadcopterByBindId(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance())));
+            Bindable.get(hand).flatMap(transmitter -> QuadcopterState.getQuadcopterByBindId(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance())).ifPresent(changeGodMode);
         });
     }
 }

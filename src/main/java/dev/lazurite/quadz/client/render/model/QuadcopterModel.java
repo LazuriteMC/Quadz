@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.client.render.entity;
+package dev.lazurite.quadz.client.render.model;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;

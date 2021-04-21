@@ -1,7 +1,6 @@
 package dev.lazurite.quadz.common.state;
 
 import dev.lazurite.quadz.common.item.QuadcopterItem;
-import dev.lazurite.quadz.common.mixin.player.ServerPlayerEntityMixin;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.state.item.StackQuadcopterState;
 import dev.lazurite.quadz.common.util.Frequency;
@@ -20,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * This interface represents the state of any given quadcopter
@@ -37,12 +35,12 @@ public interface QuadcopterState extends Bindable {
      * @param range the maximum range
      * @return the bound {@link QuadcopterEntity} (null if not found)
      */
-    @Nullable static QuadcopterEntity getQuadcopterByBindId(World world, Vec3d origin, int bindId, int range) {
-        return world.getClosestEntity(
+    static Optional<QuadcopterEntity> getQuadcopterByBindId(World world, Vec3d origin, int bindId, int range) {
+        return Optional.ofNullable(world.getClosestEntity(
                 QuadcopterEntity.class,
                 TargetPredicate.DEFAULT.setPredicate(quad -> ((QuadcopterEntity) quad).isBoundTo(bindId)),
                 null, origin.x, origin.y, origin.z,
-                new Box(new BlockPos(origin)).expand(range));
+                new Box(new BlockPos(origin)).expand(range)));
     }
 
     /**

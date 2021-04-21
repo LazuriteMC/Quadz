@@ -1,5 +1,6 @@
-package dev.lazurite.quadz.client.render.item;
+package dev.lazurite.quadz.client.render.renderer;
 
+import dev.lazurite.quadz.client.render.model.GogglesItemModel;
 import dev.lazurite.quadz.common.item.GogglesItem;
 import software.bernie.geckolib3.renderer.geo.GeoArmorRenderer;
 

@@ -3,7 +3,6 @@ package dev.lazurite.quadz;
 import dev.lazurite.quadz.api.event.JoystickEvents;
 import dev.lazurite.quadz.client.network.ClientNetworkHandler;
 import dev.lazurite.quadz.client.Config;
-import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.keybind.*;
 import dev.lazurite.quadz.client.util.ClientTick;
 import dev.lazurite.quadz.client.render.QuadzRendering;
@@ -124,7 +123,6 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 		/* Register Client Tick Events */
 		ClientTickEvents.START_CLIENT_TICK.register(ClientTick::tick);
-		ClientTickEvents.START_CLIENT_TICK.register(InputTick.getInstance()::keyboardTick);
 
 		BetterClientLifecycleEvents.DISCONNECT.register((client, world) -> DataDriver.clearRemoteTemplates());
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {

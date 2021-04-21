@@ -1,8 +1,9 @@
 package dev.lazurite.quadz.client.render;
 
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.client.render.entity.QuadcopterEntityRenderer;
-import dev.lazurite.quadz.client.render.item.GogglesItemRenderer;
+import dev.lazurite.quadz.client.render.model.QuadcopterItemModel;
+import dev.lazurite.quadz.client.render.renderer.QuadcopterEntityRenderer;
+import dev.lazurite.quadz.client.render.renderer.GogglesItemRenderer;
 import dev.lazurite.quadz.client.resource.SplashResourceLoader;
 import dev.lazurite.quadz.common.data.util.TemplateResourceLoader;
 import dev.lazurite.quadz.common.item.GogglesItem;
@@ -12,6 +13,7 @@ import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.renderer.geo.GeoArmorRenderer;
+import software.bernie.geckolib3.renderer.geo.GeoItemRenderer;
 
 @Environment(EnvType.CLIENT)
 public class QuadzRendering {
@@ -21,6 +23,7 @@ public class QuadzRendering {
     public static void initialize() {
         GeckoLib.initialize();
         GeoArmorRenderer.registerArmorRenderer(GogglesItem.class, new GogglesItemRenderer());
+        GeoItemRenderer.registerItemRenderer(Quadz.QUADCOPTER_ITEM, new GeoItemRenderer<>(new QuadcopterItemModel()));
         EntityRendererRegistry.INSTANCE.register(Quadz.QUADCOPTER_ENTITY, (entityRenderDispatcher, context) -> new QuadcopterEntityRenderer(entityRenderDispatcher));
     }
 

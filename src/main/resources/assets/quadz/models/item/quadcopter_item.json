@@ -1,6 +1,74 @@
 {
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "quadz:item/quadcopter_item"
+  "credit": "Made with Blockbench",
+  "parent": "builtin/entity",
+  "texture_size": [
+    32,
+    32
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "translation": [
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        0.9,
+        0.9,
+        0.9
+      ]
+    },
+    "thirdperson_lefthand": {
+      "translation": [
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        0.9,
+        0.9,
+        0.9
+      ]
+    },
+    "firstperson_righthand": {
+      "translation": [
+        0,
+        0.5,
+        1.5
+      ]
+    },
+    "firstperson_lefthand": {
+      "translation": [
+        0,
+        0.5,
+        1.5
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        -2,
+        0
+      ]
+    },
+    "gui": {
+      "rotation": [
+        33.25,
+        -25.5,
+        0
+      ],
+      "translation": [
+        0.25,
+        -1,
+        0
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        -90,
+        0,
+        0
+      ]
+    }
   }
 }

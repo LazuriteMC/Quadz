@@ -16,10 +16,18 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.Random;
 
-public class QuadcopterItem extends Item {
+public class QuadcopterItem extends Item implements IAnimatable {
+    private final AnimationFactory factory = new AnimationFactory(this);
+
     public QuadcopterItem(Settings settings) {
         super(settings);
     }
@@ -53,5 +61,19 @@ public class QuadcopterItem extends Item {
         }
 
         return TypedActionResult.success(itemStack);
+    }
+
+    private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event) {
+        return PlayState.STOP;
+    }
+
+    @Override
+    public void registerControllers(AnimationData animationData) {
+        animationData.addAnimationController(new AnimationController<>(this, "quadcopter_controller", 0, this::predicate));
+    }
+
+    @Override
+    public AnimationFactory getFactory() {
+        return this.factory;
     }
 }
