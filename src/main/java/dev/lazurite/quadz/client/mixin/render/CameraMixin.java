@@ -37,9 +37,11 @@ public abstract class CameraMixin {
             QuadcopterEntity quadcopter = (QuadcopterEntity) focusedEntity;
 
             if (quadcopter.getRigidBody() != null && quadcopter.getRigidBody().getFrame() != null) {
+                Template template = DataDriver.getTemplate(quadcopter.getTemplate());
+
                 Vector3f location = quadcopter.getPhysicsLocation(new Vector3f(), tickDelta);
                 Quaternion rotation = quadcopter.getPhysicsRotation(new Quaternion(), tickDelta);
-                Template template = DataDriver.getTemplate(quadcopter.getTemplate());
+
                 Vector3f point = new Vector3f(0.0f, template.getSettings().getCameraY(), template.getSettings().getCameraX());
                 net.minecraft.client.util.math.Vector3f vec = VectorHelper.bulletToMinecraft(point);
 
@@ -57,28 +59,49 @@ public abstract class CameraMixin {
                                 Config.getInstance().thirdPersonOffsetY,
                                 -Config.getInstance().thirdPersonOffsetX)));
                     }
+                }
 
-                    vec.rotate(QuaternionHelper.bulletToMinecraft(rotation));
-                    vec.add(VectorHelper.bulletToMinecraft(location));
-                    setPos(clip(VectorHelper.vector3fToVec3d(location), VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec))));
+                vec.rotate(QuaternionHelper.bulletToMinecraft(rotation));
+                vec.add(VectorHelper.bulletToMinecraft(location));
+
+                Vec3d entityPos = VectorHelper.vector3fToVec3d(location);
+                Vec3d targetPos = VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec));
+
+                if (thirdPerson) {
+                    double percent = clipNormalDistance(entityPos, targetPos);
+                    setPos(targetPos.subtract(targetPos.subtract(entityPos).multiply(1 - percent)));
                 } else {
-//                QuaternionHelper.rotateX(rotation, -quadcopter.getCameraAngle());
-                    vec.rotate(QuaternionHelper.bulletToMinecraft(rotation));
-                    vec.add(VectorHelper.bulletToMinecraft(location));
-                    setPos(clip(VectorHelper.vector3fToVec3d(location), VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec))));
-//                setPos(VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec)));
+                    setPos(targetPos);
                 }
             }
         }
     }
 
-    public Vec3d clip(Vec3d quadcopter, Vec3d target) {
-        HitResult hitResult = this.area.raycast(new RaycastContext(quadcopter, target, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, this.focusedEntity));
+    public double clipNormalDistance(Vec3d entityPos, Vec3d targetPos) {
+        double length = entityPos.distanceTo(targetPos);
+        double percent = 1.0; // 0.0 - 1.0
 
-        if (hitResult.getType() != HitResult.Type.MISS) {
-            target = hitResult.getPos().subtract(target.subtract(quadcopter));
+        for (int i = 0; i < 8; i++) {
+            float f = (i & 1) * 2 - 1;
+            float g = (i >> 1 & 1) * 2 - 1;
+            float h = (i >> 2 & 1) * 2 - 1;
+
+            double scale = 0.1;
+            f *= scale;
+            g *= scale;
+            h *= scale;
+            Vec3d adjustedPos = targetPos.add(f, g, h);
+            HitResult hitResult = this.area.raycast(new RaycastContext(entityPos.add(f + h, g, h), adjustedPos, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, this.focusedEntity));
+
+            if (hitResult.getType() != HitResult.Type.MISS) {
+                double adjustedPercent = entityPos.distanceTo(hitResult.getPos()) / length;
+
+                if (adjustedPercent < percent) {
+                    percent = adjustedPercent;
+                }
+            }
         }
 
-        return target;
+        return percent;
     }
 }

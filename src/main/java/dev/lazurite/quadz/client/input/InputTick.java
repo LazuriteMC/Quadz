@@ -113,25 +113,43 @@ public final class InputTick {
         }
     }
 
+    private final float rate = 0.3f;
+    private float pitch;
+    private float roll;
+
     public void tickKeyboard(MinecraftClient client) {
         if (Config.getInstance().controllerId == -1) {
             ClientTick.isUsingKeyboard = true;
 
             float throttle = getInputFrame().getThrottle();
-            float pitch = 0.0f;
-            float roll = 0.0f;
             float yaw = 0.0f;
 
             if (ControlKeybinds.pitchForward.isPressed()) {
-                pitch = 1.0f;
+                pitch += rate;
             } else if (ControlKeybinds.pitchBackward.isPressed()) {
-                pitch -= 1.0f;
+                pitch -= rate;
+            } else {
+                if (pitch > rate / 2.0f) {
+                    pitch -= rate;
+                } else if (pitch < rate / -2.0f) {
+                    pitch += rate;
+                } else {
+                    pitch = 0.0f;
+                }
             }
 
             if (ControlKeybinds.rollLeft.isPressed()) {
-                roll = -1.0f;
+                roll -= rate;
             } else if (ControlKeybinds.rollRight.isPressed()) {
-                roll = 1.0f;
+                roll += rate;
+            } else {
+                if (roll > rate / 2.0f) {
+                    roll -= rate;
+                } else if (roll < rate / -2.0f) {
+                    roll += rate;
+                } else {
+                    roll = 0.0f;
+                }
             }
 
             if (client.options.keyRight.isPressed()) {
@@ -146,7 +164,11 @@ public final class InputTick {
                 throttle -= 0.025f;
             }
 
-            frame.set(MathHelper.clamp(throttle, 0.0f, 1.0f), pitch, yaw, roll,
+            throttle = MathHelper.clamp(throttle, 0.0f, 1.0f);
+            pitch = MathHelper.clamp(pitch, -1.0f, 1.0f);
+            roll = MathHelper.clamp(roll, -1.0f, 1.0f);
+
+            frame.set(throttle, pitch, yaw, roll,
                     Config.getInstance().rate,
                     Config.getInstance().superRate,
                     Config.getInstance().expo,
