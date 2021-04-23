@@ -7,16 +7,14 @@ import dev.lazurite.quadz.client.input.keybind.*;
 import dev.lazurite.quadz.client.util.ClientTick;
 import dev.lazurite.quadz.client.render.QuadzRendering;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerConnectedToast;
-import dev.lazurite.quadz.common.util.tick.QuadSaver;
 import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.network.CommonNetworkHandler;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
-import dev.lazurite.quadz.common.util.tick.ServerTick;
+import dev.lazurite.quadz.common.util.ServerTick;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
 import dev.lazurite.quadz.common.network.KeybindNetworkHandler;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.api.event.PhysicsSpaceEvents;
 import dev.lazurite.rayon.core.impl.util.event.BetterClientLifecycleEvents;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
@@ -80,11 +78,12 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 		DataDriver.initialize();
 
-		PhysicsSpaceEvents.STEP.register(QuadSaver::step);
+		/* Set up events */
 		ServerTickEvents.START_SERVER_TICK.register(ServerTick::tick);
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
 			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize())));
 
+		/* Set up networking events */
 		ServerPlayNetworking.registerGlobalReceiver(QUADCOPTER_SETTINGS_C2S, CommonNetworkHandler::onQuadcopterSettingsReceived);
 		ServerPlayNetworking.registerGlobalReceiver(PLAYER_DATA_C2S, CommonNetworkHandler::onPlayerDataReceived);
 		ServerPlayNetworking.registerGlobalReceiver(TEMPLATE, CommonNetworkHandler::onTemplateReceived);
@@ -124,6 +123,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		/* Register Client Tick Events */
 		ClientTickEvents.START_CLIENT_TICK.register(ClientTick::tick);
 
+		/* Set up events */
 		BetterClientLifecycleEvents.DISCONNECT.register((client, world) -> DataDriver.clearRemoteTemplates());
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			Config.getInstance().sendPlayerData();

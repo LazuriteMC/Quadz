@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.common.util.tick;
+package dev.lazurite.quadz.common.util;
 
 import com.google.common.collect.Lists;
 import dev.lazurite.quadz.Quadz;
