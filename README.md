@@ -28,12 +28,3 @@ In order to use this mod, you'll have to download a few other things as well:
 The following dependencies allow you to configure Quadz using its config screen.
 * [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config)
 * [Mod Menu](https://www.curseforge.com/minecraft/mc-mods/modmenu)
-
-### Special Thanks
-Quadz wouldn't be possible without the following mods and libs:
-* [FabricMC/fabric](https://github.com/FabricMC/fabric)
-* [FabLabsMc/Fiber](https://github.com/FabLabsMC/fiber)
-* [shedaniel/Cloth-Config](https://github.com/shedaniel/cloth-config)
-* [TerraformersMC/ModMenu](https://github.com/TerraformersMC/ModMenu)
-* [bernie-g/geckolib](https://github.com/bernie-g/geckolib)
-* [LazuriteMC/Rayon](https://github.com/LazuriteMC/Rayon)

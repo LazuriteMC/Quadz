@@ -63,13 +63,12 @@ public abstract class CameraMixin {
 
                 vec.rotate(QuaternionHelper.bulletToMinecraft(rotation));
                 vec.add(VectorHelper.bulletToMinecraft(location));
-
                 Vec3d entityPos = VectorHelper.vector3fToVec3d(location);
                 Vec3d targetPos = VectorHelper.vector3fToVec3d(VectorHelper.minecraftToBullet(vec));
 
-                if (thirdPerson) {
+                if (thirdPerson && quadcopter.getRigidBody().shouldDoTerrainLoading()) {
                     double percent = clipNormalDistance(entityPos, targetPos);
-                    setPos(targetPos.subtract(targetPos.subtract(entityPos).multiply(1 - percent)));
+                    setPos(entityPos.add(targetPos.subtract(entityPos).multiply(percent)));
                 } else {
                     setPos(targetPos);
                 }
@@ -81,15 +80,11 @@ public abstract class CameraMixin {
         double length = entityPos.distanceTo(targetPos);
         double percent = 1.0; // 0.0 - 1.0
 
-        for (int i = 0; i < 8; i++) {
-            float f = (i & 1) * 2 - 1;
-            float g = (i >> 1 & 1) * 2 - 1;
-            float h = (i >> 2 & 1) * 2 - 1;
+        for (int i = 0; i < 8; ++i) {
+            float f = 0.05f * ((i & 1) * 2 - 1);
+            float g = 0.05f * ((i >> 1 & 1) * 2 - 1);
+            float h = 0.05f * ((i >> 2 & 1) * 2 - 1);
 
-            double scale = 0.1;
-            f *= scale;
-            g *= scale;
-            h *= scale;
             Vec3d adjustedPos = targetPos.add(f, g, h);
             HitResult hitResult = this.area.raycast(new RaycastContext(entityPos.add(f + h, g, h), adjustedPos, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, this.focusedEntity));
 

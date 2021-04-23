@@ -7,10 +7,7 @@ import dev.lazurite.quadz.client.render.ui.osd.OnScreenDisplay;
 import dev.lazurite.quadz.common.util.Frequency;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
-import me.shedaniel.clothconfig2.gui.ClothConfigScreen;
-import me.shedaniel.clothconfig2.gui.entries.EnumListEntry;
-import me.shedaniel.clothconfig2.gui.entries.IntegerSliderEntry;
-import me.shedaniel.clothconfig2.gui.entries.SelectionListEntry;
+import me.shedaniel.clothconfig2.gui.entries.*;
 import me.shedaniel.clothconfig2.impl.builders.SelectorBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -31,15 +28,8 @@ public class ConfigScreen {
     public static Screen create(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setTitle(new TranslatableText("config.quadz.title"))
-                .setSavingRunnable(() -> {
-                    Screen screen = MinecraftClient.getInstance().currentScreen;
-
-                    if (screen instanceof ClothConfigScreen && screen.getTitle().toString().equals("config.quadz.title")) {
-                        Config.getInstance().lastSelectedCategory = ((ClothConfigScreen) screen).getSelectedCategory().toString();
-                    }
-
-                    Config.getInstance().save();
-                }).setParentScreen(parent);
+                .setSavingRunnable(Config.getInstance()::save)
+                .setParentScreen(parent);
 
         ConfigCategory controllerSetup = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.setup"));
         ConfigCategory controllerPreferences = builder.getOrCreateCategory(new TranslatableText("config.quadz.category.stick_feel"));
@@ -184,11 +174,74 @@ public class ConfigScreen {
 
         // region controller setup
 
-        // actual concern
+        IntegerListEntry pitchEntry = builder.entryBuilder().startIntField(
+                new TranslatableText("config.quadz.entry.pitch_axis"), Config.getInstance().pitch)
+                .setDefaultValue(Config.getInstance().pitch)
+                .setSaveConsumer(value -> Config.getInstance().pitch = value)
+                .setMin(0).build();
+
+        IntegerListEntry yawEntry = builder.entryBuilder().startIntField(
+                new TranslatableText("config.quadz.entry.yaw_axis"), Config.getInstance().yaw)
+                .setDefaultValue(Config.getInstance().yaw)
+                .setSaveConsumer(value -> Config.getInstance().yaw = value)
+                .setMin(0).build();
+
+        IntegerListEntry rollEntry = builder.entryBuilder().startIntField(
+                new TranslatableText("config.quadz.entry.roll_axis"), Config.getInstance().roll)
+                .setDefaultValue(Config.getInstance().roll)
+                .setSaveConsumer(value -> Config.getInstance().roll = value)
+                .setMin(0).build();
+
+        IntegerListEntry throttleEntry = builder.entryBuilder().startIntField(
+                new TranslatableText("config.quadz.entry.throttle_axis"), Config.getInstance().throttle)
+                .setDefaultValue(Config.getInstance().throttle)
+                .setSaveConsumer(value -> Config.getInstance().throttle = value)
+                .setMin(0).build();
+
+        BooleanListEntry invertPitchEntry = builder.entryBuilder().startBooleanToggle(
+                new TranslatableText("config.quadz.entry.invert_pitch"), Config.getInstance().invertPitch)
+                .setDefaultValue(Config.getInstance().invertPitch)
+                .setSaveConsumer(value -> Config.getInstance().invertPitch = value)
+                .build();
+
+        BooleanListEntry invertYawEntry = builder.entryBuilder().startBooleanToggle(
+                new TranslatableText("config.quadz.entry.invert_yaw"), Config.getInstance().invertYaw)
+                .setDefaultValue(Config.getInstance().invertYaw)
+                .setSaveConsumer(value -> Config.getInstance().invertYaw = value)
+                .build();
+
+        BooleanListEntry invertRollEntry = builder.entryBuilder().startBooleanToggle(
+                new TranslatableText("config.quadz.entry.invert_roll"), Config.getInstance().invertRoll)
+                .setDefaultValue(Config.getInstance().invertRoll)
+                .setSaveConsumer(value -> Config.getInstance().invertRoll = value)
+                .build();
+
+        BooleanListEntry invertThrottleEntry = builder.entryBuilder().startBooleanToggle(
+                new TranslatableText("config.quadz.entry.invert_throttle"), Config.getInstance().invertThrottle)
+                .setDefaultValue(Config.getInstance().invertThrottle)
+                .setSaveConsumer(value -> Config.getInstance().invertThrottle = value)
+                .build();
+
+        BooleanListEntry throttleInCenterEntry = builder.entryBuilder().startBooleanToggle(
+                new TranslatableText("config.quadz.entry.throttle_in_center"), Config.getInstance().throttleInCenter)
+                .setDefaultValue(Config.getInstance().throttleInCenter)
+                .setSaveConsumer(value -> Config.getInstance().throttleInCenter = value)
+                .build();
+
+        // hyper concern
         controllerSelectorBuilt.set(controllerSelector.setNameProvider(value -> {
             String name = joysticks.get((int) value);
             modeSelector.setEditable((int) value != -1);
             maxAngleEntry.setEditable((int) value == -1 || modeSelector.getValue() == Mode.ANGLE);
+            pitchEntry.setEditable((int) value != -1);
+            yawEntry.setEditable((int) value != -1);
+            rollEntry.setEditable((int) value != -1);
+            throttleEntry.setEditable((int) value != -1);
+            invertPitchEntry.setEditable((int) value != -1);
+            invertYawEntry.setEditable((int) value != -1);
+            invertRollEntry.setEditable((int) value != -1);
+            invertThrottleEntry.setEditable((int) value != -1);
+            throttleInCenterEntry.setEditable((int) value != -1);
 
             if ((int) value == -1) {
                 return new TranslatableText("config.quadz.entry.controller_id.keyboard");
@@ -200,75 +253,18 @@ public class ConfigScreen {
         }).build());
 
         controllerSetup.addEntry(controllerSelectorBuilt.get());
-
-        controllerSetup.addEntry(builder.entryBuilder().startIntField(
-                new TranslatableText("config.quadz.entry.pitch_axis"), Config.getInstance().pitch)
-                .setDefaultValue(Config.getInstance().pitch)
-                .setSaveConsumer(value -> Config.getInstance().pitch = value)
-                .setMin(0).build());
-
-        controllerSetup.addEntry(builder.entryBuilder().startIntField(
-                new TranslatableText("config.quadz.entry.yaw_axis"), Config.getInstance().yaw)
-                .setDefaultValue(Config.getInstance().yaw)
-                .setSaveConsumer(value -> Config.getInstance().yaw = value)
-                .setMin(0).build());
-
-        controllerSetup.addEntry(builder.entryBuilder().startIntField(
-                new TranslatableText("config.quadz.entry.roll_axis"), Config.getInstance().roll)
-                .setDefaultValue(Config.getInstance().roll)
-                .setSaveConsumer(value -> Config.getInstance().roll = value)
-                .setMin(0).build());
-
-        controllerSetup.addEntry(builder.entryBuilder().startIntField(
-                new TranslatableText("config.quadz.entry.throttle_axis"), Config.getInstance().throttle)
-                .setDefaultValue(Config.getInstance().throttle)
-                .setSaveConsumer(value -> Config.getInstance().throttle = value)
-                .setMin(0).build());
-
-        controllerSetup.addEntry(builder.entryBuilder().startBooleanToggle(
-                new TranslatableText("config.quadz.entry.invert_pitch"), Config.getInstance().invertPitch)
-                .setDefaultValue(Config.getInstance().invertPitch)
-                .setSaveConsumer(value -> Config.getInstance().invertPitch = value)
-                .build());
-
-        controllerSetup.addEntry(builder.entryBuilder().startBooleanToggle(
-                new TranslatableText("config.quadz.entry.invert_yaw"), Config.getInstance().invertYaw)
-                .setDefaultValue(Config.getInstance().invertYaw)
-                .setSaveConsumer(value -> Config.getInstance().invertYaw = value)
-                .build());
-
-        controllerSetup.addEntry(builder.entryBuilder().startBooleanToggle(
-                new TranslatableText("config.quadz.entry.invert_roll"), Config.getInstance().invertRoll)
-                .setDefaultValue(Config.getInstance().invertRoll)
-                .setSaveConsumer(value -> Config.getInstance().invertRoll = value)
-                .build());
-
-        controllerSetup.addEntry(builder.entryBuilder().startBooleanToggle(
-                new TranslatableText("config.quadz.entry.invert_throttle"), Config.getInstance().invertThrottle)
-                .setDefaultValue(Config.getInstance().invertThrottle)
-                .setSaveConsumer(value -> Config.getInstance().invertThrottle = value)
-                .build());
-
-        controllerSetup.addEntry(builder.entryBuilder().startBooleanToggle(
-                new TranslatableText("config.quadz.entry.throttle_in_center"), Config.getInstance().throttleInCenter)
-                .setDefaultValue(Config.getInstance().throttleInCenter)
-                .setSaveConsumer(value -> Config.getInstance().throttleInCenter = value)
-                .build());
+        controllerSetup.addEntry(pitchEntry);
+        controllerSetup.addEntry(yawEntry);
+        controllerSetup.addEntry(rollEntry);
+        controllerSetup.addEntry(throttleEntry);
+        controllerSetup.addEntry(invertPitchEntry);
+        controllerSetup.addEntry(invertYawEntry);
+        controllerSetup.addEntry(invertRollEntry);
+        controllerSetup.addEntry(invertThrottleEntry);
+        controllerSetup.addEntry(throttleInCenterEntry);
 
         // endregion controller setup
 
-        String fallback = Config.getInstance().lastSelectedCategory;
-
-        if (controllerPreferences.getCategoryKey().toString().equals(fallback)) {
-            builder.setFallbackCategory(cameraPreferences);
-        } else if (cameraPreferences.getCategoryKey().toString().equals(fallback)) {
-            builder.setFallbackCategory(cameraPreferences);
-        } else if (osdPreferences.getCategoryKey().toString().equals(fallback)) {
-            builder.setFallbackCategory(osdPreferences);
-        } else {
-            builder.setFallbackCategory(controllerSetup);
-        }
-
-        return builder.build();
+        return builder.setFallbackCategory(controllerSetup).build();
     }
 }

@@ -1,7 +1,6 @@
 package dev.lazurite.quadz.client.util;
 
 import dev.lazurite.quadz.client.Config;
-import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
@@ -51,12 +50,9 @@ public class ClientTick {
                 } else if (optionalQuad.isPresent()) {
                     if (Config.getInstance().followLOS) {
                         InputTick.getInstance().tickKeyboard(client);
-                    } else if (Config.getInstance().controllerId == -1) {
-                        optionalQuad.get().getInputFrame().set(new InputFrame());
-                    } else {
-                        optionalQuad.get().getInputFrame().set(InputTick.getInstance().getInputFrame());
                     }
 
+                    optionalQuad.get().getInputFrame().set(Config.getInstance().controllerId == -1 ? new InputFrame() : InputTick.getInstance().getInputFrame());
                     optionalQuad.get().sendInputFrame();
                 }
             });

@@ -4,12 +4,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.Arrays;
 
 public class Template {
-    public static final Template EMPTY = new Template(new Settings("empty", "Empty", "empty", 0, 0, 0, 0, 0, 0, 0, 0, 0));
-
     private final Settings settings;
     private final JsonObject geo;
     private final JsonObject animation;
@@ -26,14 +25,6 @@ public class Template {
         this.animation = animation;
         this.texture = texture;
         this.originDistance = originDistance;
-    }
-
-    private Template(Settings settings) {
-        this.settings = settings;
-        this.geo = null;
-        this.animation = null;
-        this.texture = null;
-        this.originDistance = 0;
     }
 
     public PacketByteBuf serialize() {
@@ -107,18 +98,18 @@ public class Template {
         private final int cameraAngle;
 
         public Settings(String id, String name, String author, float width, float height, float cameraX, float cameraY, float mass, float dragCoefficient, float thrust, float thrustCurve, int cameraAngle) {
-            this.id = id;
+            this.id = id.toLowerCase();
             this.name = name;
             this.author = author;
-            this.width = width;
-            this.height = height;
-            this.cameraX = cameraX;
-            this.cameraY = cameraY;
-            this.mass = mass;
-            this.dragCoefficient = dragCoefficient;
-            this.thrust = thrust;
-            this.thrustCurve = thrustCurve;
-            this.cameraAngle = cameraAngle;
+            this.width = MathHelper.clamp(width, 0.0f, 3.0f);
+            this.height = MathHelper.clamp(height, 0.0f, 3.0f);
+            this.cameraX = MathHelper.clamp(cameraX, -1.5f, 1.5f);
+            this.cameraY = MathHelper.clamp(cameraY, -1.5f, 1.5f);
+            this.mass = MathHelper.clamp(mass, 0.0f, 100);
+            this.dragCoefficient = MathHelper.clamp(dragCoefficient, 0.0f, 1.0f);
+            this.thrust = MathHelper.clamp(thrust, 0.0f, 200);
+            this.thrustCurve = MathHelper.clamp(thrustCurve, 0.0f, 1.0f);
+            this.cameraAngle = MathHelper.clamp(cameraAngle, -180, 180);
         }
 
         public void serialize(PacketByteBuf buf) {

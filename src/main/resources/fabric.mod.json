@@ -32,11 +32,10 @@
   "depends": {
     "fabricloader": ">=0.7.4",
     "fabric": ">=0.28.0",
-    "minecraft": "1.16.x"
-  },
-
-  "suggests": {
-    "flamingo": "*"
+    "minecraft": "1.16.x",
+    "geckolib3": ">=3.0.30",
+    "rayon-core": ">=1.2.3",
+    "rayon-entity": ">=1.2.3"
   },
 
   "custom": {
@@ -45,7 +44,6 @@
         "modmenu.discord": "https://discord.gg/NNPPHN7b3P"
       }
     },
-
     "vanguard": {
       "curse-project-id": "410234"
     }

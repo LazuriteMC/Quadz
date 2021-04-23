@@ -33,10 +33,10 @@ dependencies {
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// Gecko Lib (not jij)
+	// Gecko Lib 3
 	modImplementation "software.bernie.geckolib:${project.geckolib_version}:dev"
 
-	// Rayon (not jij)
+	// Rayon
 	modImplementation "com.github.LazuriteMC:Rayon:${project.rayon_version}"
 
 	// Lattice

@@ -1,0 +1,14 @@
+{
+	"id" : "pixel",
+	"name" : "Pixel",
+	"author" : "BlueVista",
+	"width" : 0.225,
+	"height" : 0.125,
+	"cameraX" : 0.025,
+	"cameraY" : 0.1,
+ 	"mass" : 0.01,
+	"dragCoefficient" : 0.2,
+	"thrust" : 0.4,
+	"thrustCurve" : 1.0,
+	"cameraAngle" : 5
+}

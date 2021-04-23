@@ -20,7 +20,6 @@ public class KeybindNetworkHandler {
             Bindable.get(player.getMainHandStack()).flatMap(transmitter -> QuadcopterState.getQuadcopterByBindId(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance())).ifPresent(quadcopter -> {
                 boolean lastNoClip = quadcopter.getRigidBody().shouldDoTerrainLoading();
                 quadcopter.getRigidBody().setDoTerrainLoading(!lastNoClip);
-                quadcopter.getRigidBody().setDoEntityLoading(!lastNoClip);
 
                 if (lastNoClip) {
                     player.sendMessage(new TranslatableText("message.quadz.noclip_on"), true);

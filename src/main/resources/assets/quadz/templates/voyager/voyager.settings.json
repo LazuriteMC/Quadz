@@ -1,0 +1,14 @@
+{
+	"id" : "voyager",
+	"name" : "Voyager",
+	"author" : "BlueVista",
+	"width" : 0.9,
+	"height" : 0.2,
+	"cameraX" : 0.43,
+	"cameraY" : 0.05,
+ 	"mass" : 1.2,
+	"dragCoefficient" : 0.01,
+	"thrust" : 65,
+	"thrustCurve" : 0.9,
+	"cameraAngle" : 20
+}

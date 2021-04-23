@@ -441,7 +441,7 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	}
 
 	public boolean isInGodMode() {
-		return getDataTracker().get(GOD_MODE);
+		return getDataTracker().get(GOD_MODE) || !getRigidBody().shouldDoTerrainLoading();
 	}
 
 	public boolean isDisabled() {
