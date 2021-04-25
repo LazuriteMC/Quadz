@@ -92,15 +92,15 @@ public class ConfigScreen {
                 .setSaveConsumer(value -> Config.getInstance().thirdPersonAngle = value * 5)
                 .build());
 
-        cameraPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
+        // endregion camera preferences
+
+        // region osd preferences
+
+        osdPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
                 new TranslatableText("config.quadz.entry.osd_enabled"), Config.getInstance().osdEnabled)
                 .setDefaultValue(Config.getInstance().osdEnabled)
                 .setSaveConsumer(value -> Config.getInstance().osdEnabled = value)
                 .build());
-
-        // endregion camera preferences
-
-        // region osd preferences
 
         osdPreferences.addEntry(builder.entryBuilder().startTextField(
                 new TranslatableText("config.quadz.entry.call_sign"), Config.getInstance().callSign)
