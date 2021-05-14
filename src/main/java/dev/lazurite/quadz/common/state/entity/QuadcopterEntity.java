@@ -63,8 +63,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import java.util.ArrayList;
 import java.util.Optional;
 
-@SuppressWarnings("EntityConstructor")
-public class QuadcopterEntity extends LivingEntity implements IAnimatable, EntityPhysicsElement, Viewable, QuadcopterState {
+public class QuadcopterEntity extends LivingEntity implements QuadcopterState, IAnimatable, EntityPhysicsElement, Viewable {
 	/* States */
 	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<Boolean> ACTIVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -89,7 +88,6 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 	private final InputFrame inputFrame = new InputFrame();
 	private ServerPlayerEntity lastPlayer;
 	private String prevTemplate;
-	public int stuckTicks;
 
 	public QuadcopterEntity(World world) {
 		super(Quadz.QUADCOPTER_ENTITY, world);
@@ -106,10 +104,12 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 				setWidth(template.getSettings().getWidth());
 				setHeight(template.getSettings().getHeight());
 				calculateDimensions();
-
-				setCameraAngle(template.getSettings().getCameraAngle());
 				setThrust(template.getSettings().getThrust());
 				setThrustCurve(template.getSettings().getThrustCurve());
+
+				if (getCameraAngle() == 0) {
+					setCameraAngle(template.getSettings().getCameraAngle());
+				}
 
 				PhysicsThread.get(world).execute(() -> {
 					getRigidBody().setMass(template.getSettings().getMass());
@@ -133,11 +133,13 @@ public class QuadcopterEntity extends LivingEntity implements IAnimatable, Entit
 				lastPlayer = null;
 			}
 		} else if (isDisabled()) {
-			float width = 1 / this.dimensions.width * 2;
-			world.addImportantParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), 0.0D, 0.07D, 0.0D);
+			for (int i = 0; i < 3; i++) {
+				float width = 1 / this.dimensions.width * 2;
+				world.addImportantParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), 0.0D, 0.07D, 0.0D);
 
-			if (width <= 3.0) {
-				world.addParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), 0.0D, 0.005D, 0.0D);
+				if (width <= 3.0) {
+					world.addParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), 0.0D, 0.005D, 0.0D);
+				}
 			}
 		}
 
