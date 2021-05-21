@@ -38,6 +38,10 @@
     "rayon-entity": ">=1.2.3"
   },
 
+  "breaks": {
+    "immersive_portals": "*"
+  },
+
   "custom": {
     "modmenu": {
       "links": {

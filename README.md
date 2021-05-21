@@ -30,3 +30,8 @@ The following dependencies allow you to configure Quadz using its config screen.
 be able to change your controller or camera settings.
 * [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config)
 * [Mod Menu](https://www.curseforge.com/minecraft/mc-mods/modmenu)
+
+### Conflicts
+The following mods are incompatible with Quadz at the moment but will hopefully work later on in development.
+* [Immersive Portals](https://www.curseforge.com/minecraft/mc-mods/immersive-portals-mod)
+* [Canvas](https://www.curseforge.com/minecraft/mc-mods/canvas-renderer)

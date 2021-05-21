@@ -76,8 +76,8 @@ public class DataDriver {
 
             // Collect all paths and iterate
             List<Path> templatePaths = new ArrayList<>();
-            templatePaths.addAll(Files.walk(jar).collect(Collectors.toList()));
-            templatePaths.addAll(Files.walk(quadz).collect(Collectors.toList()));
+            templatePaths.addAll(Files.walk(jar).filter(path -> path.getParent().equals(jar)).collect(Collectors.toList()));
+            templatePaths.addAll(Files.walk(quadz).filter(path -> path.getParent().equals(quadz)).collect(Collectors.toList()));
 
             for (Path path : templatePaths) {
                 Template.Settings settings = null;
@@ -85,72 +85,70 @@ public class DataDriver {
                 JsonObject animation = null;
                 byte[] texture = null;
 
-                if (path.getParent().equals(quadz) || path.getParent().equals(jar)) {
-                    if (path.getFileName().toString().contains(".zip")) {
-                        String id = FilenameUtils.removeExtension(path.getName(path.getNameCount() - 1).toString());
-                        ZipFile zip = new ZipFile(path.toFile());
-                        Enumeration<? extends ZipEntry> entries = zip.entries();
+                if (path.getFileName().toString().contains(".zip")) {
+                    String id = FilenameUtils.removeExtension(path.getName(path.getNameCount() - 1).toString());
+                    ZipFile zip = new ZipFile(path.toFile());
+                    Enumeration<? extends ZipEntry> entries = zip.entries();
 
-                        while (entries.hasMoreElements()) {
-                            ZipEntry entry = entries.nextElement();
+                    while (entries.hasMoreElements()) {
+                        ZipEntry entry = entries.nextElement();
 
-                            if (!entry.isDirectory()) {
-                                /* Settings */
-                                if (entry.getName().contains(id + ".settings.json")) {
-                                    settings = new Gson().fromJson(new InputStreamReader(zip.getInputStream(entry)), Template.Settings.class);
-
-                                /* Geo Model */
-                                } else if (entry.getName().contains(id + ".geo.json")) {
-                                    geo = new JsonParser().parse(new InputStreamReader(zip.getInputStream(entry))).getAsJsonObject();
-
-                                /* Animation */
-                                } else if (entry.getName().contains(id + ".animation.json")) {
-                                    animation = new JsonParser().parse(new InputStreamReader(zip.getInputStream(entry))).getAsJsonObject();
-
-                                /* Texture */
-                                } else if (entry.getName().contains(id + ".png")) {
-                                    InputStream stream = zip.getInputStream(entry);
-                                    texture = new byte[stream.available()];
-                                    stream.read(texture);
-                                }
-                            }
-                        }
-
-                        try {
-                            load(new Template(settings, geo, animation, texture, 0));
-                        } catch (NoSuchElementException e) {
-                            Quadz.LOGGER.error("Error reading from directory: " + path, e);
-                        }
-                    } else if (Files.isDirectory(path)) {
-                        String id = path.getName(path.getNameCount() - 1).toString();
-                        List<Path> files = Files.walk(path).filter(file -> !Files.isDirectory(file)).collect(Collectors.toList());
-
-                        for (Path file : files) {
+                        if (!entry.isDirectory()) {
                             /* Settings */
-                            if (file.toString().contains(id + ".settings.json")) {
-                                settings = new Gson().fromJson(new InputStreamReader(Files.newInputStream(file)), Template.Settings.class);
+                            if (entry.getName().contains(id + ".settings.json")) {
+                                settings = new Gson().fromJson(new InputStreamReader(zip.getInputStream(entry)), Template.Settings.class);
 
                             /* Geo Model */
-                            } else if (file.toString().contains(id + ".geo.json")) {
-                                geo = new JsonParser().parse(new InputStreamReader(Files.newInputStream(file))).getAsJsonObject();
+                            } else if (entry.getName().contains(id + ".geo.json")) {
+                                geo = new JsonParser().parse(new InputStreamReader(zip.getInputStream(entry))).getAsJsonObject();
 
                             /* Animation */
-                            } else if (file.toString().contains(id + ".animation.json")) {
-                                animation = new JsonParser().parse(new InputStreamReader(Files.newInputStream(file))).getAsJsonObject();
+                            } else if (entry.getName().contains(id + ".animation.json")) {
+                                animation = new JsonParser().parse(new InputStreamReader(zip.getInputStream(entry))).getAsJsonObject();
 
                             /* Texture */
-                            } else if (file.toString().contains(id + ".png")) {
-                                InputStream stream = Files.newInputStream(file);
+                            } else if (entry.getName().contains(id + ".png")) {
+                                InputStream stream = zip.getInputStream(entry);
                                 texture = new byte[stream.available()];
                                 stream.read(texture);
                             }
                         }
+                    }
 
-                        try {
-                            load(new Template(settings, geo, animation, texture, 0));
-                        } catch (NoSuchElementException e) {
-                            Quadz.LOGGER.error("Error reading from directory: " + path, e);
+                    try {
+                        load(new Template(settings, geo, animation, texture, 0));
+                    } catch (NoSuchElementException e) {
+                        Quadz.LOGGER.error("Error reading from directory: " + path, e);
+                    }
+                } else if (Files.isDirectory(path)) {
+                    String id = path.getFileName().toString().replace("/", "");
+                    List<Path> files = Files.walk(path).collect(Collectors.toList());
+
+                    for (Path file : files) {
+                        /* Settings */
+                        if (file.toString().contains(id + ".settings.json")) {
+                            settings = new Gson().fromJson(new InputStreamReader(Files.newInputStream(file)), Template.Settings.class);
+
+                        /* Geo Model */
+                        } else if (file.toString().contains(id + ".geo.json")) {
+                            geo = new JsonParser().parse(new InputStreamReader(Files.newInputStream(file))).getAsJsonObject();
+
+                        /* Animation */
+                        } else if (file.toString().contains(id + ".animation.json")) {
+                            animation = new JsonParser().parse(new InputStreamReader(Files.newInputStream(file))).getAsJsonObject();
+
+                        /* Texture */
+                        } else if (file.toString().contains(id + ".png")) {
+                            InputStream stream = Files.newInputStream(file);
+                            texture = new byte[stream.available()];
+                            stream.read(texture);
                         }
+                    }
+
+                    try {
+                        load(new Template(settings, geo, animation, texture, 0));
+                    } catch (NoSuchElementException e) {
+                        Quadz.LOGGER.error("Error reading from directory: " + path, e);
                     }
                 }
             }

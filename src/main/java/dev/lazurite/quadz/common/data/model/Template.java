@@ -16,8 +16,14 @@ public class Template {
     private final int originDistance;
 
     public Template(Settings settings, JsonObject geo, JsonObject animation, byte[] texture, int originDistance) throws RuntimeException {
-        if (geo == null || animation == null || texture == null) {
-            throw new RuntimeException("Quadcopter template is missing information.");
+        if (settings == null) {
+            throw new RuntimeException("Missing or currupted settings file");
+        } else if (geo == null) {
+            throw new RuntimeException("Missing or corrupted geo model file in " + settings.getName());
+        } else if (animation == null) {
+            throw new RuntimeException("Missing or currupted animation file in " + settings.getName());
+        } else if (texture == null) {
+            throw new RuntimeException("Missing or currupted texture file in " + settings.getName());
         }
 
         this.settings = settings;
