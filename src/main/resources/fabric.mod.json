@@ -39,7 +39,9 @@
   },
 
   "breaks": {
-    "immersive_portals": "*"
+    "immersive_portals": "*",
+    "sodium": "*",
+    "canvas": "*"
   },
 
   "custom": {

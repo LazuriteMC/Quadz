@@ -1,4 +1,4 @@
-![Project icon](https://raw.githubusercontent.com/lazuritemc/Quadz/development/src/main/resources/assets/quadz/icon.png)
+![icon](https://raw.githubusercontent.com/lazuritemc/Quadz/development/src/main/resources/assets/quadz/icon.png)
 
 # Quadz
 
@@ -10,6 +10,11 @@ Quadz adds flyable FPV drones to Minecraft using the [Fabric Modloader and API](
 use of several libraries including [Rayon](https://github.com/lazuritemc/rayon), a rigid body simulation library for minecraft, which was
 developed with this mod in mind. Another library it uses is called [Lattice](https://github.com/lazuritemc/lattice) which allows chunks
 to be loaded around the player's camera instead of just the player itself.
+
+A full list of changes can be found [here](https://github.com/LazuriteMC/Quadz/blob/development/changelog.md). For instructions on how
+to use quadcopter templates, look [here](https://github.com/LazuriteMC/Quadz-Template).
+
+![banner](https://raw.githubusercontent.com/lazuritemc/Quadz/development/src/main/resources/assets/quadz/images/banner.png)
 
 ### Background
 This mod began in late 2018 as a fun side project. Originally, it was just [BlueVista](https://github.com/ethanejohnsons) developing it
@@ -35,3 +40,7 @@ be able to change your controller or camera settings.
 The following mods are incompatible with Quadz at the moment but will hopefully work later on in development.
 * [Immersive Portals](https://www.curseforge.com/minecraft/mc-mods/immersive-portals-mod)
 * [Canvas](https://www.curseforge.com/minecraft/mc-mods/canvas-renderer)
+* [Sodium](https://www.curseforge.com/minecraft/mc-mods/sodium)
+
+### Wiki
+We have a wiki now! It contains a list of known controller mappings. It can be found [here](https://docs.lazurite.dev/quadz/).
