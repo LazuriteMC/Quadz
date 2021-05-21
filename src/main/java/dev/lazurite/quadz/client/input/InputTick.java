@@ -108,7 +108,7 @@ public final class InputTick {
                     frame.setRoll(0);
                 }
             }
-        } else {
+        } else if (MinecraftClient.getInstance().world != null){
             Config.getInstance().controllerId = -1;
         }
     }

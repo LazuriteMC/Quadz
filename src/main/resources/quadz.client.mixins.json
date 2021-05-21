@@ -12,6 +12,7 @@
     "render.GameRendererMixin",
     "render.InGameHudMixin",
     "render.MatrixRotationMixin",
+    "render.PerspectiveMixin",
     "resource.TextureManagerMixin",
     "resource.TranslationStorageMixin"
   ],

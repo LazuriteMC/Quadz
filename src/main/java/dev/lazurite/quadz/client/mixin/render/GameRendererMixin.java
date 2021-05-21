@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * This mixin is mainly for manipulating the player's camera.
+ * This mixin is mainly for manipulating the player's camera (i.e. rotating it according to the quadcopter's view).
  */
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
@@ -39,20 +39,7 @@ public class GameRendererMixin {
 
 			Quaternion q = quadcopter.getPhysicsRotation(new Quaternion(), tickDelta);
 			q.set(q.getX(), -q.getY(), q.getZ(), -q.getW());
-
-			/* Third Person */
-			if (!client.options.getPerspective().isFirstPerson()) {
-				if (client.options.getPerspective().isFrontView()) {
-					QuaternionHelper.rotateY(q, 180);
-					QuaternionHelper.rotateX(q, -quadcopter.getCameraAngle());
-				} else {
-					QuaternionHelper.rotateX(q, quadcopter.getCameraAngle());
-				}
-
-				QuaternionHelper.rotateX(q, -Config.getInstance().thirdPersonAngle);
-			} else {
-				QuaternionHelper.rotateX(q, quadcopter.getCameraAngle());
-			}
+			QuaternionHelper.rotateX(q, quadcopter.getCameraAngle());
 
 			Matrix4f newMat = new Matrix4f(QuaternionHelper.bulletToMinecraft(q));
 			newMat.transpose();
@@ -82,13 +69,7 @@ public class GameRendererMixin {
 		}
 	}
 
-	@Redirect(
-			method = "getFov",
-			at = @At(
-					value = "FIELD",
-					target = "Lnet/minecraft/client/options/GameOptions;fov:D"
-			)
-	)
+	@Redirect(method = "getFov", at = @At(value = "FIELD", target = "Lnet/minecraft/client/options/GameOptions;fov:D"))
 	public double getFov(GameOptions options) {
 		if (client.getCameraEntity() instanceof QuadcopterEntity && Config.getInstance().firstPersonFOV > 30) {
 			return Config.getInstance().firstPersonFOV;

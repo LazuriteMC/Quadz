@@ -49,9 +49,6 @@ public final class Config {
     @Setting public boolean followLOS;
     @Setting public boolean renderFirstPerson;
     @Setting public int firstPersonFOV;
-    @Setting public float thirdPersonOffsetX;
-    @Setting public float thirdPersonOffsetY;
-    @Setting public int thirdPersonAngle;
     @Setting public int channel;
     @Setting public char band;
 
@@ -80,9 +77,6 @@ public final class Config {
         this.followLOS = true;
         this.renderFirstPerson = true;
         this.firstPersonFOV = 30;
-        this.thirdPersonOffsetX = 3.0f;
-        this.thirdPersonOffsetY = 0.0f;
-        this.thirdPersonAngle = 0;
         this.channel = 1;
         this.band = 'R';
         this.osdEnabled = true;

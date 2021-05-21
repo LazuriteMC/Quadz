@@ -383,9 +383,10 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	@Override
 	public float getPitch(float tickDelta) {
-		return QuaternionHelper.getPitch(QuaternionHelper.rotateX(
-				getPhysicsRotation(new Quaternion(), tickDelta),
-				-getCameraAngle()));
+		return QuaternionHelper.getPitch(getPhysicsRotation(new Quaternion(), tickDelta));
+//		return QuaternionHelper.getPitch(QuaternionHelper.rotateX(
+//				getPhysicsRotation(new Quaternion(), tickDelta),
+//				-getCameraAngle()));
 	}
 
 	@Override

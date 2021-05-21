@@ -5,7 +5,7 @@
 	"width" : 0.9,
 	"height" : 0.2,
 	"cameraX" : 0.43,
-	"cameraY" : 0.05,
+	"cameraY" : 0.0,
  	"mass" : 1.2,
 	"dragCoefficient" : 0.01,
 	"thrust" : 65,
