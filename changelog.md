@@ -1,19 +1,18 @@
 # Quadz 1.0.0 - At long last
 
 ### Overview
-The coveted new release of Quadz (formerly FPV Racing Mod) is here! If you're wondering what's changed, the answer is 
-everything!!
+The coveted new release of Quadz (formerly FPV Racing Mod) is here!
 
-Well, not quite everything. *Internally* the mod has been almost completely rewritten due to its constant revision over
-the past five and a half months. A few new features of note are:
+Internally, the mod has been almost completely rewritten due to its constant revision over
+the past six months. A few new features of note are:
 * FPV Racing was renamed to Quadz
-* Physics were broken out into a separate lib called [Rayon](https://github.com/LazuriteMC/Rayon)
+* Physics was broken out into a separate lib called [Rayon](https://github.com/LazuriteMC/Rayon)
 * Chunk loading was broken out into a separate lib called [Lattice](https://github.com/LazuriteMC/Lattice)
 * A config screen was added (using [Cloth](https://www.curseforge.com/minecraft/mc-mods/cloth-config) and [Fiber](https://github.com/FabLabsMC/fiber))
 * Quadcopters have actual models now and are animated by [Gecko Lib](https://www.curseforge.com/minecraft/mc-mods/geckolib-fabric)
 * Additional quadcopters can be loaded by users
 * Configurable quadcopter settings (on right-click)
-* A new goggles head model when worn
+* A new goggles model when worn
 * Keyboard support
 * Angle mode
 * LOS (line of sight) camera following
