@@ -1,4 +1,4 @@
-![Project icon](https://raw.githubusercontent.com/lazuritemc/Quadz/master/src/main/resources/assets/images/logo.png)
+![Project icon](https://raw.githubusercontent.com/lazuritemc/Quadz/development/src/main/resources/assets/quadz/icon.png)
 
 # Quadz
 
@@ -25,6 +25,7 @@ In order to use this mod, you'll have to download a few other things as well:
 * [Rayon](https://www.curseforge.com/minecraft/mc-mods/rayon)
   
 ### Optional Dependencies (Highly Recommended)
-The following dependencies allow you to configure Quadz using its config screen.
+The following dependencies allow you to configure Quadz using its config screen. If you don't install these, you won't
+be able to change your controller or camera settings.
 * [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config)
 * [Mod Menu](https://www.curseforge.com/minecraft/mc-mods/modmenu)
