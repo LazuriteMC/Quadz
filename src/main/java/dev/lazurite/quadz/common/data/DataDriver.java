@@ -77,7 +77,12 @@ public class DataDriver {
             // Collect all paths and iterate
             List<Path> templatePaths = new ArrayList<>();
             templatePaths.addAll(Files.walk(jar).filter(path -> path.getParent().equals(jar)).collect(Collectors.toList()));
-            templatePaths.addAll(Files.walk(quadz).filter(path -> path.getParent().equals(quadz)).collect(Collectors.toList()));
+            templatePaths.addAll(Files.walk(quadz)
+                    .filter(path -> {
+                        System.out.println(path);
+                        return path.getParent() == quadz;
+                    })
+                    .collect(Collectors.toList()));
 
             for (Path path : templatePaths) {
                 Template.Settings settings = null;
