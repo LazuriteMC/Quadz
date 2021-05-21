@@ -51,6 +51,12 @@ public class ConfigScreen {
                 .setSaveConsumer(value -> Config.getInstance().renderFirstPerson = value)
                 .build());
 
+        cameraPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
+                new TranslatableText("config.quadz.entry.render_camera_in_center"), Config.getInstance().renderCameraInCenter)
+                .setDefaultValue(Config.getInstance().renderCameraInCenter)
+                .setSaveConsumer(value -> Config.getInstance().renderCameraInCenter = value)
+                .build());
+
         cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
                 new TranslatableText("config.quadz.entry.first_person_fov"), Config.getInstance().firstPersonFOV, 30, 135)
                 .setTextGetter(value -> value == 30 ? new LiteralText("Match Player") : new LiteralText(value + "°"))

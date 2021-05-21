@@ -8,7 +8,8 @@
 
 Quadz adds flyable FPV drones to Minecraft using the [Fabric Modloader and API](https://fabricmc.net/). It also makes
 use of several libraries including [Rayon](https://github.com/lazuritemc/rayon), a rigid body simulation library for minecraft, which was
-developed with this mod in mind.
+developed with this mod in mind. Another library it uses is called [Lattice](https://github.com/lazuritemc/lattice) which allows chunks
+to be loaded around the player's camera instead of just the player itself.
 
 ### Background
 This mod began in late 2018 as a fun side project. Originally, it was just [BlueVista](https://github.com/ethanejohnsons) developing it

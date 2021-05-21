@@ -21,7 +21,7 @@ repositories {
 	maven { url 'https://hephaestus.dev/release' }
 	maven { url 'https://maven.terraformersmc.com/releases/' }
 	maven { url 'https://ladysnake.jfrog.io/artifactory/mods' }
-	maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib/' }
+	maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
 }
 
 dependencies {

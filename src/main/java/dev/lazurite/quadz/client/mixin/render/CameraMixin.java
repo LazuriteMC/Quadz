@@ -2,6 +2,7 @@ package dev.lazurite.quadz.client.mixin.render;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
@@ -9,7 +10,6 @@ import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import dev.lazurite.rayon.core.impl.util.math.VectorHelper;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 import org.spongepowered.asm.mixin.Final;
@@ -29,11 +29,11 @@ public abstract class CameraMixin {
     @Shadow @Final private net.minecraft.client.util.math.Vector3f verticalPlane;
     @Shadow @Final private net.minecraft.client.util.math.Vector3f diagonalPlane;
     @Shadow @Final private net.minecraft.util.math.Quaternion rotation;
-    @Shadow @Final private BlockPos.Mutable blockPos;
     @Shadow private Entity focusedEntity;
-    @Shadow private Vec3d pos;
     @Shadow private float pitch;
     @Shadow private float yaw;
+
+    @Shadow protected abstract void setPos(Vec3d pos);
     @Shadow protected abstract void moveBy(double x, double y, double z);
 
     @Inject(
@@ -50,19 +50,10 @@ public abstract class CameraMixin {
             if (quadcopter.getRigidBody() != null && quadcopter.getRigidBody().getFrame() != null) {
                 Template template = DataDriver.getTemplate(quadcopter.getTemplate());
                 Vector3f location = quadcopter.getPhysicsLocation(new Vector3f(), tickDelta);
-
-                pos = VectorHelper.vector3fToVec3d(location);
-                blockPos.set(pos.x, pos.y, pos.z);
+                setPos(VectorHelper.vector3fToVec3d(location));
 
                 Quaternion quaternion = ((QuadcopterEntity) focusedEntity).getPhysicsRotation(new Quaternion(), tickDelta);
                 int cameraAngle = ((QuadcopterEntity) focusedEntity).getCameraAngle();
-
-                if (!thirdPerson) {
-                    double cameraX = template.getSettings().getCameraX();
-                    double cameraY = template.getSettings().getCameraY();
-                    moveBy(cameraX, cameraY, 0);
-                }
-
                 this.pitch = QuaternionHelper.getPitch(quaternion);
                 this.yaw = QuaternionHelper.getYaw(quaternion);
 
@@ -76,6 +67,12 @@ public abstract class CameraMixin {
                 this.verticalPlane.rotate(rotation);
                 this.diagonalPlane.set(1.0F, 0.0F, 0.0F);
                 this.diagonalPlane.rotate(rotation);
+
+                if (!thirdPerson && !Config.getInstance().renderCameraInCenter) {
+                    double cameraX = template.getSettings().getCameraX();
+                    double cameraY = template.getSettings().getCameraY();
+                    moveBy(cameraX, cameraY, 0);
+                }
             }
         }
     }

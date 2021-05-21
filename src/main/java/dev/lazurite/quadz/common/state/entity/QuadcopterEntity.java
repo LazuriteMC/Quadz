@@ -504,7 +504,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	@Override
 	@Environment(EnvType.CLIENT)
 	public boolean shouldRenderSelf() {
-		return Config.getInstance().renderFirstPerson || QuadzRendering.isInThirdPerson();
+		return (!Config.getInstance().renderCameraInCenter && Config.getInstance().renderFirstPerson) || QuadzRendering.isInThirdPerson();
 	}
 
 	@Override

@@ -60,6 +60,7 @@
   "config.quadz.entry.max_angle" : "Max Angle",
   "config.quadz.entry.follow_los" : "Follow LOS",
   "config.quadz.entry.render_first_person" : "Render First Person",
+  "config.quadz.entry.render_camera_in_center" : "Render Camera In Center",
   "config.quadz.entry.first_person_fov" : "First Person FOV",
   "config.quadz.entry.band" : "Band",
   "config.quadz.entry.channel" : "Channel",

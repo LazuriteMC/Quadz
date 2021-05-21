@@ -48,6 +48,7 @@ public final class Config {
 
     @Setting public boolean followLOS;
     @Setting public boolean renderFirstPerson;
+    @Setting public boolean renderCameraInCenter;
     @Setting public int firstPersonFOV;
     @Setting public int channel;
     @Setting public char band;
@@ -76,6 +77,7 @@ public final class Config {
         this.mode = Mode.RATE;
         this.followLOS = true;
         this.renderFirstPerson = true;
+        this.renderCameraInCenter = true;
         this.firstPersonFOV = 30;
         this.channel = 1;
         this.band = 'R';
