@@ -89,7 +89,7 @@ public class ConfigScreen {
 
         osdPreferences.addEntry(builder.entryBuilder().startTextField(
                 new TranslatableText("config.quadz.entry.call_sign"), Config.getInstance().callSign)
-                .setDefaultValue(MinecraftClient.getInstance().player == null ? "" : MinecraftClient.getInstance().player.getName().asString())
+                .setDefaultValue(Config.getInstance().callSign)
                 .setSaveConsumer(value -> Config.getInstance().callSign = value)
                 .build());
 

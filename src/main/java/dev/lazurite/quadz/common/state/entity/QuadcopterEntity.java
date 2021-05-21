@@ -449,7 +449,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	public boolean isDisabled() {
 		return getDataTracker().get(DISABLED);
-	}
+}
 
 	public void setActive(boolean active) {
 		getDataTracker().set(ACTIVE, active);
@@ -460,6 +460,14 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	}
 
 	public void setCallSign(String callSign) {
+		if (callSign.isEmpty()) {
+			Optional<ServerPlayerEntity> pilot = QuadcopterState.reverseLookup(this);
+
+			if (pilot.isPresent()) {
+				callSign = pilot.get().getDisplayName().asString();
+			}
+		}
+
 		getDataTracker().set(CALL_SIGN, callSign);
 	}
 
