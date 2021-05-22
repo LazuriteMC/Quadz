@@ -40,7 +40,6 @@ be able to change your controller or camera settings.
 The following mods are incompatible with Quadz at the moment but will hopefully work later on in development.
 * [Immersive Portals](https://www.curseforge.com/minecraft/mc-mods/immersive-portals-mod)
 * [Canvas](https://www.curseforge.com/minecraft/mc-mods/canvas-renderer)
-* [Sodium](https://www.curseforge.com/minecraft/mc-mods/sodium)
 
 ### Wiki
 We have a wiki now! It contains a list of known controller mappings. It can be found [here](https://docs.lazurite.dev/quadz/).

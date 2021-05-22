@@ -40,7 +40,6 @@
 
   "breaks": {
     "immersive_portals": "*",
-    "sodium": "*",
     "canvas": "*"
   },
 
