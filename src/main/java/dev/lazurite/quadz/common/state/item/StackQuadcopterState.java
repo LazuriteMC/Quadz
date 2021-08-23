@@ -19,11 +19,6 @@ public class StackQuadcopterState implements QuadcopterState {
     }
 
     @Override
-    public void setGodMode(boolean godMode) {
-        tag.putBoolean("godmode", godMode);
-    }
-
-    @Override
     public void setBindId(int bindId) {
         tag.putInt("bind_id", bindId);
     }
@@ -36,15 +31,6 @@ public class StackQuadcopterState implements QuadcopterState {
     @Override
     public void setTemplate(String template) {
         tag.putString("template", template);
-    }
-
-    @Override
-    public boolean isInGodMode() {
-        if (!tag.contains("godmode")) {
-            setGodMode(false);
-        }
-
-        return tag.getBoolean("godmode");
     }
 
     @Override
@@ -79,8 +65,7 @@ public class StackQuadcopterState implements QuadcopterState {
         if (obj instanceof StackQuadcopterState) {
             StackQuadcopterState container = (StackQuadcopterState) obj;
             return getBindId() == container.getBindId() &&
-                    getCameraAngle() == container.getCameraAngle() &&
-                    isInGodMode() == container.isInGodMode();
+                    getCameraAngle() == container.getCameraAngle();
         }
 
         return false;

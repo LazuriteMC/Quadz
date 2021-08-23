@@ -12,8 +12,6 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 
-import java.util.function.Consumer;
-
 public class KeybindNetworkHandler {
     public static void onNoClipKey(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
         server.execute(() ->
@@ -58,25 +56,6 @@ public class KeybindNetworkHandler {
             if (hat.getItem() instanceof GogglesItem) {
                 hat.getOrCreateTag().putBoolean("enabled", enable);
             }
-        });
-    }
-
-    public static void onGodModeKey(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-        server.execute(() -> {
-            ItemStack hand = player.getMainHandStack();
-
-            Consumer<QuadcopterState> changeGodMode = quadcopter -> {
-                quadcopter.setGodMode(!quadcopter.isInGodMode());
-
-                if (quadcopter.isInGodMode()) {
-                    player.sendMessage(new TranslatableText("message.quadz.godmode_on"), true);
-                } else {
-                    player.sendMessage(new TranslatableText("message.quadz.godmode_off"), true);
-                }
-            };
-
-            QuadcopterState.fromStack(hand).ifPresent(changeGodMode);
-            Bindable.get(hand).flatMap(transmitter -> QuadcopterState.getQuadcopterByBindId(player.getEntityWorld(), player.getCameraEntity().getPos(), transmitter.getBindId(), server.getPlayerManager().getViewDistance())).ifPresent(changeGodMode);
         });
     }
 }

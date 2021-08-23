@@ -47,7 +47,6 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 	public static final Identifier NOCLIP_C2S = new Identifier(MODID, "noclip_c2s");
 	public static final Identifier CHANGE_CAMERA_ANGLE_C2S = new Identifier(MODID, "change_camera_angle_c2s");
 	public static final Identifier POWER_GOGGLES_C2S = new Identifier(MODID, "power_goggles_c2s");
-	public static final Identifier GOD_MODE_C2S = new Identifier(MODID, "godmode_c2s");
 
 	/* Items */
 	public static QuadcopterItem QUADCOPTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "quadcopter_item"), new QuadcopterItem(new Item.Settings().maxCount(1)));
@@ -88,7 +87,6 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 		ServerPlayNetworking.registerGlobalReceiver(NOCLIP_C2S, KeybindNetworkHandler::onNoClipKey);
 		ServerPlayNetworking.registerGlobalReceiver(CHANGE_CAMERA_ANGLE_C2S, KeybindNetworkHandler::onChangeCameraAngleKey);
-		ServerPlayNetworking.registerGlobalReceiver(GOD_MODE_C2S, KeybindNetworkHandler::onGodModeKey);
 		ServerPlayNetworking.registerGlobalReceiver(POWER_GOGGLES_C2S, KeybindNetworkHandler::onPowerGogglesKey);
 	}
 
@@ -102,7 +100,6 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		/* Register Keybindings */
 		ControlKeybinds.register();
 		CameraAngleKeybinds.register();
-		GodModeKeybind.register();
 		NoClipKeybind.register();
 		FollowKeybind.register();
 		QuadConfigKeybind.register();

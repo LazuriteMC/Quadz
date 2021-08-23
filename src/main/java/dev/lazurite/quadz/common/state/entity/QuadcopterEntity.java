@@ -41,7 +41,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -63,9 +62,7 @@ import java.util.Optional;
 
 public class QuadcopterEntity extends LivingEntity implements QuadcopterState, IAnimatable, EntityPhysicsElement, Viewable {
 	/* States */
-	private static final TrackedData<Boolean> GOD_MODE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<Boolean> ACTIVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-	private static final TrackedData<Boolean> DISABLED = DataTracker.registerData(QuadcopterEntity.class,  TrackedDataHandlerRegistry.BOOLEAN);
 	private static final TrackedData<String> TEMPLATE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.STRING);
 
 	/* Data */
@@ -115,10 +112,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		}
 
 		if (!world.isClient) {
-			if (!isInGodMode() && (isTouchingWaterOrRain() || isInLava() || isSubmergedInWater())) {
-				this.disable();
-			}
-
 			Optional<ServerPlayerEntity> player = QuadcopterState.reverseLookup(this);
 
 			if (player.isPresent()) {
@@ -127,15 +120,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 				this.inputFrame.set(new InputFrame());
 				this.sendInputFrame();
 				lastPlayer = null;
-			}
-		} else if (isDisabled()) {
-			for (int i = 0; i < 3; i++) {
-				float width = 1 / this.dimensions.width * 2;
-				world.addImportantParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), 0.0D, 0.07D, 0.0D);
-
-				if (width <= 3.0) {
-					world.addParticle(ParticleTypes.SMOKE, true, getX() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), getY(), getZ() + random.nextDouble() / width * (double) (random.nextBoolean() ? 1 : -1), 0.0D, 0.005D, 0.0D);
-				}
 			}
 		}
 
@@ -146,7 +130,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	public void step(MinecraftSpace space) {
 		InputFrame frame = new InputFrame(getInputFrame());
 
-		if (!frame.isEmpty() && !isDisabled()) {
+		if (!frame.isEmpty()) {
 			/* Rate Mode */
 			if (Mode.RATE.equals(frame.getMode())) {
 				rotate(frame.calculatePitch(0.05f), frame.calculateYaw(0.05f), frame.calculateRoll(0.05f));
@@ -230,31 +214,18 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	@Override
 	public boolean damage(DamageSource source, float amount) {
-		if (!world.isClient()) {
-			if (source.getAttacker() instanceof PlayerEntity) {
-				this.kill();
-			} else if (!isInGodMode() && canBeDamagedBy(source)) {
-				this.disable();
-			}
+		if (!world.isClient() && source.getAttacker() instanceof PlayerEntity) {
+			this.kill();
+			return true;
 		}
 
-		return !isInGodMode();
-	}
-
-	public void disable() {
-		getDataTracker().set(DISABLED, true);
+		return false;
 	}
 
 	@Override
 	public void kill() {
 		this.dropSpawner();
 		this.remove();
-	}
-
-	public boolean canBeDamagedBy(DamageSource source) {
-		return source.equals(DamageSource.CACTUS) || source.equals(DamageSource.WITHER) ||
-				source.equals(DamageSource.DRAGON_BREATH) || source.equals(DamageSource.ON_FIRE) ||
-				source.equals(DamageSource.LIGHTNING_BOLT);
 	}
 
 	/**
@@ -316,11 +287,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	@Override
 	public void readCustomDataFromTag(CompoundTag tag) {
 		super.readCustomDataFromTag(tag);
-
-		setGodMode(tag.getBoolean("god_mode"));
 		setTemplate(tag.getString("template"));
-		if (tag.getBoolean("disabled")) this.disable();
-
 		setBindId(tag.getInt("bind_id"));
 		setCameraAngle(tag.getInt("camera_angle"));
 		setCallSign(tag.getString("call_sign"));
@@ -329,11 +296,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	@Override
 	public void writeCustomDataToTag(CompoundTag tag) {
 		super.writeCustomDataToTag(tag);
-
-		tag.putBoolean("god_mode", isInGodMode());
 		tag.putString("template", getTemplate());
-		tag.putBoolean("disabled", isDisabled());
-
 		tag.putInt("bind_id", getBindId());
 		tag.putInt("camera_angle", getCameraAngle());
 		tag.putString("call_sign", getCallSign());
@@ -348,9 +311,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	@Override
 	protected void initDataTracker() {
 		super.initDataTracker();
-		getDataTracker().startTracking(GOD_MODE, false);
 		getDataTracker().startTracking(ACTIVE, false);
-		getDataTracker().startTracking(DISABLED, false);
 		getDataTracker().startTracking(TEMPLATE, "");
 
 		getDataTracker().startTracking(BIND_ID, -1);
@@ -414,18 +375,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	public int getCameraAngle() {
 		return getDataTracker().get(CAMERA_ANGLE);
 	}
-
-	public void setGodMode(boolean godMode) {
-		getDataTracker().set(GOD_MODE, godMode);
-	}
-
-	public boolean isInGodMode() {
-		return getDataTracker().get(GOD_MODE) || !getRigidBody().shouldDoTerrainLoading();
-	}
-
-	public boolean isDisabled() {
-		return getDataTracker().get(DISABLED);
-}
 
 	public void setActive(boolean active) {
 		getDataTracker().set(ACTIVE, active);
@@ -498,8 +447,9 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	}
 
 	/* Called each frame */
+	@Environment(EnvType.CLIENT)
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-		return isActive() && !isDisabled() ? PlayState.CONTINUE : PlayState.STOP;
+		return isActive() ? PlayState.CONTINUE : PlayState.STOP;
 	}
 
 	@Override

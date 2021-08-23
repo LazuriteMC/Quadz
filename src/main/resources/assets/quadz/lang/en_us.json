@@ -1,7 +1,6 @@
 {
   "key.quadz.category" : "Quadz Keybindings",
   "key.quadz.noclip" : "No Clip",
-  "key.quadz.godmode" : "God Mode",
   "key.quadz.follow" : "Follow LOS",
   "key.quadz.camera.raise" : "Camera Angle - Increase",
   "key.quadz.camera.lower" : "Camera Angle - Decrease",
@@ -15,13 +14,10 @@
   "itemGroup.quadz.items" : "Quadz",
   "item.quadz.goggles_item" : "Goggles",
   "item.quadz.transmitter_item" : "Transmitter",
-
   "item.quadz.transmitter_item.bound" : "Transmitter Bound",
 
   "message.quadz.drone_error" : "Must be holding a quadcopter or a bound transmitter.",
   "message.quadz.goggles_error" : "Must be holding or wearing goggles.",
-  "message.quadz.godmode_on" : "God Mode Enabled",
-  "message.quadz.godmode_off" : "God Mode Disabled",
   "message.quadz.noclip_on" : "No Clip Enabled",
   "message.quadz.noclip_off" : "No Clip Disabled",
   "message.quadz.follow_on" : "Follow LOS Enabled",

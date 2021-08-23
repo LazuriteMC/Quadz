@@ -92,17 +92,14 @@ public interface QuadcopterState extends Bindable {
     }
 
     default void copyFrom(QuadcopterState quadcopter) {
-        this.setGodMode(quadcopter.isInGodMode());
         this.setBindId(quadcopter.getBindId());
         this.setCameraAngle(quadcopter.getCameraAngle());
         this.setTemplate(quadcopter.getTemplate());
     }
 
-    void setGodMode(boolean godMode);
     void setCameraAngle(int cameraAngle);
     void setTemplate(String template);
 
-    boolean isInGodMode();
     int getCameraAngle();
     String getTemplate();
 }
