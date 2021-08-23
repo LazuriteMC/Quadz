@@ -19,7 +19,6 @@ import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.QuadcopterState;
-import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
 import dev.lazurite.rayon.core.impl.physics.space.MinecraftSpace;
 import dev.lazurite.rayon.core.impl.physics.space.body.ElementRigidBody;
@@ -44,7 +43,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
@@ -72,8 +70,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	/* Data */
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	private static final TrackedData<Integer> BAND = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	private static final TrackedData<Integer> CHANNEL = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
 	private static final TrackedData<String> CALL_SIGN = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.STRING);
 
 	/* Physical Attributes */
@@ -300,20 +296,16 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
 				Bindable.get(stack).ifPresent(bindable -> {
 					Bindable.bind(this, bindable);
-					setFrequency(Frequency.from((ServerPlayerEntity) player));
 					setCallSign(((PlayerData) player).getCallSign());
 					player.sendMessage(new TranslatableText("item.quadz.transmitter_item.bound"), true);
 				});
-			} else if (stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM)) {
-				Frequency frequency = getFrequency();
-				player.sendMessage(new LiteralText("Frequency: " + frequency.getFrequency() + " (Band: " + frequency.getBand() + " Channel: " + frequency.getChannel() + ")"), true);
 			}
 		} else {
 			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
 				if (!InputTick.controllerExists() && Config.getInstance().controllerId != -1) {
 					ControllerNotFoundToast.add();
 				}
-			} else if (!stack.getItem().equals(Quadz.CHANNEL_WAND_ITEM) && !getTemplate().isEmpty()) {
+			} else if (!getTemplate().isEmpty()) {
 				QuadcopterScreen.show(this);
 			}
 		}
@@ -330,7 +322,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		if (tag.getBoolean("disabled")) this.disable();
 
 		setBindId(tag.getInt("bind_id"));
-		setFrequency(new Frequency((char) tag.getInt("band"), tag.getInt("channel")));
 		setCameraAngle(tag.getInt("camera_angle"));
 		setCallSign(tag.getString("call_sign"));
 	}
@@ -344,8 +335,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		tag.putBoolean("disabled", isDisabled());
 
 		tag.putInt("bind_id", getBindId());
-		tag.putInt("band", getFrequency().getBand());
-		tag.putInt("channel", getFrequency().getChannel());
 		tag.putInt("camera_angle", getCameraAngle());
 		tag.putString("call_sign", getCallSign());
 	}
@@ -365,8 +354,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		getDataTracker().startTracking(TEMPLATE, "");
 
 		getDataTracker().startTracking(BIND_ID, -1);
-		getDataTracker().startTracking(BAND, (int) 'R');
-		getDataTracker().startTracking(CHANNEL, 1);
 		getDataTracker().startTracking(CALL_SIGN, "");
 
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
@@ -416,17 +403,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	@Override
 	public void setTemplate(String template) {
 		getDataTracker().set(TEMPLATE, template);
-	}
-
-	@Override
-	public void setFrequency(Frequency frequency) {
-		getDataTracker().set(BAND, (int) frequency.getBand());
-		getDataTracker().set(CHANNEL, frequency.getChannel());
-	}
-
-	@Override
-	public Frequency getFrequency() {
-		return new Frequency((char) getDataTracker().get(BAND).intValue(), getDataTracker().get(CHANNEL));
 	}
 
 	@Override

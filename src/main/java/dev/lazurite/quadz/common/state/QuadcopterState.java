@@ -3,7 +3,6 @@ package dev.lazurite.quadz.common.state;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.state.item.StackQuadcopterState;
-import dev.lazurite.quadz.common.util.Frequency;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
@@ -21,7 +20,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * This interface represents the state of any given quadcopter
+ * This interface represents the state of any given quadcopter,
  * and it can be transformed between item and entity form.
  * @see StackQuadcopterState
  * @see QuadcopterEntity
@@ -95,18 +94,15 @@ public interface QuadcopterState extends Bindable {
     default void copyFrom(QuadcopterState quadcopter) {
         this.setGodMode(quadcopter.isInGodMode());
         this.setBindId(quadcopter.getBindId());
-        this.setFrequency(quadcopter.getFrequency());
         this.setCameraAngle(quadcopter.getCameraAngle());
         this.setTemplate(quadcopter.getTemplate());
     }
 
     void setGodMode(boolean godMode);
     void setCameraAngle(int cameraAngle);
-    void setFrequency(Frequency frequency);
     void setTemplate(String template);
 
     boolean isInGodMode();
     int getCameraAngle();
-    Frequency getFrequency();
     String getTemplate();
 }

@@ -44,7 +44,6 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 	public static final Identifier PLAYER_DATA_C2S = new Identifier(MODID, "player_data_c2s");
 	public static final Identifier INPUT_FRAME = new Identifier(MODID, "input_frame");
 
-	public static final Identifier SELECTED_SLOT_S2C = new Identifier(MODID, "selected_slot_s2c");
 	public static final Identifier NOCLIP_C2S = new Identifier(MODID, "noclip_c2s");
 	public static final Identifier CHANGE_CAMERA_ANGLE_C2S = new Identifier(MODID, "change_camera_angle_c2s");
 	public static final Identifier POWER_GOGGLES_C2S = new Identifier(MODID, "power_goggles_c2s");
@@ -54,7 +53,6 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 	public static QuadcopterItem QUADCOPTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "quadcopter_item"), new QuadcopterItem(new Item.Settings().maxCount(1)));
 	public static GogglesItem GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
 	public static Item TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new Item(new Item.Settings().maxCount(1)));
-	public static Item CHANNEL_WAND_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "channel_wand_item"), new Item(new Item.Settings().maxCount(1)));
 
 	/* Quadcopter Entities */
 	public static EntityType<LivingEntity> QUADCOPTER_ENTITY = Registry.register(
@@ -72,8 +70,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		/* Set up the item group */
 		ItemGroupHandler.getInstance().register(
 				new ItemStack(GOGGLES_ITEM),
-				new ItemStack(TRANSMITTER_ITEM),
-				new ItemStack(CHANNEL_WAND_ITEM)
+				new ItemStack(TRANSMITTER_ITEM)
 		).build();
 
 		DataDriver.initialize();
@@ -105,14 +102,12 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		/* Register Keybindings */
 		ControlKeybinds.register();
 		CameraAngleKeybinds.register();
-		GogglePowerKeybind.register();
 		GodModeKeybind.register();
 		NoClipKeybind.register();
 		FollowKeybind.register();
 		QuadConfigKeybind.register();
 
 		/* Register Packets */
-		ClientPlayNetworking.registerGlobalReceiver(SELECTED_SLOT_S2C, ClientNetworkHandler::onSelectSlot);
 		ClientPlayNetworking.registerGlobalReceiver(TEMPLATE, ClientNetworkHandler::onTemplateReceived);
 		ClientPlayNetworking.registerGlobalReceiver(INPUT_FRAME, ClientNetworkHandler::onInputFrameReceived);
 

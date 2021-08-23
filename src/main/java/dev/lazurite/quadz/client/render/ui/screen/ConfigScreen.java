@@ -4,14 +4,12 @@ import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.render.ui.osd.OnScreenDisplay;
-import dev.lazurite.quadz.common.util.Frequency;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.gui.entries.*;
 import me.shedaniel.clothconfig2.impl.builders.SelectorBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
@@ -62,19 +60,6 @@ public class ConfigScreen {
                 .setTextGetter(value -> value == 30 ? new LiteralText("Match Player") : new LiteralText(value + "°"))
                 .setDefaultValue(30)
                 .setSaveConsumer(value -> Config.getInstance().firstPersonFOV = value)
-                .build());
-
-        cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
-                new TranslatableText("config.quadz.entry.band"), Frequency.getBandIndex(Config.getInstance().band), 0, 4)
-                .setDefaultValue(Frequency.getBandIndex(Config.getInstance().band))
-                .setTextGetter(value -> new LiteralText(String.valueOf(Frequency.BANDS[value])))
-                .setSaveConsumer(value -> Config.getInstance().band = Frequency.BANDS[value])
-                .build());
-
-        cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
-                new TranslatableText("config.quadz.entry.channel"), Config.getInstance().channel, 1, 8)
-                .setDefaultValue(Config.getInstance().channel)
-                .setSaveConsumer(value -> Config.getInstance().channel = value)
                 .build());
 
         // endregion camera preferences

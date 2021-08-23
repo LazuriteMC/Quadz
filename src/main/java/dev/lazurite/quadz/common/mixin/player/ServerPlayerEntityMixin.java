@@ -1,7 +1,6 @@
 package dev.lazurite.quadz.common.mixin.player;
 
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.quadz.common.util.PlayerData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,7 +10,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerEntityMixin implements PlayerData {
-    @Unique private Frequency frequency;
     @Unique private String callSign;
 
     /**
@@ -31,16 +29,6 @@ public class ServerPlayerEntityMixin implements PlayerData {
         } else {
             return player.isSneaking();
         }
-    }
-
-    @Override
-    public void setFrequency(Frequency frequency) {
-        this.frequency = frequency;
-    }
-
-    @Override
-    public Frequency getFrequency() {
-        return this.frequency;
     }
 
     @Override

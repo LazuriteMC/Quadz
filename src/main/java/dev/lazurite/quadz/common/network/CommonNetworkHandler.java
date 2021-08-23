@@ -6,7 +6,6 @@ import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.util.Frequency;
 import dev.lazurite.quadz.common.util.PlayerData;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -22,27 +21,19 @@ public class CommonNetworkHandler {
     public static void onQuadcopterSettingsReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
         int entityId = buf.readInt();
         int cameraAngle = buf.readInt();
-        int band = buf.readInt();
-        int channel = buf.readInt();
 
         server.execute(() -> {
             Entity entity = player.getEntityWorld().getEntityById(entityId);
 
             if (entity instanceof QuadcopterEntity) {
                 ((QuadcopterEntity) entity).setCameraAngle(cameraAngle);
-                ((QuadcopterEntity) entity).setFrequency(new Frequency((char) band, channel));
             }
         });
     }
 
     public static void onPlayerDataReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-        Frequency frequency = new Frequency((char) buf.readInt(), buf.readInt());
         String callSign = buf.readString(32767);
-
-        server.execute(() -> {
-            ((PlayerData) player).setFrequency(frequency);
-            ((PlayerData) player).setCallSign(callSign);
-        });
+        server.execute(() -> ((PlayerData) player).setCallSign(callSign));
     }
 
     public static void onTemplateReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {

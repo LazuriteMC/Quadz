@@ -2,7 +2,6 @@
   "key.quadz.category" : "Quadz Keybindings",
   "key.quadz.noclip" : "No Clip",
   "key.quadz.godmode" : "God Mode",
-  "key.quadz.powergoggles" : "Goggle Power",
   "key.quadz.follow" : "Follow LOS",
   "key.quadz.camera.raise" : "Camera Angle - Increase",
   "key.quadz.camera.lower" : "Camera Angle - Decrease",
@@ -16,7 +15,6 @@
   "itemGroup.quadz.items" : "Quadz",
   "item.quadz.goggles_item" : "Goggles",
   "item.quadz.transmitter_item" : "Transmitter",
-  "item.quadz.channel_wand_item" : "Channel Wand",
 
   "item.quadz.transmitter_item.bound" : "Transmitter Bound",
 
@@ -28,7 +26,6 @@
   "message.quadz.noclip_off" : "No Clip Disabled",
   "message.quadz.follow_on" : "Follow LOS Enabled",
   "message.quadz.follow_off" : "Follow LOS Disabled",
-  "message.quadz.goggles_on" : "Press %1$s or %2$s to power off goggles.",
 
   "toast.quadz.controller.connect" : "Controller Connected!",
   "toast.quadz.controller.disconnect" : "Controller Disconnected!",
@@ -62,8 +59,6 @@
   "config.quadz.entry.render_first_person" : "Render First Person",
   "config.quadz.entry.render_camera_in_center" : "Render Camera In Center",
   "config.quadz.entry.first_person_fov" : "First Person FOV",
-  "config.quadz.entry.band" : "Band",
-  "config.quadz.entry.channel" : "Channel",
   "config.quadz.entry.camera_angle" : "Camera Angle",
 
   "config.quadz.entry.rate" : "Rate",

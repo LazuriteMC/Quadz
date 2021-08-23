@@ -3,7 +3,6 @@ package dev.lazurite.quadz.client.render.ui.osd;
 import com.jme3.math.Vector3f;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.util.Frequency;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -30,13 +29,8 @@ public final class OnScreenDisplay {
         float vel = Math.round(quadcopter.getRigidBody().getLinearVelocity(new Vector3f()).length() * unit.getFactor() * 10) / 10f;
         Text velocity = new LiteralText(vel + " " + unit.getAbbreviation());
 
-        Frequency freq = quadcopter.getFrequency();
-        Text frequency = new LiteralText(freq.getBand() + ":" + freq.getChannel());
-        int frequencyWidth = textRenderer.getWidth(frequency);
-
         textRenderer.drawWithShadow(matrixStack, callSign, width * 0.5f - callSignWidth * 0.5f, height, white);
         textRenderer.drawWithShadow(matrixStack, velocity, width * 0.5f + callSignWidth * 0.5f + spacing, height, white);
-        textRenderer.drawWithShadow(matrixStack, frequency, width * 0.5f - callSignWidth * 0.5f - frequencyWidth - spacing, height, white);
     }
 
     public enum VelocityUnit {

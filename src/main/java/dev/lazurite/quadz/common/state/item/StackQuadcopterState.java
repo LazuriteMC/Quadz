@@ -1,7 +1,6 @@
 package dev.lazurite.quadz.common.state.item;
 
 import dev.lazurite.quadz.common.state.QuadcopterState;
-import dev.lazurite.quadz.common.util.Frequency;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 
@@ -27,12 +26,6 @@ public class StackQuadcopterState implements QuadcopterState {
     @Override
     public void setBindId(int bindId) {
         tag.putInt("bind_id", bindId);
-    }
-
-    @Override
-    public void setFrequency(Frequency frequency) {
-        tag.putInt("channel", frequency.getChannel());
-        tag.putInt("band", frequency.getBand());
     }
 
     @Override
@@ -64,19 +57,6 @@ public class StackQuadcopterState implements QuadcopterState {
     }
 
     @Override
-    public Frequency getFrequency() {
-        if (!tag.contains("channel")) {
-            tag.putInt("channel", 1);
-        }
-
-        if (!tag.contains("band")) {
-            tag.putInt("band", 'R');
-        }
-
-        return new Frequency((char) tag.getInt("band"), tag.getInt("channel"));
-    }
-
-    @Override
     public int getCameraAngle() {
         if (!tag.contains("camera_angle")) {
             setCameraAngle(0);
@@ -100,8 +80,7 @@ public class StackQuadcopterState implements QuadcopterState {
             StackQuadcopterState container = (StackQuadcopterState) obj;
             return getBindId() == container.getBindId() &&
                     getCameraAngle() == container.getCameraAngle() &&
-                    isInGodMode() == container.isInGodMode() &&
-                    getFrequency().equals(container.getFrequency());
+                    isInGodMode() == container.isInGodMode();
         }
 
         return false;
