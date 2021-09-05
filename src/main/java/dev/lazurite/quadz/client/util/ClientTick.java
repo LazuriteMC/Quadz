@@ -42,9 +42,8 @@ public class ClientTick {
             Bindable.get(client.player.getMainHandStack()).ifPresent(transmitter -> {
                 Optional<QuadcopterEntity> optionalQuad = QuadcopterState.getQuadcopterByBindId(client.world, client.player.getPos(), transmitter.getBindId(), (int) client.gameRenderer.getViewDistance());
 
-                if (client.getCameraEntity() instanceof QuadcopterEntity && ((QuadcopterEntity) client.getCameraEntity()).isBoundTo(transmitter)) {
+                if (client.getCameraEntity() instanceof QuadcopterEntity entity && ((QuadcopterEntity) client.getCameraEntity()).isBoundTo(transmitter)) {
                     InputTick.getInstance().tickKeyboard(client);
-                    var entity = (QuadcopterEntity) client.getCameraEntity();
                     entity.getInputFrame().set(InputTick.getInstance().getInputFrame());
                     entity.sendInputFrame();
                 } else if (optionalQuad.isPresent()) {

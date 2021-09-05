@@ -5,7 +5,6 @@ import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.impl.bullet.thread.PhysicsThread;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -32,31 +31,35 @@ public class ServerTick {
 
             quads.forEach(quadcopter -> quadcopter.setActive(false));
 
-            // TODO change this in 1.17 with Java 16!!!
-            Optional<Bindable> transmitter = Bindable.get(player.getMainHandStack());
-
-            if (transmitter.isPresent()) {
-                QuadcopterState.getQuadcopterByBindId(world, pos, transmitter.get().getBindId(), range).ifPresent(quad -> {
+            Bindable.get(player.getMainHandStack()).ifPresentOrElse(transmitter -> {
+                QuadcopterState.getQuadcopterByBindId(world, pos, transmitter.getBindId(), range).ifPresent(quad -> {
                     toActivate.add(quad);
 
                     Optional.of(player.getInventory().armor.get(3))
-                            .filter(stack -> stack.getItem() instanceof GogglesItem).ifPresent(goggles -> {
-                        if (!(player.getCameraEntity() instanceof QuadcopterEntity)) {
-                            player.setCameraEntity(quad);
-                            PhysicsThread.get(server).execute(() -> quad.getRigidBody().prioritize(player));
-                        }
-                    });
+                        .filter(stack -> stack.getItem() instanceof GogglesItem).ifPresentOrElse(goggles -> {
+                            if (!(player.getCameraEntity() instanceof QuadcopterEntity)) {
+                                player.setCameraEntity(quad);
+                                quad.getRigidBody().prioritize(player);
+                            }
+                        }, () -> {
+                            if (player.getCameraEntity() instanceof QuadcopterEntity entity) {
+                                if (player.equals(entity.getRigidBody().getPriorityPlayer())) {
+                                    quad.getRigidBody().prioritize(null);
+                                }
+
+                                player.setCameraEntity(player);
+                            }
+                        });
                 });
+            }, () -> {
+                if (player.getCameraEntity() instanceof QuadcopterEntity entity) {
+                    if (player.equals(entity.getRigidBody().getPriorityPlayer())) {
+                        entity.getRigidBody().prioritize(null);
+                    }
 
-            } else if (player.getCameraEntity() instanceof QuadcopterEntity) {
-                QuadcopterEntity entity = (QuadcopterEntity) player.getCameraEntity();
-
-                if (player.equals(entity.getRigidBody().getPriorityPlayer())) {
-                    PhysicsThread.get(server).execute(() -> entity.getRigidBody().prioritize(null));
+                    player.setCameraEntity(player);
                 }
-
-                player.setCameraEntity(player);
-            }
+            });
         }
 
         toActivate.forEach(quadcopter -> quadcopter.setActive(true));

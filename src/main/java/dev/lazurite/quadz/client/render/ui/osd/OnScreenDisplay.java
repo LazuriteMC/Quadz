@@ -22,7 +22,7 @@ public final class OnScreenDisplay {
         int width = client.getWindow().getScaledWidth();
         int height = client.getWindow().getScaledHeight() - spacing;
 
-        Text callSign = new LiteralText(quadcopter.getCallSign());
+        Text callSign = new LiteralText(""); // TODO
         int callSignWidth = textRenderer.getWidth(callSign);
 
         VelocityUnit unit = Config.getInstance().velocityUnit;

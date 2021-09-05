@@ -13,7 +13,6 @@ import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.item.StackQuadcopterState;
 import dev.lazurite.quadz.common.util.Matrix4fAccess;
-import dev.lazurite.quadz.common.util.PlayerData;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.Bindable;
@@ -69,7 +68,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	/* Data */
 	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	private static final TrackedData<String> CALL_SIGN = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.STRING);
 
 	/* Physical Attributes */
 	private static final TrackedData<Integer> CAMERA_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -84,8 +82,8 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	private ServerPlayerEntity lastPlayer;
 	private String prevTemplate;
 
-	public QuadcopterEntity(EntityType<?> entityType, World world) {
-		super(Quadz.QUADCOPTER_ENTITY, world);
+	public QuadcopterEntity(EntityType<? extends LivingEntity> entityType, World world) {
+		super(entityType, world);
 		this.ignoreCameraFrustum = true;
 	}
 
@@ -265,13 +263,10 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		ItemStack stack = player.getInventory().getMainHandStack();
 
 		if (!world.isClient()) {
-			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
-				Bindable.get(stack).ifPresent(bindable -> {
-					Bindable.bind(this, bindable);
-					setCallSign(((PlayerData) player).getCallSign());
-					player.sendMessage(new TranslatableText("item.quadz.transmitter_item.bound"), true);
-				});
-			}
+			Bindable.get(stack).ifPresent(bindable -> {
+				Bindable.bind(this, bindable);
+				player.sendMessage(new TranslatableText("item.quadz.transmitter_item.bound"), true);
+			});
 		} else {
 			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
 				if (!InputTick.controllerExists() && Config.getInstance().controllerId != -1) {
@@ -291,7 +286,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		setTemplate(tag.getString("template"));
 		setBindId(tag.getInt("bind_id"));
 		setCameraAngle(tag.getInt("camera_angle"));
-		setCallSign(tag.getString("call_sign"));
 	}
 
 	@Override
@@ -300,7 +294,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		tag.putString("template", getTemplate());
 		tag.putInt("bind_id", getBindId());
 		tag.putInt("camera_angle", getCameraAngle());
-		tag.putString("call_sign", getCallSign());
 	}
 
 	@Override
@@ -316,7 +309,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		getDataTracker().startTracking(TEMPLATE, "");
 
 		getDataTracker().startTracking(BIND_ID, -1);
-		getDataTracker().startTracking(CALL_SIGN, "");
 
 		getDataTracker().startTracking(CAMERA_ANGLE, 0);
 		getDataTracker().startTracking(THRUST, 0.0f);
@@ -383,22 +375,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	public boolean isActive() {
 		return getDataTracker().get(ACTIVE);
-	}
-
-	public void setCallSign(String callSign) {
-		if (callSign.isEmpty()) {
-			Optional<ServerPlayerEntity> pilot = QuadcopterState.reverseLookup(this);
-
-			if (pilot.isPresent()) {
-				callSign = pilot.get().getDisplayName().asString();
-			}
-		}
-
-		getDataTracker().set(CALL_SIGN, callSign);
-	}
-
-	public String getCallSign() {
-		return getDataTracker().get(CALL_SIGN);
 	}
 
 	public void setThrust(float thrust) {

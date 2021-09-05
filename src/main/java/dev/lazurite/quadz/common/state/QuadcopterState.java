@@ -1,8 +1,10 @@
 package dev.lazurite.quadz.common.state;
 
+import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.state.item.StackQuadcopterState;
+import dev.lazurite.transporter.impl.pattern.model.Quad;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
@@ -35,11 +37,15 @@ public interface QuadcopterState extends Bindable {
      * @return the bound {@link QuadcopterEntity} (null if not found)
      */
     static Optional<QuadcopterEntity> getQuadcopterByBindId(World world, Vec3d origin, int bindId, int range) {
-        return Optional.ofNullable(world.getClosestEntity(
-                QuadcopterEntity.class,
-                TargetPredicate.DEFAULT.setPredicate(quad -> ((QuadcopterEntity) quad).isBoundTo(bindId)),
-                null, origin.x, origin.y, origin.z,
-                new Box(new BlockPos(origin)).expand(range)));
+        var entities = world.getOtherEntities(null,
+                new Box(new BlockPos(origin)).expand(range),
+                entity -> entity instanceof QuadcopterEntity quadcopter && quadcopter.isBoundTo(bindId));
+
+        if (entities.size() > 0) {
+            return Optional.of((QuadcopterEntity) entities.get(0));
+        }
+
+        return Optional.empty();
     }
 
     /**
