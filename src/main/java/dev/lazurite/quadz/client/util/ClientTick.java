@@ -44,7 +44,7 @@ public class ClientTick {
 
                 if (client.getCameraEntity() instanceof QuadcopterEntity && ((QuadcopterEntity) client.getCameraEntity()).isBoundTo(transmitter)) {
                     InputTick.getInstance().tickKeyboard(client);
-                    QuadcopterEntity entity = (QuadcopterEntity) client.getCameraEntity();
+                    var entity = (QuadcopterEntity) client.getCameraEntity();
                     entity.getInputFrame().set(InputTick.getInstance().getInputFrame());
                     entity.sendInputFrame();
                 } else if (optionalQuad.isPresent()) {

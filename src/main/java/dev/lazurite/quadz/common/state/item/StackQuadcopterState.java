@@ -2,7 +2,7 @@ package dev.lazurite.quadz.common.state.item;
 
 import dev.lazurite.quadz.common.state.QuadcopterState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 
 /**
  * Stores all relevant quadcopter information in quadcopter spawner items
@@ -11,11 +11,11 @@ import net.minecraft.nbt.CompoundTag;
  */
 public class StackQuadcopterState implements QuadcopterState {
     private final ItemStack stack;
-    private final CompoundTag tag;
+    private final NbtCompound tag;
 
     public StackQuadcopterState(ItemStack stack) {
         this.stack = stack;
-        this.tag = this.stack.getOrCreateSubTag("container");
+        this.tag = this.stack.getOrCreateSubNbt("container");
     }
 
     @Override

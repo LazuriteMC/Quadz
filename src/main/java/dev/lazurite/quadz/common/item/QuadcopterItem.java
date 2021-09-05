@@ -2,10 +2,11 @@ package dev.lazurite.quadz.common.item;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
-import dev.lazurite.rayon.core.impl.util.math.VectorHelper;
+import dev.lazurite.rayon.core.impl.bullet.math.Converter;
+import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -39,19 +40,19 @@ public class QuadcopterItem extends Item implements IAnimatable {
         if (world.isClient()) {
             return TypedActionResult.success(itemStack);
         } else {
-            QuadcopterEntity entity = new QuadcopterEntity(world);
+            QuadcopterEntity entity = new QuadcopterEntity(Quadz.QUADCOPTER_ENTITY, world);
             QuadcopterState.fromStack(itemStack).ifPresent(entity::copyFrom);
 
             if (hitResult.getType() == HitResult.Type.BLOCK) {
                 entity.updatePosition(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
-                entity.getRigidBody().setPhysicsRotation(QuaternionHelper.rotateY(new Quaternion(), -user.yaw));
+                entity.getRigidBody().setPhysicsRotation(Converter.toBullet(QuaternionHelper.rotateY(Converter.toMinecraft(new Quaternion()), -user.getYaw())));
             } else {
                 Random random = new Random();
                 Vec3d direction = hitResult.getPos().subtract(user.getPos()).add(0, user.getStandingEyeHeight(), 0).normalize();
                 Vec3d pos = user.getPos().add(direction);
 
                 entity.updatePosition(pos.x, pos.y, pos.z);
-                entity.getRigidBody().setLinearVelocity(VectorHelper.vec3dToVector3f(direction).multLocal(4).multLocal(new Vector3f(1, 3, 1)));
+                entity.getRigidBody().setLinearVelocity(Converter.toBullet(direction).multLocal(4).multLocal(new Vector3f(1, 3, 1)));
                 entity.getRigidBody().setAngularVelocity(new Vector3f(random.nextFloat() * 2, random.nextFloat() * 2, random.nextFloat() * 2));
             }
 

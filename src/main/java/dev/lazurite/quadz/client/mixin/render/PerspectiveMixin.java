@@ -2,7 +2,7 @@ package dev.lazurite.quadz.client.mixin.render;
 
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.options.Perspective;
+import net.minecraft.client.option.Perspective;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

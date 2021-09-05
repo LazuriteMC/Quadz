@@ -3,8 +3,8 @@ package dev.lazurite.quadz.common.mixin.entity;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
-import dev.lazurite.rayon.core.impl.physics.space.body.shape.BoundingBoxShape;
+import dev.lazurite.rayon.core.impl.bullet.collision.body.shape.MinecraftShape;
+import dev.lazurite.rayon.core.impl.bullet.thread.PhysicsThread;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.util.math.Box;
@@ -44,7 +44,7 @@ public abstract class EntityMixin {
                 }
 
                 PhysicsThread.get(world).execute(() ->
-                        quadcopter.getRigidBody().setCollisionShape(new BoundingBoxShape(quadcopter.getBoundingBox())));
+                        quadcopter.getRigidBody().setCollisionShape(MinecraftShape.of(quadcopter.getBoundingBox())));
                 info.cancel();
             }
         }

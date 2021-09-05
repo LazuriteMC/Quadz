@@ -5,3 +5,5 @@ accessible field net/minecraft/client/resource/language/TranslationStorage trans
 accessible method net/minecraft/client/resource/language/TranslationStorage <init> (Ljava/util/Map;Z)V
 extendable method net/minecraft/entity/Entity getWidth ()F
 extendable method net/minecraft/entity/Entity getHeight ()F
+
+accessible field net/minecraft/network/packet/s2c/play/SetCameraEntityS2CPacket entityId I

@@ -9,11 +9,13 @@ import dev.lazurite.quadz.common.data.util.TemplateResourceLoader;
 import dev.lazurite.quadz.common.item.GogglesItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.entity.LivingEntity;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.renderer.geo.GeoArmorRenderer;
-import software.bernie.geckolib3.renderer.geo.GeoItemRenderer;
+import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
+import software.bernie.geckolib3.renderers.geo.GeoItemRenderer;
 
 @Environment(EnvType.CLIENT)
 public class QuadzRendering {
@@ -22,9 +24,9 @@ public class QuadzRendering {
 
     public static void initialize() {
         GeckoLib.initialize();
-        GeoArmorRenderer.registerArmorRenderer(GogglesItem.class, new GogglesItemRenderer());
+//        GeoArmorRenderer.registerArmorRenderer(GogglesItem.class, context -> new GogglesItemRenderer(context));
         GeoItemRenderer.registerItemRenderer(Quadz.QUADCOPTER_ITEM, new GeoItemRenderer<>(new QuadcopterItemModel()));
-        EntityRendererRegistry.INSTANCE.register(Quadz.QUADCOPTER_ENTITY, (entityRenderDispatcher, context) -> new QuadcopterEntityRenderer(entityRenderDispatcher));
+        EntityRendererRegistry.register(Quadz.QUADCOPTER_ENTITY, QuadcopterEntityRenderer::new);
     }
 
     public static boolean isInThirdPerson() {

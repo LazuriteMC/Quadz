@@ -3,7 +3,6 @@ package dev.lazurite.quadz.common.state.entity;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
-import dev.lazurite.lattice.api.entity.Viewable;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
@@ -19,17 +18,20 @@ import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.QuadcopterState;
-import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
-import dev.lazurite.rayon.core.impl.physics.space.MinecraftSpace;
-import dev.lazurite.rayon.core.impl.physics.space.body.ElementRigidBody;
-import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
+import dev.lazurite.rayon.core.impl.bullet.collision.space.MinecraftSpace;
+import dev.lazurite.rayon.core.impl.bullet.math.Converter;
+import dev.lazurite.rayon.core.impl.bullet.thread.PhysicsThread;
 import dev.lazurite.rayon.entity.api.EntityPhysicsElement;
+import dev.lazurite.rayon.entity.impl.collision.body.EntityRigidBody;
+import dev.lazurite.toolbox.api.math.QuaternionHelper;
+import dev.lazurite.toolbox.api.render.Viewable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -39,7 +41,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
@@ -77,12 +79,12 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	private static final TrackedData<Float> HEIGHT = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
 	private final AnimationFactory animationFactory = new AnimationFactory(this);
-	private final ElementRigidBody rigidBody = new ElementRigidBody(this);
+	private final EntityRigidBody rigidBody = new EntityRigidBody(this);
 	private final InputFrame inputFrame = new InputFrame();
 	private ServerPlayerEntity lastPlayer;
 	private String prevTemplate;
 
-	public QuadcopterEntity(World world) {
+	public QuadcopterEntity(EntityType<?> entityType, World world) {
 		super(Quadz.QUADCOPTER_ENTITY, world);
 		this.ignoreCameraFrustum = true;
 	}
@@ -140,8 +142,8 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 				float targetPitch = -frame.getPitch() * frame.getMaxAngle();
 				float targetRoll = -frame.getRoll() * frame.getMaxAngle();
 
-				float currentPitch = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(getRigidBody().getPhysicsRotation(new Quaternion())).y);
-				float currentRoll = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(getRigidBody().getPhysicsRotation(new Quaternion())).x);
+				float currentPitch = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(Converter.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion()))).getY());
+				float currentRoll = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(Converter.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion()))).getX());
 
 				rotate(currentPitch - targetPitch, frame.calculateYaw(0.05f), currentRoll - targetRoll);
 			}
@@ -158,8 +160,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 			/* Get the thrust unit vector */
 			Matrix4f mat = new Matrix4f();
-			Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.bulletToMinecraft(
-					QuaternionHelper.rotateX(getRigidBody().getPhysicsRotation(new Quaternion()), 90)));
+			Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.rotateX(Converter.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion())), 90));
 			Vector3f unit = Matrix4fAccess.from(mat).matrixToVector();
 
 			/* Calculate basic thrust */
@@ -178,13 +179,13 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	}
 
 	public void rotate(float x, float y, float z) {
-		Quaternion rot = new Quaternion();
+		var rot = new net.minecraft.util.math.Quaternion(net.minecraft.util.math.Quaternion.IDENTITY);
 		QuaternionHelper.rotateX(rot, x);
 		QuaternionHelper.rotateY(rot, y);
 		QuaternionHelper.rotateZ(rot, z);
 
 		Transform trans = getRigidBody().getTransform(new Transform());
-		trans.getRotation().set(trans.getRotation().mult(rot));
+		trans.getRotation().set(trans.getRotation().mult(Converter.toBullet(rot)));
 		getRigidBody().setPhysicsTransform(trans);
 	}
 
@@ -193,7 +194,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 		if (frame != null) {
 			PacketByteBuf buf = PacketByteBufs.create();
-			buf.writeInt(getEntityId());
+			buf.writeInt(getId());
 			buf.writeFloat(frame.getThrottle());
 			buf.writeFloat(frame.getPitch());
 			buf.writeFloat(frame.getYaw());
@@ -225,7 +226,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	@Override
 	public void kill() {
 		this.dropSpawner();
-		this.remove();
+		this.remove(RemovalReason.KILLED);
 	}
 
 	/**
@@ -256,12 +257,12 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	@Override
 	public Direction getHorizontalFacing() {
-		return Direction.fromRotation(QuaternionHelper.getYaw(getPhysicsRotation(new Quaternion(), 1.0f)));
+		return Direction.fromRotation(QuaternionHelper.getYaw(Converter.toMinecraft(getPhysicsRotation(new Quaternion(), 1.0f))));
 	}
 
 	@Override
 	public ActionResult interact(PlayerEntity player, Hand hand) {
-		ItemStack stack = player.inventory.getMainHandStack();
+		ItemStack stack = player.getInventory().getMainHandStack();
 
 		if (!world.isClient()) {
 			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
@@ -285,8 +286,8 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	}
 
 	@Override
-	public void readCustomDataFromTag(CompoundTag tag) {
-		super.readCustomDataFromTag(tag);
+	public void readCustomDataFromNbt(NbtCompound tag) {
+		super.readCustomDataFromNbt(tag);
 		setTemplate(tag.getString("template"));
 		setBindId(tag.getInt("bind_id"));
 		setCameraAngle(tag.getInt("camera_angle"));
@@ -294,8 +295,8 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	}
 
 	@Override
-	public void writeCustomDataToTag(CompoundTag tag) {
-		super.writeCustomDataToTag(tag);
+	public void writeCustomDataToNbt(NbtCompound tag) {
+		super.writeCustomDataToNbt(tag);
 		tag.putString("template", getTemplate());
 		tag.putInt("bind_id", getBindId());
 		tag.putInt("camera_angle", getCameraAngle());
@@ -326,12 +327,12 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	@Override
 	public float getYaw(float tickDelta) {
-		return QuaternionHelper.getYaw(getPhysicsRotation(new Quaternion(), tickDelta));
+		return QuaternionHelper.getYaw(Converter.toMinecraft(getPhysicsRotation(new Quaternion(), tickDelta)));
 	}
 
 	@Override
 	public float getPitch(float tickDelta) {
-		return QuaternionHelper.getPitch(getPhysicsRotation(new Quaternion(), tickDelta));
+		return QuaternionHelper.getPitch(Converter.toMinecraft(getPhysicsRotation(new Quaternion(), tickDelta)));
 //		return QuaternionHelper.getPitch(QuaternionHelper.rotateX(
 //				getPhysicsRotation(new Quaternion(), tickDelta),
 //				-getCameraAngle()));
@@ -470,7 +471,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	}
 
 	@Override
-	public ElementRigidBody getRigidBody() {
+	public EntityRigidBody getRigidBody() {
 		return this.rigidBody;
 	}
 }

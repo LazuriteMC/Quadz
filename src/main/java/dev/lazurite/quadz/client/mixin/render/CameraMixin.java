@@ -6,11 +6,13 @@ import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
-import dev.lazurite.rayon.core.impl.util.math.VectorHelper;
+import dev.lazurite.rayon.core.impl.bullet.math.Converter;
+import dev.lazurite.toolbox.api.math.QuaternionHelper;
+import dev.lazurite.toolbox.api.math.VectorHelper;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.BlockView;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,9 +27,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(Camera.class)
 public abstract class CameraMixin {
-    @Shadow @Final private net.minecraft.client.util.math.Vector3f horizontalPlane;
-    @Shadow @Final private net.minecraft.client.util.math.Vector3f verticalPlane;
-    @Shadow @Final private net.minecraft.client.util.math.Vector3f diagonalPlane;
+    @Shadow @Final private Vec3f horizontalPlane;
+    @Shadow @Final private Vec3f verticalPlane;
+    @Shadow @Final private Vec3f diagonalPlane;
     @Shadow @Final private net.minecraft.util.math.Quaternion rotation;
     @Shadow private Entity focusedEntity;
     @Shadow private float pitch;
@@ -44,22 +46,20 @@ public abstract class CameraMixin {
             )
     )
     public void update(BlockView area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo info) {
-        if (focusedEntity instanceof QuadcopterEntity) {
-            QuadcopterEntity quadcopter = (QuadcopterEntity) focusedEntity;
-
+        if (focusedEntity instanceof QuadcopterEntity quadcopter) {
             if (quadcopter.getRigidBody() != null && quadcopter.getRigidBody().getFrame() != null) {
-                Template template = DataDriver.getTemplate(quadcopter.getTemplate());
-                Vector3f location = quadcopter.getPhysicsLocation(new Vector3f(), tickDelta);
-                setPos(VectorHelper.vector3fToVec3d(location));
+                var template = DataDriver.getTemplate(quadcopter.getTemplate());
+                var location = quadcopter.getPhysicsLocation(new Vector3f(), tickDelta);
+                setPos(VectorHelper.toVec3d(Converter.toMinecraft(location)));
 
-                Quaternion quaternion = ((QuadcopterEntity) focusedEntity).getPhysicsRotation(new Quaternion(), tickDelta);
-                int cameraAngle = ((QuadcopterEntity) focusedEntity).getCameraAngle();
-                this.pitch = QuaternionHelper.getPitch(quaternion);
-                this.yaw = QuaternionHelper.getYaw(quaternion);
+                var quaternion = ((QuadcopterEntity) focusedEntity).getPhysicsRotation(new Quaternion(), tickDelta);
+                var cameraAngle = ((QuadcopterEntity) focusedEntity).getCameraAngle();
+                this.pitch = QuaternionHelper.getPitch(Converter.toMinecraft(quaternion));
+                this.yaw = QuaternionHelper.getYaw(Converter.toMinecraft(quaternion));
 
                 this.rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
-                this.rotation.hamiltonProduct(QuaternionHelper.bulletToMinecraft(quaternion));
-                this.rotation.hamiltonProduct(net.minecraft.client.util.math.Vector3f.NEGATIVE_X.getDegreesQuaternion(cameraAngle));
+                this.rotation.hamiltonProduct(Converter.toMinecraft(quaternion));
+                this.rotation.hamiltonProduct(Vec3f.NEGATIVE_X.getDegreesQuaternion(cameraAngle));
 
                 this.horizontalPlane.set(0.0F, 0.0F, 1.0F);
                 this.horizontalPlane.rotate(rotation);

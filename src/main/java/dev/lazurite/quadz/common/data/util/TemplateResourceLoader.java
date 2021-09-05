@@ -40,11 +40,6 @@ public class TemplateResourceLoader implements SimpleSynchronousResourceReloadLi
         return new Identifier(Quadz.MODID, "templates");
     }
 
-    @Override
-    public void apply(ResourceManager manager) {
-        DataDriver.getTemplates().forEach(this::load);
-    }
-
     /**
      * For loading non-synchronously.
      * @param template the template to load
@@ -71,7 +66,7 @@ public class TemplateResourceLoader implements SimpleSynchronousResourceReloadLi
             }
 
             RawGeometryTree rawGeometryTree = RawGeometryTree.parseHierarchy(rawModel);
-            GeckoLibCache.getInstance().getGeoModels().put(identifier, GeoBuilder.constructGeoModel(rawGeometryTree));
+            GeckoLibCache.getInstance().getGeoModels().put(identifier, GeoBuilder.getGeoBuilder(Quadz.MODID).constructGeoModel(rawGeometryTree));
         } catch (IOException e) {
             throw new RuntimeException(identifier.getPath() + " : Problem reading geo model.");
         }
@@ -109,5 +104,10 @@ public class TemplateResourceLoader implements SimpleSynchronousResourceReloadLi
         if (Language.getInstance() instanceof TranslationStorage) {
             ((TranslationStorage) Language.getInstance()).translations.put("template." + Quadz.MODID + "." + id, name);
         }
+    }
+
+    @Override
+    public void reload(ResourceManager manager) {
+        DataDriver.getTemplates().forEach(this::load);
     }
 }

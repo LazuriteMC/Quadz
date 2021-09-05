@@ -24,7 +24,12 @@ public class SplashResourceLoader implements SimpleSynchronousResourceReloadList
     }
 
     @Override
-    public void apply(ResourceManager manager) {
+    public Identifier getFabricId() {
+        return new Identifier(Quadz.MODID, "splash");
+    }
+
+    @Override
+    public void reload(ResourceManager manager) {
         try {
             Resource resource = manager.getResource(location);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
@@ -33,10 +38,5 @@ public class SplashResourceLoader implements SimpleSynchronousResourceReloadList
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public Identifier getFabricId() {
-        return new Identifier(Quadz.MODID, "splash");
     }
 }

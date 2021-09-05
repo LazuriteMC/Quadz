@@ -2,7 +2,8 @@ package dev.lazurite.quadz.compat.mixin.optifabric;
 
 import com.jme3.math.Quaternion;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
+import dev.lazurite.rayon.core.impl.bullet.math.Converter;
+import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import org.spongepowered.asm.mixin.Final;
@@ -25,7 +26,7 @@ public class GameRendererMixin {
     )
     public net.minecraft.util.math.Quaternion multiplyYaw(net.minecraft.util.math.Quaternion quaternion) {
         if (camera.getFocusedEntity() instanceof QuadcopterEntity) {
-            return QuaternionHelper.bulletToMinecraft(QuaternionHelper.rotateY(new Quaternion(), 180));
+            return QuaternionHelper.rotateY(Converter.toMinecraft(new Quaternion()), 180);
         }
 
         return quaternion;
@@ -41,7 +42,7 @@ public class GameRendererMixin {
     )
     public net.minecraft.util.math.Quaternion multiplyPitch(net.minecraft.util.math.Quaternion quaternion) {
         if (camera.getFocusedEntity() instanceof QuadcopterEntity) {
-            return QuaternionHelper.bulletToMinecraft(new Quaternion());
+            return Converter.toMinecraft(new Quaternion());
         }
 
         return quaternion;

@@ -5,7 +5,7 @@ import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.impl.physics.PhysicsThread;
+import dev.lazurite.rayon.core.impl.bullet.thread.PhysicsThread;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -39,7 +39,7 @@ public class ServerTick {
                 QuadcopterState.getQuadcopterByBindId(world, pos, transmitter.get().getBindId(), range).ifPresent(quad -> {
                     toActivate.add(quad);
 
-                    Optional.of(player.inventory.armor.get(3))
+                    Optional.of(player.getInventory().armor.get(3))
                             .filter(stack -> stack.getItem() instanceof GogglesItem).ifPresent(goggles -> {
                         if (!(player.getCameraEntity() instanceof QuadcopterEntity)) {
                             player.setCameraEntity(quad);

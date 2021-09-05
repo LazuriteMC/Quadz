@@ -15,7 +15,7 @@ import dev.lazurite.quadz.common.util.ServerTick;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
 import dev.lazurite.quadz.common.network.KeybindNetworkHandler;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.impl.util.event.BetterClientLifecycleEvents;
+import dev.lazurite.toolbox.api.event.BetterClientLifecycleEvents;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -54,11 +54,11 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 	public static Item TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new Item(new Item.Settings().maxCount(1)));
 
 	/* Quadcopter Entities */
-	public static EntityType<LivingEntity> QUADCOPTER_ENTITY = Registry.register(
+	public static EntityType<QuadcopterEntity> QUADCOPTER_ENTITY = Registry.register(
 			Registry.ENTITY_TYPE,
 			new Identifier(MODID, "quadcopter"),
 				FabricEntityTypeBuilder.createLiving()
-						.entityFactory((type, world) -> new QuadcopterEntity(world))
+						.entityFactory(QuadcopterEntity::new)
 						.spawnGroup(SpawnGroup.MISC)
 						.dimensions(EntityDimensions.changing(0.5F, 0.2F))
 						.defaultAttributes(LivingEntity::createLivingAttributes)

@@ -1,10 +1,10 @@
 plugins {
-	id 'fabric-loom' version '0.7-SNAPSHOT'
+	id 'fabric-loom' version '0.8-SNAPSHOT'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -15,7 +15,7 @@ minecraft {
 }
 
 repositories {
-	maven { url 'https://jitpack.io/' }
+	maven { url 'https://lazurite.dev/releases' }
 	maven { url 'https://maven.shedaniel.me/' }
 	maven { url 'https://maven.blamejared.com/' }
 	maven { url 'https://hephaestus.dev/release' }
@@ -30,18 +30,19 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 
 	// Fabric
-	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
-	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// Gecko Lib 3
 	modImplementation "software.bernie.geckolib:${project.geckolib_version}:dev"
 
 	// Rayon
-	modImplementation "com.github.LazuriteMC:Rayon:${project.rayon_version}"
+	modImplementation "dev.lazurite:rayon-core:${project.rayon_version}"
+	modImplementation "dev.lazurite:rayon-entity:${project.rayon_version}"
 
 	// Lattice
-	modImplementation "com.github.LazuriteMC:Lattice:${project.lattice_version}"
-	include "com.github.LazuriteMC:Lattice:${project.lattice_version}"
+	modImplementation "dev.lazurite:lattice:${project.lattice_version}"
+	include "dev.lazurite:lattice:${project.lattice_version}"
 
 	// Mod Menu + Cloth
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
@@ -55,18 +56,15 @@ dependencies {
 processResources {
 	inputs.property "version", project.version
 
-	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
+	filesMatching("fabric.mod.json") {
 		expand "version": project.version
-	}
-
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
 	}
 }
 
 tasks.withType(JavaCompile) {
 	options.encoding = "UTF-8"
+	it.options.release = 16
+
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -74,16 +72,50 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 	from sourceSets.main.allSource
 }
 
+java {
+	withSourcesJar()
+}
+
 jar {
-	from "LICENSE"
+	from("LICENSE") {
+		rename { "${it}_${project.archivesBaseName}"}
+	}
+}
+
+remapJar {
 }
 
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
+			artifactId = 'quadz'
+
+			pom {
+				name = 'Quadz'
+				description = 'An FPV quadcopter simulator for Minecraft.'
+				url = 'https://github.com/LazuriteMC/Quadz'
+				developers {
+					developer {
+						id = 'bluevista'
+						name = 'BlueVista'
+						email = 'ethan@ejohnsons.com'
+					}
+				}
+			}
+
+			versionMapping {
+				usage('java-api') {
+					fromResolutionOf('runtimeClasspath')
+				}
+				usage('java-runtime') {
+					fromResolutionResult()
+				}
+			}
+
 			artifact(remapJar) {
 				builtBy remapJar
 			}
+
 			artifact(sourcesJar) {
 				builtBy remapSourcesJar
 			}
@@ -91,6 +123,14 @@ publishing {
 	}
 
 	repositories {
-		 mavenLocal()
+		mavenLocal()
+
+		maven {
+			url = 'https://lazurite.dev/maven/releases'
+			credentials {
+				username = project.property("publish.lazurite.alias")
+				password = project.property("publish.lazurite.secret")
+			}
+		}
 	}
 }

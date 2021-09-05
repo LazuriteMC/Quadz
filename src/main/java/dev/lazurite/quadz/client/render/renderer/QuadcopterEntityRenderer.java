@@ -4,13 +4,13 @@ import com.jme3.math.Quaternion;
 import dev.lazurite.quadz.client.render.model.QuadcopterModel;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
+import dev.lazurite.rayon.core.impl.bullet.math.Converter;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
-import software.bernie.geckolib3.renderer.geo.GeoEntityRenderer;
+import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 /**
  * Responsible for rendering the {@link QuadcopterEntity} based on
@@ -21,8 +21,8 @@ import software.bernie.geckolib3.renderer.geo.GeoEntityRenderer;
  */
 @Environment(EnvType.CLIENT)
 public class QuadcopterEntityRenderer extends GeoEntityRenderer<QuadcopterEntity> {
-    public QuadcopterEntityRenderer(EntityRenderDispatcher dispatcher) {
-        super(dispatcher, new QuadcopterModel());
+    public QuadcopterEntityRenderer(EntityRendererFactory.Context ctx) {
+        super(ctx, new QuadcopterModel());
         this.shadowRadius = 0.1f;
     }
 
@@ -36,7 +36,7 @@ public class QuadcopterEntityRenderer extends GeoEntityRenderer<QuadcopterEntity
             quadcopter.prevBodyYaw = 0;
 
             stack.push();
-            stack.multiply(QuaternionHelper.bulletToMinecraft(quadcopter.getPhysicsRotation(new Quaternion(), tickDelta)));
+            stack.multiply(Converter.toMinecraft(quadcopter.getPhysicsRotation(new Quaternion(), tickDelta)));
             stack.translate(0, -quadcopter.getBoundingBox().getYLength() / 2, 0);
             super.render(quadcopter, 0, tickDelta, stack, bufferIn, packedLightIn);
             stack.pop();

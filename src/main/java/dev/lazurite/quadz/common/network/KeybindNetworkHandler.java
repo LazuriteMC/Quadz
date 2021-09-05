@@ -51,10 +51,10 @@ public class KeybindNetworkHandler {
         boolean enable = buf.readBoolean();
 
         server.execute(() -> {
-            ItemStack hat = player.inventory.armor.get(3);
+            ItemStack hat = player.getInventory().armor.get(3);
 
             if (hat.getItem() instanceof GogglesItem) {
-                hat.getOrCreateTag().putBoolean("enabled", enable);
+                hat.getOrCreateNbt().putBoolean("enabled", enable);
             }
         });
     }

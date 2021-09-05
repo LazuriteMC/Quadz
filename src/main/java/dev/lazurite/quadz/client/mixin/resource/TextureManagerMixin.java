@@ -17,13 +17,13 @@ public abstract class TextureManagerMixin {
     @Shadow @Final private ResourceManager resourceContainer;
 
     @Redirect(
-            method = "method_24303",
+            method = "loadTexture",
             at = @At(
                     value = "FIELD",
                     target = "Lnet/minecraft/client/texture/TextureManager;resourceContainer:Lnet/minecraft/resource/ResourceManager;"
             )
     )
-    public ResourceManager getResourceContainer(TextureManager manager, Identifier identifier, AbstractTexture texture) {
+    public ResourceManager getResourceContainer(TextureManager textureManager, Identifier identifier, AbstractTexture texture) {
         if (identifier.getNamespace().equals(Quadz.MODID)) {
             return new TemplateTextureManager(resourceContainer);
         }

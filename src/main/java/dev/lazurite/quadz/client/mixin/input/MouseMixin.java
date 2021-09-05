@@ -4,7 +4,7 @@ import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,7 +46,7 @@ public class MouseMixin {
             method = "onMouseButton",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/options/KeyBinding;setKeyPressed(Lnet/minecraft/client/util/InputUtil$Key;Z)V"
+                    target = "Lnet/minecraft/client/option/KeyBinding;setKeyPressed(Lnet/minecraft/client/util/InputUtil$Key;Z)V"
             )
     )
     public void setKeyPressed(InputUtil.Key key, boolean pressed) {
@@ -62,7 +62,7 @@ public class MouseMixin {
             method = "onMouseButton",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/options/KeyBinding;onKeyPressed(Lnet/minecraft/client/util/InputUtil$Key;)V"
+                    target = "Lnet/minecraft/client/option/KeyBinding;onKeyPressed(Lnet/minecraft/client/util/InputUtil$Key;)V"
             )
     )
     public void onKeyPressed(InputUtil.Key key) {

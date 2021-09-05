@@ -25,7 +25,7 @@ public class QuadcopterScreen {
                 .setTitle(new LiteralText(settings.getName() + " by " + settings.getAuthor()))
                 .setSavingRunnable(() -> {
                     PacketByteBuf buf = PacketByteBufs.create();
-                    buf.writeInt(entity.getEntityId());
+                    buf.writeInt(entity.getId());
                     buf.writeInt(entity.getCameraAngle());
                     ClientPlayNetworking.send(Quadz.QUADCOPTER_SETTINGS_C2S, buf);
                 });
@@ -38,6 +38,6 @@ public class QuadcopterScreen {
                 .setSaveConsumer(entity::setCameraAngle)
                 .build());
 
-        MinecraftClient.getInstance().openScreen(builder.setFallbackCategory(category).build());
+        MinecraftClient.getInstance().setScreen(builder.setFallbackCategory(category).build());
     }
 }

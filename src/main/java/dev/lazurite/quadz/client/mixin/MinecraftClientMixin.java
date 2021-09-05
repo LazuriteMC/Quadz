@@ -3,7 +3,7 @@ package dev.lazurite.quadz.client.mixin;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.options.GameOptions;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.profiler.Profiler;
 import org.spongepowered.asm.mixin.Final;

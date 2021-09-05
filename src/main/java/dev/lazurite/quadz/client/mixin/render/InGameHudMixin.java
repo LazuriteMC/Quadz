@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
     @Shadow @Final private MinecraftClient client;
-    @Shadow public abstract TextRenderer getFontRenderer();
+    @Shadow public abstract TextRenderer getTextRenderer();
 
     /**
      * Render the OSD whenever the player views a{@link QuadcopterEntity}
@@ -29,7 +29,7 @@ public abstract class InGameHudMixin {
     @Inject(method = "render", at = @At("HEAD"))
     public void render(MatrixStack matrices, float tickDelta, CallbackInfo info) {
         if (Config.getInstance().osdEnabled && client.getCameraEntity() instanceof QuadcopterEntity) {
-            OnScreenDisplay.render((QuadcopterEntity) client.getCameraEntity(), getFontRenderer(), matrices, tickDelta);
+            OnScreenDisplay.render((QuadcopterEntity) client.getCameraEntity(), getTextRenderer(), matrices, tickDelta);
         }
     }
 

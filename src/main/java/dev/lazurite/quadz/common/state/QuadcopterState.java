@@ -66,7 +66,7 @@ public interface QuadcopterState extends Bindable {
      * @return a {@link List} of {@link QuadcopterEntity}s
      */
     static List<QuadcopterEntity> getQuadcoptersInRange(World world, Vec3d origin, int range) {
-        return world.getEntitiesByClass(QuadcopterEntity.class, new Box(new BlockPos(origin)).expand(range), null);
+        return world.getEntitiesByClass(QuadcopterEntity.class, new Box(new BlockPos(origin)).expand(range), entity -> true);
     }
 
     /**

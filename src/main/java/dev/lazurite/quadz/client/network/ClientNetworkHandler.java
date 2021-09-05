@@ -45,14 +45,4 @@ public class ClientNetworkHandler {
             CompletableFuture.runAsync(() -> QuadzRendering.templateLoader.load(template));
         });
     }
-
-    public static void onSelectSlot(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-        int slot = buf.readInt();
-
-        client.execute(() -> {
-            if (client.player != null) {
-                client.player.inventory.selectedSlot = slot;
-            }
-        });
-    }
 }
