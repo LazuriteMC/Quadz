@@ -7,57 +7,57 @@ import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Optional;
 
 public class ServerTick {
     public static void tick(MinecraftServer server) {
-        int range = server.getPlayerManager().getViewDistance() * 16;
+        int range = server.getPlayerList().getViewDistance() * 16;
         List<QuadcopterEntity> toActivate = Lists.newArrayList();
 
-        for (ServerPlayerEntity player : PlayerLookup.all(server)) {
-            Vec3d pos = player.getCameraEntity().getPos();
-            World world = player.getEntityWorld();
-            List<QuadcopterEntity> quads = QuadcopterState.getQuadcoptersInRange(world, pos, range);
+        for (ServerPlayer player : PlayerLookup.all(server)) {
+            Vec3 pos = player.getCamera().position();
+            Level level = player.getLevel();
+            List<QuadcopterEntity> quads = QuadcopterState.getQuadcoptersInRange(level, pos, range);
 
             /* Don't forget the camera! */
-            if (player.getCameraEntity() instanceof QuadcopterEntity) {
-                quads.add((QuadcopterEntity) player.getCameraEntity());
+            if (player.getCamera() instanceof QuadcopterEntity) {
+                quads.add((QuadcopterEntity) player.getCamera());
             }
 
             quads.forEach(quadcopter -> quadcopter.setActive(false));
 
-            Bindable.get(player.getMainHandStack()).ifPresentOrElse(transmitter -> {
-                QuadcopterState.getQuadcopterByBindId(world, pos, transmitter.getBindId(), range).ifPresent(quad -> {
+            Bindable.get(player.getMainHandItem()).ifPresentOrElse(transmitter -> {
+                QuadcopterState.getQuadcopterByBindId(level, pos, transmitter.getBindId(), range).ifPresent(quad -> {
                     toActivate.add(quad);
 
                     Optional.of(player.getInventory().armor.get(3))
                         .filter(stack -> stack.getItem() instanceof GogglesItem).ifPresentOrElse(goggles -> {
-                            if (!(player.getCameraEntity() instanceof QuadcopterEntity)) {
-                                player.setCameraEntity(quad);
+                            if (!(player.getCamera() instanceof QuadcopterEntity)) {
+                                player.setCamera(quad);
                                 quad.getRigidBody().prioritize(player);
                             }
                         }, () -> {
-                            if (player.getCameraEntity() instanceof QuadcopterEntity entity) {
+                            if (player.getCamera() instanceof QuadcopterEntity entity) {
                                 if (player.equals(entity.getRigidBody().getPriorityPlayer())) {
                                     quad.getRigidBody().prioritize(null);
                                 }
 
-                                player.setCameraEntity(player);
+                                player.setCamera(player);
                             }
                         });
                 });
             }, () -> {
-                if (player.getCameraEntity() instanceof QuadcopterEntity entity) {
+                if (player.getCamera() instanceof QuadcopterEntity entity) {
                     if (player.equals(entity.getRigidBody().getPriorityPlayer())) {
                         entity.getRigidBody().prioritize(null);
                     }
 
-                    player.setCameraEntity(player);
+                    player.setCamera(player);
                 }
             });
         }

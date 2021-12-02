@@ -1,12 +1,12 @@
 package dev.lazurite.quadz.client.render.ui.toast;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.lazurite.quadz.Quadz;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.toast.Toast;
-import net.minecraft.client.toast.ToastManager;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.toasts.Toast;
+import net.minecraft.client.gui.components.toasts.ToastComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.ItemStack;
 
 public class ControllerNotFoundToast implements Toast {
     public static long visibilityTime = 1000L;
@@ -14,15 +14,15 @@ public class ControllerNotFoundToast implements Toast {
     private boolean visible;
 
     @Override
-    public Visibility draw(MatrixStack matrices, ToastManager manager, long startTime) {
-        manager.getGame().getTextureManager().bindTexture(TEXTURE);
-        manager.drawTexture(matrices, 0, 0, 0, 0, getWidth(), getHeight());
-        manager.getGame().textRenderer.draw(matrices, new TranslatableText("toast.quadz.controller.notfound"), 30, 12, -1);
+    public Visibility render(PoseStack matrices, ToastComponent manager, long startTime) {
+        manager.getMinecraft().getTextureManager().bindForSetup(TEXTURE);
+        manager.blit(matrices, 0, 0, 0, 0, width(), height());
+        manager.getMinecraft().font.draw(matrices, new TranslatableComponent("toast.quadz.controller.notfound"), 30, 12, -1);
 
-        matrices.push();
+        matrices.pushPose();
         matrices.scale(1.5f, 1.5f, 1.0f);
-        manager.getGame().getItemRenderer().renderInGui(new ItemStack(Quadz.TRANSMITTER_ITEM), 3, 3);
-        matrices.pop();
+        manager.getMinecraft().getItemRenderer().renderAndDecorateFakeItem(new ItemStack(Quadz.TRANSMITTER_ITEM), 3, 3);
+        matrices.popPose();
 
         this.visible = startTime < visibilityTime;
         return startTime >= visibilityTime ? Visibility.HIDE : Visibility.SHOW;
@@ -33,11 +33,11 @@ public class ControllerNotFoundToast implements Toast {
     }
 
     public static void add() {
-        ToastManager manager = MinecraftClient.getInstance().getToastManager();
+        ToastComponent manager = Minecraft.getInstance().getToasts();
 
         if (toast == null || !toast.isVisible()) {
             toast = new ControllerNotFoundToast();
-            manager.add(toast);
+            manager.addToast(toast);
         }
     }
 }

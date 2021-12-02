@@ -25,12 +25,15 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.minecraft.entity.*;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,28 +42,28 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger("Quadz");
 
 	/* Packet Identifiers */
-	public static final Identifier TEMPLATE = new Identifier(MODID, "template_s2c");
-	public static final Identifier QUADCOPTER_SETTINGS_C2S = new Identifier(MODID, "quadcopter_settings_c2s");
-	public static final Identifier PLAYER_DATA_C2S = new Identifier(MODID, "player_data_c2s");
-	public static final Identifier INPUT_FRAME = new Identifier(MODID, "input_frame");
+	public static final ResourceLocation TEMPLATE = new ResourceLocation(MODID, "template_s2c");
+	public static final ResourceLocation QUADCOPTER_SETTINGS_C2S = new ResourceLocation(MODID, "quadcopter_settings_c2s");
+	public static final ResourceLocation PLAYER_DATA_C2S = new ResourceLocation(MODID, "player_data_c2s");
+	public static final ResourceLocation INPUT_FRAME = new ResourceLocation(MODID, "input_frame");
 
-	public static final Identifier NOCLIP_C2S = new Identifier(MODID, "noclip_c2s");
-	public static final Identifier CHANGE_CAMERA_ANGLE_C2S = new Identifier(MODID, "change_camera_angle_c2s");
-	public static final Identifier POWER_GOGGLES_C2S = new Identifier(MODID, "power_goggles_c2s");
+	public static final ResourceLocation NOCLIP_C2S = new ResourceLocation(MODID, "noclip_c2s");
+	public static final ResourceLocation CHANGE_CAMERA_ANGLE_C2S = new ResourceLocation(MODID, "change_camera_angle_c2s");
+	public static final ResourceLocation POWER_GOGGLES_C2S = new ResourceLocation(MODID, "power_goggles_c2s");
 
 	/* Items */
-	public static QuadcopterItem QUADCOPTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "quadcopter_item"), new QuadcopterItem(new Item.Settings().maxCount(1)));
-	public static GogglesItem GOGGLES_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "goggles_item"), new GogglesItem(new Item.Settings().maxCount(1)));
-	public static Item TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new Identifier(MODID, "transmitter_item"), new Item(new Item.Settings().maxCount(1)));
+	public static QuadcopterItem QUADCOPTER_ITEM = Registry.register(Registry.ITEM, new ResourceLocation(MODID, "quadcopter_item"), new QuadcopterItem(new Item.Properties().stacksTo(1)));
+	public static GogglesItem GOGGLES_ITEM = Registry.register(Registry.ITEM, new ResourceLocation(MODID, "goggles_item"), new GogglesItem(new Item.Properties().stacksTo(1)));
+	public static Item TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new ResourceLocation(MODID, "transmitter_item"), new Item(new Item.Properties().stacksTo(1)));
 
 	/* Quadcopter Entities */
 	public static EntityType<QuadcopterEntity> QUADCOPTER_ENTITY = Registry.register(
 			Registry.ENTITY_TYPE,
-			new Identifier(MODID, "quadcopter"),
+			new ResourceLocation(MODID, "quadcopter"),
 				FabricEntityTypeBuilder.createLiving()
 						.entityFactory(QuadcopterEntity::new)
-						.spawnGroup(SpawnGroup.MISC)
-						.dimensions(EntityDimensions.changing(0.5F, 0.2F))
+						.spawnGroup(MobCategory.MISC)
+						.dimensions(EntityDimensions.scalable(0.5F, 0.2F))
 						.defaultAttributes(LivingEntity::createLivingAttributes)
 						.build());
 
@@ -109,8 +112,8 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(INPUT_FRAME, ClientNetworkHandler::onInputFrameReceived);
 
 		/* Register Toast Events */
-		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerConnectedToast.add(new TranslatableText("toast.quadz.controller.connect"), name));
-		JoystickEvents.JOYSTICK_DISCONNECT.register((id, name) -> ControllerConnectedToast.add(new TranslatableText("toast.quadz.controller.disconnect"), name));
+		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerConnectedToast.add(new TranslatableComponent("toast.quadz.controller.connect"), name));
+		JoystickEvents.JOYSTICK_DISCONNECT.register((id, name) -> ControllerConnectedToast.add(new TranslatableComponent("toast.quadz.controller.disconnect"), name));
 
 		/* Register Client Tick Events */
 		ClientTickEvents.START_CLIENT_TICK.register(ClientTick::tick);

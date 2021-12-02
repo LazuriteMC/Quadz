@@ -2,11 +2,11 @@ package dev.lazurite.quadz.client.resource;
 
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceImpl;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleResource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -22,12 +22,12 @@ public class TemplateTextureManager implements ResourceManager {
     }
 
     @Override
-    public Set<String> getAllNamespaces() {
+    public Set<String> getNamespaces() {
         return new HashSet<>();
     }
 
     @Override
-    public Resource getResource(Identifier id) throws IOException {
+    public Resource getResource(ResourceLocation id) throws IOException {
         if (id.getPath().endsWith("_n.png") || id.getPath().endsWith("_s.png")) {
             return getOriginal().getResource(id);
         }
@@ -37,27 +37,27 @@ public class TemplateTextureManager implements ResourceManager {
         if (template == null) {
             return original.getResource(id);
         } else {
-            return new ResourceImpl(template.getId(), id, new ByteArrayInputStream(template.getTexture()), null);
+            return new SimpleResource(template.getId(), id, new ByteArrayInputStream(template.getTexture()), null);
         }
     }
 
     @Override
-    public boolean containsResource(Identifier id) {
+    public boolean hasResource(ResourceLocation id) {
         return false;
     }
 
     @Override
-    public List<Resource> getAllResources(Identifier id) {
+    public List<Resource> getResources(ResourceLocation id) {
         return new ArrayList<>();
     }
 
     @Override
-    public Collection<Identifier> findResources(String resourceType, Predicate<String> pathPredicate) {
+    public Collection<ResourceLocation> listResources(String resourceType, Predicate<String> pathPredicate) {
         return new ArrayList<>();
     }
 
     @Override
-    public Stream<ResourcePack> streamResourcePacks() {
+    public Stream<PackResources> listPacks() {
         return null;
     }
 

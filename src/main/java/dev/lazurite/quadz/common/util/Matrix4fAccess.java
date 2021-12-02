@@ -1,8 +1,8 @@
 package dev.lazurite.quadz.common.util;
 
 import com.jme3.math.Vector3f;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Quaternion;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
 
 public interface Matrix4fAccess {
     Vector3f matrixToVector();

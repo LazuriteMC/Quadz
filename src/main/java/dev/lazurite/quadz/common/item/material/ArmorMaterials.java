@@ -3,18 +3,18 @@ package dev.lazurite.quadz.common.item.material;
 import dev.lazurite.quadz.Quadz;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Lazy;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.LazyLoadedValue;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.function.Supplier;
 
 public enum ArmorMaterials implements ArmorMaterial {
-    GOGGLE("goggle", 0, new int[]{0, 0, 0, 0}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F, () -> {
-        return Ingredient.ofItems(Quadz.GOGGLES_ITEM);
+    GOGGLE("goggle", 0, new int[]{0, 0, 0, 0}, 0, SoundEvents.ARMOR_EQUIP_LEATHER, 0.0F, () -> {
+        return Ingredient.of(Quadz.GOGGLES_ITEM);
     });
 
     private static final int[] BASE_DURABILITY = new int[]{13, 15, 16, 11};
@@ -25,7 +25,7 @@ public enum ArmorMaterials implements ArmorMaterial {
     private final int enchantability;
     private final SoundEvent equipSound;
     private final float toughness;
-    private final Lazy<Ingredient> repairIngredientSupplier;
+    private final LazyLoadedValue<Ingredient> repairIngredientSupplier;
 
     ArmorMaterials(String name, int durabilityMultiplier, int[] protectionAmounts, int enchantability, SoundEvent equipSound, float toughness, Supplier<Ingredient> ingredientSupplier) {
         this.name = name;
@@ -34,34 +34,41 @@ public enum ArmorMaterials implements ArmorMaterial {
         this.enchantability = enchantability;
         this.equipSound = equipSound;
         this.toughness = toughness;
-        this.repairIngredientSupplier = new Lazy(ingredientSupplier);
+        this.repairIngredientSupplier = new LazyLoadedValue<>(ingredientSupplier);
     }
 
-    public int getDurability(EquipmentSlot slot) {
-        return BASE_DURABILITY[slot.getEntitySlotId()] * this.durabilityMultiplier;
+    @Override
+    public int getDurabilityForSlot(EquipmentSlot slot) {
+        return BASE_DURABILITY[slot.getIndex()] * this.durabilityMultiplier;
     }
 
-    public int getProtectionAmount(EquipmentSlot slot) {
-        return this.protectionAmounts[slot.getEntitySlotId()];
+    @Override
+    public int getDefenseForSlot(EquipmentSlot slot) {
+        return this.protectionAmounts[slot.getIndex()];
     }
 
-    public int getEnchantability() {
+    @Override
+    public int getEnchantmentValue() {
         return this.enchantability;
     }
 
+    @Override
     public SoundEvent getEquipSound() {
         return this.equipSound;
     }
 
+    @Override
     public Ingredient getRepairIngredient() {
         return (Ingredient)this.repairIngredientSupplier.get();
     }
 
     @Environment(EnvType.CLIENT)
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public float getToughness() {
         return this.toughness;
     }

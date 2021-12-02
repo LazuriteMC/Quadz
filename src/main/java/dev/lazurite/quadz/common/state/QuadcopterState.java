@@ -1,20 +1,18 @@
 package dev.lazurite.quadz.common.state;
 
-import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.state.item.StackQuadcopterState;
-import dev.lazurite.transporter.impl.pattern.model.Quad;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.TargetPredicate;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -30,15 +28,15 @@ import java.util.function.Predicate;
 public interface QuadcopterState extends Bindable {
     /**
      * Finds a specific {@link QuadcopterEntity} which is bound to the given bind ID.
-     * @param world the world to search in
+     * @param level the level to search in
      * @param origin the point to search from
      * @param bindId the bind id of the transmitter
      * @param range the maximum range
      * @return the bound {@link QuadcopterEntity} (null if not found)
      */
-    static Optional<QuadcopterEntity> getQuadcopterByBindId(World world, Vec3d origin, int bindId, int range) {
-        var entities = world.getOtherEntities(null,
-                new Box(new BlockPos(origin)).expand(range),
+    static Optional<QuadcopterEntity> getQuadcopterByBindId(Level level, Vec3 origin, int bindId, int range) {
+        var entities = level.getEntities((Entity) null,
+                new AABB(new BlockPos(origin)).inflate(range),
                 entity -> entity instanceof QuadcopterEntity quadcopter && quadcopter.isBoundTo(bindId));
 
         if (entities.size() > 0) {
@@ -50,29 +48,29 @@ public interface QuadcopterState extends Bindable {
 
     /**
      * Finds the closest {@link QuadcopterEntity} to the given origin.
-     * @param world the world to search in
+     * @param level the level to search in
      * @param origin the point to search from
      * @param range the maximum range
      * @param predicate a predicate to narrow the search
      * @return the nearest {@link QuadcopterEntity} (null if not found)
      */
-    static Optional<QuadcopterEntity> getNearestQuadcopter(World world, Vec3d origin, int range, @Nullable Predicate<LivingEntity> predicate) {
-        return Optional.ofNullable(world.getClosestEntity(
+    static Optional<QuadcopterEntity> getNearestQuadcopter(Level level, Vec3 origin, int range, @Nullable Predicate<LivingEntity> predicate) {
+        return Optional.ofNullable(level.getNearestEntity(
                 QuadcopterEntity.class,
-                TargetPredicate.DEFAULT.setPredicate(predicate),
+                TargetingConditions.DEFAULT.selector(predicate),
                 null, origin.x, origin.y, origin.z,
-                new Box(new BlockPos(origin)).expand(range)));
+                new AABB(new BlockPos(origin)).inflate(range)));
     }
 
     /**
      * Finds all {@link QuadcopterEntity}s inside of a specific range.
-     * @param world the world to search in
+     * @param level the level to search in
      * @param origin the point to search from
      * @param range the maximum range
      * @return a {@link List} of {@link QuadcopterEntity}s
      */
-    static List<QuadcopterEntity> getQuadcoptersInRange(World world, Vec3d origin, int range) {
-        return world.getEntitiesByClass(QuadcopterEntity.class, new Box(new BlockPos(origin)).expand(range), entity -> true);
+    static List<QuadcopterEntity> getQuadcoptersInRange(Level level, Vec3 origin, int range) {
+        return level.getEntitiesOfClass(QuadcopterEntity.class, new AABB(new BlockPos(origin)).inflate(range), entity -> true);
     }
 
     /**
@@ -80,9 +78,9 @@ public interface QuadcopterState extends Bindable {
      * @param quadcopter the {@link QuadcopterEntity} to find a matching player for
      * @return the matching {@link PlayerEntity}
      */
-    static Optional<ServerPlayerEntity> reverseLookup(QuadcopterEntity quadcopter) {
+    static Optional<ServerPlayer> reverseLookup(QuadcopterEntity quadcopter) {
         return PlayerLookup.tracking(quadcopter).stream()
-                .filter(player -> Bindable.get(player.getMainHandStack())
+                .filter(player -> Bindable.get(player.getMainHandItem())
                 .filter(transmitter -> transmitter.getBindId() == quadcopter.getBindId())
                 .isPresent()).findFirst();
     }

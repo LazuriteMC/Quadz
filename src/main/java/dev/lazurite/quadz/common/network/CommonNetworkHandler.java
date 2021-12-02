@@ -11,19 +11,20 @@ import dev.lazurite.quadz.common.util.input.InputFrame;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ServerGamePacketListener;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import org.apache.logging.log4j.core.jmx.Server;
 
 public class CommonNetworkHandler {
-    public static void onQuadcopterSettingsReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+    public static void onQuadcopterSettingsReceived(MinecraftServer server, ServerPlayer player, ServerGamePacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
         int entityId = buf.readInt();
         int cameraAngle = buf.readInt();
 
         server.execute(() -> {
-            Entity entity = player.getEntityWorld().getEntityById(entityId);
+            Entity entity = player.getLevel().getEntity(entityId);
 
             if (entity instanceof QuadcopterEntity) {
                 ((QuadcopterEntity) entity).setCameraAngle(cameraAngle);
@@ -31,12 +32,12 @@ public class CommonNetworkHandler {
         });
     }
 
-    public static void onPlayerDataReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-        String callSign = buf.readString(32767);
+    public static void onPlayerDataReceived(MinecraftServer server, ServerPlayer player, ServerGamePacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+        String callSign = buf.readUtf(32767);
         server.execute(() -> ((PlayerData) player).setCallSign(callSign));
     }
 
-    public static void onTemplateReceived(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+    public static void onTemplateReceived(MinecraftServer server, ServerPlayer player, ServerGamePacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
         Template template = Template.deserialize(buf);
 
         server.execute(() -> {
@@ -50,7 +51,7 @@ public class CommonNetworkHandler {
         });
     }
 
-    public static void onInputFrame(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+    public static void onInputFrame(MinecraftServer server, ServerPlayer player, ServerGamePacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
         int entityId = buf.readInt();
         InputFrame frame = new InputFrame(
                 buf.readFloat(),
@@ -61,11 +62,11 @@ public class CommonNetworkHandler {
                 buf.readFloat(),
                 buf.readFloat(),
                 buf.readFloat(),
-                buf.readEnumConstant(Mode.class));
+                buf.readEnum(Mode.class));
 
         server.execute(() -> {
-            Bindable.get(player.getMainHandStack()).ifPresent(transmitter -> {
-                Entity entity = player.getEntityWorld().getEntityById(entityId);
+            Bindable.get(player.getMainHandItem()).ifPresent(transmitter -> {
+                Entity entity = player.getLevel().getEntity(entityId);
 
                 if (entity instanceof QuadcopterEntity) {
                     if (((QuadcopterEntity) entity).isBoundTo(transmitter)) {

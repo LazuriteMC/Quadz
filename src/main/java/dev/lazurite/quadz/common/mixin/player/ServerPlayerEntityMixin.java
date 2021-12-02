@@ -2,13 +2,13 @@ package dev.lazurite.quadz.common.mixin.player;
 
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.PlayerData;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(ServerPlayerEntity.class)
+@Mixin(ServerPlayer.class)
 public class ServerPlayerEntityMixin implements PlayerData {
     @Unique private String callSign;
 
@@ -20,14 +20,14 @@ public class ServerPlayerEntityMixin implements PlayerData {
             method = "tick",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;shouldDismount()Z"
+                    target = "Lnet/minecraft/server/level/ServerPlayer;wantsToStopRiding()Z"
             )
     )
-    public boolean shouldDismount(ServerPlayerEntity player) {
-        if (player.getCameraEntity() instanceof QuadcopterEntity) {
+    public boolean shouldDismount(ServerPlayer serverPlayer) {
+        if (serverPlayer.getCamera() instanceof QuadcopterEntity) {
             return false;
         } else {
-            return player.isSneaking();
+            return serverPlayer.isCrouching();
         }
     }
 

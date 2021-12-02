@@ -3,8 +3,8 @@ package dev.lazurite.quadz.common.data.model;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.Mth;
 
 import java.util.Arrays;
 
@@ -33,21 +33,21 @@ public class Template {
         this.originDistance = originDistance;
     }
 
-    public PacketByteBuf serialize() {
-        PacketByteBuf buf = PacketByteBufs.create();
+    public FriendlyByteBuf serialize() {
+        FriendlyByteBuf buf = PacketByteBufs.create();
         settings.serialize(buf);
-        buf.writeString(geo.toString());
-        buf.writeString(animation.toString());
+        buf.writeUtf(geo.toString());
+        buf.writeUtf(animation.toString());
         buf.writeByteArray(texture);
         buf.writeInt(originDistance + 1);
         return buf;
     }
 
-    public static Template deserialize(PacketByteBuf buf) {
+    public static Template deserialize(FriendlyByteBuf buf) {
         return new Template(
             Settings.deserialize(buf),
-            new JsonParser().parse(buf.readString(32767)).getAsJsonObject(),
-            new JsonParser().parse(buf.readString(32767)).getAsJsonObject(),
+            new JsonParser().parse(buf.readUtf(32767)).getAsJsonObject(),
+            new JsonParser().parse(buf.readUtf(32767)).getAsJsonObject(),
             buf.readByteArray(),
             buf.readInt());
     }
@@ -107,21 +107,21 @@ public class Template {
             this.id = id.toLowerCase();
             this.name = name;
             this.author = author;
-            this.width = MathHelper.clamp(width, 0.0f, 3.0f);
-            this.height = MathHelper.clamp(height, 0.0f, 3.0f);
-            this.cameraX = MathHelper.clamp(cameraX, -1.5f, 1.5f);
-            this.cameraY = MathHelper.clamp(cameraY, -1.5f, 1.5f);
-            this.mass = MathHelper.clamp(mass, 0.0f, 100);
-            this.dragCoefficient = MathHelper.clamp(dragCoefficient, 0.0f, 1.0f);
-            this.thrust = MathHelper.clamp(thrust, 0.0f, 200);
-            this.thrustCurve = MathHelper.clamp(thrustCurve, 0.0f, 1.0f);
-            this.cameraAngle = MathHelper.clamp(cameraAngle, -180, 180);
+            this.width = Mth.clamp(width, 0.0f, 3.0f);
+            this.height = Mth.clamp(height, 0.0f, 3.0f);
+            this.cameraX = Mth.clamp(cameraX, -1.5f, 1.5f);
+            this.cameraY = Mth.clamp(cameraY, -1.5f, 1.5f);
+            this.mass = Mth.clamp(mass, 0.0f, 100);
+            this.dragCoefficient = Mth.clamp(dragCoefficient, 0.0f, 1.0f);
+            this.thrust = Mth.clamp(thrust, 0.0f, 200);
+            this.thrustCurve = Mth.clamp(thrustCurve, 0.0f, 1.0f);
+            this.cameraAngle = Mth.clamp(cameraAngle, -180, 180);
         }
 
-        public void serialize(PacketByteBuf buf) {
-            buf.writeString(id);
-            buf.writeString(name);
-            buf.writeString(author);
+        public void serialize(FriendlyByteBuf buf) {
+            buf.writeUtf(id);
+            buf.writeUtf(name);
+            buf.writeUtf(author);
             buf.writeFloat(width);
             buf.writeFloat(height);
             buf.writeFloat(cameraX);
@@ -133,11 +133,11 @@ public class Template {
             buf.writeInt(cameraAngle);
         }
 
-        public static Settings deserialize(PacketByteBuf buf) {
+        public static Settings deserialize(FriendlyByteBuf buf) {
             return new Settings(
-                    buf.readString(32767),
-                    buf.readString(32767),
-                    buf.readString(32767),
+                    buf.readUtf(32767),
+                    buf.readUtf(32767),
+                    buf.readUtf(32767),
                     buf.readFloat(),
                     buf.readFloat(),
                     buf.readFloat(),

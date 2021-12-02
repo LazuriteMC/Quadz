@@ -2,10 +2,9 @@ package dev.lazurite.quadz.client.mixin.resource;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.resource.TemplateTextureManager;
-import net.minecraft.client.texture.AbstractTexture;
-import net.minecraft.client.texture.TextureManager;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,20 +13,21 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(TextureManager.class)
 public abstract class TextureManagerMixin {
-    @Shadow @Final private ResourceManager resourceContainer;
+
+    @Shadow @Final private ResourceManager resourceManager;
 
     @Redirect(
             method = "loadTexture",
             at = @At(
                     value = "FIELD",
-                    target = "Lnet/minecraft/client/texture/TextureManager;resourceContainer:Lnet/minecraft/resource/ResourceManager;"
+                    target = "Lnet/minecraft/client/renderer/texture/TextureManager;resourceManager:Lnet/minecraft/server/packs/resources/ResourceManager;"
             )
     )
-    public ResourceManager getResourceContainer(TextureManager textureManager, Identifier identifier, AbstractTexture texture) {
-        if (identifier.getNamespace().equals(Quadz.MODID)) {
-            return new TemplateTextureManager(resourceContainer);
+    public ResourceManager getResourceContainer(TextureManager instance, ResourceLocation resourceLocation) {
+        if (resourceLocation.getNamespace().equals(Quadz.MODID)) {
+            return new TemplateTextureManager(resourceManager);
         }
 
-        return resourceContainer;
+        return resourceManager;
     }
 }

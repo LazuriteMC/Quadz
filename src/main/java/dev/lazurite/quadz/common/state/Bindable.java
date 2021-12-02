@@ -2,7 +2,7 @@ package dev.lazurite.quadz.common.state;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.item.StackBindableState;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
 import java.util.Random;

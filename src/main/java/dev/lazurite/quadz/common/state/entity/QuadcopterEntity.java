@@ -3,6 +3,7 @@ package dev.lazurite.quadz.common.state.entity;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
+import com.mojang.math.Matrix4f;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
@@ -30,26 +31,25 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Arm;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -63,28 +63,28 @@ import java.util.Optional;
 
 public class QuadcopterEntity extends LivingEntity implements QuadcopterState, IAnimatable, EntityPhysicsElement, Viewable {
 	/* States */
-	private static final TrackedData<Boolean> ACTIVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-	private static final TrackedData<String> TEMPLATE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.STRING);
+	private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<String> TEMPLATE = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.STRING);
 
 	/* Data */
-	private static final TrackedData<Integer> BIND_ID = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
+	private static final EntityDataAccessor<Integer> BIND_ID = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.INT);
 
 	/* Physical Attributes */
-	private static final TrackedData<Integer> CAMERA_ANGLE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	private static final TrackedData<Float> THRUST = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
-	private static final TrackedData<Float> THRUST_CURVE = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
-	private static final TrackedData<Float> WIDTH = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
-	private static final TrackedData<Float> HEIGHT = DataTracker.registerData(QuadcopterEntity.class, TrackedDataHandlerRegistry.FLOAT);
+	private static final EntityDataAccessor<Integer> CAMERA_ANGLE = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Float> THRUST = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Float> THRUST_CURVE = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.FLOAT);
 
 	private final AnimationFactory animationFactory = new AnimationFactory(this);
 	private final EntityRigidBody rigidBody = new EntityRigidBody(this);
 	private final InputFrame inputFrame = new InputFrame();
-	private ServerPlayerEntity lastPlayer;
+	private ServerPlayer lastPlayer;
 	private String prevTemplate;
 
-	public QuadcopterEntity(EntityType<? extends LivingEntity> entityType, World world) {
-		super(entityType, world);
-		this.ignoreCameraFrustum = true;
+	public QuadcopterEntity(EntityType<? extends LivingEntity> entityType, Level level) {
+		super(entityType, level);
+		this.noCulling = true;
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 			if (template != null) {
 				setWidth(template.getSettings().getWidth());
 				setHeight(template.getSettings().getHeight());
-				calculateDimensions();
+				refreshDimensions();
 				setThrust(template.getSettings().getThrust());
 				setThrustCurve(template.getSettings().getThrustCurve());
 
@@ -104,15 +104,15 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 					setCameraAngle(template.getSettings().getCameraAngle());
 				}
 
-				PhysicsThread.get(world).execute(() -> {
+				PhysicsThread.get(level).execute(() -> {
 					getRigidBody().setMass(template.getSettings().getMass());
 					getRigidBody().setDragCoefficient(template.getSettings().getDragCoefficient());
 				});
 			}
 		}
 
-		if (!world.isClient) {
-			Optional<ServerPlayerEntity> player = QuadcopterState.reverseLookup(this);
+		if (!level.isClientSide()) {
+			Optional<ServerPlayer> player = QuadcopterState.reverseLookup(this);
 
 			if (player.isPresent()) {
 				lastPlayer = player.get();
@@ -140,8 +140,8 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 				float targetPitch = -frame.getPitch() * frame.getMaxAngle();
 				float targetRoll = -frame.getRoll() * frame.getMaxAngle();
 
-				float currentPitch = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(Converter.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion()))).getY());
-				float currentRoll = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(Converter.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion()))).getX());
+				float currentPitch = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(Converter.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion()))).y());
+				float currentRoll = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(Converter.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion()))).x());
 
 				rotate(currentPitch - targetPitch, frame.calculateYaw(0.05f), currentRoll - targetRoll);
 			}
@@ -177,7 +177,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	}
 
 	public void rotate(float x, float y, float z) {
-		var rot = new net.minecraft.util.math.Quaternion(net.minecraft.util.math.Quaternion.IDENTITY);
+		var rot = new com.mojang.math.Quaternion(com.mojang.math.Quaternion.ONE);
 		QuaternionHelper.rotateX(rot, x);
 		QuaternionHelper.rotateY(rot, y);
 		QuaternionHelper.rotateZ(rot, z);
@@ -191,7 +191,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		InputFrame frame = getInputFrame();
 
 		if (frame != null) {
-			PacketByteBuf buf = PacketByteBufs.create();
+			FriendlyByteBuf buf = PacketByteBufs.create();
 			buf.writeInt(getId());
 			buf.writeFloat(frame.getThrottle());
 			buf.writeFloat(frame.getPitch());
@@ -201,9 +201,9 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 			buf.writeFloat(frame.getSuperRate());
 			buf.writeFloat(frame.getExpo());
 			buf.writeFloat(frame.getMaxAngle());
-			buf.writeEnumConstant(frame.getMode());
+			buf.writeEnum(frame.getMode());
 
-			if (world.isClient()) {
+			if (level.isClientSide()) {
 				ClientPlayNetworking.send(Quadz.INPUT_FRAME, buf);
 			} else {
 				PlayerLookup.tracking(this).forEach(player -> ServerPlayNetworking.send(player, Quadz.INPUT_FRAME, buf));
@@ -212,8 +212,8 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	}
 
 	@Override
-	public boolean damage(DamageSource source, float amount) {
-		if (!world.isClient() && source.getAttacker() instanceof PlayerEntity) {
+	public boolean hurt(DamageSource source, float amount) {
+		if (!level.isClientSide() && source.getEntity() instanceof Player) {
 			this.kill();
 			return true;
 		}
@@ -236,36 +236,36 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
 		QuadcopterState.fromStack(stack).ifPresent(state -> {
 			state.copyFrom(this);
-			this.dropStack(stack);
+			this.spawnAtLocation(stack);
 		});
 	}
 
 	@Override
-	public Iterable<ItemStack> getArmorItems() {
+	public Iterable<ItemStack> getArmorSlots() {
 		return new ArrayList<>();
 	}
 
 	@Override
-	public ItemStack getEquippedStack(EquipmentSlot slot) {
+	public ItemStack getItemBySlot(EquipmentSlot slot) {
 		return new ItemStack(Items.AIR);
 	}
 
 	@Override
-	public void equipStack(EquipmentSlot slot, ItemStack stack) { }
+	public void setItemSlot(EquipmentSlot slot, ItemStack stack) { }
 
 	@Override
-	public Direction getHorizontalFacing() {
-		return Direction.fromRotation(QuaternionHelper.getYaw(Converter.toMinecraft(getPhysicsRotation(new Quaternion(), 1.0f))));
+	public Direction getDirection() {
+		return Direction.fromYRot(QuaternionHelper.getYaw(Converter.toMinecraft(getPhysicsRotation(new Quaternion(), 1.0f))));
 	}
 
 	@Override
-	public ActionResult interact(PlayerEntity player, Hand hand) {
-		ItemStack stack = player.getInventory().getMainHandStack();
+	public InteractionResult interact(Player player, InteractionHand hand) {
+		ItemStack stack = player.getInventory().getSelected();
 
-		if (!world.isClient()) {
+		if (!level.isClientSide()) {
 			Bindable.get(stack).ifPresent(bindable -> {
 				Bindable.bind(this, bindable);
-				player.sendMessage(new TranslatableText("item.quadz.transmitter_item.bound"), true);
+				player.displayClientMessage(new TranslatableComponent("item.quadz.transmitter_item.bound"), true);
 			});
 		} else {
 			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
@@ -277,20 +277,20 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 			}
 		}
 
-		return ActionResult.SUCCESS;
+		return InteractionResult.SUCCESS;
 	}
 
 	@Override
-	public void readCustomDataFromNbt(NbtCompound tag) {
-		super.readCustomDataFromNbt(tag);
+	public void readAdditionalSaveData(CompoundTag tag) {
+		super.readAdditionalSaveData(tag);
 		setTemplate(tag.getString("template"));
 		setBindId(tag.getInt("bind_id"));
 		setCameraAngle(tag.getInt("camera_angle"));
 	}
 
 	@Override
-	public void writeCustomDataToNbt(NbtCompound tag) {
-		super.writeCustomDataToNbt(tag);
+	public void addAdditionalSaveData(CompoundTag tag) {
+		super.addAdditionalSaveData(tag);
 		tag.putString("template", getTemplate());
 		tag.putInt("bind_id", getBindId());
 		tag.putInt("camera_angle", getCameraAngle());
@@ -298,32 +298,32 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public boolean shouldRender(double distance) {
+	public boolean shouldRenderAtSqrDistance(double distance) {
 		return true;
 	}
 
 	@Override
-	protected void initDataTracker() {
-		super.initDataTracker();
-		getDataTracker().startTracking(ACTIVE, false);
-		getDataTracker().startTracking(TEMPLATE, "");
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+		getEntityData().define(ACTIVE, false);
+		getEntityData().define(TEMPLATE, "");
 
-		getDataTracker().startTracking(BIND_ID, -1);
+		getEntityData().define(BIND_ID, -1);
 
-		getDataTracker().startTracking(CAMERA_ANGLE, 0);
-		getDataTracker().startTracking(THRUST, 0.0f);
-		getDataTracker().startTracking(THRUST_CURVE, 0.0f);
-		getDataTracker().startTracking(WIDTH, -1.0f);
-		getDataTracker().startTracking(HEIGHT, -1.0f);
+		getEntityData().define(CAMERA_ANGLE, 0);
+		getEntityData().define(THRUST, 0.0f);
+		getEntityData().define(THRUST_CURVE, 0.0f);
+		getEntityData().define(WIDTH, -1.0f);
+		getEntityData().define(HEIGHT, -1.0f);
 	}
 
 	@Override
-	public float getYaw(float tickDelta) {
+	public float getViewYRot(float tickDelta) {
 		return QuaternionHelper.getYaw(Converter.toMinecraft(getPhysicsRotation(new Quaternion(), tickDelta)));
 	}
 
 	@Override
-	public float getPitch(float tickDelta) {
+	public float getViewXRot(float tickDelta) {
 		return QuaternionHelper.getPitch(Converter.toMinecraft(getPhysicsRotation(new Quaternion(), tickDelta)));
 //		return QuaternionHelper.getPitch(QuaternionHelper.rotateX(
 //				getPhysicsRotation(new Quaternion(), tickDelta),
@@ -331,23 +331,23 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	}
 
 	@Override
-	public boolean collides() {
+	public boolean isPickable() {
 		return true;
 	}
 
 	@Override
-	public Arm getMainArm() {
+	public HumanoidArm getMainArm() {
 		return null;
 	}
 
 	@Override
 	public void setBindId(int bindId) {
-		getDataTracker().set(BIND_ID, bindId);
+		getEntityData().set(BIND_ID, bindId);
 	}
 
 	@Override
 	public int getBindId() {
-		return getDataTracker().get(BIND_ID);
+		return getEntityData().get(BIND_ID);
 	}
 
 	public InputFrame getInputFrame() {
@@ -356,59 +356,61 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	@Override
 	public void setTemplate(String template) {
-		getDataTracker().set(TEMPLATE, template);
+		getEntityData().set(TEMPLATE, template);
 	}
 
 	@Override
 	public void setCameraAngle(int cameraAngle) {
-		getDataTracker().set(CAMERA_ANGLE, cameraAngle);
+		getEntityData().set(CAMERA_ANGLE, cameraAngle);
 	}
 
 	@Override
 	public int getCameraAngle() {
-		return getDataTracker().get(CAMERA_ANGLE);
+		return getEntityData().get(CAMERA_ANGLE);
 	}
 
 	public void setActive(boolean active) {
-		getDataTracker().set(ACTIVE, active);
+		getEntityData().set(ACTIVE, active);
 	}
 
 	public boolean isActive() {
-		return getDataTracker().get(ACTIVE);
+		return getEntityData().get(ACTIVE);
 	}
 
 	public void setThrust(float thrust) {
-		getDataTracker().set(THRUST, thrust);
+		getEntityData().set(THRUST, thrust);
 	}
 
 	public float getThrust() {
-		return getDataTracker().get(THRUST);
+		return getEntityData().get(THRUST);
 	}
 
 	public void setThrustCurve(float thrustCurve) {
-		getDataTracker().set(THRUST_CURVE, thrustCurve);
+		getEntityData().set(THRUST_CURVE, thrustCurve);
 	}
 
 	public float getThrustCurve() {
-		return getDataTracker().get(THRUST_CURVE);
+		return getEntityData().get(THRUST_CURVE);
 	}
 
 	public void setWidth(float width) {
-		getDataTracker().set(WIDTH, width);
+		getEntityData().set(WIDTH, width);
 	}
 
+	// TODO: Access restricted :(
 	@Override
 	public float getWidth() {
-		return getDataTracker().get(WIDTH);
+		return getEntityData().get(WIDTH);
 	}
 
 	public void setHeight(float height) {
-		getDataTracker().set(HEIGHT, height);
+		getEntityData().set(HEIGHT, height);
 	}
 
+	// TODO: Access restricted :(
 	@Override
 	public float getHeight() {
-		return getDataTracker().get(HEIGHT);
+		return getEntityData().get(HEIGHT);
 	}
 
 	@Override
@@ -443,7 +445,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	@Override
 	public String getTemplate() {
-		return getDataTracker().get(TEMPLATE);
+		return getEntityData().get(TEMPLATE);
 	}
 
 	@Override

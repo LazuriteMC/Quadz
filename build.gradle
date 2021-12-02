@@ -22,8 +22,8 @@ dependencies {
 	// TODO: Individual modules?
 	modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_api_version"
 
-	// Gecko Lib 3 (couldn't modImplement... unfixable conflicts)
-	implementation "software.bernie.geckolib:$geckolib_version"
+	// Gecko Lib 3 (modImplementation broken... unfixable conflicts)
+	modImplementation "software.bernie.geckolib:$geckolib_version"
 
 	// Rayon
 	modImplementation "dev.lazurite:rayon-core:$rayon_version"
@@ -55,7 +55,7 @@ jar {
 }
 
 loom {
-	accessWidenerPath = file "src/main/resources/quadz.accesswidener"
+	accessWidenerPath = file 'src/main/resources/quadz.accesswidener'
 }
 
 tasks.withType ProcessResources, {

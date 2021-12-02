@@ -2,9 +2,9 @@ package dev.lazurite.quadz.common.item.group;
 
 import dev.lazurite.quadz.Quadz;
 import net.fabricmc.fabric.impl.item.group.ItemGroupExtensions;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,21 +26,21 @@ public final class ItemGroupHandler {
     }
 
     public void build() {
-        ((ItemGroupExtensions) ItemGroup.BUILDING_BLOCKS).fabric_expandArray();
-        this.build(ItemGroup.GROUPS.length - 1);
+        ((ItemGroupExtensions) CreativeModeTab.TAB_BUILDING_BLOCKS).fabric_expandArray();
+        this.build(CreativeModeTab.TABS.length - 1);
     }
 
     private void build(int index) {
-        new ItemGroup(index, String.format("%s.%s", Quadz.MODID, "items")) {
+        new CreativeModeTab(index, String.format("%s.%s", Quadz.MODID, "items")) {
             @Override
-            public ItemStack createIcon() {
+            public ItemStack makeIcon() {
                 return new ItemStack(Quadz.GOGGLES_ITEM);
             }
 
             @Override
-            public void appendStacks(DefaultedList<ItemStack> stacks) {
+            public void fillItemList(NonNullList<ItemStack> stacks) {
                 stacks.addAll(ItemGroupHandler.getInstance().getStacks());
-                super.appendStacks(stacks);
+                super.fillItemList(stacks);
             }
         };
     }

@@ -1,8 +1,8 @@
 package dev.lazurite.quadz.common.state.item;
 
 import dev.lazurite.quadz.common.state.Bindable;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Stores the bind id in the transmitter through the {@link Bindable} interface.
@@ -10,11 +10,11 @@ import net.minecraft.nbt.NbtCompound;
  */
 public class StackBindableState implements Bindable {
     private final ItemStack stack;
-    private final NbtCompound tag;
+    private final CompoundTag tag;
 
     public StackBindableState(ItemStack stack) {
         this.stack = stack;
-        this.tag = this.stack.getOrCreateSubNbt("container");
+        this.tag = this.stack.getOrCreateTagElement("container");
     }
 
     @Override

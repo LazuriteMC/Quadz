@@ -3,18 +3,13 @@ package dev.lazurite.quadz.client.render;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.render.model.QuadcopterItemModel;
 import dev.lazurite.quadz.client.render.renderer.QuadcopterEntityRenderer;
-import dev.lazurite.quadz.client.render.renderer.GogglesItemRenderer;
 import dev.lazurite.quadz.client.resource.SplashResourceLoader;
 import dev.lazurite.quadz.common.data.util.TemplateResourceLoader;
-import dev.lazurite.quadz.common.item.GogglesItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.client.Minecraft;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoItemRenderer;
 
 @Environment(EnvType.CLIENT)
@@ -30,6 +25,6 @@ public class QuadzRendering {
     }
 
     public static boolean isInThirdPerson() {
-        return !MinecraftClient.getInstance().options.getPerspective().isFirstPerson();
+        return !Minecraft.getInstance().options.getCameraType().isFirstPerson();
     }
 }

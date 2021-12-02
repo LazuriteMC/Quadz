@@ -8,8 +8,8 @@ import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.client.input.InputTick;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
 
 import java.util.Optional;
 
@@ -26,10 +26,10 @@ public class ClientTick {
     public static int desiredCameraEntity = -1;
     public static boolean isUsingKeyboard = false;
 
-    public static void tick(MinecraftClient client) {
-        if (client.player != null && client.world != null && !client.isPaused()) {
+    public static void tick(Minecraft client) {
+        if (client.player != null && client.level != null && !client.isPaused()) {
             if (desiredCameraEntity != -1) {
-                Entity entity = client.world.getEntityById(desiredCameraEntity);
+                Entity entity = client.level.getEntity(desiredCameraEntity);
 
                 if (entity != null) {
                     client.setCameraEntity(entity);
@@ -39,8 +39,8 @@ public class ClientTick {
 
             isUsingKeyboard = false;
 
-            Bindable.get(client.player.getMainHandStack()).ifPresent(transmitter -> {
-                Optional<QuadcopterEntity> optionalQuad = QuadcopterState.getQuadcopterByBindId(client.world, client.player.getPos(), transmitter.getBindId(), (int) client.gameRenderer.getViewDistance());
+            Bindable.get(client.player.getMainHandItem()).ifPresent(transmitter -> {
+                Optional<QuadcopterEntity> optionalQuad = QuadcopterState.getQuadcopterByBindId(client.level, client.player.position(), transmitter.getBindId(), (int) client.gameRenderer.getRenderDistance());
 
                 if (client.getCameraEntity() instanceof QuadcopterEntity entity && ((QuadcopterEntity) client.getCameraEntity()).isBoundTo(transmitter)) {
                     InputTick.getInstance().tickKeyboard(client);

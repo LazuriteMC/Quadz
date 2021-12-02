@@ -8,8 +8,8 @@ import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.client.input.keybind.ControlKeybinds;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.Mth;
 
 import java.nio.FloatBuffer;
 import java.util.Map;
@@ -108,7 +108,7 @@ public final class InputTick {
                     frame.setRoll(0);
                 }
             }
-        } else if (MinecraftClient.getInstance().world != null){
+        } else if (Minecraft.getInstance().level != null){
             Config.getInstance().controllerId = -1;
         }
     }
@@ -117,16 +117,16 @@ public final class InputTick {
     private float pitch;
     private float roll;
 
-    public void tickKeyboard(MinecraftClient client) {
+    public void tickKeyboard(Minecraft minecraft) {
         if (Config.getInstance().controllerId == -1) {
             ClientTick.isUsingKeyboard = true;
 
             float throttle = getInputFrame().getThrottle();
             float yaw = 0.0f;
 
-            if (ControlKeybinds.pitchForward.isPressed()) {
+            if (ControlKeybinds.pitchForward.isDown()) {
                 pitch += rate;
-            } else if (ControlKeybinds.pitchBackward.isPressed()) {
+            } else if (ControlKeybinds.pitchBackward.isDown()) {
                 pitch -= rate;
             } else {
                 if (pitch > rate / 2.0f) {
@@ -138,9 +138,9 @@ public final class InputTick {
                 }
             }
 
-            if (ControlKeybinds.rollLeft.isPressed()) {
+            if (ControlKeybinds.rollLeft.isDown()) {
                 roll -= rate;
-            } else if (ControlKeybinds.rollRight.isPressed()) {
+            } else if (ControlKeybinds.rollRight.isDown()) {
                 roll += rate;
             } else {
                 if (roll > rate / 2.0f) {
@@ -152,21 +152,21 @@ public final class InputTick {
                 }
             }
 
-            if (client.options.keyRight.isPressed()) {
+            if (minecraft.options.keyRight.isDown()) {
                 yaw = -0.5f;
-            } else if (client.options.keyLeft.isPressed()) {
+            } else if (minecraft.options.keyLeft.isDown()) {
                 yaw = 0.5f;
             }
 
-            if (client.options.keyForward.isPressed()) {
+            if (minecraft.options.keyUp.isDown()) {
                 throttle += 0.025f;
-            } else if (client.options.keyBack.isPressed()) {
+            } else if (minecraft.options.keyDown.isDown()) {
                 throttle -= 0.025f;
             }
 
-            throttle = MathHelper.clamp(throttle, 0.0f, 1.0f);
-            pitch = MathHelper.clamp(pitch, -1.0f, 1.0f);
-            roll = MathHelper.clamp(roll, -1.0f, 1.0f);
+            throttle = Mth.clamp(throttle, 0.0f, 1.0f);
+            pitch = Mth.clamp(pitch, -1.0f, 1.0f);
+            roll = Mth.clamp(roll, -1.0f, 1.0f);
 
             frame.set(throttle, pitch, yaw, roll,
                     Config.getInstance().rate,

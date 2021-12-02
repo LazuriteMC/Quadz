@@ -1,15 +1,15 @@
 package dev.lazurite.quadz.client.render.renderer;
 
 import com.jme3.math.Quaternion;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.lazurite.quadz.client.render.model.QuadcopterModel;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.core.impl.bullet.math.Converter;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 /**
@@ -21,13 +21,13 @@ import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
  */
 @Environment(EnvType.CLIENT)
 public class QuadcopterEntityRenderer extends GeoEntityRenderer<QuadcopterEntity> {
-    public QuadcopterEntityRenderer(EntityRendererFactory.Context ctx) {
+    public QuadcopterEntityRenderer(EntityRendererProvider.Context ctx) {
         super(ctx, new QuadcopterModel());
         this.shadowRadius = 0.1f;
     }
 
     @Override
-    public void render(QuadcopterEntity quadcopter, float entityYaw, float tickDelta, MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn) {
+    public void render(QuadcopterEntity quadcopter, float entityYaw, float tickDelta, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn) {
         if (DataDriver.getTemplate(quadcopter.getTemplate()) != null) {
             this.shadowRadius = quadcopter.dimensions.width * quadcopter.dimensions.height * 2;
 
@@ -35,11 +35,11 @@ public class QuadcopterEntityRenderer extends GeoEntityRenderer<QuadcopterEntity
             quadcopter.bodyYaw = 0;
             quadcopter.prevBodyYaw = 0;
 
-            stack.push();
-            stack.multiply(Converter.toMinecraft(quadcopter.getPhysicsRotation(new Quaternion(), tickDelta)));
-            stack.translate(0, -quadcopter.getBoundingBox().getYLength() / 2, 0);
+            stack.pushPose();
+            stack.mulPose(Converter.toMinecraft(quadcopter.getPhysicsRotation(new Quaternion(), tickDelta)));
+            stack.translate(0, -quadcopter.getBoundingBox().getYsize() / 2, 0);
             super.render(quadcopter, 0, tickDelta, stack, bufferIn, packedLightIn);
-            stack.pop();
+            stack.popPose();
 
             quadcopter.bodyYaw = temp;
         }

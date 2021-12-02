@@ -1,21 +1,21 @@
 package dev.lazurite.quadz.client.mixin;
 
 import dev.lazurite.quadz.client.util.ClientTick;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.packet.s2c.play.SetCameraEntityS2CPacket;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.protocol.game.ClientboundSetCameraPacket;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-@Mixin(ClientPlayNetworkHandler.class)
+@Mixin(ClientPacketListener.class)
 public class ClientPlayNetworkHandlerMixin {
-    @Inject(method = "onSetCameraEntity", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void onSetCameraEntity(SetCameraEntityS2CPacket packet, CallbackInfo info, Entity entity) {
+    @Inject(method = "handleSetCamera", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+    public void onSetCameraEntity(ClientboundSetCameraPacket packet, CallbackInfo ci, Entity entity) {
         if (entity == null) {
-            ClientTick.desiredCameraEntity = packet.entityId;
+            ClientTick.desiredCameraEntity = packet.entityId; // TODO: Access restricted :(
         }
     }
 }

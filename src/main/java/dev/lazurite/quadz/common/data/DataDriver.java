@@ -10,7 +10,7 @@ import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;

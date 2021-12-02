@@ -7,16 +7,16 @@ import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.core.impl.bullet.math.Converter;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -29,39 +29,39 @@ import java.util.Random;
 public class QuadcopterItem extends Item implements IAnimatable {
     private final AnimationFactory factory = new AnimationFactory(this);
 
-    public QuadcopterItem(Settings settings) {
-        super(settings);
+    public QuadcopterItem(Item.Properties properties) {
+        super(properties);
     }
 
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        ItemStack itemStack = user.getStackInHand(hand);
-        HitResult hitResult = raycast(world, user, RaycastContext.FluidHandling.NONE);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+        ItemStack itemStack = player.getItemInHand(interactionHand);
+        HitResult hitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
 
-        if (world.isClient()) {
-            return TypedActionResult.success(itemStack);
+        if (level.isClientSide()) {
+            return InteractionResultHolder.success(itemStack);
         } else {
-            QuadcopterEntity entity = new QuadcopterEntity(Quadz.QUADCOPTER_ENTITY, world);
+            QuadcopterEntity entity = new QuadcopterEntity(Quadz.QUADCOPTER_ENTITY, level);
             QuadcopterState.fromStack(itemStack).ifPresent(entity::copyFrom);
 
             if (hitResult.getType() == HitResult.Type.BLOCK) {
-                entity.updatePosition(hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z);
-                entity.getRigidBody().setPhysicsRotation(Converter.toBullet(QuaternionHelper.rotateY(Converter.toMinecraft(new Quaternion()), -user.getYaw())));
+                entity.absMoveTo(hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z);
+                entity.getRigidBody().setPhysicsRotation(Converter.toBullet(QuaternionHelper.rotateY(Converter.toMinecraft(new Quaternion()), -player.getYRot())));
             } else {
                 Random random = new Random();
-                Vec3d direction = hitResult.getPos().subtract(user.getPos()).add(0, user.getStandingEyeHeight(), 0).normalize();
-                Vec3d pos = user.getPos().add(direction);
+                Vec3 direction = hitResult.getLocation().subtract(player.position()).add(0, player.getEyeHeight(), 0).normalize();
+                Vec3 pos = player.position().add(direction);
 
-                entity.updatePosition(pos.x, pos.y, pos.z);
+                entity.absMoveTo(pos.x, pos.y, pos.z);
                 entity.getRigidBody().setLinearVelocity(Converter.toBullet(direction).multLocal(4).multLocal(new Vector3f(1, 3, 1)));
                 entity.getRigidBody().setAngularVelocity(new Vector3f(random.nextFloat() * 2, random.nextFloat() * 2, random.nextFloat() * 2));
             }
 
-            world.spawnEntity(entity);
-            itemStack.decrement(1);
+            level.addFreshEntity(entity);
+            itemStack.shrink(1);
             itemStack = new ItemStack(Items.AIR);
         }
 
-        return TypedActionResult.success(itemStack);
+        return InteractionResultHolder.success(itemStack);
     }
 
     private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event) {

@@ -7,14 +7,13 @@ import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.ShaderParseException;
-import net.minecraft.client.resource.language.TranslationStorage;
-import net.minecraft.client.texture.ResourceTexture;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Language;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.resources.language.ClientLanguage;
+import net.minecraft.locale.Language;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.ResourceManager;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.file.AnimationFile;
 import software.bernie.geckolib3.geo.raw.pojo.Converter;
@@ -32,12 +31,12 @@ import java.util.Map;
 public class TemplateResourceLoader implements SimpleSynchronousResourceReloadListener {
 
     public TemplateResourceLoader() {
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this);
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(this);
     }
 
     @Override
-    public Identifier getFabricId() {
-        return new Identifier(Quadz.MODID, "templates");
+    public ResourceLocation getFabricId() {
+        return new ResourceLocation(Quadz.MODID, "templates");
     }
 
     /**
@@ -45,12 +44,12 @@ public class TemplateResourceLoader implements SimpleSynchronousResourceReloadLi
      * @param template the template to load
      */
     public void load(Template template) {
-        Identifier identifier = new Identifier(Quadz.MODID, template.getId());
+        ResourceLocation identifier = new ResourceLocation(Quadz.MODID, template.getId());
 
         loadGeo(identifier, template.getGeo());
         loadAnimation(identifier, template.getAnimation());
         loadLang(template.getId(), template.getSettings().getName());
-        MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, new ResourceTexture(identifier));
+        Minecraft.getInstance().getTextureManager().register(identifier, new SimpleTexture(identifier));
     }
 
     /**
@@ -58,7 +57,7 @@ public class TemplateResourceLoader implements SimpleSynchronousResourceReloadLi
      * @param identifier identifies the model
      * @param geo the geo model json string
      */
-    private void loadGeo(Identifier identifier, JsonObject geo) {
+    private void loadGeo(ResourceLocation identifier, JsonObject geo) {
         try {
             RawGeoModel rawModel = Converter.fromJsonString(geo.toString());
             if (rawModel.getFormatVersion() != FormatVersion.VERSION_1_12_0) {
@@ -77,7 +76,7 @@ public class TemplateResourceLoader implements SimpleSynchronousResourceReloadLi
      * @param identifier identifies the animation
      * @param animation the animation json string
      */
-    private void loadAnimation(Identifier identifier, JsonObject animation) {
+    private void loadAnimation(ResourceLocation identifier, JsonObject animation) {
         AnimationFile animationFile = new AnimationFile();
 
         for (Map.Entry<String, JsonElement> entry : JsonAnimationUtils.getAnimations(animation)) {
@@ -101,13 +100,13 @@ public class TemplateResourceLoader implements SimpleSynchronousResourceReloadLi
      * @param name the actual name
      */
     private void loadLang(String id, String name) {
-        if (Language.getInstance() instanceof TranslationStorage) {
-            ((TranslationStorage) Language.getInstance()).translations.put("template." + Quadz.MODID + "." + id, name);
+        if (Language.getInstance() instanceof ClientLanguage) {
+            ((ClientLanguage) Language.getInstance()).translations.put("template." + Quadz.MODID + "." + id, name); // TODO: Access restricted :(
         }
     }
 
     @Override
-    public void reload(ResourceManager manager) {
+    public void onResourceManagerReload(ResourceManager manager) {
         DataDriver.getTemplates().forEach(this::load);
     }
 }

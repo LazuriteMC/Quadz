@@ -7,15 +7,15 @@ import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
 
 import java.util.concurrent.CompletableFuture;
 
 public class ClientNetworkHandler {
-    public static void onInputFrameReceived(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+    public static void onInputFrameReceived(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
         int entityId = buf.readInt();
         InputFrame frame = new InputFrame(
                 buf.readFloat(),
@@ -26,10 +26,10 @@ public class ClientNetworkHandler {
                 buf.readFloat(),
                 buf.readFloat(),
                 buf.readFloat(),
-                buf.readEnumConstant(Mode.class));
+                buf.readEnum(Mode.class));
 
         client.execute(() -> {
-            Entity entity = client.world.getEntityById(entityId);
+            Entity entity = client.level.getEntity(entityId);
 
             if (entity instanceof QuadcopterEntity) {
                 ((QuadcopterEntity) entity).getInputFrame().set(frame);
@@ -37,7 +37,7 @@ public class ClientNetworkHandler {
         });
     }
 
-    public static void onTemplateReceived(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+    public static void onTemplateReceived(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
         Template template = Template.deserialize(buf);
 
         client.execute(() -> {

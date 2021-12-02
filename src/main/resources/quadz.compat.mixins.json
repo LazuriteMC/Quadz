@@ -3,7 +3,7 @@
   "minVersion": "0.8",
   "package": "dev.lazurite.quadz.compat.mixin",
   "plugin": "dev.lazurite.quadz.compat.mixin.CompatPlugin",
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [],
   "injectors": {
     "defaultRequire": 1

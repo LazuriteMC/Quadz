@@ -1,56 +1,55 @@
 {
   "schemaVersion": 1,
   "id": "quadz",
-  "version": "${version}",
-
-  "name": "Quadz",
-  "description": "An FPV drone simulator for Fabric.",
-  "authors": [ "The Lazurite Team" ],
-  "contact": {
-    "homepage": "https://lazurite.dev",
-    "sources": "https://github.com/lazuritemc/quadz",
-    "issues": "https://github.com/lazuritemc/quadz/issues"
-  },
-
-  "license": "MIT",
-  "icon": "assets/quadz/icon.png",
-  "accessWidener" : "quadz.accesswidener",
-
+  "version": "$version",
   "environment": "*",
   "entrypoints": {
     "main": [ "dev.lazurite.quadz.Quadz" ],
     "client": [ "dev.lazurite.quadz.Quadz" ],
     "modmenu": [ "dev.lazurite.quadz.compat.ModMenuCompat" ]
   },
-
   "mixins": [
-    "quadz.client.mixins.json",
-    "quadz.common.mixins.json",
-    "quadz.compat.mixins.json"
+    {
+      "config": "quadz.common.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "quadz.client.mixins.json",
+      "environment": "client"
+    },
+    {
+      "config": "quadz.compat.mixins.json",
+      "environment": "*"
+    }
   ],
-
+  "accessWidener" : "quadz.accesswidener",
   "depends": {
-    "fabricloader": ">=0.7.4",
-    "fabric": ">=0.38.2",
-    "minecraft": "1.17.x",
-    "geckolib3": ">=3.0.13",
+    "minecraft": "1.18.x",
+    "fabricloader": ">=0.12.8",
+    "fabric": ">=0.43.1+1.18",
+    "geckolib3": ">=3.0.21",
     "rayon-core": ">=1.3.0",
     "rayon-entity": ">=1.3.0"
   },
-
   "breaks": {
     "immersive_portals": "*",
     "canvas": "*"
   },
-
+  "name": "Quadz",
+  "description": "An FPV drone simulator for Fabric.",
+  "authors": [ "The Lazurite Team" ],
+  "contact": {
+    "homepage": "https://lazurite.dev",
+    "sources": "https://github.com/LazuriteMC/Quadz",
+    "issues": "https://github.com/LazuriteMC/Quadz/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/quadz/icon.png",
   "custom": {
     "modmenu": {
       "links": {
         "modmenu.discord": "https://discord.gg/NNPPHN7b3P"
       }
-    },
-    "vanguard": {
-      "curse-project-id": "410234"
     }
   }
 }

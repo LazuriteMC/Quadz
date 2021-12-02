@@ -4,8 +4,8 @@ import com.jme3.math.Quaternion;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.core.impl.bullet.math.Converter;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.Camera;
+import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,18 +14,18 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
-    @Shadow @Final private Camera camera;
+    @Shadow @Final private Camera mainCamera;
 
     @ModifyArg(
-            method = "renderWorld",
+            method = "renderLevel",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lnet/minecraft/util/math/Quaternion;)V",
+                    target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPose(Lcom/mojang/math/Quaternion;)V",
                     ordinal = 3
             )
     )
-    public net.minecraft.util.math.Quaternion multiplyYaw(net.minecraft.util.math.Quaternion quaternion) {
-        if (camera.getFocusedEntity() instanceof QuadcopterEntity) {
+    public com.mojang.math.Quaternion multiplyYaw(com.mojang.math.Quaternion quaternion) {
+        if (mainCamera.getEntity() instanceof QuadcopterEntity) {
             return QuaternionHelper.rotateY(Converter.toMinecraft(new Quaternion()), 180);
         }
 
@@ -33,15 +33,15 @@ public class GameRendererMixin {
     }
 
     @ModifyArg(
-            method = "renderWorld",
+            method = "renderLevel",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lnet/minecraft/util/math/Quaternion;)V",
+                    target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPose(Lcom/mojang/math/Quaternion;)V",
                     ordinal = 4
             )
     )
-    public net.minecraft.util.math.Quaternion multiplyPitch(net.minecraft.util.math.Quaternion quaternion) {
-        if (camera.getFocusedEntity() instanceof QuadcopterEntity) {
+    public com.mojang.math.Quaternion multiplyPitch(com.mojang.math.Quaternion quaternion) {
+        if (mainCamera.getEntity() instanceof QuadcopterEntity) {
             return Converter.toMinecraft(new Quaternion());
         }
 
