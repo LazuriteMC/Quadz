@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.resources.language.ClientLanguage;
 import net.minecraft.locale.Language;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.ChainedJsonException;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -86,7 +87,7 @@ public class TemplateResourceLoader implements SimpleSynchronousResourceReloadLi
             try {
                 anim = JsonAnimationUtils.deserializeJsonToAnimation(JsonAnimationUtils.getAnimation(animation, animationName), new MolangParser());
                 animationFile.putAnimation(animationName, anim);
-            } catch (ShaderParseException e) {
+            } catch (ChainedJsonException e) {
                 throw new RuntimeException("Could not load animation from quadcopter template: " + animationName);
             }
         }
@@ -101,7 +102,7 @@ public class TemplateResourceLoader implements SimpleSynchronousResourceReloadLi
      */
     private void loadLang(String id, String name) {
         if (Language.getInstance() instanceof ClientLanguage) {
-            ((ClientLanguage) Language.getInstance()).translations.put("template." + Quadz.MODID + "." + id, name); // TODO: Access restricted :(
+            ((ClientLanguage) Language.getInstance()).storage.put("template." + Quadz.MODID + "." + id, name);
         }
     }
 

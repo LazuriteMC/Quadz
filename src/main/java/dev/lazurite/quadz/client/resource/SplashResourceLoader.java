@@ -34,7 +34,7 @@ public class SplashResourceLoader implements SimpleSynchronousResourceReloadList
             Resource resource = manager.getResource(location);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
             List<String> strings = bufferedReader.lines().map(String::trim).filter((string) -> string.hashCode() != 125780783).collect(Collectors.toList());
-            Minecraft.getInstance().getSplashManager().splashes.addAll(strings); // TODO: Access restricted :(
+            Minecraft.getInstance().getSplashManager().splashes.addAll(strings);
         } catch (IOException e) {
             e.printStackTrace();
         }

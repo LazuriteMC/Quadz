@@ -35,7 +35,7 @@ public abstract class EntityMixin {
 
             if (template != null) {
                 EntityDimensions dimensions1 = this.dimensions;
-                this.dimensions = new EntityDimensions(quadcopter.getWidth(), quadcopter.getHeight(), true);
+                this.dimensions = new EntityDimensions(quadcopter.getBbWidth(), quadcopter.getBbHeight(), true);
 
                 if (dimensions.width < dimensions1.width) {
                     double d = (double)dimensions.width / 2.0D;

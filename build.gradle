@@ -7,8 +7,11 @@ group 'dev.lazurite'
 version quadz_version
 
 repositories {
+	mavenLocal()
+
 	maven { url 'https://lazurite.dev/releases' }
 	maven { url 'https://maven.shedaniel.me' }
+	maven { url 'https://maven.modmuss50.me' }
 	maven { url 'https://maven.terraformersmc.com/releases' }
 	maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven' }
 }
@@ -22,7 +25,7 @@ dependencies {
 	// TODO: Individual modules?
 	modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_api_version"
 
-	// Gecko Lib 3 (modImplementation broken... unfixable conflicts)
+	// Gecko Lib 3 (using mavenLocal version... see https://github.com/bernie-g/geckolib/issues/208)
 	modImplementation "software.bernie.geckolib:$geckolib_version"
 
 	// Rayon
@@ -40,9 +43,8 @@ dependencies {
 	}
 
 	// Fiber
-	// TODO: Read gradle.properties
-//	modImplementation "me.zeroeightsix:fiber:${project.fiber_version}"
-//	include "me.zeroeightsix:fiber:${project.fiber_version}"
+	modImplementation "me.zeroeightsix:fiber:${project.fiber_version}"
+	include "me.zeroeightsix:fiber:${project.fiber_version}"
 }
 
 java {

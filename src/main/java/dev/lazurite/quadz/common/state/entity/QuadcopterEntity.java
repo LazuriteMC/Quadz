@@ -397,9 +397,8 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		getEntityData().set(WIDTH, width);
 	}
 
-	// TODO: Access restricted :(
 	@Override
-	public float getWidth() {
+	public float getBbWidth() {
 		return getEntityData().get(WIDTH);
 	}
 
@@ -407,9 +406,8 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		getEntityData().set(HEIGHT, height);
 	}
 
-	// TODO: Access restricted :(
 	@Override
-	public float getHeight() {
+	public float getBbHeight() {
 		return getEntityData().get(HEIGHT);
 	}
 

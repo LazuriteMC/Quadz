@@ -10,6 +10,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 /**
@@ -31,9 +32,9 @@ public class QuadcopterEntityRenderer extends GeoEntityRenderer<QuadcopterEntity
         if (DataDriver.getTemplate(quadcopter.getTemplate()) != null) {
             this.shadowRadius = quadcopter.dimensions.width * quadcopter.dimensions.height * 2;
 
-            float temp = quadcopter.bodyYaw;
-            quadcopter.bodyYaw = 0;
-            quadcopter.prevBodyYaw = 0;
+            float temp = quadcopter.yBodyRot;
+            quadcopter.yBodyRot = 0;
+            quadcopter.yBodyRotO = 0;
 
             stack.pushPose();
             stack.mulPose(Converter.toMinecraft(quadcopter.getPhysicsRotation(new Quaternion(), tickDelta)));
@@ -41,7 +42,12 @@ public class QuadcopterEntityRenderer extends GeoEntityRenderer<QuadcopterEntity
             super.render(quadcopter, 0, tickDelta, stack, bufferIn, packedLightIn);
             stack.popPose();
 
-            quadcopter.bodyYaw = temp;
+            quadcopter.yBodyRot = temp;
         }
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(QuadcopterEntity entity) {
+        return this.getGeoModelProvider().getTextureLocation(entity);
     }
 }

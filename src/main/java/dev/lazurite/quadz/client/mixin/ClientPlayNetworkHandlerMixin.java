@@ -15,7 +15,7 @@ public class ClientPlayNetworkHandlerMixin {
     @Inject(method = "handleSetCamera", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
     public void onSetCameraEntity(ClientboundSetCameraPacket packet, CallbackInfo ci, Entity entity) {
         if (entity == null) {
-            ClientTick.desiredCameraEntity = packet.entityId; // TODO: Access restricted :(
+            ClientTick.desiredCameraEntity = packet.cameraId;
         }
     }
 }

@@ -20,9 +20,9 @@ public class KeybindNetworkHandler {
                 quadcopter.getRigidBody().setDoTerrainLoading(!lastNoClip);
 
                 if (lastNoClip) {
-                    player.sendMessage(new TranslatableComponent("message.quadz.noclip_on"), true);
+                    player.displayClientMessage(new TranslatableComponent("message.quadz.noclip_on"), true);
                 } else {
-                    player.sendMessage(new TranslatableComponent("message.quadz.noclip_off"), true);
+                    player.displayClientMessage(new TranslatableComponent("message.quadz.noclip_off"), true);
                 }
             })
         );

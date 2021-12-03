@@ -15,14 +15,13 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-// TODO: Completely broken
 @Environment(EnvType.CLIENT)
 @Settings(onlyAnnotated = true)
 public final class Config {
@@ -122,11 +121,11 @@ public final class Config {
     }
 
     public void sendPlayerData() {
-        if (MinecraftClient.getInstance().world != null) {
-            PacketByteBuf buf = PacketByteBufs.create();
+        if (Minecraft.getInstance().level != null) {
+            FriendlyByteBuf buf = PacketByteBufs.create();
             buf.writeInt(band);
             buf.writeInt(channel);
-            buf.writeString(callSign);
+            buf.writeUtf(callSign);
             ClientPlayNetworking.send(Quadz.PLAYER_DATA_C2S, buf);
         }
     }

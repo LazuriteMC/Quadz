@@ -46,7 +46,7 @@ public class GameRendererMixin {
 		/* Rotate the player's yaw and pitch to follow the quadcopter */
 		} else if (Config.getInstance().followLOS) {
 			Bindable.get(minecraft.player.getMainHandItem()).ifPresent(transmitter -> {
-				for (Entity entity : minecraft.level.getEntities()) { // TODO: Access restricted :(
+				for (Entity entity : minecraft.level.getEntities().getAll()) {
 					if (entity instanceof QuadcopterEntity && ((QuadcopterEntity) entity).isBoundTo(transmitter) && minecraft.player.hasLineOfSight(entity)) {
 						/* Get the difference in position between the camera and the quad */
 						var delta = minecraft.gameRenderer.getMainCamera().getPosition().subtract(VectorHelper.toVec3d(Converter.toMinecraft(((QuadcopterEntity) entity).getPhysicsLocation(new Vector3f(), f))));

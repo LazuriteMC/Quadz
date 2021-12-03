@@ -20,6 +20,6 @@ public class TranslationStorageMixin {
             locals = LocalCapture.CAPTURE_FAILHARD,
             cancellable = true)
     private static void load(ResourceManager resourceManager, List<LanguageInfo> list, CallbackInfoReturnable<ClientLanguage> info, Map<String, String> map, boolean bl) {
-        info.setReturnValue(new ClientLanguage(map, bl)); // TODO: Access restricted :(
+        info.setReturnValue(new ClientLanguage(map, bl));
     }
 }

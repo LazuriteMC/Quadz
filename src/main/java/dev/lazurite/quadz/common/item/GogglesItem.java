@@ -1,9 +1,7 @@
 package dev.lazurite.quadz.common.item;
 
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ArmorMaterials;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -11,7 +9,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class GogglesItem extends GeoArmorItem implements IAnimatable {
+public class GogglesItem extends ArmorItem implements IAnimatable {
     private final AnimationFactory factory = new AnimationFactory(this);
 
     public GogglesItem(Item.Properties builder) {
