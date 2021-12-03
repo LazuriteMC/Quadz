@@ -16,10 +16,9 @@ import net.minecraft.network.protocol.game.ServerGamePacketListener;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import org.apache.logging.log4j.core.jmx.Server;
 
 public class CommonNetworkHandler {
-    public static void onQuadcopterSettingsReceived(MinecraftServer server, ServerPlayer player, ServerGamePacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public static void onQuadcopterSettingsReceived(MinecraftServer server, ServerPlayer player, ServerGamePacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
         int entityId = buf.readInt();
         int cameraAngle = buf.readInt();
 
@@ -32,12 +31,12 @@ public class CommonNetworkHandler {
         });
     }
 
-    public static void onPlayerDataReceived(MinecraftServer server, ServerPlayer player, ServerGamePacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public static void onPlayerDataReceived(MinecraftServer server, ServerPlayer player, ServerGamePacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
         String callSign = buf.readUtf(32767);
         server.execute(() -> ((PlayerData) player).setCallSign(callSign));
     }
 
-    public static void onTemplateReceived(MinecraftServer server, ServerPlayer player, ServerGamePacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public static void onTemplateReceived(MinecraftServer server, ServerPlayer player, ServerGamePacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
         Template template = Template.deserialize(buf);
 
         server.execute(() -> {
@@ -51,7 +50,7 @@ public class CommonNetworkHandler {
         });
     }
 
-    public static void onInputFrame(MinecraftServer server, ServerPlayer player, ServerGamePacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public static void onInputFrame(MinecraftServer server, ServerPlayer player, ServerGamePacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
         int entityId = buf.readInt();
         InputFrame frame = new InputFrame(
                 buf.readFloat(),

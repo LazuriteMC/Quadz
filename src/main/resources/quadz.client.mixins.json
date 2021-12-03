@@ -4,17 +4,17 @@
   "package": "dev.lazurite.quadz.client.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "ClientPlayNetworkHandlerMixin",
+    "ClientPacketListenerMixin",
     "input.KeyboardInputMixin",
-    "input.MouseMixin",
-    "MinecraftClientMixin",
+    "input.MouseHandlerMixin",
+    "MinecraftMixin",
     "render.CameraMixin",
     "render.GameRendererMixin",
-    "render.InGameHudMixin",
+    "render.GuiMixin",
     "render.MatrixRotationMixin",
-    "render.PerspectiveMixin",
+    "render.CameraTypeMixin",
     "resource.TextureManagerMixin",
-    "resource.TranslationStorageMixin"
+    "resource.ClientLanguageMixin"
   ],
   "injectors": {
     "defaultRequire": 1

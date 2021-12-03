@@ -27,27 +27,27 @@ public class TemplateTextureManager implements ResourceManager {
     }
 
     @Override
-    public Resource getResource(ResourceLocation id) throws IOException {
-        if (id.getPath().endsWith("_n.png") || id.getPath().endsWith("_s.png")) {
-            return getOriginal().getResource(id);
+    public Resource getResource(ResourceLocation resourceLocation) throws IOException {
+        if (resourceLocation.getPath().endsWith("_n.png") || resourceLocation.getPath().endsWith("_s.png")) {
+            return getOriginal().getResource(resourceLocation);
         }
 
-        Template template = DataDriver.getTemplate(id.getPath());
+        Template template = DataDriver.getTemplate(resourceLocation.getPath());
 
         if (template == null) {
-            return original.getResource(id);
+            return original.getResource(resourceLocation);
         } else {
-            return new SimpleResource(template.getId(), id, new ByteArrayInputStream(template.getTexture()), null);
+            return new SimpleResource(template.getId(), resourceLocation, new ByteArrayInputStream(template.getTexture()), null);
         }
     }
 
     @Override
-    public boolean hasResource(ResourceLocation id) {
+    public boolean hasResource(ResourceLocation resourceLocation) {
         return false;
     }
 
     @Override
-    public List<Resource> getResources(ResourceLocation id) {
+    public List<Resource> getResources(ResourceLocation resourceLocation) {
         return new ArrayList<>();
     }
 

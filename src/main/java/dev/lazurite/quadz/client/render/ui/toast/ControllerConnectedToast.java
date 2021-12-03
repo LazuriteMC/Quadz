@@ -24,16 +24,16 @@ public class ControllerConnectedToast implements Toast {
     }
 
     @Override
-    public Visibility render(PoseStack matrices, ToastComponent manager, long startTime) {
-        manager.getMinecraft().getTextureManager().bindForSetup(TEXTURE);
-        manager.blit(matrices, 0, 0, 0, 0, width(), height());
-        manager.getMinecraft().font.draw(matrices, message, 30, 7, -1);
-        manager.getMinecraft().font.draw(matrices, new TextComponent(controllerName), 30, 18, -1);
+    public Visibility render(PoseStack poseStack, ToastComponent toastComponent, long startTime) {
+        toastComponent.getMinecraft().getTextureManager().bindForSetup(TEXTURE);
+        toastComponent.blit(poseStack, 0, 0, 0, 0, width(), height());
+        toastComponent.getMinecraft().font.draw(poseStack, message, 30, 7, -1);
+        toastComponent.getMinecraft().font.draw(poseStack, new TextComponent(controllerName), 30, 18, -1);
 
-        matrices.pushPose();
-        matrices.scale(1.5f, 1.5f, 1.0f);
-        manager.getMinecraft().getItemRenderer().renderAndDecorateFakeItem(new ItemStack(Quadz.TRANSMITTER_ITEM), 3, 3);
-        matrices.popPose();
+        poseStack.pushPose();
+        poseStack.scale(1.5f, 1.5f, 1.0f);
+        toastComponent.getMinecraft().getItemRenderer().renderAndDecorateFakeItem(new ItemStack(Quadz.TRANSMITTER_ITEM), 3, 3);
+        poseStack.popPose();
 
         return startTime >= 5000L ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
     }

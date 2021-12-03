@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ClientPacketListener.class)
-public class ClientPlayNetworkHandlerMixin {
+public class ClientPacketListenerMixin {
     @Inject(method = "handleSetCamera", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void onSetCameraEntity(ClientboundSetCameraPacket packet, CallbackInfo ci, Entity entity) {
+    public void handleSetCamera_TAIL(ClientboundSetCameraPacket packet, CallbackInfo ci, Entity entity) {
         if (entity == null) {
             ClientTick.desiredCameraEntity = packet.cameraId;
         }

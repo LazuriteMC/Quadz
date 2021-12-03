@@ -55,29 +55,29 @@ public class TemplateResourceLoader implements SimpleSynchronousResourceReloadLi
 
     /**
      * Loads the goe model from json into geckolib.
-     * @param identifier identifies the model
+     * @param resourceLocation identifies the model
      * @param geo the geo model json string
      */
-    private void loadGeo(ResourceLocation identifier, JsonObject geo) {
+    private void loadGeo(ResourceLocation resourceLocation, JsonObject geo) {
         try {
             RawGeoModel rawModel = Converter.fromJsonString(geo.toString());
             if (rawModel.getFormatVersion() != FormatVersion.VERSION_1_12_0) {
-                throw new RuntimeException(identifier.getPath() + " : Wrong geometry json version, expected 1.12.0");
+                throw new RuntimeException(resourceLocation.getPath() + " : Wrong geometry json version, expected 1.12.0");
             }
 
             RawGeometryTree rawGeometryTree = RawGeometryTree.parseHierarchy(rawModel);
-            GeckoLibCache.getInstance().getGeoModels().put(identifier, GeoBuilder.getGeoBuilder(Quadz.MODID).constructGeoModel(rawGeometryTree));
+            GeckoLibCache.getInstance().getGeoModels().put(resourceLocation, GeoBuilder.getGeoBuilder(Quadz.MODID).constructGeoModel(rawGeometryTree));
         } catch (IOException e) {
-            throw new RuntimeException(identifier.getPath() + " : Problem reading geo model.");
+            throw new RuntimeException(resourceLocation.getPath() + " : Problem reading geo model.");
         }
     }
 
     /**
      * Loads the animation from json into geckolib.
-     * @param identifier identifies the animation
+     * @param resourceLocation identifies the animation
      * @param animation the animation json string
      */
-    private void loadAnimation(ResourceLocation identifier, JsonObject animation) {
+    private void loadAnimation(ResourceLocation resourceLocation, JsonObject animation) {
         AnimationFile animationFile = new AnimationFile();
 
         for (Map.Entry<String, JsonElement> entry : JsonAnimationUtils.getAnimations(animation)) {
@@ -92,7 +92,7 @@ public class TemplateResourceLoader implements SimpleSynchronousResourceReloadLi
             }
         }
 
-        GeckoLibCache.getInstance().getAnimations().put(identifier, animationFile);
+        GeckoLibCache.getInstance().getAnimations().put(resourceLocation, animationFile);
     }
 
     /**

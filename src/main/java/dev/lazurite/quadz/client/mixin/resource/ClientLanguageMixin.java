@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 @Mixin(ClientLanguage.class)
-public class TranslationStorageMixin {
+public class ClientLanguageMixin {
     @Inject(
             method = "loadFrom",
             at = @At("RETURN"),
             locals = LocalCapture.CAPTURE_FAILHARD,
             cancellable = true)
-    private static void load(ResourceManager resourceManager, List<LanguageInfo> list, CallbackInfoReturnable<ClientLanguage> info, Map<String, String> map, boolean bl) {
+    private static void loadFrom(ResourceManager resourceManager, List<LanguageInfo> list, CallbackInfoReturnable<ClientLanguage> info, Map<String, String> map, boolean bl) {
         info.setReturnValue(new ClientLanguage(map, bl));
     }
 }

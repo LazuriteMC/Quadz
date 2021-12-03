@@ -17,20 +17,20 @@ public final class OnScreenDisplay {
     private static final int white = 14737632;
     private static final int spacing = 25;
 
-    public static void render(QuadcopterEntity quadcopter, Font textRenderer, PoseStack matrixStack, float tickDelta) {
+    public static void render(QuadcopterEntity quadcopter, Font font, PoseStack poseStack, float tickDelta) {
         Minecraft client = Minecraft.getInstance();
         int width = client.getWindow().getGuiScaledWidth();
         int height = client.getWindow().getGuiScaledHeight() - spacing;
 
         Component callSign = new TextComponent(""); // TODO
-        int callSignWidth = textRenderer.width(callSign);
+        int callSignWidth = font.width(callSign);
 
         VelocityUnit unit = Config.getInstance().velocityUnit;
         float vel = Math.round(quadcopter.getRigidBody().getLinearVelocity(new Vector3f()).length() * unit.getFactor() * 10) / 10f;
         Component velocity = new TextComponent(vel + " " + unit.getAbbreviation());
 
-        textRenderer.drawShadow(matrixStack, callSign, width * 0.5f - callSignWidth * 0.5f, height, white);
-        textRenderer.drawShadow(matrixStack, velocity, width * 0.5f + callSignWidth * 0.5f + spacing, height, white);
+        font.drawShadow(poseStack, callSign, width * 0.5f - callSignWidth * 0.5f, height, white);
+        font.drawShadow(poseStack, velocity, width * 0.5f + callSignWidth * 0.5f + spacing, height, white);
     }
 
     public enum VelocityUnit {

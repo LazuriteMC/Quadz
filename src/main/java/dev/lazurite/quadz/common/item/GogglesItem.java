@@ -12,8 +12,8 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 public class GogglesItem extends ArmorItem implements IAnimatable {
     private final AnimationFactory factory = new AnimationFactory(this);
 
-    public GogglesItem(Item.Properties builder) {
-        super(ArmorMaterials.LEATHER, EquipmentSlot.HEAD, builder.tab(CreativeModeTab.TAB_COMBAT));
+    public GogglesItem(Item.Properties properties) {
+        super(ArmorMaterials.LEATHER, EquipmentSlot.HEAD, properties.tab(CreativeModeTab.TAB_COMBAT));
     }
 
     private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event) {

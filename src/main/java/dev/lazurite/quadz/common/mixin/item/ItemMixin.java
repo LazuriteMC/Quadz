@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Item.class)
 public class ItemMixin {
     @Inject(method = "getDescriptionId(Lnet/minecraft/world/item/ItemStack;)Ljava/lang/String;", at = @At("RETURN"), cancellable = true)
-    public void getTranslationKey(ItemStack itemStack, CallbackInfoReturnable<String> info) {
+    public void getDescriptionId_RETURN(ItemStack itemStack, CallbackInfoReturnable<String> info) {
         if ((Item) (Object) this instanceof QuadcopterItem) {
             QuadcopterState.fromStack(itemStack).ifPresent(state ->
                 info.setReturnValue("template.quadz." + state.getTemplate()));

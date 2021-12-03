@@ -14,15 +14,15 @@ public class ControllerNotFoundToast implements Toast {
     private boolean visible;
 
     @Override
-    public Visibility render(PoseStack matrices, ToastComponent manager, long startTime) {
-        manager.getMinecraft().getTextureManager().bindForSetup(TEXTURE);
-        manager.blit(matrices, 0, 0, 0, 0, width(), height());
-        manager.getMinecraft().font.draw(matrices, new TranslatableComponent("toast.quadz.controller.notfound"), 30, 12, -1);
+    public Visibility render(PoseStack poseStack, ToastComponent toastComponent, long startTime) {
+        toastComponent.getMinecraft().getTextureManager().bindForSetup(TEXTURE);
+        toastComponent.blit(poseStack, 0, 0, 0, 0, width(), height());
+        toastComponent.getMinecraft().font.draw(poseStack, new TranslatableComponent("toast.quadz.controller.notfound"), 30, 12, -1);
 
-        matrices.pushPose();
-        matrices.scale(1.5f, 1.5f, 1.0f);
-        manager.getMinecraft().getItemRenderer().renderAndDecorateFakeItem(new ItemStack(Quadz.TRANSMITTER_ITEM), 3, 3);
-        matrices.popPose();
+        poseStack.pushPose();
+        poseStack.scale(1.5f, 1.5f, 1.0f);
+        toastComponent.getMinecraft().getItemRenderer().renderAndDecorateFakeItem(new ItemStack(Quadz.TRANSMITTER_ITEM), 3, 3);
+        poseStack.popPose();
 
         this.visible = startTime < visibilityTime;
         return startTime >= visibilityTime ? Visibility.HIDE : Visibility.SHOW;
@@ -33,11 +33,11 @@ public class ControllerNotFoundToast implements Toast {
     }
 
     public static void add() {
-        ToastComponent manager = Minecraft.getInstance().getToasts();
+        ToastComponent toastComponent = Minecraft.getInstance().getToasts();
 
         if (toast == null || !toast.isVisible()) {
             toast = new ControllerNotFoundToast();
-            manager.addToast(toast);
+            toastComponent.addToast(toast);
         }
     }
 }

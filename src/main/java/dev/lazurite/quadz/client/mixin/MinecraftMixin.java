@@ -14,10 +14,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
-public class MinecraftClientMixin {
-
+public class MinecraftMixin {
     @Shadow private ProfilerFiller profiler;
-
     @Shadow @Final public Options options;
 
     @Inject(
@@ -28,13 +26,13 @@ public class MinecraftClientMixin {
                     shift = At.Shift.AFTER
             )
     )
-    public void render(boolean tick, CallbackInfo info) {
+    public void runTick_render(boolean bl, CallbackInfo info) {
         this.profiler.popPush("gamepadInput");
         InputTick.getInstance().tick();
     }
 
     @Inject(method = "setCameraEntity", at = @At("HEAD"))
-    public void setCameraEntity(Entity entity, CallbackInfo ci) {
+    public void setCameraEntity_HEAD(Entity entity, CallbackInfo ci) {
         if (entity instanceof QuadcopterEntity && options.getCameraType().isMirrored()) {
             options.setCameraType(options.getCameraType().cycle());
         }

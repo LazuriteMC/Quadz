@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemInHandRenderer.class)
-public class HeldItemRendererMixin {
+public class ItemInHandRendererMixin {
     @Shadow @Final private Minecraft minecraft;
 
     @Inject(
@@ -24,7 +24,7 @@ public class HeldItemRendererMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void renderItem(LivingEntity livingEntity, ItemStack itemStack, ItemTransforms.TransformType transformType, boolean bl, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, CallbackInfo info) {
+    public void renderItem_HEAD(LivingEntity livingEntity, ItemStack itemStack, ItemTransforms.TransformType transformType, boolean bl, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, CallbackInfo info) {
         if (minecraft.getCameraEntity() instanceof QuadcopterEntity) {
             info.cancel();
         }

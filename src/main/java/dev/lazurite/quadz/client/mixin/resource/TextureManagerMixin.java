@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(TextureManager.class)
 public abstract class TextureManagerMixin {
-
     @Shadow @Final private ResourceManager resourceManager;
 
     @Redirect(
@@ -23,7 +22,7 @@ public abstract class TextureManagerMixin {
                     target = "Lnet/minecraft/client/renderer/texture/TextureManager;resourceManager:Lnet/minecraft/server/packs/resources/ResourceManager;"
             )
     )
-    public ResourceManager getResourceContainer(TextureManager instance, ResourceLocation resourceLocation) {
+    public ResourceManager loadTexture_FIELD(TextureManager textureManager, ResourceLocation resourceLocation) {
         if (resourceLocation.getNamespace().equals(Quadz.MODID)) {
             return new TemplateTextureManager(resourceManager);
         }

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ServerPlayer.class)
-public class ServerPlayerEntityMixin implements PlayerData {
+public class ServerPlayerMixin implements PlayerData {
     @Unique private String callSign;
 
     /**
@@ -23,7 +23,7 @@ public class ServerPlayerEntityMixin implements PlayerData {
                     target = "Lnet/minecraft/server/level/ServerPlayer;wantsToStopRiding()Z"
             )
     )
-    public boolean shouldDismount(ServerPlayer serverPlayer) {
+    public boolean tick_wantsToStopRiding(ServerPlayer serverPlayer) {
         if (serverPlayer.getCamera() instanceof QuadcopterEntity) {
             return false;
         } else {

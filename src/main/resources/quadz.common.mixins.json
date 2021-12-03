@@ -7,7 +7,7 @@
     "Matrix4fMixin",
     "entity.EntityMixin",
     "item.ItemMixin",
-    "player.ServerPlayerEntityMixin"
+    "player.ServerPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

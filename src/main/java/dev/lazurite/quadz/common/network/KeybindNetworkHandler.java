@@ -13,7 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 public class KeybindNetworkHandler {
-    public static void onNoClipKey(MinecraftServer server, ServerPlayer player, ServerGamePacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public static void onNoClipKey(MinecraftServer server, ServerPlayer player, ServerGamePacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
         server.execute(() ->
             Bindable.get(player.getMainHandItem()).flatMap(transmitter -> QuadcopterState.getQuadcopterByBindId(player.getLevel(), player.getCamera().position(), transmitter.getBindId(), server.getPlayerList().getViewDistance())).ifPresent(quadcopter -> {
                 boolean lastNoClip = quadcopter.getRigidBody().shouldDoTerrainLoading();
@@ -28,7 +28,7 @@ public class KeybindNetworkHandler {
         );
     }
 
-    public static void onChangeCameraAngleKey(MinecraftServer server, ServerPlayer player, ServerGamePacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public static void onChangeCameraAngleKey(MinecraftServer server, ServerPlayer player, ServerGamePacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
         int amount = buf.readInt();
 
         server.execute(() ->
@@ -47,7 +47,7 @@ public class KeybindNetworkHandler {
         );
     }
 
-    public static void onPowerGogglesKey(MinecraftServer server, ServerPlayer player, ServerGamePacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public static void onPowerGogglesKey(MinecraftServer server, ServerPlayer player, ServerGamePacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
         boolean enable = buf.readBoolean();
 
         server.execute(() -> {

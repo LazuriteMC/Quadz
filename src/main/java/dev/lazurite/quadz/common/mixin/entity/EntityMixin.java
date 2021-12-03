@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Entity.class)
 public abstract class EntityMixin {
 
-    @Shadow private EntityDimensions dimensions;
+    @Shadow public EntityDimensions dimensions;
     @Shadow public abstract void setBoundingBox(AABB aABB);
     @Shadow public abstract double getX();
     @Shadow public abstract double getY();
@@ -28,7 +28,7 @@ public abstract class EntityMixin {
     @Shadow public Level level;
 
     @Inject(method = "refreshDimensions", at = @At("HEAD"), cancellable = true)
-    public void calculateEntityDimensions(CallbackInfo info) {
+    public void refreshDimensions_HEAD(CallbackInfo info) {
         if ((Entity) (Object) this instanceof QuadcopterEntity) {
             QuadcopterEntity quadcopter = (QuadcopterEntity) (Object) this;
             Template template = DataDriver.getTemplate(quadcopter.getTemplate());

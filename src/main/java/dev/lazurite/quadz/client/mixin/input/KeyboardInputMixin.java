@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(KeyboardInput.class)
 public abstract class KeyboardInputMixin extends Input {
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-    public void tick(CallbackInfo info) {
+    public void tick_HEAD(CallbackInfo info) {
         if (ClientTick.isUsingKeyboard) {
             forwardImpulse = 0.0f;
             leftImpulse = 0.0f;

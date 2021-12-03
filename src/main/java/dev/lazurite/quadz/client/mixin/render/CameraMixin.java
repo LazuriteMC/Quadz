@@ -44,7 +44,7 @@ public abstract class CameraMixin {
                     target = "Lnet/minecraft/client/Camera;setRotation(FF)V"
             )
     )
-    public void update(BlockGetter blockGetter, Entity entity, boolean bl, boolean bl2, float f, CallbackInfo ci) {
+    public void setup_setRotation(BlockGetter blockGetter, Entity entity, boolean bl, boolean bl2, float f, CallbackInfo ci) {
         if (entity instanceof QuadcopterEntity quadcopter) {
             if (quadcopter.getRigidBody() != null && quadcopter.getRigidBody().getFrame() != null) {
                 var template = DataDriver.getTemplate(quadcopter.getTemplate());
@@ -77,14 +77,14 @@ public abstract class CameraMixin {
     }
 
     @Inject(method = "setPosition(DDD)V", at = @At("HEAD"), cancellable = true)
-    public void setPos(double x, double y, double z, CallbackInfo info) {
+    public void setPosition_HEAD(double x, double y, double z, CallbackInfo info) {
         if (entity instanceof QuadcopterEntity) {
             info.cancel();
         }
     }
 
     @Inject(method = "setRotation", at = @At("HEAD"), cancellable = true)
-    public void setRotation(float yaw, float pitch, CallbackInfo info) {
+    public void setRotation_HEAD(float yaw, float pitch, CallbackInfo info) {
         if (entity instanceof QuadcopterEntity) {
             info.cancel();
         }

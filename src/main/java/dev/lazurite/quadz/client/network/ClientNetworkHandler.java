@@ -15,7 +15,7 @@ import net.minecraft.world.entity.Entity;
 import java.util.concurrent.CompletableFuture;
 
 public class ClientNetworkHandler {
-    public static void onInputFrameReceived(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public static void onInputFrameReceived(Minecraft client, ClientPacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
         int entityId = buf.readInt();
         InputFrame frame = new InputFrame(
                 buf.readFloat(),
@@ -31,13 +31,13 @@ public class ClientNetworkHandler {
         client.execute(() -> {
             Entity entity = client.level.getEntity(entityId);
 
-            if (entity instanceof QuadcopterEntity) {
-                ((QuadcopterEntity) entity).getInputFrame().set(frame);
+            if (entity instanceof QuadcopterEntity quadcopterEntity) {
+                quadcopterEntity.getInputFrame().set(frame);
             }
         });
     }
 
-    public static void onTemplateReceived(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public static void onTemplateReceived(Minecraft client, ClientPacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
         Template template = Template.deserialize(buf);
 
         client.execute(() -> {

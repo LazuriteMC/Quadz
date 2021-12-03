@@ -32,7 +32,7 @@ public class GameRendererMixin {
 	@Shadow @Final private Camera mainCamera;
 
 	@Inject(method = "renderLevel", at = @At("HEAD"))
-	public void renderWorld(float f, long l, PoseStack poseStack, CallbackInfo ci) {
+	public void renderLevel_HEAD(float f, long l, PoseStack poseStack, CallbackInfo ci) {
 		/* Rotate the entire view to match the view of the quadcopter */
 		if (mainCamera.getEntity() instanceof QuadcopterEntity quadcopter) {
 			var q = quadcopter.getPhysicsRotation(new Quaternion(), f);
@@ -61,14 +61,14 @@ public class GameRendererMixin {
 	}
 
 	@Inject(method = "renderItemInHand", at = @At("HEAD"), cancellable = true)
-	private void renderHand(PoseStack poseStack, Camera camera, float f, CallbackInfo info) {
+	private void renderItemInHand_HEAD(PoseStack poseStack, Camera camera, float f, CallbackInfo info) {
 		if (camera.getEntity() instanceof QuadcopterEntity) {
 			info.cancel();
 		}
 	}
 
 	@Redirect(method = "getFov", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;fov:D"))
-	public double getFov(Options options) {
+	public double getFov_FIELD(Options options) {
 		if (minecraft.getCameraEntity() instanceof QuadcopterEntity && Config.getInstance().firstPersonFOV > 30) {
 			return Config.getInstance().firstPersonFOV;
 		}

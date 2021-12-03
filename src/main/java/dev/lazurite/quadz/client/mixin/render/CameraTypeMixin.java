@@ -11,11 +11,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(CameraType.class)
-public class PerspectiveMixin {
+public class CameraTypeMixin {
     @Shadow @Final private static CameraType[] VALUES;
 
     @Inject(method = "cycle", at = @At("HEAD"), cancellable = true)
-    public void next(CallbackInfoReturnable<CameraType> info) {
+    public void cycle_HEAD(CallbackInfoReturnable<CameraType> info) {
         boolean isQuadcopter = Minecraft.getInstance().getCameraEntity() instanceof QuadcopterEntity;
         boolean isNextFront = VALUES[(((CameraType) (Object) this).ordinal() + 1) % VALUES.length] == CameraType.THIRD_PERSON_FRONT;
 
