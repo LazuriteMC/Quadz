@@ -7,7 +7,7 @@ import com.mojang.math.Matrix4f;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.impl.bullet.math.Converter;
+import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import dev.lazurite.toolbox.api.math.VectorHelper;
 import net.minecraft.client.Camera;
@@ -37,9 +37,9 @@ public class GameRendererMixin {
 		if (mainCamera.getEntity() instanceof QuadcopterEntity quadcopter) {
 			var q = quadcopter.getPhysicsRotation(new Quaternion(), f);
 			q.set(q.getX(), -q.getY(), q.getZ(), -q.getW());
-			QuaternionHelper.rotateX(Converter.toMinecraft(q), quadcopter.getCameraAngle());
+			QuaternionHelper.rotateX(Convert.toMinecraft(q), quadcopter.getCameraAngle());
 
-			var newMat = new Matrix4f(Converter.toMinecraft(q));
+			var newMat = new Matrix4f(Convert.toMinecraft(q));
 			newMat.transpose();
 			poseStack.last().pose().multiply(newMat);
 
@@ -49,7 +49,7 @@ public class GameRendererMixin {
 				for (Entity entity : minecraft.level.getEntities().getAll()) {
 					if (entity instanceof QuadcopterEntity && ((QuadcopterEntity) entity).isBoundTo(transmitter) && minecraft.player.hasLineOfSight(entity)) {
 						/* Get the difference in position between the camera and the quad */
-						var delta = minecraft.gameRenderer.getMainCamera().getPosition().subtract(VectorHelper.toVec3d(Converter.toMinecraft(((QuadcopterEntity) entity).getPhysicsLocation(new Vector3f(), f))));
+						var delta = minecraft.gameRenderer.getMainCamera().getPosition().subtract(VectorHelper.toVec3(Convert.toMinecraft(((QuadcopterEntity) entity).getPhysicsLocation(new Vector3f(), f))));
 
 						/* Set new pitch and yaw */
 						minecraft.player.setYRot((float) Math.toDegrees(Math.atan2(delta.z, delta.x)) + 90);

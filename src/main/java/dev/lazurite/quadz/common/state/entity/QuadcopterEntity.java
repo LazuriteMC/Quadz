@@ -18,13 +18,12 @@ import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.QuadcopterState;
-import dev.lazurite.rayon.core.impl.bullet.collision.space.MinecraftSpace;
-import dev.lazurite.rayon.core.impl.bullet.math.Converter;
-import dev.lazurite.rayon.core.impl.bullet.thread.PhysicsThread;
-import dev.lazurite.rayon.entity.api.EntityPhysicsElement;
-import dev.lazurite.rayon.entity.impl.collision.body.EntityRigidBody;
+import dev.lazurite.rayon.api.EntityPhysicsElement;
+import dev.lazurite.rayon.impl.bullet.collision.body.entity.EntityRigidBody;
+import dev.lazurite.rayon.impl.bullet.collision.space.MinecraftSpace;
+import dev.lazurite.rayon.impl.bullet.math.Convert;
+import dev.lazurite.rayon.impl.bullet.thread.PhysicsThread;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
-import dev.lazurite.toolbox.api.render.Viewable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -61,7 +60,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class QuadcopterEntity extends LivingEntity implements QuadcopterState, IAnimatable, EntityPhysicsElement, Viewable {
+public class QuadcopterEntity extends LivingEntity implements QuadcopterState, IAnimatable, EntityPhysicsElement {
 	/* States */
 	private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<String> TEMPLATE = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.STRING);
@@ -126,7 +125,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		super.tick();
 	}
 
-	@Override
 	public void step(MinecraftSpace space) {
 		InputFrame frame = new InputFrame(getInputFrame());
 
@@ -140,8 +138,8 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 				float targetPitch = -frame.getPitch() * frame.getMaxAngle();
 				float targetRoll = -frame.getRoll() * frame.getMaxAngle();
 
-				float currentPitch = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(Converter.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion()))).y());
-				float currentRoll = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(Converter.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion()))).x());
+				float currentPitch = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(Convert.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion()))).y());
+				float currentRoll = -1.0F * (float) Math.toDegrees(QuaternionHelper.toEulerAngles(Convert.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion()))).x());
 
 				rotate(currentPitch - targetPitch, frame.calculateYaw(0.05f), currentRoll - targetRoll);
 			}
@@ -158,7 +156,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 			/* Get the thrust unit vector */
 			Matrix4f mat = new Matrix4f();
-			Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.rotateX(Converter.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion())), 90));
+			Matrix4fAccess.from(mat).fromQuaternion(QuaternionHelper.rotateX(Convert.toMinecraft(getRigidBody().getPhysicsRotation(new Quaternion())), 90));
 			Vector3f unit = Matrix4fAccess.from(mat).matrixToVector();
 
 			/* Calculate basic thrust */
@@ -183,7 +181,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		QuaternionHelper.rotateZ(rot, z);
 
 		Transform trans = getRigidBody().getTransform(new Transform());
-		trans.getRotation().set(trans.getRotation().mult(Converter.toBullet(rot)));
+		trans.getRotation().set(trans.getRotation().mult(Convert.toBullet(rot)));
 		getRigidBody().setPhysicsTransform(trans);
 	}
 
@@ -255,7 +253,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	@Override
 	public Direction getDirection() {
-		return Direction.fromYRot(QuaternionHelper.getYaw(Converter.toMinecraft(getPhysicsRotation(new Quaternion(), 1.0f))));
+		return Direction.fromYRot(QuaternionHelper.getYaw(Convert.toMinecraft(getPhysicsRotation(new Quaternion(), 1.0f))));
 	}
 
 	@Override
@@ -319,12 +317,12 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	@Override
 	public float getViewYRot(float tickDelta) {
-		return QuaternionHelper.getYaw(Converter.toMinecraft(getPhysicsRotation(new Quaternion(), tickDelta)));
+		return QuaternionHelper.getYaw(Convert.toMinecraft(getPhysicsRotation(new Quaternion(), tickDelta)));
 	}
 
 	@Override
 	public float getViewXRot(float tickDelta) {
-		return QuaternionHelper.getPitch(Converter.toMinecraft(getPhysicsRotation(new Quaternion(), tickDelta)));
+		return QuaternionHelper.getPitch(Convert.toMinecraft(getPhysicsRotation(new Quaternion(), tickDelta)));
 //		return QuaternionHelper.getPitch(QuaternionHelper.rotateX(
 //				getPhysicsRotation(new Quaternion(), tickDelta),
 //				-getCameraAngle()));
@@ -411,13 +409,11 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		return getEntityData().get(HEIGHT);
 	}
 
-	@Override
 	@Environment(EnvType.CLIENT)
 	public boolean shouldRenderSelf() {
 		return (!Config.getInstance().renderCameraInCenter && Config.getInstance().renderFirstPerson) || QuadzRendering.isInThirdPerson();
 	}
 
-	@Override
 	@Environment(EnvType.CLIENT)
 	public boolean shouldRenderPlayer() {
 		return true;

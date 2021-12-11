@@ -6,7 +6,7 @@ import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.impl.bullet.math.Converter;
+import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import dev.lazurite.toolbox.api.math.VectorHelper;
 import net.minecraft.client.Camera;
@@ -49,15 +49,15 @@ public abstract class CameraMixin {
             if (quadcopter.getRigidBody() != null && quadcopter.getRigidBody().getFrame() != null) {
                 var template = DataDriver.getTemplate(quadcopter.getTemplate());
                 var location = quadcopter.getPhysicsLocation(new Vector3f(), f);
-                setPosition(VectorHelper.toVec3d(Converter.toMinecraft(location)));
+                setPosition(VectorHelper.toVec3(Convert.toMinecraft(location)));
 
                 var quaternion = ((QuadcopterEntity) entity).getPhysicsRotation(new Quaternion(), f);
                 var cameraAngle = ((QuadcopterEntity) entity).getCameraAngle();
-                this.xRot = QuaternionHelper.getPitch(Converter.toMinecraft(quaternion));
-                this.yRot = QuaternionHelper.getYaw(Converter.toMinecraft(quaternion));
+                this.xRot = QuaternionHelper.getPitch(Convert.toMinecraft(quaternion));
+                this.yRot = QuaternionHelper.getYaw(Convert.toMinecraft(quaternion));
 
                 this.rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
-                this.rotation.mul(Converter.toMinecraft(quaternion));
+                this.rotation.mul(Convert.toMinecraft(quaternion));
                 this.rotation.mul(com.mojang.math.Vector3f.XN.rotationDegrees(cameraAngle));
 
                 this.forwards.set(0.0F, 0.0F, 1.0F);

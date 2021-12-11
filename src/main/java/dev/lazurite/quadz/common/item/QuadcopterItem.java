@@ -5,7 +5,7 @@ import com.jme3.math.Vector3f;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.impl.bullet.math.Converter;
+import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -45,14 +45,14 @@ public class QuadcopterItem extends Item implements IAnimatable {
 
             if (hitResult.getType() == HitResult.Type.BLOCK) {
                 entity.absMoveTo(hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z);
-                entity.getRigidBody().setPhysicsRotation(Converter.toBullet(QuaternionHelper.rotateY(Converter.toMinecraft(new Quaternion()), -player.getYRot())));
+                entity.getRigidBody().setPhysicsRotation(Convert.toBullet(QuaternionHelper.rotateY(Convert.toMinecraft(new Quaternion()), -player.getYRot())));
             } else {
                 Random random = new Random();
                 Vec3 direction = hitResult.getLocation().subtract(player.position()).add(0, player.getEyeHeight(), 0).normalize();
                 Vec3 pos = player.position().add(direction);
 
                 entity.absMoveTo(pos.x, pos.y, pos.z);
-                entity.getRigidBody().setLinearVelocity(Converter.toBullet(direction).multLocal(4).multLocal(new Vector3f(1, 3, 1)));
+                entity.getRigidBody().setLinearVelocity(Convert.toBullet(direction).multLocal(4).multLocal(new Vector3f(1, 3, 1)));
                 entity.getRigidBody().setAngularVelocity(new Vector3f(random.nextFloat() * 2, random.nextFloat() * 2, random.nextFloat() * 2));
             }
 

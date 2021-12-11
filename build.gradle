@@ -27,8 +27,7 @@ dependencies {
 	modImplementation "software.bernie.geckolib:$geckolib_version"
 
 	// Rayon
-	modImplementation "dev.lazurite:rayon-core:$rayon_version"
-	modImplementation "dev.lazurite:rayon-entity:$rayon_version"
+	modImplementation "dev.lazurite:rayon-fabric:$rayon_version"
 
 	// Lattice
 	modImplementation "dev.lazurite:lattice:$lattice_version"
@@ -41,8 +40,8 @@ dependencies {
 	}
 
 	// Fiber
-	modImplementation "me.zeroeightsix:fiber:${project.fiber_version}"
-	include "me.zeroeightsix:fiber:${project.fiber_version}"
+	modImplementation "me.zeroeightsix:fiber:$fiber_version"
+	include "me.zeroeightsix:fiber:$fiber_version"
 }
 
 java {

@@ -16,8 +16,8 @@ public class KeybindNetworkHandler {
     public static void onNoClipKey(MinecraftServer server, ServerPlayer player, ServerGamePacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
         server.execute(() ->
             Bindable.get(player.getMainHandItem()).flatMap(transmitter -> QuadcopterState.getQuadcopterByBindId(player.getLevel(), player.getCamera().position(), transmitter.getBindId(), server.getPlayerList().getViewDistance())).ifPresent(quadcopter -> {
-                boolean lastNoClip = quadcopter.getRigidBody().shouldDoTerrainLoading();
-                quadcopter.getRigidBody().setDoTerrainLoading(!lastNoClip);
+                boolean lastNoClip = quadcopter.getRigidBody().terrainLoadingEnabled();
+                quadcopter.getRigidBody().setTerrainLoadingEnabled(!lastNoClip);
 
                 if (lastNoClip) {
                     player.displayClientMessage(new TranslatableComponent("message.quadz.noclip_on"), true);

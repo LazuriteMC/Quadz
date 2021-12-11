@@ -2,7 +2,7 @@ package dev.lazurite.quadz.client.mixin.render;
 
 import com.jme3.math.Quaternion;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.rayon.core.impl.bullet.math.Converter;
+import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
@@ -26,7 +26,7 @@ public class MatrixRotationMixin {
     )
     public com.mojang.math.Quaternion multiplyYaw(com.mojang.math.Quaternion quaternion) {
         if (mainCamera.getEntity() instanceof QuadcopterEntity) {
-            return QuaternionHelper.rotateY(Converter.toMinecraft(new Quaternion()), 180);
+            return QuaternionHelper.rotateY(Convert.toMinecraft(new Quaternion()), 180);
         }
 
         return quaternion;
@@ -42,7 +42,7 @@ public class MatrixRotationMixin {
     )
     public com.mojang.math.Quaternion multiplyPitch(com.mojang.math.Quaternion quaternion) {
         if (mainCamera.getEntity() instanceof QuadcopterEntity) {
-            return Converter.toMinecraft(new Quaternion());
+            return Convert.toMinecraft(new Quaternion());
         }
 
         return quaternion;

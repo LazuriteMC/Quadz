@@ -15,7 +15,11 @@ import dev.lazurite.quadz.common.util.ServerTick;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
 import dev.lazurite.quadz.common.network.KeybindNetworkHandler;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.toolbox.api.event.BetterClientLifecycleEvents;
+import dev.lazurite.rayon.api.event.collision.PhysicsSpaceEvents;
+import dev.lazurite.rayon.impl.Rayon;
+import dev.lazurite.rayon.impl.bullet.collision.body.entity.EntityRigidBody;
+import dev.lazurite.toolbox.api.event.ClientLifecycleEvents;
+import me.shedaniel.clothconfig2.ClothConfigInitializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -25,6 +29,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -77,6 +82,14 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 		DataDriver.initialize();
 
+		PhysicsSpaceEvents.STEP.register(space -> {
+			space.getRigidBodiesByClass(EntityRigidBody.class).forEach(rigidBody -> {
+				if (rigidBody.getElement() instanceof QuadcopterEntity quadcopter) {
+					quadcopter.step(space);
+				}
+			});
+		});
+
 		/* Set up events */
 		ServerTickEvents.START_SERVER_TICK.register(ServerTick::tick);
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
@@ -119,7 +132,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		ClientTickEvents.START_CLIENT_TICK.register(ClientTick::tick);
 
 		/* Set up events */
-		BetterClientLifecycleEvents.DISCONNECT.register((client, world) -> DataDriver.clearRemoteTemplates());
+		ClientLifecycleEvents.DISCONNECT.register((client, world) -> DataDriver.clearRemoteTemplates());
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			Config.getInstance().sendPlayerData();
 			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()));

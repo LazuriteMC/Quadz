@@ -5,16 +5,17 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "ClientPacketListenerMixin",
+    "MinecraftMixin",
     "input.KeyboardInputMixin",
     "input.MouseHandlerMixin",
-    "MinecraftMixin",
     "render.CameraMixin",
+    "render.CameraTypeMixin",
     "render.GameRendererMixin",
     "render.GuiMixin",
+    "render.LevelRendererMixin",
     "render.MatrixRotationMixin",
-    "render.CameraTypeMixin",
-    "resource.TextureManagerMixin",
-    "resource.ClientLanguageMixin"
+    "resource.ClientLanguageMixin",
+    "resource.TextureManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
