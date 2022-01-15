@@ -19,7 +19,8 @@ import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.rayon.api.EntityPhysicsElement;
-import dev.lazurite.rayon.impl.bullet.collision.body.entity.EntityRigidBody;
+import dev.lazurite.rayon.impl.bullet.collision.body.ElementRigidBody;
+import dev.lazurite.rayon.impl.bullet.collision.body.EntityRigidBody;
 import dev.lazurite.rayon.impl.bullet.collision.space.MinecraftSpace;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.rayon.impl.bullet.thread.PhysicsThread;
@@ -125,13 +126,13 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		super.tick();
 	}
 
-	public void step(MinecraftSpace space) {
+	public void step() {
 		InputFrame frame = new InputFrame(getInputFrame());
 
 		if (!frame.isEmpty()) {
 			/* Rate Mode */
 			if (Mode.RATE.equals(frame.getMode())) {
-				rotate(frame.calculatePitch(0.05f), frame.calculateYaw(0.05f), frame.calculateRoll(0.05f));
+				rotate(frame.calculatePitch(1/60f), frame.calculateYaw(1/60f), frame.calculateRoll(1/60f));
 
 			/* Self Leveling Mode */
 			} else if (Mode.ANGLE.equals(frame.getMode())) {

@@ -46,7 +46,7 @@ public abstract class EntityMixin {
                 }
 
                 PhysicsThread.get(level).execute(() ->
-                        quadcopter.getRigidBody().setCollisionShape(MinecraftShape.of(quadcopter.getBoundingBox())));
+                        quadcopter.getRigidBody().setCollisionShape(MinecraftShape.convex(quadcopter.getBoundingBox())));
                 info.cancel();
             }
         }

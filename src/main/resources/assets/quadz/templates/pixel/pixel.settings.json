@@ -7,7 +7,7 @@
 	"cameraX" : 0.025,
 	"cameraY" : 0.1,
  	"mass" : 0.01,
-	"dragCoefficient" : 0.2,
+	"dragCoefficient" : 0.05,
 	"thrust" : 0.4,
 	"thrustCurve" : 1.0,
 	"cameraAngle" : 5
