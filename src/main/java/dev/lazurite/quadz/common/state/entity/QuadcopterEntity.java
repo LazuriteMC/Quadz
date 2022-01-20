@@ -21,7 +21,6 @@ import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.rayon.api.EntityPhysicsElement;
 import dev.lazurite.rayon.impl.bullet.collision.body.ElementRigidBody;
 import dev.lazurite.rayon.impl.bullet.collision.body.EntityRigidBody;
-import dev.lazurite.rayon.impl.bullet.collision.space.MinecraftSpace;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.rayon.impl.bullet.thread.PhysicsThread;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
@@ -85,6 +84,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	public QuadcopterEntity(EntityType<? extends LivingEntity> entityType, Level level) {
 		super(entityType, level);
 		this.noCulling = true;
+		this.rigidBody.setBuoyancyType(ElementRigidBody.BuoyancyType.NONE);
 	}
 
 	@Override
