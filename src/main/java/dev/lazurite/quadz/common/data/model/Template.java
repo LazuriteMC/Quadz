@@ -2,7 +2,6 @@ package dev.lazurite.quadz.common.data.model;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 
@@ -33,21 +32,19 @@ public class Template {
         this.originDistance = originDistance;
     }
 
-    public FriendlyByteBuf serialize() {
-        FriendlyByteBuf buf = PacketByteBufs.create();
+    public void serialize(FriendlyByteBuf buf) {
         settings.serialize(buf);
         buf.writeUtf(geo.toString());
         buf.writeUtf(animation.toString());
         buf.writeByteArray(texture);
         buf.writeInt(originDistance + 1);
-        return buf;
     }
 
     public static Template deserialize(FriendlyByteBuf buf) {
         return new Template(
             Settings.deserialize(buf),
-            new JsonParser().parse(buf.readUtf(32767)).getAsJsonObject(),
-            new JsonParser().parse(buf.readUtf(32767)).getAsJsonObject(),
+            JsonParser.parseString(buf.readUtf(32767)).getAsJsonObject(),
+            JsonParser.parseString(buf.readUtf(32767)).getAsJsonObject(),
             buf.readByteArray(),
             buf.readInt());
     }

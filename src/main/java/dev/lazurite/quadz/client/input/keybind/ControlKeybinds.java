@@ -2,13 +2,10 @@ package dev.lazurite.quadz.client.input.keybind;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.lazurite.quadz.Quadz;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import org.lwjgl.glfw.GLFW;
 
-@Environment(EnvType.CLIENT)
 public class ControlKeybinds {
     public static KeyMapping pitchForward = new KeyMapping(
             "key." + Quadz.MODID + ".pitch.forward",

@@ -24,6 +24,8 @@ import dev.lazurite.rayon.impl.bullet.collision.body.EntityRigidBody;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.rayon.impl.bullet.thread.PhysicsThread;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
+import dev.lazurite.toolbox.api.network.ClientNetworking;
+import dev.lazurite.toolbox.api.network.ServerNetworking;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -59,6 +61,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class QuadcopterEntity extends LivingEntity implements QuadcopterState, IAnimatable, EntityPhysicsElement {
 	/* States */
@@ -190,22 +193,23 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		InputFrame frame = getInputFrame();
 
 		if (frame != null) {
-			FriendlyByteBuf buf = PacketByteBufs.create();
-			buf.writeInt(getId());
-			buf.writeFloat(frame.getThrottle());
-			buf.writeFloat(frame.getPitch());
-			buf.writeFloat(frame.getYaw());
-			buf.writeFloat(frame.getRoll());
-			buf.writeFloat(frame.getRate());
-			buf.writeFloat(frame.getSuperRate());
-			buf.writeFloat(frame.getExpo());
-			buf.writeFloat(frame.getMaxAngle());
-			buf.writeEnum(frame.getMode());
+			Consumer<FriendlyByteBuf> serialize = buf -> {
+				buf.writeInt(getId());
+				buf.writeFloat(frame.getThrottle());
+				buf.writeFloat(frame.getPitch());
+				buf.writeFloat(frame.getYaw());
+				buf.writeFloat(frame.getRoll());
+				buf.writeFloat(frame.getRate());
+				buf.writeFloat(frame.getSuperRate());
+				buf.writeFloat(frame.getExpo());
+				buf.writeFloat(frame.getMaxAngle());
+				buf.writeEnum(frame.getMode());
+			};
 
 			if (level.isClientSide()) {
-				ClientPlayNetworking.send(Quadz.INPUT_FRAME, buf);
+				ClientNetworking.send(Quadz.INPUT_FRAME, serialize);
 			} else {
-				PlayerLookup.tracking(this).forEach(player -> ServerPlayNetworking.send(player, Quadz.INPUT_FRAME, buf));
+				PlayerLookup.tracking(this).forEach(player -> ServerNetworking.send(player, Quadz.INPUT_FRAME, serialize));
 			}
 		}
 	}

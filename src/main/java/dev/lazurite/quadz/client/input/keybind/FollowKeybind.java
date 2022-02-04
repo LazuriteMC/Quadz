@@ -3,18 +3,15 @@ package dev.lazurite.quadz.client.input.keybind;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.Config;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import dev.lazurite.toolbox.api.event.ClientEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.lwjgl.glfw.GLFW;
 
-@Environment(EnvType.CLIENT)
 public class FollowKeybind {
     public static void register() {
-        KeyMapping key = new KeyMapping(
+        final var key = new KeyMapping(
                 "key." + Quadz.MODID + ".follow",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_K,
@@ -22,7 +19,8 @@ public class FollowKeybind {
         );
 
         KeyBindingHelper.registerKeyBinding(key);
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+
+        ClientEvents.Tick.END_CLIENT_TICK.register(client -> {
             if (key.consumeClick()) {
                 Config.getInstance().followLOS = !Config.getInstance().followLOS;
 

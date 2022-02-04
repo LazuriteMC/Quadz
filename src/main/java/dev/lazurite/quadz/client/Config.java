@@ -3,6 +3,7 @@ package dev.lazurite.quadz.client;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.ui.osd.OnScreenDisplay;
+import dev.lazurite.toolbox.api.network.ClientNetworking;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.AnnotatedSettings;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.Setting;
 import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.Settings;
@@ -12,11 +13,8 @@ import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.JanksonValueSerial
 import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigTree;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -122,11 +120,11 @@ public final class Config {
 
     public void sendPlayerData() {
         if (Minecraft.getInstance().level != null) {
-            FriendlyByteBuf buf = PacketByteBufs.create();
-            buf.writeInt(band);
-            buf.writeInt(channel);
-            buf.writeUtf(callSign);
-            ClientPlayNetworking.send(Quadz.PLAYER_DATA_C2S, buf);
+            ClientNetworking.send(Quadz.PLAYER_DATA_C2S, buf -> {
+                buf.writeInt(band);
+                buf.writeInt(channel);
+                buf.writeUtf(callSign);
+            });
         }
     }
 }

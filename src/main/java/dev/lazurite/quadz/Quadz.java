@@ -17,15 +17,15 @@ import dev.lazurite.quadz.common.network.KeybindNetworkHandler;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.api.event.collision.PhysicsSpaceEvents;
 import dev.lazurite.rayon.impl.bullet.collision.body.EntityRigidBody;
-import dev.lazurite.toolbox.api.event.ClientLifecycleEvents;
+import dev.lazurite.toolbox.api.event.ClientEvents;
+import dev.lazurite.toolbox.api.event.ServerEvents;
+import dev.lazurite.toolbox.api.network.ClientNetworking;
+import dev.lazurite.toolbox.api.network.PacketRegistry;
+import dev.lazurite.toolbox.api.network.ServerNetworking;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -43,7 +43,6 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 	public static final String MODID = "quadz";
 	public static final Logger LOGGER = LogManager.getLogger("Quadz");
 
-	/* Packet Identifiers */
 	public static final ResourceLocation TEMPLATE = new ResourceLocation(MODID, "template_s2c");
 	public static final ResourceLocation QUADCOPTER_SETTINGS_C2S = new ResourceLocation(MODID, "quadcopter_settings_c2s");
 	public static final ResourceLocation PLAYER_DATA_C2S = new ResourceLocation(MODID, "player_data_c2s");
@@ -51,14 +50,11 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 	public static final ResourceLocation NOCLIP_C2S = new ResourceLocation(MODID, "noclip_c2s");
 	public static final ResourceLocation CHANGE_CAMERA_ANGLE_C2S = new ResourceLocation(MODID, "change_camera_angle_c2s");
-	public static final ResourceLocation POWER_GOGGLES_C2S = new ResourceLocation(MODID, "power_goggles_c2s");
 
-	/* Items */
 	public static QuadcopterItem QUADCOPTER_ITEM = Registry.register(Registry.ITEM, new ResourceLocation(MODID, "quadcopter_item"), new QuadcopterItem(new Item.Properties().stacksTo(1)));
 	public static GogglesItem GOGGLES_ITEM = Registry.register(Registry.ITEM, new ResourceLocation(MODID, "goggles_item"), new GogglesItem(new Item.Properties().stacksTo(1)));
 	public static Item TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new ResourceLocation(MODID, "transmitter_item"), new Item(new Item.Properties().stacksTo(1)));
 
-	/* Quadcopter Entities */
 	public static EntityType<QuadcopterEntity> QUADCOPTER_ENTITY = Registry.register(
 			Registry.ENTITY_TYPE,
 			new ResourceLocation(MODID, "quadcopter"),
@@ -88,19 +84,18 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		});
 
 		/* Set up events */
-		ServerTickEvents.START_SERVER_TICK.register(ServerTick::tick);
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize())));
+		ServerEvents.Tick.START_SERVER_TICK.register(ServerTick::tick);
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> // TODO still on fabric
+			DataDriver.getTemplates().forEach(template -> ServerNetworking.send(handler.player, TEMPLATE, template::serialize)));
 
 		/* Set up networking events */
-		ServerPlayNetworking.registerGlobalReceiver(QUADCOPTER_SETTINGS_C2S, CommonNetworkHandler::onQuadcopterSettingsReceived);
-		ServerPlayNetworking.registerGlobalReceiver(PLAYER_DATA_C2S, CommonNetworkHandler::onPlayerDataReceived);
-		ServerPlayNetworking.registerGlobalReceiver(TEMPLATE, CommonNetworkHandler::onTemplateReceived);
-		ServerPlayNetworking.registerGlobalReceiver(INPUT_FRAME, CommonNetworkHandler::onInputFrame);
+		PacketRegistry.registerServerbound(QUADCOPTER_SETTINGS_C2S, CommonNetworkHandler::onQuadcopterSettingsReceived);
+		PacketRegistry.registerServerbound(PLAYER_DATA_C2S, CommonNetworkHandler::onPlayerDataReceived);
+		PacketRegistry.registerServerbound(TEMPLATE, CommonNetworkHandler::onTemplateReceived);
+		PacketRegistry.registerServerbound(INPUT_FRAME, CommonNetworkHandler::onInputFrame);
 
-		ServerPlayNetworking.registerGlobalReceiver(NOCLIP_C2S, KeybindNetworkHandler::onNoClipKey);
-		ServerPlayNetworking.registerGlobalReceiver(CHANGE_CAMERA_ANGLE_C2S, KeybindNetworkHandler::onChangeCameraAngleKey);
-		ServerPlayNetworking.registerGlobalReceiver(POWER_GOGGLES_C2S, KeybindNetworkHandler::onPowerGogglesKey);
+		PacketRegistry.registerServerbound(NOCLIP_C2S, KeybindNetworkHandler::onNoClipKey);
+		PacketRegistry.registerServerbound(CHANGE_CAMERA_ANGLE_C2S, KeybindNetworkHandler::onChangeCameraAngleKey);
 	}
 
 	@Override
@@ -110,29 +105,31 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		/* Load the Config */
 		Config.getInstance().load();
 
-		/* Register Keybindings */
-		ControlKeybinds.register();
 		CameraAngleKeybinds.register();
 		NoClipKeybind.register();
+		/* Register Keybindings */
+		ControlKeybinds.register();
 		FollowKeybind.register();
 		QuadConfigKeybind.register();
 
 		/* Register Packets */
-		ClientPlayNetworking.registerGlobalReceiver(TEMPLATE, ClientNetworkHandler::onTemplateReceived);
-		ClientPlayNetworking.registerGlobalReceiver(INPUT_FRAME, ClientNetworkHandler::onInputFrameReceived);
+		PacketRegistry.registerClientbound(TEMPLATE, ClientNetworkHandler::onTemplateReceived);
+		PacketRegistry.registerClientbound(INPUT_FRAME, ClientNetworkHandler::onInputFrameReceived);
 
 		/* Register Toast Events */
-		JoystickEvents.JOYSTICK_CONNECT.register((id, name) -> ControllerConnectedToast.add(new TranslatableComponent("toast.quadz.controller.connect"), name));
-		JoystickEvents.JOYSTICK_DISCONNECT.register((id, name) -> ControllerConnectedToast.add(new TranslatableComponent("toast.quadz.controller.disconnect"), name));
+		JoystickEvents.JOYSTICK_CONNECT.register(
+				(id, name) -> ControllerConnectedToast.add(new TranslatableComponent("toast.quadz.controller.connect"), name));
+		JoystickEvents.JOYSTICK_DISCONNECT.register(
+				(id, name) -> ControllerConnectedToast.add(new TranslatableComponent("toast.quadz.controller.disconnect"), name));
 
 		/* Register Client Tick Events */
-		ClientTickEvents.START_CLIENT_TICK.register(ClientTick::tick);
+		ClientEvents.Tick.START_CLIENT_TICK.register(ClientTick::tick);
 
 		/* Set up events */
-		ClientLifecycleEvents.DISCONNECT.register((client, world) -> DataDriver.clearRemoteTemplates());
-		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+		ClientEvents.Lifecycle.DISCONNECT.register((client, world) -> DataDriver.clearRemoteTemplates());
+		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> { // TODO still on fabric
 			Config.getInstance().sendPlayerData();
-			DataDriver.getTemplates().forEach(template -> sender.sendPacket(TEMPLATE, template.serialize()));
+			DataDriver.getTemplates().forEach(template -> ClientNetworking.send(TEMPLATE, template::serialize));
 		});
 	}
 }

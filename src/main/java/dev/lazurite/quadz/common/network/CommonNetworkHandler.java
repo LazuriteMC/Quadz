@@ -8,22 +8,21 @@ import dev.lazurite.quadz.common.state.Bindable;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.PlayerData;
 import dev.lazurite.quadz.common.util.input.InputFrame;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import dev.lazurite.toolbox.api.network.PacketRegistry;
+import dev.lazurite.toolbox.api.network.ServerNetworking;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.game.ServerGamePacketListener;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 
 public class CommonNetworkHandler {
-    public static void onQuadcopterSettingsReceived(MinecraftServer server, ServerPlayer player, ServerGamePacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
-        int entityId = buf.readInt();
-        int cameraAngle = buf.readInt();
+    public static void onQuadcopterSettingsReceived(PacketRegistry.ServerboundContext context) {
+        final var player = context.player();
+        final var server = player.getServer();
+        final var buf = context.byteBuf();
+
+        final var entityId = buf.readInt();
+        final var cameraAngle = buf.readInt();
 
         server.execute(() -> {
-            Entity entity = player.getLevel().getEntity(entityId);
+            final var entity = player.getLevel().getEntity(entityId);
 
             if (entity instanceof QuadcopterEntity) {
                 ((QuadcopterEntity) entity).setCameraAngle(cameraAngle);
@@ -31,18 +30,26 @@ public class CommonNetworkHandler {
         });
     }
 
-    public static void onPlayerDataReceived(MinecraftServer server, ServerPlayer player, ServerGamePacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
-        String callSign = buf.readUtf(32767);
+    public static void onPlayerDataReceived(PacketRegistry.ServerboundContext context) {
+        final var player = context.player();
+        final var server = player.getServer();
+        final var buf = context.byteBuf();
+
+        final var callSign = buf.readUtf(32767);
         server.execute(() -> ((PlayerData) player).setCallSign(callSign));
     }
 
-    public static void onTemplateReceived(MinecraftServer server, ServerPlayer player, ServerGamePacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
-        Template template = Template.deserialize(buf);
+    public static void onTemplateReceived(PacketRegistry.ServerboundContext context) {
+        final var player = context.player();
+        final var server = player.getServer();
+        final var buf = context.byteBuf();
+
+        final var template = Template.deserialize(buf);
 
         server.execute(() -> {
             PlayerLookup.all(server).forEach(p -> {
                 if (!p.equals(player)) {
-                    ServerPlayNetworking.send(p, Quadz.TEMPLATE, template.serialize());
+                    ServerNetworking.send(p, Quadz.TEMPLATE, template::serialize);
                 }
             });
 
@@ -50,9 +57,13 @@ public class CommonNetworkHandler {
         });
     }
 
-    public static void onInputFrame(MinecraftServer server, ServerPlayer player, ServerGamePacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
-        int entityId = buf.readInt();
-        InputFrame frame = new InputFrame(
+    public static void onInputFrame(PacketRegistry.ServerboundContext context) {
+        final var player = context.player();
+        final var server = player.getServer();
+        final var buf = context.byteBuf();
+
+        final var entityId = buf.readInt();
+        final var frame = new InputFrame(
                 buf.readFloat(),
                 buf.readFloat(),
                 buf.readFloat(),
@@ -65,11 +76,11 @@ public class CommonNetworkHandler {
 
         server.execute(() -> {
             Bindable.get(player.getMainHandItem()).ifPresent(transmitter -> {
-                Entity entity = player.getLevel().getEntity(entityId);
+                final var entity = player.getLevel().getEntity(entityId);
 
-                if (entity instanceof QuadcopterEntity) {
-                    if (((QuadcopterEntity) entity).isBoundTo(transmitter)) {
-                        ((QuadcopterEntity) entity).getInputFrame().set(frame);
+                if (entity instanceof QuadcopterEntity quadcopterEntity) {
+                    if (quadcopterEntity.isBoundTo(transmitter)) {
+                        quadcopterEntity.getInputFrame().set(frame);
                     }
                 }
             });

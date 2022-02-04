@@ -1,23 +1,12 @@
 package dev.lazurite.quadz.api.event;
 
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
+import dev.lazurite.toolbox.api.event.Event;
 
 public class JoystickEvents {
-    public static final Event<JoystickConnectEvent> JOYSTICK_CONNECT = EventFactory.createArrayBacked(JoystickConnectEvent.class, (callbacks) -> (id, name) -> {
-        for (JoystickConnectEvent event : callbacks) {
-            event.onConnect(id, name);
-        }
-    });
+    public static final Event<JoystickConnectEvent> JOYSTICK_CONNECT = Event.create();
+    public static final Event<JoystickDisconnectEvent> JOYSTICK_DISCONNECT = Event.create();
 
-    public static final Event<JoystickDisconnectEvent> JOYSTICK_DISCONNECT = EventFactory.createArrayBacked(JoystickDisconnectEvent.class, (callbacks) -> (id, name) -> {
-        for (JoystickDisconnectEvent event : callbacks) {
-            event.onDisconnect(id, name);
-        }
-    });
-
-    private JoystickEvents() {
-    }
+    private JoystickEvents() {}
 
     @FunctionalInterface
     public interface JoystickConnectEvent {

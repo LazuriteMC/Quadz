@@ -2,29 +2,22 @@ package dev.lazurite.quadz.client.input.keybind;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.lazurite.quadz.Quadz;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import dev.lazurite.toolbox.api.event.ClientEvents;
+import dev.lazurite.toolbox.api.network.ClientNetworking;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.network.FriendlyByteBuf;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.function.Consumer;
-
-@Environment(EnvType.CLIENT)
 public class CameraAngleKeybinds {
     public static void register() {
-        KeyMapping up = new KeyMapping(
+        final var up = new KeyMapping(
                 "key." + Quadz.MODID + ".camera.raise",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_PERIOD,
                 "key." + Quadz.MODID + ".category"
         );
 
-        KeyMapping down = new KeyMapping(
+        final var down = new KeyMapping(
                 "key." + Quadz.MODID + ".camera.lower",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_COMMA,
@@ -34,17 +27,11 @@ public class CameraAngleKeybinds {
         KeyBindingHelper.registerKeyBinding(up);
         KeyBindingHelper.registerKeyBinding(down);
 
-        Consumer<Integer> sendPacket = amount -> {
-            FriendlyByteBuf buf = PacketByteBufs.create();
-            buf.writeInt(amount);
-            ClientPlayNetworking.send(Quadz.CHANGE_CAMERA_ANGLE_C2S, buf);
-        };
-
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+        ClientEvents.Tick.END_CLIENT_TICK.register(client -> {
             if (up.consumeClick()) {
-                sendPacket.accept(5);
+                ClientNetworking.send(Quadz.CHANGE_CAMERA_ANGLE_C2S, buf -> buf.writeInt(5));
             } else if (down.consumeClick()) {
-                sendPacket.accept(-5);
+                ClientNetworking.send(Quadz.CHANGE_CAMERA_ANGLE_C2S, buf -> buf.writeInt(-5));
             }
         });
     }

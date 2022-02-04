@@ -6,18 +6,18 @@ import dev.lazurite.quadz.common.data.DataDriver;
 import dev.lazurite.quadz.common.data.model.Template;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.input.InputFrame;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import dev.lazurite.toolbox.api.network.PacketRegistry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.Entity;
 
 import java.util.concurrent.CompletableFuture;
 
 public class ClientNetworkHandler {
-    public static void onInputFrameReceived(Minecraft client, ClientPacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
-        int entityId = buf.readInt();
-        InputFrame frame = new InputFrame(
+    public static void onInputFrameReceived(PacketRegistry.ClientboundContext context) {
+        final var client = Minecraft.getInstance();
+        final var buf = context.byteBuf();
+        final var entityId = buf.readInt();
+
+        final var frame = new InputFrame(
                 buf.readFloat(),
                 buf.readFloat(),
                 buf.readFloat(),
@@ -28,8 +28,8 @@ public class ClientNetworkHandler {
                 buf.readFloat(),
                 buf.readEnum(Mode.class));
 
-        client.execute(() -> {
-            Entity entity = client.level.getEntity(entityId);
+        client .execute(() -> {
+            final var entity = client.level.getEntity(entityId);
 
             if (entity instanceof QuadcopterEntity quadcopterEntity) {
                 quadcopterEntity.getInputFrame().set(frame);
@@ -37,8 +37,10 @@ public class ClientNetworkHandler {
         });
     }
 
-    public static void onTemplateReceived(Minecraft client, ClientPacketListener listener, FriendlyByteBuf buf, PacketSender sender) {
-        Template template = Template.deserialize(buf);
+    public static void onTemplateReceived(PacketRegistry.ClientboundContext context) {
+        final var client = Minecraft.getInstance();
+        final var buf = context.byteBuf();
+        final var template = Template.deserialize(buf);
 
         client.execute(() -> {
             DataDriver.load(template);

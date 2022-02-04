@@ -6,8 +6,6 @@ import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.util.ClientTick;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.client.input.keybind.ControlKeybinds;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 
@@ -21,7 +19,6 @@ import static org.lwjgl.glfw.GLFW.*;
  * time the class is ticked. It dynamically values stored in {@link Config}.
  * @see Config
  */
-@Environment(EnvType.CLIENT)
 public final class InputTick {
     private static final InputTick instance = new InputTick();
     private final Map<Integer, String> joysticks = Maps.newConcurrentMap();
@@ -45,10 +42,10 @@ public final class InputTick {
                     joysticks.put(i, getJoystickName(i));
 
                     if (!lastJoysticks.containsKey(i) && loaded) {
-                        JoystickEvents.JOYSTICK_CONNECT.invoker().onConnect(i, getJoystickName(i));
+                        JoystickEvents.JOYSTICK_CONNECT.invoke(i, getJoystickName(i));
                     }
                 } else if (lastJoysticks.containsKey(i) && loaded) {
-                    JoystickEvents.JOYSTICK_DISCONNECT.invoker().onDisconnect(i, lastJoysticks.get(i));
+                    JoystickEvents.JOYSTICK_DISCONNECT.invoke(i, lastJoysticks.get(i));
                 }
             }
 

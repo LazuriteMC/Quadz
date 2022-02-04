@@ -37,7 +37,7 @@ public class GameRendererMixin {
 		if (mainCamera.getEntity() instanceof QuadcopterEntity quadcopter) {
 			var q = quadcopter.getPhysicsRotation(new Quaternion(), f);
 			q.set(q.getX(), -q.getY(), q.getZ(), -q.getW());
-			QuaternionHelper.rotateX(Convert.toMinecraft(q), quadcopter.getCameraAngle());
+			q.set(Convert.toBullet(QuaternionHelper.rotateX(Convert.toMinecraft(q), quadcopter.getCameraAngle())));
 
 			var newMat = new Matrix4f(Convert.toMinecraft(q));
 			newMat.transpose();
