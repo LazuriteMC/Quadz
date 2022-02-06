@@ -23,20 +23,10 @@ import java.util.Optional;
  */
 @Environment(EnvType.CLIENT)
 public class ClientTick {
-    public static int desiredCameraEntity = -1;
     public static boolean isUsingKeyboard = false;
 
     public static void tick(Minecraft client) {
         if (client.player != null && client.level != null && !client.isPaused()) {
-            if (desiredCameraEntity != -1) {
-                Entity entity = client.level.getEntity(desiredCameraEntity);
-
-                if (entity != null) {
-                    client.setCameraEntity(entity);
-                    desiredCameraEntity = -1;
-                }
-            }
-
             isUsingKeyboard = false;
 
             Bindable.get(client.player.getMainHandItem()).ifPresent(transmitter -> {

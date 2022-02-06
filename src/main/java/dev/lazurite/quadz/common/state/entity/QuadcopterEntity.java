@@ -4,6 +4,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.mojang.math.Matrix4f;
+import dev.lazurite.lattice.api.Viewable;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
@@ -28,10 +29,7 @@ import dev.lazurite.toolbox.api.network.ClientNetworking;
 import dev.lazurite.toolbox.api.network.ServerNetworking;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -63,7 +61,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class QuadcopterEntity extends LivingEntity implements QuadcopterState, IAnimatable, EntityPhysicsElement {
+public class QuadcopterEntity extends LivingEntity implements QuadcopterState, IAnimatable, EntityPhysicsElement, Viewable {
 	/* States */
 	private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<String> TEMPLATE = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.STRING);
@@ -419,6 +417,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		return (!Config.getInstance().renderCameraInCenter && Config.getInstance().renderFirstPerson) || QuadzRendering.isInThirdPerson();
 	}
 
+	@Override
 	@Environment(EnvType.CLIENT)
 	public boolean shouldRenderPlayer() {
 		return true;

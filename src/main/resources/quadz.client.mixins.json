@@ -4,7 +4,6 @@
   "package": "dev.lazurite.quadz.client.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "ClientPacketListenerMixin",
     "MinecraftMixin",
     "input.KeyboardInputMixin",
     "input.MouseHandlerMixin",
