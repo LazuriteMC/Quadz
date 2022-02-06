@@ -49,6 +49,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -213,7 +214,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	}
 
 	@Override
-	public boolean hurt(DamageSource source, float amount) {
+	public boolean hurt(@NotNull DamageSource source, float amount) {
 		if (!level.isClientSide() && source.getEntity() instanceof Player) {
 			this.kill();
 			return true;
@@ -415,12 +416,6 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	@Environment(EnvType.CLIENT)
 	public boolean shouldRenderSelf() {
 		return (!Config.getInstance().renderCameraInCenter && Config.getInstance().renderFirstPerson) || QuadzRendering.isInThirdPerson();
-	}
-
-	@Override
-	@Environment(EnvType.CLIENT)
-	public boolean shouldRenderPlayer() {
-		return true;
 	}
 
 	/* Called each frame */

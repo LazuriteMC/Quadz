@@ -22,7 +22,7 @@ public final class OnScreenDisplay {
         int width = client.getWindow().getGuiScaledWidth();
         int height = client.getWindow().getGuiScaledHeight() - spacing;
 
-        Component callSign = new TextComponent(""); // TODO
+        Component callSign = new TextComponent(Config.getInstance().callSign); // TODO
         int callSignWidth = font.width(callSign);
 
         VelocityUnit unit = Config.getInstance().velocityUnit;
@@ -30,7 +30,7 @@ public final class OnScreenDisplay {
         Component velocity = new TextComponent(vel + " " + unit.getAbbreviation());
 
         font.drawShadow(poseStack, callSign, width * 0.5f - callSignWidth * 0.5f, height, white);
-        font.drawShadow(poseStack, velocity, width * 0.5f + callSignWidth * 0.5f + spacing, height, white);
+        font.drawShadow(poseStack, velocity, spacing, height, white);
     }
 
     public enum VelocityUnit {
