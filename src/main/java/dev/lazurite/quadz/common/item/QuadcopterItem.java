@@ -3,7 +3,7 @@ package dev.lazurite.quadz.common.item;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.state.QuadcopterState;
+import dev.lazurite.quadz.common.state.Quadcopter;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
@@ -41,7 +41,7 @@ public class QuadcopterItem extends Item implements IAnimatable {
             return InteractionResultHolder.success(itemStack);
         } else {
             QuadcopterEntity entity = new QuadcopterEntity(Quadz.QUADCOPTER_ENTITY, level);
-            QuadcopterState.fromStack(itemStack).ifPresent(entity::copyFrom);
+            Quadcopter.fromStack(itemStack).ifPresent(entity::copyFrom);
 
             if (hitResult.getType() == HitResult.Type.BLOCK) {
                 entity.absMoveTo(hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z);

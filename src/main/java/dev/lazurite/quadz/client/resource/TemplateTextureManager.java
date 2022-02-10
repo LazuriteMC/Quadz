@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.client.resource;
 
-import dev.lazurite.quadz.common.data.DataDriver;
-import dev.lazurite.quadz.common.data.model.Template;
+import dev.lazurite.quadz.common.data.template.TemplateLoader;
+import dev.lazurite.quadz.common.data.template.model.Template;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.resources.Resource;
@@ -32,7 +32,7 @@ public class TemplateTextureManager implements ResourceManager {
             return getOriginal().getResource(resourceLocation);
         }
 
-        Template template = DataDriver.getTemplate(resourceLocation.getPath());
+        Template template = TemplateLoader.getTemplate(resourceLocation.getPath());
 
         if (template == null) {
             return original.getResource(resourceLocation);

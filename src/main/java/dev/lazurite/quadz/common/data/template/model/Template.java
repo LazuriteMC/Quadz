@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.common.data.model;
+package dev.lazurite.quadz.common.data.template.model;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

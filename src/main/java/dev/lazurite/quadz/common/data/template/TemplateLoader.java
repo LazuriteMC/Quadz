@@ -1,12 +1,12 @@
-package dev.lazurite.quadz.common.data;
+package dev.lazurite.quadz.common.data.template;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.data.model.Template;
+import dev.lazurite.quadz.common.data.template.model.Template;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
-import dev.lazurite.quadz.common.state.QuadcopterState;
+import dev.lazurite.quadz.common.state.Quadcopter;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -33,7 +33,7 @@ import java.util.zip.ZipFile;
  * except here - even {@link QuadcopterEntity} objects only store the ID
  * of the template so that it may look it up here.
  */
-public class DataDriver {
+public class TemplateLoader {
     private static Map<String, Template> templates;
 
     public static void load(Template template) {
@@ -51,7 +51,7 @@ public class DataDriver {
              */
             if (env == EnvType.CLIENT && template.getOriginDistance() < 2) {
                 ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
-                QuadcopterState.fromStack(stack).ifPresent(state -> state.setTemplate(template.getId()));
+                Quadcopter.fromStack(stack).ifPresent(state -> state.setTemplate(template.getId()));
                 ItemGroupHandler.getInstance().register(stack);
             }
         } else {

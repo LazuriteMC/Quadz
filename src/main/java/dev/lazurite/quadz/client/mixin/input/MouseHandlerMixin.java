@@ -1,6 +1,7 @@
 package dev.lazurite.quadz.client.mixin.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -66,7 +67,13 @@ public class MouseHandlerMixin {
             )
     )
     public void onPress_click(InputConstants.Key key) {
-        if (!(minecraft.getCameraEntity() instanceof QuadcopterEntity)) {
+        if (minecraft.getCameraEntity() instanceof QuadcopterEntity) {
+            if (key.getName().equals("key.mouse.left")) {
+                InputTick.LEFT_CLICK_EVENT.invoke();
+            } else if (key.getName().equals("key.mouse.right")) {
+                InputTick.RIGHT_CLICK_EVENT.invoke();
+            }
+        } else {
             KeyMapping.click(key);
         }
     }

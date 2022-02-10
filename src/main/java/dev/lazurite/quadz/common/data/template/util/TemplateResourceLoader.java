@@ -1,10 +1,10 @@
-package dev.lazurite.quadz.common.data.util;
+package dev.lazurite.quadz.common.data.template.util;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.data.DataDriver;
-import dev.lazurite.quadz.common.data.model.Template;
+import dev.lazurite.quadz.common.data.template.TemplateLoader;
+import dev.lazurite.quadz.common.data.template.model.Template;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.Minecraft;
@@ -108,6 +108,6 @@ public class TemplateResourceLoader implements SimpleSynchronousResourceReloadLi
 
     @Override
     public void onResourceManagerReload(ResourceManager manager) {
-        DataDriver.getTemplates().forEach(this::load);
+        TemplateLoader.getTemplates().forEach(this::load);
     }
 }

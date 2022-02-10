@@ -3,8 +3,8 @@ package dev.lazurite.quadz.client.mixin.render;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import dev.lazurite.quadz.client.Config;
-import dev.lazurite.quadz.common.data.DataDriver;
-import dev.lazurite.quadz.common.data.model.Template;
+import dev.lazurite.quadz.common.data.template.TemplateLoader;
+import dev.lazurite.quadz.common.data.template.model.Template;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
@@ -47,7 +47,7 @@ public abstract class CameraMixin {
     public void setup_setRotation(BlockGetter blockGetter, Entity entity, boolean bl, boolean bl2, float f, CallbackInfo ci) {
         if (entity instanceof QuadcopterEntity quadcopter) {
             if (quadcopter.getRigidBody() != null && quadcopter.getRigidBody().getFrame() != null) {
-                var template = DataDriver.getTemplate(quadcopter.getTemplate());
+                var template = TemplateLoader.getTemplate(quadcopter.getTemplate());
                 var location = quadcopter.getPhysicsLocation(new Vector3f(), f);
                 setPosition(VectorHelper.toVec3(Convert.toMinecraft(location)));
 

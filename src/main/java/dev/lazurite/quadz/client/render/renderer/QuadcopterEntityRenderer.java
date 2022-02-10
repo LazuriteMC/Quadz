@@ -3,10 +3,9 @@ package dev.lazurite.quadz.client.render.renderer;
 import com.jme3.math.Quaternion;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.lazurite.quadz.client.render.model.QuadcopterModel;
-import dev.lazurite.quadz.common.data.DataDriver;
+import dev.lazurite.quadz.common.data.template.TemplateLoader;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
-import dev.lazurite.rayon.impl.bullet.natives.NativeLoader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -30,7 +29,7 @@ public class QuadcopterEntityRenderer extends GeoEntityRenderer<QuadcopterEntity
 
     @Override
     public void render(QuadcopterEntity quadcopter, float entityYaw, float tickDelta, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn) {
-        if (DataDriver.getTemplate(quadcopter.getTemplate()) != null) {
+        if (TemplateLoader.getTemplate(quadcopter.getTemplate()) != null) {
             this.shadowRadius = quadcopter.dimensions.width * quadcopter.dimensions.height * 2;
 
             float temp = quadcopter.yBodyRot;

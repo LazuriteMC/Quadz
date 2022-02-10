@@ -2,9 +2,10 @@ package dev.lazurite.quadz.common.network;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.input.Mode;
-import dev.lazurite.quadz.common.data.DataDriver;
-import dev.lazurite.quadz.common.data.model.Template;
+import dev.lazurite.quadz.common.data.template.TemplateLoader;
+import dev.lazurite.quadz.common.data.template.model.Template;
 import dev.lazurite.quadz.common.state.Bindable;
+import dev.lazurite.quadz.common.state.Quadcopter;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.PlayerData;
 import dev.lazurite.quadz.common.util.input.InputFrame;
@@ -53,7 +54,7 @@ public class CommonNetworkHandler {
                 }
             });
 
-            DataDriver.load(template);
+            TemplateLoader.load(template);
         });
     }
 
@@ -85,5 +86,33 @@ public class CommonNetworkHandler {
                 }
             });
         });
+    }
+
+    public static void onQuadcopterViewRequestReceived(PacketRegistry.ServerboundContext context) {
+        final var player = context.player();
+        final var server = player.getServer();
+        final var buf = context.byteBuf();
+        final var spectateDirection = buf.readInt();
+
+        server.execute(() -> {
+            if (player.getCamera() instanceof QuadcopterEntity quadcopter) {
+                final var allQuads = Quadcopter.getAllViewing(server);
+                final var index = Math.max(allQuads.lastIndexOf(quadcopter) + spectateDirection, 0);
+                player.setCamera(allQuads.get(index % allQuads.size()));
+            } else {
+                Bindable.get(player.getMainHandItem()).flatMap(
+                        transmitter -> Quadcopter.getQuadcopterByBindId(player.getLevel(), player.getCamera().position(), transmitter.getBindId(), server.getPlayerList().getViewDistance() * 16)
+                ).ifPresentOrElse(quadcopter -> {
+                    player.setCamera(quadcopter);
+                    quadcopter.getRigidBody().prioritize(player);
+                }, () -> Quadcopter.getAllViewing(server).stream().findFirst().ifPresent(player::setCamera));
+            }
+        });
+    }
+
+    public static void onPlayerViewRequestReceived(PacketRegistry.ServerboundContext context) {
+        final var player = context.player();
+        final var server = player.getServer();
+        server.execute(() -> player.setCamera(player));
     }
 }

@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.common.network;
 
 import dev.lazurite.quadz.common.state.Bindable;
-import dev.lazurite.quadz.common.state.QuadcopterState;
+import dev.lazurite.quadz.common.state.Quadcopter;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.toolbox.api.network.PacketRegistry;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -12,7 +12,7 @@ public class KeybindNetworkHandler {
         final var server = player.getServer();
 
         server.execute(() ->
-            Bindable.get(player.getMainHandItem()).flatMap(transmitter -> QuadcopterState.getQuadcopterByBindId(player.getLevel(), player.getCamera().position(), transmitter.getBindId(), server.getPlayerList().getViewDistance())).ifPresent(quadcopter -> {
+            Bindable.get(player.getMainHandItem()).flatMap(transmitter -> Quadcopter.getQuadcopterByBindId(player.getLevel(), player.getCamera().position(), transmitter.getBindId(), server.getPlayerList().getViewDistance())).ifPresent(quadcopter -> {
                 boolean lastNoClip = quadcopter.getRigidBody().terrainLoadingEnabled();
                 quadcopter.getRigidBody().setTerrainLoadingEnabled(!lastNoClip);
 
@@ -39,7 +39,7 @@ public class KeybindNetworkHandler {
                         quadcopter.setCameraAngle(quadcopter.getCameraAngle() + amount);
                     }
                 } else {
-                    QuadcopterState.getQuadcopterByBindId(player.getLevel(), player.getCamera().position(), transmitter.getBindId(), server.getPlayerList().getViewDistance())
+                    Quadcopter.getQuadcopterByBindId(player.getLevel(), player.getCamera().position(), transmitter.getBindId(), server.getPlayerList().getViewDistance())
                             .ifPresent(quadcopter -> quadcopter.setCameraAngle(quadcopter.getCameraAngle() + amount));
                 }
             })

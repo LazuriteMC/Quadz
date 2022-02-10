@@ -2,8 +2,8 @@ package dev.lazurite.quadz.client.network;
 
 import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.QuadzRendering;
-import dev.lazurite.quadz.common.data.DataDriver;
-import dev.lazurite.quadz.common.data.model.Template;
+import dev.lazurite.quadz.common.data.template.TemplateLoader;
+import dev.lazurite.quadz.common.data.template.model.Template;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.toolbox.api.network.PacketRegistry;
@@ -43,7 +43,7 @@ public class ClientNetworkHandler {
         final var template = Template.deserialize(buf);
 
         client.execute(() -> {
-            DataDriver.load(template);
+            TemplateLoader.load(template);
             CompletableFuture.runAsync(() -> QuadzRendering.templateLoader.load(template));
         });
     }

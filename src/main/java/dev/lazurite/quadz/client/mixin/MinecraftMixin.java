@@ -31,10 +31,10 @@ public class MinecraftMixin {
         InputTick.getInstance().tick();
     }
 
-    @Inject(method = "setCameraEntity", at = @At("HEAD"))
-    public void setCameraEntity_HEAD(Entity entity, CallbackInfo ci) {
-        if (entity instanceof QuadcopterEntity && options.getCameraType().isMirrored()) {
-            options.setCameraType(options.getCameraType().cycle());
-        }
-    }
+//    @Inject(method = "setCameraEntity", at = @At("HEAD"))
+//    public void setCameraEntity_HEAD(Entity entity, CallbackInfo ci) {
+//        if (entity instanceof QuadcopterEntity && options.getCameraType().isMirrored()) {
+//            options.setCameraType(options.getCameraType().cycle());
+//        }
+//    }
 }

@@ -2,16 +2,14 @@ package dev.lazurite.quadz.client.util;
 
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.common.state.Bindable;
-import dev.lazurite.quadz.common.state.QuadcopterState;
+import dev.lazurite.quadz.common.state.Quadcopter;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.client.input.InputTick;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.Entity;
-
-import java.util.Optional;
+import net.minecraft.client.multiplayer.ClientLevel;
 
 /**
  * This class is responsible for transmitting the player's controller input
@@ -25,24 +23,38 @@ import java.util.Optional;
 public class ClientTick {
     public static boolean isUsingKeyboard = false;
 
-    public static void tick(Minecraft client) {
-        if (client.player != null && client.level != null && !client.isPaused()) {
+    public static void tickInput(ClientLevel level) {
+        final var client = Minecraft.getInstance();
+
+        if (!client.isPaused()) {
             isUsingKeyboard = false;
 
+            if (client.options.keyShift.isDown() && client.cameraEntity instanceof QuadcopterEntity) {
+                ((CameraTypeAccess) (Object) client.options.getCameraType()).reset();
+            }
+
             Bindable.get(client.player.getMainHandItem()).ifPresent(transmitter -> {
-                Optional<QuadcopterEntity> optionalQuad = QuadcopterState.getQuadcopterByBindId(client.level, client.player.position(), transmitter.getBindId(), (int) client.gameRenderer.getRenderDistance());
-
-                if (client.getCameraEntity() instanceof QuadcopterEntity entity && ((QuadcopterEntity) client.getCameraEntity()).isBoundTo(transmitter)) {
+                if (client.getCameraEntity() instanceof QuadcopterEntity quadcopter && quadcopter.isBoundTo(transmitter)) {
                     InputTick.getInstance().tickKeyboard(client);
-                    entity.getInputFrame().set(InputTick.getInstance().getInputFrame());
-                    entity.sendInputFrame();
-                } else if (optionalQuad.isPresent()) {
-                    if (Config.getInstance().followLOS) {
-                        InputTick.getInstance().tickKeyboard(client);
-                    }
+                    quadcopter.getInputFrame().set(InputTick.getInstance().getInputFrame());
+                    quadcopter.sendInputFrame();
+                } else {
+                    Quadcopter.getQuadcopterByBindId(
+                            level,
+                            client.cameraEntity.position(),
+                            transmitter.getBindId(),
+                            (int) client.gameRenderer.getRenderDistance())
+                    .ifPresent(quadcopter -> {
+                        if (Config.getInstance().followLOS) {
+                            InputTick.getInstance().tickKeyboard(client);
+                        }
 
-                    optionalQuad.get().getInputFrame().set(Config.getInstance().controllerId == -1 ? new InputFrame() : InputTick.getInstance().getInputFrame());
-                    optionalQuad.get().sendInputFrame();
+                        quadcopter.getInputFrame().set(
+                                Config.getInstance().controllerId == -1 ?
+                                        new InputFrame() :
+                                        InputTick.getInstance().getInputFrame());
+                        quadcopter.sendInputFrame();
+                    });
                 }
             });
         }

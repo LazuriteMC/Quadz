@@ -6,6 +6,7 @@ import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.util.ClientTick;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.client.input.keybind.ControlKeybinds;
+import dev.lazurite.toolbox.api.event.Event;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 
@@ -27,6 +28,13 @@ public final class InputTick {
     private long next;
 
     private InputTick() { }
+
+    public static Event<Click> RIGHT_CLICK_EVENT = Event.create();
+    public static Event<Click> LEFT_CLICK_EVENT = Event.create();
+
+    public interface Click {
+        void onClick();
+    }
 
     public static InputTick getInstance() {
         return instance;

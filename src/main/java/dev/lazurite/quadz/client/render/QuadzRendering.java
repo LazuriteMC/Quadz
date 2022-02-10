@@ -5,7 +5,7 @@ import dev.lazurite.quadz.client.render.model.QuadcopterItemModel;
 import dev.lazurite.quadz.client.render.renderer.GogglesItemRenderer;
 import dev.lazurite.quadz.client.render.renderer.QuadcopterEntityRenderer;
 import dev.lazurite.quadz.client.resource.SplashResourceLoader;
-import dev.lazurite.quadz.common.data.util.TemplateResourceLoader;
+import dev.lazurite.quadz.common.data.template.util.TemplateResourceLoader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;

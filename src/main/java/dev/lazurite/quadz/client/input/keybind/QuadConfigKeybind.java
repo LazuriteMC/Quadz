@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.render.ui.screen.QuadcopterScreen;
 import dev.lazurite.quadz.common.state.Bindable;
-import dev.lazurite.quadz.common.state.QuadcopterState;
+import dev.lazurite.quadz.common.state.Quadcopter;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.toolbox.api.event.ClientEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -27,7 +27,7 @@ public class QuadConfigKeybind {
                 if (client.getCameraEntity() instanceof QuadcopterEntity) {
                     QuadcopterScreen.show((QuadcopterEntity) client.getCameraEntity());
                 } else {
-                    Bindable.get(client.player.getMainHandItem()).flatMap(bindable -> QuadcopterState.getQuadcopterByBindId(
+                    Bindable.get(client.player.getMainHandItem()).flatMap(bindable -> Quadcopter.getQuadcopterByBindId(
                             client.level,
                             client.player.position(),
                             bindable.getBindId(),

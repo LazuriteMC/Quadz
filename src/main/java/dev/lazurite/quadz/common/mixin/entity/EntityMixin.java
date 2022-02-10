@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.common.mixin.entity;
 
-import dev.lazurite.quadz.common.data.DataDriver;
-import dev.lazurite.quadz.common.data.model.Template;
+import dev.lazurite.quadz.common.data.template.TemplateLoader;
+import dev.lazurite.quadz.common.data.template.model.Template;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.rayon.impl.bullet.collision.body.shape.MinecraftShape;
 import dev.lazurite.rayon.impl.bullet.thread.PhysicsThread;
@@ -31,7 +31,7 @@ public abstract class EntityMixin {
     public void refreshDimensions_HEAD(CallbackInfo info) {
         if ((Entity) (Object) this instanceof QuadcopterEntity) {
             QuadcopterEntity quadcopter = (QuadcopterEntity) (Object) this;
-            Template template = DataDriver.getTemplate(quadcopter.getTemplate());
+            Template template = TemplateLoader.getTemplate(quadcopter.getTemplate());
 
             if (template != null) {
                 EntityDimensions dimensions1 = this.dimensions;

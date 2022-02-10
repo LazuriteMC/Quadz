@@ -12,6 +12,7 @@ repositories {
 	maven { url 'https://maven.modmuss50.me' }
 	maven { url 'https://maven.terraformersmc.com/releases' }
 	maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven' }
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {

@@ -1,15 +1,15 @@
 package dev.lazurite.quadz.common.state.item;
 
-import dev.lazurite.quadz.common.state.QuadcopterState;
+import dev.lazurite.quadz.common.state.Quadcopter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
 /**
  * Stores all relevant quadcopter information in quadcopter spawner items
- * through the {@link QuadcopterState} interface.
- * @see QuadcopterState
+ * through the {@link Quadcopter} interface.
+ * @see Quadcopter
  */
-public class StackQuadcopterState implements QuadcopterState {
+public class StackQuadcopterState implements Quadcopter {
     private final ItemStack stack;
     private final CompoundTag tag;
 
@@ -31,6 +31,11 @@ public class StackQuadcopterState implements QuadcopterState {
     @Override
     public void setTemplate(String template) {
         tag.putString("template", template);
+    }
+
+    @Override
+    public void setActive(boolean active) {
+
     }
 
     @Override
@@ -56,14 +61,18 @@ public class StackQuadcopterState implements QuadcopterState {
         return tag.getString("template");
     }
 
+    @Override
+    public boolean isActive() {
+        return false;
+    }
+
     public ItemStack getStack() {
         return this.stack;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof StackQuadcopterState) {
-            StackQuadcopterState container = (StackQuadcopterState) obj;
+        if (obj instanceof final StackQuadcopterState container) {
             return getBindId() == container.getBindId() &&
                     getCameraAngle() == container.getCameraAngle();
         }

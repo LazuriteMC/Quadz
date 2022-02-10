@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.client.render.ui.screen;
 
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.data.DataDriver;
+import dev.lazurite.quadz.common.data.template.TemplateLoader;
 import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import dev.lazurite.toolbox.api.network.ClientNetworking;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
@@ -14,7 +14,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 @Environment(EnvType.CLIENT)
 public class QuadcopterScreen {
     public static void show(QuadcopterEntity entity) {
-        final var settings = DataDriver.getTemplate(entity.getTemplate()).getSettings();
+        final var settings = TemplateLoader.getTemplate(entity.getTemplate()).getSettings();
 
         final var builder = ConfigBuilder.create()
                 .setTitle(new TextComponent(settings.getName() + " by " + settings.getAuthor()))

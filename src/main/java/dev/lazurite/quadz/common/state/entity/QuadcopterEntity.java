@@ -11,14 +11,14 @@ import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.QuadzRendering;
 import dev.lazurite.quadz.client.render.ui.screen.QuadcopterScreen;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
-import dev.lazurite.quadz.common.data.DataDriver;
-import dev.lazurite.quadz.common.data.model.Template;
+import dev.lazurite.quadz.common.data.template.TemplateLoader;
+import dev.lazurite.quadz.common.data.template.model.Template;
+import dev.lazurite.quadz.common.state.Quadcopter;
 import dev.lazurite.quadz.common.state.item.StackQuadcopterState;
 import dev.lazurite.quadz.common.util.Matrix4fAccess;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.state.Bindable;
-import dev.lazurite.quadz.common.state.QuadcopterState;
 import dev.lazurite.rayon.api.EntityPhysicsElement;
 import dev.lazurite.rayon.impl.bullet.collision.body.ElementRigidBody;
 import dev.lazurite.rayon.impl.bullet.collision.body.EntityRigidBody;
@@ -62,7 +62,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class QuadcopterEntity extends LivingEntity implements QuadcopterState, IAnimatable, EntityPhysicsElement, Viewable {
+public class QuadcopterEntity extends LivingEntity implements Quadcopter, IAnimatable, EntityPhysicsElement, Viewable {
 	/* States */
 	private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<String> TEMPLATE = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.STRING);
@@ -93,7 +93,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 	public void tick() {
 		if (!getTemplate().equals(prevTemplate)) {
 			prevTemplate = getTemplate();
-			Template template = DataDriver.getTemplate(getTemplate());
+			Template template = TemplateLoader.getTemplate(getTemplate());
 
 			if (template != null) {
 				setWidth(template.getSettings().getWidth());
@@ -114,7 +114,7 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		}
 
 		if (!level.isClientSide()) {
-			Optional<ServerPlayer> player = QuadcopterState.reverseLookup(this);
+			Optional<ServerPlayer> player = Quadcopter.reverseLookup(this);
 
 			if (player.isPresent()) {
 				lastPlayer = player.get();
@@ -231,12 +231,12 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 
 	/**
 	 * Copies the {@link Template} along with other
-	 * necessary information from this {@link QuadcopterState}
+	 * necessary information from this {@link Quadcopter}
 	 * to the new {@link StackQuadcopterState}.
 	 */
 	public void dropSpawner() {
 		ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
-		QuadcopterState.fromStack(stack).ifPresent(state -> {
+		Quadcopter.fromStack(stack).ifPresent(state -> {
 			state.copyFrom(this);
 			this.spawnAtLocation(stack);
 		});
@@ -371,10 +371,12 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		return getEntityData().get(CAMERA_ANGLE);
 	}
 
+	@Override
 	public void setActive(boolean active) {
 		getEntityData().set(ACTIVE, active);
 	}
 
+	@Override
 	public boolean isActive() {
 		return getEntityData().get(ACTIVE);
 	}
@@ -429,6 +431,11 @@ public class QuadcopterEntity extends LivingEntity implements QuadcopterState, I
 		AnimationController<QuadcopterEntity> controller = new AnimationController<>(this, "quadcopter_controller", 0, this::predicate);
 		controller.setAnimation(new AnimationBuilder().addAnimation("armed", true));
 		animationData.addAnimationController(controller);
+	}
+
+	@Override
+	public boolean shouldRenderPlayer() {
+		return true;
 	}
 
 	@Override
