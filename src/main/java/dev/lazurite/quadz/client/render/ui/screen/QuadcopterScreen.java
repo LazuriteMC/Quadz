@@ -2,7 +2,7 @@ package dev.lazurite.quadz.client.render.ui.screen;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.data.template.TemplateLoader;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import dev.lazurite.toolbox.api.network.ClientNetworking;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import net.fabricmc.api.EnvType;

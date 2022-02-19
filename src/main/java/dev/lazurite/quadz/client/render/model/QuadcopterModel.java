@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.client.render.model;
 
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;

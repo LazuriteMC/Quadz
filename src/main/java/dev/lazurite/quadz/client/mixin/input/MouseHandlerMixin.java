@@ -2,7 +2,7 @@ package dev.lazurite.quadz.client.mixin.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.lazurite.quadz.client.input.InputTick;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -11,29 +11,25 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(MouseHandler.class)
 public class MouseHandlerMixin {
     @Shadow @Final private Minecraft minecraft;
 
-    /**
-     * This mixin redirects the {@link LocalPlayer#turn(double, double)} method
-     * so that when the mouse is moved while flying a drone, nothing happens.
-     * @param player the client player
-     * @param cursorDeltaX the x cursor position
-     * @param cursorDeltaY the y cursor position
-     */
-    @Redirect(
+    @ModifyArgs(
             method = "turnPlayer",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/player/LocalPlayer;turn(DD)V"
             )
     )
-    public void turnPlayer_turn(LocalPlayer player, double cursorDeltaX, double cursorDeltaY) {
-        if (!(minecraft.getCameraEntity() instanceof QuadcopterEntity)) {
-            player.turn(cursorDeltaX, cursorDeltaY);
+    public void turnPlayer_turn(Args args) {
+        if (minecraft.getCameraEntity() instanceof QuadcopterEntity) {
+            args.set(0, 0.0);
+            args.set(1, 0.0);
         }
     }
 

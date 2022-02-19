@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.compat.mixin.optifabric;
 
 import com.jme3.math.Quaternion;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import net.minecraft.client.Camera;

@@ -1,9 +1,9 @@
 package dev.lazurite.quadz.common.util;
 
 import dev.lazurite.quadz.common.item.GogglesItem;
-import dev.lazurite.quadz.common.state.Bindable;
-import dev.lazurite.quadz.common.state.Quadcopter;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.bindable.Bindable;
+import dev.lazurite.quadz.common.quadcopter.Quadcopter;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import dev.lazurite.toolbox.api.util.PlayerUtil;
 import net.minecraft.server.MinecraftServer;
 

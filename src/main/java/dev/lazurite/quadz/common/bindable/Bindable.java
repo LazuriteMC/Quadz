@@ -1,7 +1,7 @@
-package dev.lazurite.quadz.common.state;
+package dev.lazurite.quadz.common.bindable;
 
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.state.item.StackBindableState;
+import dev.lazurite.quadz.common.bindable.item.BindableItemStack;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
@@ -19,7 +19,7 @@ public interface Bindable {
         Bindable state = null;
 
         if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
-            state = new StackBindableState(stack);
+            state = new BindableItemStack(stack);
         }
 
         return Optional.ofNullable(state);

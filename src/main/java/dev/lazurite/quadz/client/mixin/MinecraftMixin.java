@@ -1,11 +1,9 @@
 package dev.lazurite.quadz.client.mixin;
 
 import dev.lazurite.quadz.client.input.InputTick;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

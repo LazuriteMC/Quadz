@@ -1,6 +1,6 @@
 package dev.lazurite.quadz.common.mixin.player;
 
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.PlayerData;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;

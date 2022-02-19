@@ -4,7 +4,7 @@ import com.jme3.math.Quaternion;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.lazurite.quadz.client.render.model.QuadcopterModel;
 import dev.lazurite.quadz.common.data.template.TemplateLoader;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

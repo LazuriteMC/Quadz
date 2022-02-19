@@ -1,8 +1,8 @@
 package dev.lazurite.quadz.common.network;
 
-import dev.lazurite.quadz.common.state.Bindable;
-import dev.lazurite.quadz.common.state.Quadcopter;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.bindable.Bindable;
+import dev.lazurite.quadz.common.quadcopter.Quadcopter;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import dev.lazurite.toolbox.api.network.PacketRegistry;
 import net.minecraft.network.chat.TranslatableComponent;
 

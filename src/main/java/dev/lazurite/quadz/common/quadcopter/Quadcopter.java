@@ -1,9 +1,9 @@
-package dev.lazurite.quadz.common.state;
+package dev.lazurite.quadz.common.quadcopter;
 
+import dev.lazurite.quadz.common.bindable.Bindable;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
-import dev.lazurite.quadz.common.state.item.StackQuadcopterState;
-import dev.lazurite.transporter.impl.pattern.model.Quad;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.quadcopter.item.QuadcopterItemStack;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 /**
  * This interface represents the state of any given quadcopter,
  * and it can be transformed between item and entity form.
- * @see StackQuadcopterState
+ * @see QuadcopterItemStack
  * @see QuadcopterEntity
  */
 public interface Quadcopter extends Bindable {
@@ -97,7 +97,7 @@ public interface Quadcopter extends Bindable {
         Quadcopter state = null;
 
         if (stack.getItem() instanceof QuadcopterItem) {
-            state = new StackQuadcopterState(stack);
+            state = new QuadcopterItemStack(stack);
         }
 
         return Optional.ofNullable(state);

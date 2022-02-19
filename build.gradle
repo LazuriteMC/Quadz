@@ -12,7 +12,6 @@ repositories {
 	maven { url 'https://maven.modmuss50.me' }
 	maven { url 'https://maven.terraformersmc.com/releases' }
 	maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven' }
-	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -47,9 +46,7 @@ java {
 	withSourcesJar()
 }
 
-jar {
-	from 'LICENSE'
-}
+jar.from 'LICENSE'
 
 loom {
 	accessWidenerPath = file 'src/main/resources/quadz.accesswidener'

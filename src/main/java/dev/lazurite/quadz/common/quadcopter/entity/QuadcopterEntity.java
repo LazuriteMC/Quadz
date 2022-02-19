@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.common.state.entity;
+package dev.lazurite.quadz.common.quadcopter.entity;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
@@ -13,17 +13,16 @@ import dev.lazurite.quadz.client.render.ui.screen.QuadcopterScreen;
 import dev.lazurite.quadz.client.render.ui.toast.ControllerNotFoundToast;
 import dev.lazurite.quadz.common.data.template.TemplateLoader;
 import dev.lazurite.quadz.common.data.template.model.Template;
-import dev.lazurite.quadz.common.state.Quadcopter;
-import dev.lazurite.quadz.common.state.item.StackQuadcopterState;
+import dev.lazurite.quadz.common.quadcopter.Quadcopter;
+import dev.lazurite.quadz.common.quadcopter.item.QuadcopterItemStack;
 import dev.lazurite.quadz.common.util.Matrix4fAccess;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.state.Bindable;
+import dev.lazurite.quadz.common.bindable.Bindable;
 import dev.lazurite.rayon.api.EntityPhysicsElement;
 import dev.lazurite.rayon.impl.bullet.collision.body.ElementRigidBody;
 import dev.lazurite.rayon.impl.bullet.collision.body.EntityRigidBody;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
-import dev.lazurite.rayon.impl.bullet.thread.PhysicsThread;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import dev.lazurite.toolbox.api.network.ClientNetworking;
 import dev.lazurite.toolbox.api.network.ServerNetworking;
@@ -106,10 +105,8 @@ public class QuadcopterEntity extends LivingEntity implements Quadcopter, IAnima
 					setCameraAngle(template.getSettings().getCameraAngle());
 				}
 
-				PhysicsThread.get(level).execute(() -> {
-					getRigidBody().setMass(template.getSettings().getMass());
-					getRigidBody().setDragCoefficient(template.getSettings().getDragCoefficient());
-				});
+				getRigidBody().setMass(template.getSettings().getMass());
+				getRigidBody().setDragCoefficient(template.getSettings().getDragCoefficient());
 			}
 		}
 
@@ -232,7 +229,7 @@ public class QuadcopterEntity extends LivingEntity implements Quadcopter, IAnima
 	/**
 	 * Copies the {@link Template} along with other
 	 * necessary information from this {@link Quadcopter}
-	 * to the new {@link StackQuadcopterState}.
+	 * to the new {@link QuadcopterItemStack}.
 	 */
 	public void dropSpawner() {
 		ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
@@ -327,9 +324,6 @@ public class QuadcopterEntity extends LivingEntity implements Quadcopter, IAnima
 	@Override
 	public float getViewXRot(float tickDelta) {
 		return QuaternionHelper.getPitch(Convert.toMinecraft(getPhysicsRotation(new Quaternion(), tickDelta)));
-//		return QuaternionHelper.getPitch(QuaternionHelper.rotateX(
-//				getPhysicsRotation(new Quaternion(), tickDelta),
-//				-getCameraAngle()));
 	}
 
 	@Override
@@ -401,13 +395,13 @@ public class QuadcopterEntity extends LivingEntity implements Quadcopter, IAnima
 		getEntityData().set(WIDTH, width);
 	}
 
+	public void setHeight(float height) {
+		getEntityData().set(HEIGHT, height);
+	}
+
 	@Override
 	public float getBbWidth() {
 		return getEntityData().get(WIDTH);
-	}
-
-	public void setHeight(float height) {
-		getEntityData().set(HEIGHT, height);
 	}
 
 	@Override

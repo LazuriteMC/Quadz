@@ -39,7 +39,7 @@ public class CompatPlugin implements IMixinConfigPlugin {
         if (FabricLoader.getInstance().isModLoaded("optifabric")) {
             List<String> out = new ArrayList<>();
             out.add("optifabric.GameRendererMixin");
-            out.add("optifabric.HeldItemRendererMixin");
+            out.add("optifabric.ItemInHandRendererMixin");
             return out;
         }
 

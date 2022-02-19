@@ -15,7 +15,7 @@ import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.util.ServerTick;
 import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
 import dev.lazurite.quadz.common.network.KeybindNetworkHandler;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import dev.lazurite.rayon.api.event.collision.PhysicsSpaceEvents;
 import dev.lazurite.rayon.impl.bullet.collision.body.EntityRigidBody;
 import dev.lazurite.toolbox.api.event.ClientEvents;
@@ -25,8 +25,6 @@ import dev.lazurite.toolbox.api.network.PacketRegistry;
 import dev.lazurite.toolbox.api.network.ServerNetworking;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -88,8 +86,7 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 		/* Set up events */
 		ServerEvents.Tick.START_SERVER_TICK.register(ServerTick::tick);
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> // TODO still on fabric
-			TemplateLoader.getTemplates().forEach(template -> ServerNetworking.send(handler.player, TEMPLATE, template::serialize)));
+		ServerEvents.Lifecycle.JOIN.register(player -> TemplateLoader.getTemplates().forEach(template -> ServerNetworking.send(player, TEMPLATE, template::serialize)));
 
 		/* Set up networking events */
 		PacketRegistry.registerServerbound(QUADCOPTER_SETTINGS_C2S, CommonNetworkHandler::onQuadcopterSettingsReceived);
@@ -131,12 +128,12 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 		ClientEvents.Tick.START_LEVEL_TICK.register(ClientTick::tickInput);
 
 		/* Set up events */
+		InputTick.LEFT_CLICK_EVENT.register(() -> ClientNetworking.send(REQUEST_QUADCOPTER_VIEW_C2S, buf -> buf.writeInt(-1)));
+		InputTick.RIGHT_CLICK_EVENT.register(() -> ClientNetworking.send(REQUEST_QUADCOPTER_VIEW_C2S, buf -> buf.writeInt(1)));
 		ClientEvents.Lifecycle.DISCONNECT.register((client, world) -> TemplateLoader.clearRemoteTemplates());
-		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> { // TODO still on fabric
+		ClientEvents.Lifecycle.POST_LOGIN.register((client, level, player) -> {
 			Config.getInstance().sendPlayerData();
 			TemplateLoader.getTemplates().forEach(template -> ClientNetworking.send(TEMPLATE, template::serialize));
 		});
-		InputTick.LEFT_CLICK_EVENT.register(() -> ClientNetworking.send(REQUEST_QUADCOPTER_VIEW_C2S, buf -> buf.writeInt(-1)));
-		InputTick.RIGHT_CLICK_EVENT.register(() -> ClientNetworking.send(REQUEST_QUADCOPTER_VIEW_C2S, buf -> buf.writeInt(1)));
 	}
 }

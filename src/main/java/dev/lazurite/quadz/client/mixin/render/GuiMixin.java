@@ -3,7 +3,7 @@ package dev.lazurite.quadz.client.mixin.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.render.ui.osd.OnScreenDisplay;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;

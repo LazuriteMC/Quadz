@@ -3,7 +3,7 @@ package dev.lazurite.quadz.client.mixin.render;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.util.CameraTypeAccess;
 import dev.lazurite.quadz.common.item.GogglesItem;
-import dev.lazurite.quadz.common.state.Quadcopter;
+import dev.lazurite.quadz.common.quadcopter.Quadcopter;
 import dev.lazurite.toolbox.api.network.ClientNetworking;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;

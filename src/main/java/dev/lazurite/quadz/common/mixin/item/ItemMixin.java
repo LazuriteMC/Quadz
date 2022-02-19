@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.common.mixin.item;
 
 import dev.lazurite.quadz.common.item.QuadcopterItem;
-import dev.lazurite.quadz.common.state.Quadcopter;
+import dev.lazurite.quadz.common.quadcopter.Quadcopter;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;

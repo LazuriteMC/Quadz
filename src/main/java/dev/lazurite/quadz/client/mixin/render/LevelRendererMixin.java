@@ -1,6 +1,6 @@
 package dev.lazurite.quadz.client.mixin.render;
 
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;
 import org.spongepowered.asm.mixin.Mixin;

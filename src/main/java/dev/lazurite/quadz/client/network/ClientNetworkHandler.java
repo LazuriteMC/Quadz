@@ -4,7 +4,7 @@ import dev.lazurite.quadz.client.input.Mode;
 import dev.lazurite.quadz.client.render.QuadzRendering;
 import dev.lazurite.quadz.common.data.template.TemplateLoader;
 import dev.lazurite.quadz.common.data.template.model.Template;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.util.input.InputFrame;
 import dev.lazurite.toolbox.api.network.PacketRegistry;
 import net.minecraft.client.Minecraft;

@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.compat.mixin.optifabric;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.lazurite.quadz.common.state.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
