@@ -4,7 +4,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.mojang.math.Matrix4f;
-import dev.lazurite.lattice.api.Viewable;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.input.InputTick;
 import dev.lazurite.quadz.client.input.Mode;
@@ -32,7 +31,7 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -61,7 +60,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class QuadcopterEntity extends LivingEntity implements Quadcopter, IAnimatable, EntityPhysicsElement, Viewable {
+public class QuadcopterEntity extends LivingEntity implements Quadcopter, IAnimatable, EntityPhysicsElement {
 	/* States */
 	private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<String> TEMPLATE = SynchedEntityData.defineId(QuadcopterEntity.class, EntityDataSerializers.STRING);
@@ -264,7 +263,7 @@ public class QuadcopterEntity extends LivingEntity implements Quadcopter, IAnima
 		if (!level.isClientSide()) {
 			Bindable.get(stack).ifPresent(bindable -> {
 				Bindable.bind(this, bindable);
-				player.displayClientMessage(new TranslatableComponent("item.quadz.transmitter_item.bound"), true);
+				player.displayClientMessage(Component.translatable("item.quadz.transmitter_item.bound"), true);
 			});
 		} else {
 			if (stack.getItem().equals(Quadz.TRANSMITTER_ITEM)) {
@@ -425,11 +424,6 @@ public class QuadcopterEntity extends LivingEntity implements Quadcopter, IAnima
 		AnimationController<QuadcopterEntity> controller = new AnimationController<>(this, "quadcopter_controller", 0, this::predicate);
 		controller.setAnimation(new AnimationBuilder().addAnimation("armed", true));
 		animationData.addAnimationController(controller);
-	}
-
-	@Override
-	public boolean shouldRenderPlayer() {
-		return true;
 	}
 
 	@Override

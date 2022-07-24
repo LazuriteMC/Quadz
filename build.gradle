@@ -11,7 +11,7 @@ repositories {
 	maven { url 'https://maven.shedaniel.me' }
 	maven { url 'https://maven.modmuss50.me' }
 	maven { url 'https://maven.terraformersmc.com/releases' }
-	maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven' }
+	maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
 }
 
 dependencies {
@@ -22,15 +22,15 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:$fabric_loader_version"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_api_version"
 
-	// Gecko Lib 3
-	modImplementation "software.bernie.geckolib:$geckolib_version"
-
 	// Rayon
 	modImplementation "dev.lazurite:rayon-fabric:$rayon_version"
 
 	// Lattice
-	modImplementation "dev.lazurite:lattice:$lattice_version"
-	include "dev.lazurite:lattice:$lattice_version"
+//	modImplementation "dev.lazurite:lattice:$lattice_version"
+//	include "dev.lazurite:lattice:$lattice_version"
+
+	// Gecko Lib 3
+	modImplementation "software.bernie.geckolib:geckolib-fabric-1.19:$geckolib_version"
 
 	// Mod Menu + Cloth
 	modImplementation "com.terraformersmc:modmenu:$modmenu_version"

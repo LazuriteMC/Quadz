@@ -6,8 +6,6 @@ import dev.lazurite.quadz.client.render.model.QuadcopterModel;
 import dev.lazurite.quadz.common.data.template.TemplateLoader;
 import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +18,6 @@ import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
  * @see QuadcopterEntity
  * @see QuadcopterModel
  */
-@Environment(EnvType.CLIENT)
 public class QuadcopterEntityRenderer extends GeoEntityRenderer<QuadcopterEntity> {
     public QuadcopterEntityRenderer(EntityRendererProvider.Context ctx) {
         super(ctx, new QuadcopterModel());
@@ -48,6 +45,6 @@ public class QuadcopterEntityRenderer extends GeoEntityRenderer<QuadcopterEntity
 
     @Override
     public ResourceLocation getTextureLocation(QuadcopterEntity entity) {
-        return this.getGeoModelProvider().getTextureLocation(entity);
+        return this.getGeoModelProvider().getTextureResource(entity);
     }
 }

@@ -11,8 +11,7 @@ import me.shedaniel.clothconfig2.impl.builders.SelectorBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,39 +24,39 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ConfigScreen {
     public static Screen create(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
-                .setTitle(new TranslatableComponent("config.quadz.title"))
+                .setTitle(Component.translatable("config.quadz.title"))
                 .setSavingRunnable(Config.getInstance()::save)
                 .setParentScreen(parent);
 
-        ConfigCategory controllerSetup = builder.getOrCreateCategory(new TranslatableComponent("config.quadz.category.setup"));
-        ConfigCategory controllerPreferences = builder.getOrCreateCategory(new TranslatableComponent("config.quadz.category.stick_feel"));
-        ConfigCategory cameraPreferences = builder.getOrCreateCategory(new TranslatableComponent("config.quadz.category.camera"));
-        ConfigCategory osdPreferences = builder.getOrCreateCategory(new TranslatableComponent("config.quadz.category.osd"));
+        ConfigCategory controllerSetup = builder.getOrCreateCategory(Component.translatable("config.quadz.category.setup"));
+        ConfigCategory controllerPreferences = builder.getOrCreateCategory(Component.translatable("config.quadz.category.stick_feel"));
+        ConfigCategory cameraPreferences = builder.getOrCreateCategory(Component.translatable("config.quadz.category.camera"));
+        ConfigCategory osdPreferences = builder.getOrCreateCategory(Component.translatable("config.quadz.category.osd"));
         Map <Integer, String> joysticks = InputTick.getInstance().getJoysticks();
 
         // region camera preferences
 
         cameraPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
-                new TranslatableComponent("config.quadz.entry.follow_los"), Config.getInstance().followLOS)
+                Component.translatable("config.quadz.entry.follow_los"), Config.getInstance().followLOS)
                 .setDefaultValue(Config.getInstance().followLOS)
                 .setSaveConsumer(value -> Config.getInstance().followLOS = value)
                 .build());
 
         cameraPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
-                new TranslatableComponent("config.quadz.entry.render_first_person"), Config.getInstance().renderFirstPerson)
+                Component.translatable("config.quadz.entry.render_first_person"), Config.getInstance().renderFirstPerson)
                 .setDefaultValue(Config.getInstance().renderFirstPerson)
                 .setSaveConsumer(value -> Config.getInstance().renderFirstPerson = value)
                 .build());
 
         cameraPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
-                new TranslatableComponent("config.quadz.entry.render_camera_in_center"), Config.getInstance().renderCameraInCenter)
+                Component.translatable("config.quadz.entry.render_camera_in_center"), Config.getInstance().renderCameraInCenter)
                 .setDefaultValue(Config.getInstance().renderCameraInCenter)
                 .setSaveConsumer(value -> Config.getInstance().renderCameraInCenter = value)
                 .build());
 
         cameraPreferences.addEntry(builder.entryBuilder().startIntSlider(
-                new TranslatableComponent("config.quadz.entry.first_person_fov"), Config.getInstance().firstPersonFOV, 30, 135)
-                .setTextGetter(value -> value == 30 ? new TextComponent("Match Player") : new TextComponent(value + "°"))
+                Component.translatable("config.quadz.entry.first_person_fov"), Config.getInstance().firstPersonFOV, 30, 135)
+                .setTextGetter(value -> value == 30 ? Component.literal("Match Player") : Component.literal(value + "°"))
                 .setDefaultValue(30)
                 .setSaveConsumer(value -> Config.getInstance().firstPersonFOV = value)
                 .build());
@@ -67,19 +66,19 @@ public class ConfigScreen {
         // region osd preferences
 
         osdPreferences.addEntry(builder.entryBuilder().startBooleanToggle(
-                new TranslatableComponent("config.quadz.entry.osd_enabled"), Config.getInstance().osdEnabled)
+                Component.translatable("config.quadz.entry.osd_enabled"), Config.getInstance().osdEnabled)
                 .setDefaultValue(Config.getInstance().osdEnabled)
                 .setSaveConsumer(value -> Config.getInstance().osdEnabled = value)
                 .build());
 
         osdPreferences.addEntry(builder.entryBuilder().startTextField(
-                new TranslatableComponent("config.quadz.entry.call_sign"), Config.getInstance().callSign)
+                Component.translatable("config.quadz.entry.call_sign"), Config.getInstance().callSign)
                 .setDefaultValue(Config.getInstance().callSign)
                 .setSaveConsumer(value -> Config.getInstance().callSign = value)
                 .build());
 
         osdPreferences.addEntry(builder.entryBuilder().startEnumSelector(
-                new TranslatableComponent("config.quadz.entry.velocity_unit"), OnScreenDisplay.VelocityUnit.class, Config.getInstance().velocityUnit)
+                Component.translatable("config.quadz.entry.velocity_unit"), OnScreenDisplay.VelocityUnit.class, Config.getInstance().velocityUnit)
                 .setDefaultValue(Config.getInstance().velocityUnit)
                 .setEnumNameProvider(value -> ((OnScreenDisplay.VelocityUnit) value).getTranslation())
                 .setSaveConsumer(value -> Config.getInstance().velocityUnit = value)
@@ -90,7 +89,7 @@ public class ConfigScreen {
         // region controller preferences
 
         SelectorBuilder controllerSelector = builder.entryBuilder().startSelector(
-                new TranslatableComponent("config.quadz.entry.controller_id"), joysticks.keySet().toArray(), Config.getInstance().controllerId)
+                Component.translatable("config.quadz.entry.controller_id"), joysticks.keySet().toArray(), Config.getInstance().controllerId)
                 .setDefaultValue(Config.getInstance().controllerId)
                 .setSaveConsumer(value -> Config.getInstance().controllerId = (int) value);
 
@@ -98,16 +97,16 @@ public class ConfigScreen {
         AtomicReference<SelectionListEntry> controllerSelectorBuilt = new AtomicReference<>();
 
         IntegerSliderEntry maxAngleEntry = builder.entryBuilder().startIntSlider(
-                new TranslatableComponent("config.quadz.entry.max_angle"), Config.getInstance().maxAngle, 10, 45)
+                Component.translatable("config.quadz.entry.max_angle"), Config.getInstance().maxAngle, 10, 45)
                 .setSaveConsumer(value -> Config.getInstance().maxAngle = value)
                 .setDefaultValue(Config.getInstance().maxAngle)
                 .build();
 
         EnumListEntry modeSelector = builder.entryBuilder().startEnumSelector(
-                new TranslatableComponent("config.quadz.entry.mode"), Mode.class, Config.getInstance().mode)
+                Component.translatable("config.quadz.entry.mode"), Mode.class, Config.getInstance().mode)
                 .setEnumNameProvider(value -> {
                     maxAngleEntry.setEditable(value == Mode.ANGLE || (int) controllerSelectorBuilt.get().getValue() == -1);
-                    return new TranslatableComponent(((Mode) value).getTranslation());
+                    return Component.translatable(((Mode) value).getTranslation());
                 })
                 .setSaveConsumer(value -> Config.getInstance().mode = value)
                 .setDefaultValue(Config.getInstance().mode)
@@ -117,25 +116,25 @@ public class ConfigScreen {
         controllerPreferences.addEntry(maxAngleEntry);
 
         controllerPreferences.addEntry(builder.entryBuilder().startFloatField(
-                new TranslatableComponent("config.quadz.entry.rate"), Config.getInstance().rate)
+                Component.translatable("config.quadz.entry.rate"), Config.getInstance().rate)
                 .setDefaultValue(Config.getInstance().rate)
                 .setSaveConsumer(value -> Config.getInstance().rate = value)
                 .setMin(0).build());
 
         controllerPreferences.addEntry(builder.entryBuilder().startFloatField(
-                new TranslatableComponent("config.quadz.entry.expo"), Config.getInstance().expo)
+                Component.translatable("config.quadz.entry.expo"), Config.getInstance().expo)
                 .setDefaultValue(Config.getInstance().expo)
                 .setSaveConsumer(value -> Config.getInstance().expo = value)
                 .setMin(0).build());
 
         controllerPreferences.addEntry(builder.entryBuilder().startFloatField(
-                new TranslatableComponent("config.quadz.entry.super_rate"), Config.getInstance().superRate)
+                Component.translatable("config.quadz.entry.super_rate"), Config.getInstance().superRate)
                 .setDefaultValue(Config.getInstance().superRate)
                 .setSaveConsumer(value -> Config.getInstance().superRate = value)
                 .setMin(0).build());
 
         controllerPreferences.addEntry(builder.entryBuilder().startFloatField(
-                new TranslatableComponent("config.quadz.entry.deadzone"), Config.getInstance().deadzone)
+                Component.translatable("config.quadz.entry.deadzone"), Config.getInstance().deadzone)
                 .setDefaultValue(Config.getInstance().deadzone)
                 .setSaveConsumer(value -> Config.getInstance().deadzone = value)
                 .setMin(0).build());
@@ -145,55 +144,55 @@ public class ConfigScreen {
         // region controller setup
 
         IntegerListEntry pitchEntry = builder.entryBuilder().startIntField(
-                new TranslatableComponent("config.quadz.entry.pitch_axis"), Config.getInstance().pitch)
+                Component.translatable("config.quadz.entry.pitch_axis"), Config.getInstance().pitch)
                 .setDefaultValue(Config.getInstance().pitch)
                 .setSaveConsumer(value -> Config.getInstance().pitch = value)
                 .setMin(0).build();
 
         IntegerListEntry yawEntry = builder.entryBuilder().startIntField(
-                new TranslatableComponent("config.quadz.entry.yaw_axis"), Config.getInstance().yaw)
+                Component.translatable("config.quadz.entry.yaw_axis"), Config.getInstance().yaw)
                 .setDefaultValue(Config.getInstance().yaw)
                 .setSaveConsumer(value -> Config.getInstance().yaw = value)
                 .setMin(0).build();
 
         IntegerListEntry rollEntry = builder.entryBuilder().startIntField(
-                new TranslatableComponent("config.quadz.entry.roll_axis"), Config.getInstance().roll)
+                Component.translatable("config.quadz.entry.roll_axis"), Config.getInstance().roll)
                 .setDefaultValue(Config.getInstance().roll)
                 .setSaveConsumer(value -> Config.getInstance().roll = value)
                 .setMin(0).build();
 
         IntegerListEntry throttleEntry = builder.entryBuilder().startIntField(
-                new TranslatableComponent("config.quadz.entry.throttle_axis"), Config.getInstance().throttle)
+                Component.translatable("config.quadz.entry.throttle_axis"), Config.getInstance().throttle)
                 .setDefaultValue(Config.getInstance().throttle)
                 .setSaveConsumer(value -> Config.getInstance().throttle = value)
                 .setMin(0).build();
 
         BooleanListEntry invertPitchEntry = builder.entryBuilder().startBooleanToggle(
-                new TranslatableComponent("config.quadz.entry.invert_pitch"), Config.getInstance().invertPitch)
+                Component.translatable("config.quadz.entry.invert_pitch"), Config.getInstance().invertPitch)
                 .setDefaultValue(Config.getInstance().invertPitch)
                 .setSaveConsumer(value -> Config.getInstance().invertPitch = value)
                 .build();
 
         BooleanListEntry invertYawEntry = builder.entryBuilder().startBooleanToggle(
-                new TranslatableComponent("config.quadz.entry.invert_yaw"), Config.getInstance().invertYaw)
+                Component.translatable("config.quadz.entry.invert_yaw"), Config.getInstance().invertYaw)
                 .setDefaultValue(Config.getInstance().invertYaw)
                 .setSaveConsumer(value -> Config.getInstance().invertYaw = value)
                 .build();
 
         BooleanListEntry invertRollEntry = builder.entryBuilder().startBooleanToggle(
-                new TranslatableComponent("config.quadz.entry.invert_roll"), Config.getInstance().invertRoll)
+                Component.translatable("config.quadz.entry.invert_roll"), Config.getInstance().invertRoll)
                 .setDefaultValue(Config.getInstance().invertRoll)
                 .setSaveConsumer(value -> Config.getInstance().invertRoll = value)
                 .build();
 
         BooleanListEntry invertThrottleEntry = builder.entryBuilder().startBooleanToggle(
-                new TranslatableComponent("config.quadz.entry.invert_throttle"), Config.getInstance().invertThrottle)
+                Component.translatable("config.quadz.entry.invert_throttle"), Config.getInstance().invertThrottle)
                 .setDefaultValue(Config.getInstance().invertThrottle)
                 .setSaveConsumer(value -> Config.getInstance().invertThrottle = value)
                 .build();
 
         BooleanListEntry throttleInCenterEntry = builder.entryBuilder().startBooleanToggle(
-                new TranslatableComponent("config.quadz.entry.throttle_in_center"), Config.getInstance().throttleInCenter)
+                Component.translatable("config.quadz.entry.throttle_in_center"), Config.getInstance().throttleInCenter)
                 .setDefaultValue(Config.getInstance().throttleInCenter)
                 .setSaveConsumer(value -> Config.getInstance().throttleInCenter = value)
                 .build();
@@ -214,11 +213,11 @@ public class ConfigScreen {
             throttleInCenterEntry.setEditable((int) value != -1);
 
             if ((int) value == -1) {
-                return new TranslatableComponent("config.quadz.entry.controller_id.keyboard");
+                return Component.translatable("config.quadz.entry.controller_id.keyboard");
             } else if (name.length() > 15) {
-                return new TextComponent(name.substring(0, 15) + "...");
+                return Component.literal(name.substring(0, 15) + "...");
             } else {
-                return new TextComponent(name);
+                return Component.literal(name);
             }
         }).build());
 

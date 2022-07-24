@@ -24,11 +24,11 @@
   ],
   "accessWidener" : "quadz.accesswidener",
   "depends": {
-    "minecraft": "~1.18.1",
-    "fabricloader": ">=0.12.8",
+    "minecraft": ">=1.19",
+    "fabricloader": ">=0.14.8",
     "fabric": "*",
-    "geckolib3": "^3",
-    "rayon": ">=1.4.3"
+    "geckolib3": ">=3",
+    "rayon": ">=1.6.0"
   },
   "breaks": {
     "immersive_portals": "*",

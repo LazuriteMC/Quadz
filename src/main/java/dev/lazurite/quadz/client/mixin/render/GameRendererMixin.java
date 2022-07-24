@@ -12,6 +12,7 @@ import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import dev.lazurite.toolbox.api.math.VectorHelper;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.Entity;
@@ -67,12 +68,12 @@ public class GameRendererMixin {
 		}
 	}
 
-	@Redirect(method = "getFov", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;fov:D"))
-	public double getFov_FIELD(Options options) {
+	@Redirect(method = "getFov", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;"))
+	public Object getFov_FIELD(OptionInstance<Integer> optionInstance) {
 		if (minecraft.getCameraEntity() instanceof QuadcopterEntity && Config.getInstance().firstPersonFOV > 30) {
 			return Config.getInstance().firstPersonFOV;
 		}
 
-		return options.fov;
+		return optionInstance.get();
 	}
 }

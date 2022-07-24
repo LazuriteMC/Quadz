@@ -8,8 +8,7 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 @Environment(EnvType.CLIENT)
 public class QuadcopterScreen {
@@ -17,7 +16,7 @@ public class QuadcopterScreen {
         final var settings = TemplateLoader.getTemplate(entity.getTemplate()).getSettings();
 
         final var builder = ConfigBuilder.create()
-                .setTitle(new TextComponent(settings.getName() + " by " + settings.getAuthor()))
+                .setTitle(Component.literal(settings.getName() + " by " + settings.getAuthor()))
                 .setSavingRunnable(() -> {
                     ClientNetworking.send(Quadz.QUADCOPTER_SETTINGS_C2S, buf -> {
                         buf.writeInt(entity.getId());
@@ -25,10 +24,10 @@ public class QuadcopterScreen {
                     });
                 });
 
-        final var category = builder.getOrCreateCategory(new TextComponent(""));
+        final var category = builder.getOrCreateCategory(Component.literal(""));
 
         category.addEntry(builder.entryBuilder().startIntSlider(
-                new TranslatableComponent("config.quadz.entry.camera_angle"), entity.getCameraAngle(), 0, 90)
+                Component.literal("config.quadz.entry.camera_angle"), entity.getCameraAngle(), 0, 90)
                 .setDefaultValue(settings.getCameraAngle())
                 .setSaveConsumer(entity::setCameraAngle)
                 .build());

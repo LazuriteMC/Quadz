@@ -27,7 +27,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -120,9 +120,9 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 		/* Register Toast Events */
 		JoystickEvents.JOYSTICK_CONNECT.register(
-				(id, name) -> ControllerConnectedToast.add(new TranslatableComponent("toast.quadz.controller.connect"), name));
+				(id, name) -> ControllerConnectedToast.add(Component.translatable("toast.quadz.controller.connect"), name));
 		JoystickEvents.JOYSTICK_DISCONNECT.register(
-				(id, name) -> ControllerConnectedToast.add(new TranslatableComponent("toast.quadz.controller.disconnect"), name));
+				(id, name) -> ControllerConnectedToast.add(Component.translatable("toast.quadz.controller.disconnect"), name));
 
 		/* Register Client Tick Events */
 		ClientEvents.Tick.START_LEVEL_TICK.register(ClientTick::tickInput);

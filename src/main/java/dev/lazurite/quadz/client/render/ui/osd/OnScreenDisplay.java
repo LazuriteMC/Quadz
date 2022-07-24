@@ -9,8 +9,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 
 @Environment(EnvType.CLIENT)
 public final class OnScreenDisplay {
@@ -22,33 +20,33 @@ public final class OnScreenDisplay {
         int width = client.getWindow().getGuiScaledWidth();
         int height = client.getWindow().getGuiScaledHeight() - spacing;
 
-        Component callSign = new TextComponent(Config.getInstance().callSign); // TODO
+        Component callSign = Component.literal(Config.getInstance().callSign); // TODO
         int callSignWidth = font.width(callSign);
 
         VelocityUnit unit = Config.getInstance().velocityUnit;
         float vel = Math.round(quadcopter.getRigidBody().getLinearVelocity(new Vector3f()).length() * unit.getFactor() * 10) / 10f;
-        Component velocity = new TextComponent(vel + " " + unit.getAbbreviation());
+        Component velocity = Component.literal(vel + " " + unit.getAbbreviation());
 
         font.drawShadow(poseStack, callSign, width * 0.5f - callSignWidth * 0.5f, height, white);
         font.drawShadow(poseStack, velocity, spacing, height, white);
     }
 
     public enum VelocityUnit {
-        METERS_PER_SECOND(new TranslatableComponent("config.quadz.velocity.meters_per_second"), "m/s", 1.0f),
-        KILOMETERS_PER_HOUR(new TranslatableComponent("config.quadz.velocity.kilometers_per_hour"), "kph", 3.6f),
-        MILES_PER_HOUR(new TranslatableComponent("config.quadz.velocity.miles_per_hour"), "mph", 2.237f);
+        METERS_PER_SECOND(Component.translatable("config.quadz.velocity.meters_per_second"), "m/s", 1.0f),
+        KILOMETERS_PER_HOUR(Component.translatable("config.quadz.velocity.kilometers_per_hour"), "kph", 3.6f),
+        MILES_PER_HOUR(Component.translatable("config.quadz.velocity.miles_per_hour"), "mph", 2.237f);
 
-        private final TranslatableComponent translation;
+        private final Component translation;
         private final String abbreviation;
         private final float factor;
 
-        VelocityUnit(TranslatableComponent translation, String abbreviation, float factor) {
+        VelocityUnit(Component translation, String abbreviation, float factor) {
             this.translation = translation;
             this.abbreviation = abbreviation;
             this.factor = factor;
         }
 
-        public TranslatableComponent getTranslation() {
+        public Component getTranslation() {
             return this.translation;
         }
 

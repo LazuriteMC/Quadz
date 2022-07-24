@@ -6,7 +6,7 @@ import dev.lazurite.quadz.client.Config;
 import dev.lazurite.toolbox.api.event.ClientEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
 public class FollowKeybind {
@@ -25,9 +25,9 @@ public class FollowKeybind {
                 Config.getInstance().followLOS = !Config.getInstance().followLOS;
 
                 if (Config.getInstance().followLOS) {
-                    client.player.displayClientMessage(new TranslatableComponent("message.quadz.follow_on"), true);
+                    client.player.displayClientMessage(Component.translatable("message.quadz.follow_on"), true);
                 } else {
-                    client.player.displayClientMessage(new TranslatableComponent("message.quadz.follow_off"), true);
+                    client.player.displayClientMessage(Component.translatable("message.quadz.follow_off"), true);
                 }
             }
         });

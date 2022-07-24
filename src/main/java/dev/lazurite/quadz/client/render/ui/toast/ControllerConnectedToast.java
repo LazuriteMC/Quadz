@@ -8,7 +8,6 @@ import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 
 public class ControllerConnectedToast implements Toast {
@@ -33,7 +32,7 @@ public class ControllerConnectedToast implements Toast {
         toastComponent.blit(poseStack, 0, 0, 0, 0, width(), height());
 
         toastComponent.getMinecraft().font.draw(poseStack, message, 30, 7, -1);
-        toastComponent.getMinecraft().font.draw(poseStack, new TextComponent(controllerName), 30, 18, -1);
+        toastComponent.getMinecraft().font.draw(poseStack, Component.literal(controllerName), 30, 18, -1);
         toastComponent.getMinecraft().getItemRenderer().renderAndDecorateFakeItem(new ItemStack(Quadz.TRANSMITTER_ITEM), 8, 8);
 
         return startTime >= 5000L ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;

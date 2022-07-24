@@ -4,7 +4,7 @@ import dev.lazurite.quadz.common.bindable.Bindable;
 import dev.lazurite.quadz.common.quadcopter.Quadcopter;
 import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
 import dev.lazurite.toolbox.api.network.PacketRegistry;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 public class KeybindNetworkHandler {
     public static void onNoClipKey(PacketRegistry.ServerboundContext context) {
@@ -17,9 +17,9 @@ public class KeybindNetworkHandler {
                 quadcopter.getRigidBody().setTerrainLoadingEnabled(!lastNoClip);
 
                 if (lastNoClip) {
-                    player.displayClientMessage(new TranslatableComponent("message.quadz.noclip_on"), true);
+                    player.displayClientMessage(Component.translatable("message.quadz.noclip_on"), true);
                 } else {
-                    player.displayClientMessage(new TranslatableComponent("message.quadz.noclip_off"), true);
+                    player.displayClientMessage(Component.translatable("message.quadz.noclip_off"), true);
                 }
             })
         );

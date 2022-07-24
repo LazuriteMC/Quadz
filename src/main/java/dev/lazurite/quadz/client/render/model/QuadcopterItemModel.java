@@ -7,17 +7,17 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class QuadcopterItemModel extends AnimatedGeoModel<QuadcopterItem> {
     @Override
-    public ResourceLocation getModelLocation(QuadcopterItem object) {
+    public ResourceLocation getModelResource(QuadcopterItem object) {
         return new ResourceLocation(Quadz.MODID, "geo/quadcopter_item.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureLocation(QuadcopterItem object) {
+    public ResourceLocation getTextureResource(QuadcopterItem object) {
         return new ResourceLocation(Quadz.MODID, "textures/item/quadcopter_item.png");
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(QuadcopterItem animatable) {
+    public ResourceLocation getAnimationResource(QuadcopterItem animatable) {
         return new ResourceLocation(Quadz.MODID, "animations/quadcopter_item.animation.json");
     }
 }
