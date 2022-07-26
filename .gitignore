@@ -29,3 +29,5 @@ bin/
 run/
 logs/
 lib/
+
+local.settings.gradle

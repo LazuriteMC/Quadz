@@ -1,8 +1,7 @@
 package dev.lazurite.quadz.client.mixin.render;
 
-import com.jme3.math.Quaternion;
-import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
-import dev.lazurite.rayon.impl.bullet.math.Convert;
+import com.mojang.math.Quaternion;
+import dev.lazurite.quadz.common.entity.RemoteControllableEntity;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
@@ -25,8 +24,8 @@ public class MatrixRotationMixin {
             )
     )
     public com.mojang.math.Quaternion multiplyYaw(com.mojang.math.Quaternion quaternion) {
-        if (mainCamera.getEntity() instanceof QuadcopterEntity) {
-            return QuaternionHelper.rotateY(Convert.toMinecraft(new Quaternion()), 180);
+        if (mainCamera.getEntity() instanceof RemoteControllableEntity) {
+            return QuaternionHelper.rotateY(new Quaternion(Quaternion.ONE), 180);
         }
 
         return quaternion;
@@ -41,8 +40,8 @@ public class MatrixRotationMixin {
             )
     )
     public com.mojang.math.Quaternion multiplyPitch(com.mojang.math.Quaternion quaternion) {
-        if (mainCamera.getEntity() instanceof QuadcopterEntity) {
-            return Convert.toMinecraft(new Quaternion());
+        if (mainCamera.getEntity() instanceof RemoteControllableEntity) {
+            return new Quaternion(Quaternion.ONE);
         }
 
         return quaternion;

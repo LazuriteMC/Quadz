@@ -1,8 +1,7 @@
 package dev.lazurite.quadz.common.mixin.entity;
 
 import dev.lazurite.quadz.common.data.template.TemplateLoader;
-import dev.lazurite.quadz.common.data.template.model.Template;
-import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.entity.QuadcopterEntity;
 import dev.lazurite.rayon.impl.bullet.collision.body.shape.MinecraftShape;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -16,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
-
     @Shadow public EntityDimensions dimensions;
     @Shadow public abstract void setBoundingBox(AABB aABB);
     @Shadow public abstract double getX();
@@ -28,16 +26,15 @@ public abstract class EntityMixin {
 
     @Inject(method = "refreshDimensions", at = @At("HEAD"), cancellable = true)
     public void refreshDimensions_HEAD(CallbackInfo info) {
-        if ((Entity) (Object) this instanceof QuadcopterEntity) {
-            QuadcopterEntity quadcopter = (QuadcopterEntity) (Object) this;
-            Template template = TemplateLoader.getTemplate(quadcopter.getTemplate());
+        if ((Entity) (Object) this instanceof QuadcopterEntity quadcopter) {
+            final var template = TemplateLoader.getTemplate(quadcopter.getTemplate());
 
             if (template != null) {
-                EntityDimensions dimensions1 = this.dimensions;
+                final var dimensions1 = this.dimensions;
                 this.dimensions = new EntityDimensions(quadcopter.getBbWidth(), quadcopter.getBbHeight(), true);
 
                 if (dimensions.width < dimensions1.width) {
-                    double d = (double)dimensions.width / 2.0D;
+                    final var d = (double)dimensions.width / 2.0D;
                     setBoundingBox(new AABB(getX() - d, getY(), getZ() - d, getX() + d, getY() + dimensions.height, getZ() + d));
                 } else {
                     AABB box = this.getBoundingBox();

@@ -2,32 +2,24 @@ package dev.lazurite.quadz.client.render.ui.osd;
 
 import com.jme3.math.Vector3f;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.lazurite.quadz.client.Config;
-import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import dev.lazurite.quadz.common.data.Config;
+import dev.lazurite.quadz.common.entity.QuadcopterEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
-@Environment(EnvType.CLIENT)
 public final class OnScreenDisplay {
     private static final int white = 14737632;
     private static final int spacing = 25;
 
-    public static void render(QuadcopterEntity quadcopter, Font font, PoseStack poseStack, float tickDelta) {
-        Minecraft client = Minecraft.getInstance();
-        int width = client.getWindow().getGuiScaledWidth();
-        int height = client.getWindow().getGuiScaledHeight() - spacing;
+    public static void render(QuadcopterEntity quadcopterEntity, Font font, PoseStack poseStack, float tickDelta) {
+        final var client = Minecraft.getInstance();
+        final var width = client.getWindow().getGuiScaledWidth();
+        final var height = client.getWindow().getGuiScaledHeight() - spacing;
 
-        Component callSign = Component.literal(Config.getInstance().callSign); // TODO
-        int callSignWidth = font.width(callSign);
-
-        VelocityUnit unit = Config.getInstance().velocityUnit;
-        float vel = Math.round(quadcopter.getRigidBody().getLinearVelocity(new Vector3f()).length() * unit.getFactor() * 10) / 10f;
-        Component velocity = Component.literal(vel + " " + unit.getAbbreviation());
-
-        font.drawShadow(poseStack, callSign, width * 0.5f - callSignWidth * 0.5f, height, white);
+        final var unit = Config.velocityUnit;
+        final var vel = Math.round(quadcopterEntity.getRigidBody().getLinearVelocity(new Vector3f()).length() * unit.getFactor() * 10) / 10f;
+        final var velocity = Component.literal(vel + " " + unit.getAbbreviation());
         font.drawShadow(poseStack, velocity, spacing, height, white);
     }
 

@@ -1,9 +1,10 @@
 package dev.lazurite.quadz.client.mixin.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.render.ui.osd.OnScreenDisplay;
-import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.data.Config;
+import dev.lazurite.quadz.common.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.entity.RemoteControllableEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
@@ -28,8 +29,9 @@ public abstract class GuiMixin {
      */
     @Inject(method = "render", at = @At("HEAD"))
     public void render_HEAD(PoseStack poseStack, float delta, CallbackInfo info) {
-        if (Config.getInstance().osdEnabled && minecraft.getCameraEntity() instanceof QuadcopterEntity) {
-            OnScreenDisplay.render((QuadcopterEntity) minecraft.getCameraEntity(), getFont(), poseStack, delta);
+        // Quadz specific
+        if (Config.osdEnabled && minecraft.getCameraEntity() instanceof QuadcopterEntity quadcopter) {
+            OnScreenDisplay.render(quadcopter, getFont(), poseStack, delta);
         }
     }
 
@@ -41,7 +43,7 @@ public abstract class GuiMixin {
      */
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     private void renderCrosshair_HEAD(PoseStack poseStack, CallbackInfo info) {
-        if (minecraft.getCameraEntity() instanceof QuadcopterEntity) {
+        if (minecraft.getCameraEntity() instanceof RemoteControllableEntity) {
             info.cancel();
         }
     }
@@ -55,7 +57,7 @@ public abstract class GuiMixin {
      */
     @Inject(method = "renderExperienceBar", at = @At("HEAD"), cancellable = true)
     public void renderExperienceBar_HEAD(PoseStack poseStack, int i, CallbackInfo info) {
-        if (minecraft.getCameraEntity() instanceof QuadcopterEntity) {
+        if (minecraft.getCameraEntity() instanceof RemoteControllableEntity) {
             info.cancel();
         }
     }

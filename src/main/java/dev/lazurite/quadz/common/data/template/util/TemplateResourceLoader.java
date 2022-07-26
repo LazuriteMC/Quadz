@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.data.template.TemplateLoader;
 import dev.lazurite.quadz.common.data.template.model.Template;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.SimpleTexture;
@@ -13,7 +12,6 @@ import net.minecraft.client.resources.language.ClientLanguage;
 import net.minecraft.locale.Language;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ChainedJsonException;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.file.AnimationFile;
@@ -30,11 +28,6 @@ import java.io.IOException;
 import java.util.Map;
 
 public class TemplateResourceLoader implements SimpleSynchronousResourceReloadListener {
-
-    public TemplateResourceLoader() {
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(this);
-    }
-
     @Override
     public ResourceLocation getFabricId() {
         return new ResourceLocation(Quadz.MODID, "templates");

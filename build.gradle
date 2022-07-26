@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version "$loom_version"
 	id 'maven-publish'
+	id 'java-library'
 }
 
 group 'dev.lazurite'
@@ -26,23 +27,28 @@ dependencies {
 	modImplementation "dev.lazurite:rayon-fabric:$rayon_version"
 
 	// Lattice
-//	modImplementation "dev.lazurite:lattice:$lattice_version"
+//	modApi "dev.lazurite:lattice:$lattice_version"
 //	include "dev.lazurite:lattice:$lattice_version"
 
+	// Corduroy
+//	modApi "dev.lazurite:corduroy:$corduroy_version"
+//	include "dev.lazurite:corduroy:$corduroy_version"
+
 	// Gecko Lib 3
-	modImplementation "software.bernie.geckolib:geckolib-fabric-1.19:$geckolib_version"
+	modApi "software.bernie.geckolib:geckolib-fabric-1.19:$geckolib_version"
 
-	// Mod Menu + Cloth
-	modImplementation "com.terraformersmc:modmenu:$modmenu_version"
-	modImplementation "me.shedaniel.cloth:cloth-config-fabric:$cloth_version"
+	// Mod Menu
+	modApi "com.terraformersmc:modmenu:$modmenu_version"
 
-	// Fiber
-	modImplementation "me.zeroeightsix:fiber:$fiber_version"
-	include "me.zeroeightsix:fiber:$fiber_version"
+	// Cloth
+	modApi "me.shedaniel.cloth:cloth-config-fabric:$cloth_version"
 }
 
 java {
-	toolchain.languageVersion = JavaLanguageVersion.of 17
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+
 	withSourcesJar()
 }
 
@@ -80,5 +86,4 @@ publishing {
 			from components.java
 		}
 	}
-
 }

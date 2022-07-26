@@ -9,3 +9,7 @@ pluginManagement {
 }
 
 rootProject.name = 'quadz'
+
+if (file('local.settings.gradle').exists()) {
+    apply from: 'local.settings.gradle'
+}

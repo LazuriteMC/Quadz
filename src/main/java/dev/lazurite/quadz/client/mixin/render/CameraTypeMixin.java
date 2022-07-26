@@ -1,9 +1,9 @@
 package dev.lazurite.quadz.client.mixin.render;
 
-import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.util.CameraTypeAccess;
+import dev.lazurite.quadz.common.entity.RemoteControllableEntity;
 import dev.lazurite.quadz.common.item.GogglesItem;
-import dev.lazurite.quadz.common.quadcopter.Quadcopter;
+import dev.lazurite.quadz.common.util.network.NetworkResources;
 import dev.lazurite.toolbox.api.network.ClientNetworking;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -25,8 +25,8 @@ public class CameraTypeMixin implements CameraTypeAccess {
         index = (index + 1) % (wearingGoggles ? 5 : 3);
 
         if (index >= 0 && index <= 2) {
-            if (Minecraft.getInstance().cameraEntity instanceof Quadcopter) {
-                ClientNetworking.send(Quadz.REQUEST_PLAYER_VIEW_C2S, buf -> {});
+            if (Minecraft.getInstance().cameraEntity instanceof RemoteControllableEntity) {
+                ClientNetworking.send(NetworkResources.REQUEST_PLAYER_VIEW_C2S, buf -> {});
             }
         }
 
@@ -34,10 +34,10 @@ public class CameraTypeMixin implements CameraTypeAccess {
             case 0 -> info.setReturnValue(CameraType.FIRST_PERSON);
             case 1 -> info.setReturnValue(CameraType.THIRD_PERSON_BACK);
             case 2 -> info.setReturnValue(CameraType.THIRD_PERSON_FRONT);
-            case 3 -> ClientNetworking.send(Quadz.REQUEST_QUADCOPTER_VIEW_C2S, buf -> buf.writeInt(0));
+            case 3 -> ClientNetworking.send(NetworkResources.REQUEST_REMOTE_CONTROLLABLE_VIEW_C2S, buf -> buf.writeInt(0));
 
             case 4 -> {
-                if (!(Minecraft.getInstance().cameraEntity instanceof Quadcopter)) {
+                if (!(Minecraft.getInstance().cameraEntity instanceof RemoteControllableEntity)) {
                     index = 1;
                     info.setReturnValue(CameraType.THIRD_PERSON_BACK);
                 }
@@ -49,6 +49,6 @@ public class CameraTypeMixin implements CameraTypeAccess {
     public void reset() {
         index = 0;
         Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
-        ClientNetworking.send(Quadz.REQUEST_PLAYER_VIEW_C2S, buf -> {});
+        ClientNetworking.send(NetworkResources.REQUEST_PLAYER_VIEW_C2S, buf -> {});
     }
 }

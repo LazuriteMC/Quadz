@@ -11,6 +11,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+/**
+ * This mixin intercepts any resource that has a namespace starting with {@link Quadz#MODID} and
+ * uses the {@link TemplateTextureManager} instead.
+ */
 @Mixin(TextureManager.class)
 public abstract class TextureManagerMixin {
     @Shadow @Final private ResourceManager resourceManager;

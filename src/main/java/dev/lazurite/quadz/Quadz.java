@@ -1,34 +1,28 @@
 package dev.lazurite.quadz;
 
-import dev.lazurite.quadz.api.event.JoystickEvents;
-import dev.lazurite.quadz.client.input.InputTick;
-import dev.lazurite.quadz.client.network.ClientNetworkHandler;
-import dev.lazurite.quadz.client.Config;
-import dev.lazurite.quadz.client.input.keybind.*;
-import dev.lazurite.quadz.client.util.ClientTick;
-import dev.lazurite.quadz.client.render.QuadzRendering;
-import dev.lazurite.quadz.client.render.ui.toast.ControllerConnectedToast;
-import dev.lazurite.quadz.common.item.GogglesItem;
-import dev.lazurite.quadz.common.network.CommonNetworkHandler;
+import dev.lazurite.quadz.common.data.model.Bindable;
 import dev.lazurite.quadz.common.data.template.TemplateLoader;
+import dev.lazurite.quadz.common.entity.RemoteControllableEntity;
+import dev.lazurite.quadz.common.item.GogglesItem;
+import dev.lazurite.quadz.common.item.ItemGroupHandler;
+import dev.lazurite.quadz.common.entity.QuadcopterEntity;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
-import dev.lazurite.quadz.common.util.ServerTick;
-import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
-import dev.lazurite.quadz.common.network.KeybindNetworkHandler;
-import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
-import dev.lazurite.rayon.api.event.collision.PhysicsSpaceEvents;
-import dev.lazurite.rayon.impl.bullet.collision.body.EntityRigidBody;
-import dev.lazurite.toolbox.api.event.ClientEvents;
+import dev.lazurite.quadz.common.util.Mode;
+import dev.lazurite.quadz.api.JoystickRegistry;
+import dev.lazurite.quadz.common.data.Config;
+import dev.lazurite.quadz.common.data.model.JoystickAxis;
+import dev.lazurite.quadz.common.util.tools.RemoteControllableSearch;
+import dev.lazurite.quadz.common.util.network.NetworkResources;
 import dev.lazurite.toolbox.api.event.ServerEvents;
-import dev.lazurite.toolbox.api.network.ClientNetworking;
-import dev.lazurite.toolbox.api.network.PacketRegistry;
 import dev.lazurite.toolbox.api.network.ServerNetworking;
-import net.fabricmc.api.ClientModInitializer;
+import dev.lazurite.toolbox.api.util.PlayerUtil;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,21 +32,14 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class Quadz implements ModInitializer, ClientModInitializer {
+import java.util.ArrayList;
+import java.util.Optional;
+
+public class Quadz implements ModInitializer {
 	public static final String MODID = "quadz";
 	public static final Logger LOGGER = LogManager.getLogger("Quadz");
 
-	public static final ResourceLocation TEMPLATE = new ResourceLocation(MODID, "template_s2c");
-	public static final ResourceLocation QUADCOPTER_SETTINGS_C2S = new ResourceLocation(MODID, "quadcopter_settings_c2s");
-	public static final ResourceLocation PLAYER_DATA_C2S = new ResourceLocation(MODID, "player_data_c2s");
-	public static final ResourceLocation INPUT_FRAME = new ResourceLocation(MODID, "input_frame");
-	public static final ResourceLocation REQUEST_QUADCOPTER_VIEW_C2S = new ResourceLocation(MODID, "request_quadcopter_view_c2s");
-	public static final ResourceLocation REQUEST_PLAYER_VIEW_C2S = new ResourceLocation(MODID, "request_player_view_c2s");
-
-	public static final ResourceLocation NOCLIP_C2S = new ResourceLocation(MODID, "noclip_c2s");
-	public static final ResourceLocation CHANGE_CAMERA_ANGLE_C2S = new ResourceLocation(MODID, "change_camera_angle_c2s");
-
-	public static QuadcopterItem QUADCOPTER_ITEM = Registry.register(Registry.ITEM, new ResourceLocation(MODID, "quadcopter_item"), new QuadcopterItem(new Item.Properties().stacksTo(1)));
+	public static QuadcopterItem QUADCOPTER_ITEM = Registry.register(Registry.ITEM, new ResourceLocation(MODID, "remote_controllable_item"), new QuadcopterItem(new Item.Properties().stacksTo(1)));
 	public static GogglesItem GOGGLES_ITEM = Registry.register(Registry.ITEM, new ResourceLocation(MODID, "goggles_item"), new GogglesItem(new Item.Properties().stacksTo(1)));
 	public static Item TRANSMITTER_ITEM = Registry.register(Registry.ITEM, new ResourceLocation(MODID, "transmitter_item"), new Item(new Item.Properties().stacksTo(1)));
 
@@ -68,72 +55,70 @@ public class Quadz implements ModInitializer, ClientModInitializer {
 
 	@Override
 	public void onInitialize() {
-		/* Set up the item group */
+		TemplateLoader.initialize();
+
+		/* Register Events */
+		ServerEvents.Tick.START_SERVER_TICK.register(this::onServerTick);
+		ServerEvents.Lifecycle.JOIN.register(this::onJoin);
+
+		/* Register Packets */
+		NetworkResources.registerServerbound();
+
 		ItemGroupHandler.getInstance().register(
 				new ItemStack(GOGGLES_ITEM),
 				new ItemStack(TRANSMITTER_ITEM)
 		).build();
 
-		TemplateLoader.initialize();
+		JoystickRegistry.registerTemplateFolder(MODID);
+		JoystickRegistry.getInstance().registerJoystickInput(new JoystickAxis(new ResourceLocation(MODID, "throttle"), Component.translatable("config.quadz.controller.throttle"), 0, false));
+		JoystickRegistry.getInstance().registerJoystickInput(new JoystickAxis(new ResourceLocation(MODID, "pitch"), Component.translatable("config.quadz.controller.pitch"), 2, false));
+		JoystickRegistry.getInstance().registerJoystickInput(new JoystickAxis(new ResourceLocation(MODID, "roll"), Component.translatable("config.quadz.controller.pitch"), 1, false));
+		JoystickRegistry.getInstance().registerJoystickInput(new JoystickAxis(new ResourceLocation(MODID, "yaw"), Component.translatable("config.quadz.controller.pitch"), 3, true));
 
-		PhysicsSpaceEvents.STEP.register(space -> {
-			space.getRigidBodiesByClass(EntityRigidBody.class).forEach(rigidBody -> {
-				if (rigidBody.getElement() instanceof QuadcopterEntity quadcopter) {
-					quadcopter.step();
-				}
-			});
-		});
-
-		/* Set up events */
-		ServerEvents.Tick.START_SERVER_TICK.register(ServerTick::tick);
-		ServerEvents.Lifecycle.JOIN.register(player -> TemplateLoader.getTemplates().forEach(template -> ServerNetworking.send(player, TEMPLATE, template::serialize)));
-
-		/* Set up networking events */
-		PacketRegistry.registerServerbound(QUADCOPTER_SETTINGS_C2S, CommonNetworkHandler::onQuadcopterSettingsReceived);
-		PacketRegistry.registerServerbound(PLAYER_DATA_C2S, CommonNetworkHandler::onPlayerDataReceived);
-		PacketRegistry.registerServerbound(TEMPLATE, CommonNetworkHandler::onTemplateReceived);
-		PacketRegistry.registerServerbound(INPUT_FRAME, CommonNetworkHandler::onInputFrame);
-		PacketRegistry.registerServerbound(REQUEST_QUADCOPTER_VIEW_C2S, CommonNetworkHandler::onQuadcopterViewRequestReceived);
-		PacketRegistry.registerServerbound(REQUEST_PLAYER_VIEW_C2S, CommonNetworkHandler::onPlayerViewRequestReceived);
-
-		PacketRegistry.registerServerbound(NOCLIP_C2S, KeybindNetworkHandler::onNoClipKey);
-		PacketRegistry.registerServerbound(CHANGE_CAMERA_ANGLE_C2S, KeybindNetworkHandler::onChangeCameraAngleKey);
+		JoystickRegistry.getInstance().registerControllableParameter(new BooleanParameter(new ResourceLocation(MODID, "throttleInCenter"), Component.translatable("config.quadz.controller.throttleInCenter"), Config.Category.CONTROLLER, false, true));
+		JoystickRegistry.getInstance().registerControllableParameter(new IntegerParameter(new ResourceLocation(MODID, "maxAngle"), Component.translatable("config.quadz.controller.maxAngle"), Config.Category.CONTROLLER, 30, false, 10, 90, true));
+		JoystickRegistry.getInstance().registerControllableParameter(new FloatParameter(new ResourceLocation(MODID, "rate"), Component.translatable("config.quadz.controller.rate"), Config.Category.CONTROLLER, 0.7f, false, 0.0f, 2.0f, true));
+		JoystickRegistry.getInstance().registerControllableParameter(new FloatParameter(new ResourceLocation(MODID, "superRate"), Component.translatable("config.quadz.controller.superRate"), Config.Category.CONTROLLER, 0.9f, false, 0.0f, 2.0f, true));
+		JoystickRegistry.getInstance().registerControllableParameter(new FloatParameter(new ResourceLocation(MODID, "expo"), Component.translatable("config.quadz.controller.expo"), Config.Category.CONTROLLER, 0.1f, false, 0.0f, 2.0f, true));
+		JoystickRegistry.getInstance().registerControllableParameter(new EnumParameter<>(new ResourceLocation(MODID, "mode"), Component.translatable("config.quadz.controller.mode"), Config.Category.CONTROLLER, Mode.RATE, Mode.class, false));
 	}
 
-	@Override
-	public void onInitializeClient() {
-		QuadzRendering.initialize();
+	protected void onJoin(ServerPlayer player) {
+		TemplateLoader.getTemplates().forEach(template -> ServerNetworking.send(player, NetworkResources.TEMPLATE, template::serialize));
+	}
 
-		/* Load the Config */
-		Config.getInstance().load();
+	public void onServerTick(MinecraftServer server) {
+		final var range = server.getPlayerList().getViewDistance() * 16;
+		final var toActivate = new ArrayList<RemoteControllableEntity>();
 
-		/* Register Keybindings */
-		CameraAngleKeybinds.register();
-		NoClipKeybind.register();
-		ControlKeybinds.register();
-		FollowKeybind.register();
-		QuadConfigKeybind.register();
+		for (var player : PlayerUtil.all(server)) {
+			final var pos = player.getCamera().position();
+			final var level = player.getLevel();
+			final var quads = RemoteControllableSearch.allInArea(level, pos, range);
 
-		/* Register Packets */
-		PacketRegistry.registerClientbound(TEMPLATE, ClientNetworkHandler::onTemplateReceived);
-		PacketRegistry.registerClientbound(INPUT_FRAME, ClientNetworkHandler::onInputFrameReceived);
+			/* Don't forget the camera! */
+			if (player.getCamera() instanceof RemoteControllableEntity remoteControllableEntity) {
+				quads.add(remoteControllableEntity);
+			}
 
-		/* Register Toast Events */
-		JoystickEvents.JOYSTICK_CONNECT.register(
-				(id, name) -> ControllerConnectedToast.add(Component.translatable("toast.quadz.controller.connect"), name));
-		JoystickEvents.JOYSTICK_DISCONNECT.register(
-				(id, name) -> ControllerConnectedToast.add(Component.translatable("toast.quadz.controller.disconnect"), name));
+			quads.forEach(quadcopter -> quadcopter.setActive(false));
+			Bindable.get(player.getMainHandItem())
+					.flatMap(transmitter -> RemoteControllableSearch.byBindId(level, pos, transmitter.getBindId(), range))
+					.ifPresent(toActivate::add);
 
-		/* Register Client Tick Events */
-		ClientEvents.Tick.START_LEVEL_TICK.register(ClientTick::tickInput);
+			if (Optional.of(player.getInventory().armor.get(3)).filter(stack -> stack.getItem() instanceof GogglesItem).isEmpty()) {
+				if (player.getCamera() instanceof RemoteControllableEntity remoteControllableEntity) {
 
-		/* Set up events */
-		InputTick.LEFT_CLICK_EVENT.register(() -> ClientNetworking.send(REQUEST_QUADCOPTER_VIEW_C2S, buf -> buf.writeInt(-1)));
-		InputTick.RIGHT_CLICK_EVENT.register(() -> ClientNetworking.send(REQUEST_QUADCOPTER_VIEW_C2S, buf -> buf.writeInt(1)));
-		ClientEvents.Lifecycle.DISCONNECT.register((client, world) -> TemplateLoader.clearRemoteTemplates());
-		ClientEvents.Lifecycle.POST_LOGIN.register((client, level, player) -> {
-			Config.getInstance().sendPlayerData();
-			TemplateLoader.getTemplates().forEach(template -> ClientNetworking.send(TEMPLATE, template::serialize));
-		});
+					// Quadz specific
+					if (remoteControllableEntity instanceof QuadcopterEntity quadcopter && player.equals(quadcopter.getRigidBody().getPriorityPlayer())) {
+						quadcopter.getRigidBody().prioritize(null);
+					}
+
+					player.setCamera(player);
+				}
+			}
+		}
+
+		toActivate.forEach(quadcopter -> quadcopter.setActive(true));
 	}
 }

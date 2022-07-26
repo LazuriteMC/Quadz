@@ -1,20 +1,26 @@
 package dev.lazurite.quadz.client.mixin;
 
-import dev.lazurite.quadz.client.input.InputTick;
+import com.google.common.collect.Maps;
+import dev.lazurite.quadz.api.InputHandler;
+import dev.lazurite.quadz.api.event.JoystickEvents;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Options;
 import net.minecraft.util.profiling.ProfilerFiller;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Map;
+
+import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
+
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
     @Shadow private ProfilerFiller profiler;
-    @Shadow @Final public Options options;
+    @Unique private long next;
+    @Unique private boolean loaded;
 
     @Inject(
             method = "runTick",
@@ -26,13 +32,25 @@ public class MinecraftMixin {
     )
     public void runTick_render(boolean bl, CallbackInfo info) {
         this.profiler.popPush("gamepadInput");
-        InputTick.getInstance().tick();
-    }
 
-//    @Inject(method = "setCameraEntity", at = @At("HEAD"))
-//    public void setCameraEntity_HEAD(Entity entity, CallbackInfo ci) {
-//        if (entity instanceof QuadcopterEntity && options.getCameraType().isMirrored()) {
-//            options.setCameraType(options.getCameraType().cycle());
-//        }
-//    }
+        if (System.currentTimeMillis() > next) {
+            Map<Integer, String> lastJoysticks = Maps.newHashMap(InputHandler.JOYSTICKS);
+            InputHandler.JOYSTICKS.clear();
+
+            for (int i = 0; i < 16; i++) {
+                if (glfwJoystickPresent(i)) {
+                    InputHandler.JOYSTICKS.put(i, InputHandler.getJoystickName(i));
+
+                    if (!lastJoysticks.containsKey(i) && loaded) {
+                        JoystickEvents.JOYSTICK_CONNECT.invoke(i, InputHandler.getJoystickName(i));
+                    }
+                } else if (lastJoysticks.containsKey(i) && loaded) {
+                    JoystickEvents.JOYSTICK_DISCONNECT.invoke(i, lastJoysticks.get(i));
+                }
+            }
+
+            next = System.currentTimeMillis() + 500;
+            loaded = true;
+        }
+    }
 }

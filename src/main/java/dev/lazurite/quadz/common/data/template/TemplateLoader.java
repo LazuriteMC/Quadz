@@ -4,10 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.lazurite.quadz.Quadz;
+import dev.lazurite.quadz.common.data.model.Templated;
 import dev.lazurite.quadz.common.data.template.model.Template;
-import dev.lazurite.quadz.common.item.group.ItemGroupHandler;
-import dev.lazurite.quadz.common.quadcopter.Quadcopter;
-import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.item.ItemGroupHandler;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.item.ItemStack;
@@ -30,10 +29,10 @@ import java.util.zip.ZipFile;
  * into the game. It handles loading from template zip files and contains
  * a map of all {@link Template} objects which can be referenced at any
  * time throughout execution. As such, templates aren't stored anywhere
- * except here - even {@link QuadcopterEntity} objects only store the ID
- * of the template so that it may look it up here.
+ * except here.
  */
 public class TemplateLoader {
+    private static final List<String> templateFolders = new ArrayList<>();
     private static Map<String, Template> templates;
 
     public static void load(Template template) {
@@ -51,12 +50,16 @@ public class TemplateLoader {
              */
             if (env == EnvType.CLIENT && template.getOriginDistance() < 2) {
                 ItemStack stack = new ItemStack(Quadz.QUADCOPTER_ITEM);
-                Quadcopter.fromStack(stack).ifPresent(state -> state.setTemplate(template.getId()));
+                Templated.get(stack).ifPresent(state -> state.setTemplate(template.getId()));
                 ItemGroupHandler.getInstance().register(stack);
             }
         } else {
             Quadz.LOGGER.info("{} template already exists! Skipping...", template.getId());
         }
+    }
+
+    public static void addTemplateFolder(String folderName) {
+        templateFolders.add(folderName);
     }
 
     public static void initialize() {
@@ -66,8 +69,8 @@ public class TemplateLoader {
             Quadz.LOGGER.info("Reading templates...");
 
             // Set up directories
-            Path quadz = FabricLoader.getInstance().getGameDir().normalize().resolve(Paths.get("quadz"));
-            Path jar = FabricLoader.getInstance().getModContainer("quadz").get().getRootPath().resolve("assets").resolve("quadz").resolve("templates");
+            final var quadz = FabricLoader.getInstance().getGameDir().normalize().resolve(Paths.get("quadz"));
+            final var jar = FabricLoader.getInstance().getModContainer("quadz").get().getRootPath().resolve("assets").resolve("quadz").resolve("templates");
 
             // Make the quadz folder if it doesn't exist
             if (!Files.exists(quadz)) {

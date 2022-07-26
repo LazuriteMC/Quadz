@@ -1,6 +1,6 @@
 package dev.lazurite.quadz.client.mixin.render;
 
-import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.entity.RemoteControllableEntity;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(LevelRenderer.class)
 public abstract class LevelRendererMixin {
-
     @Redirect(
             method = "renderLevel",
             at = @At(
@@ -18,7 +17,6 @@ public abstract class LevelRendererMixin {
             )
     )
     public boolean renderLevel_isDetached(Camera camera) {
-        return camera.isDetached() || camera.getEntity() instanceof QuadcopterEntity quadcopter && quadcopter.shouldRenderSelf();
+        return camera.isDetached() || camera.getEntity() instanceof RemoteControllableEntity remoteControllableEntity && remoteControllableEntity.shouldRenderSelf();
     }
-
 }

@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.common.mixin.item;
 
+import dev.lazurite.quadz.common.data.model.Templated;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
-import dev.lazurite.quadz.common.quadcopter.Quadcopter;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,8 +14,7 @@ public class ItemMixin {
     @Inject(method = "getDescriptionId(Lnet/minecraft/world/item/ItemStack;)Ljava/lang/String;", at = @At("RETURN"), cancellable = true)
     public void getDescriptionId_RETURN(ItemStack itemStack, CallbackInfoReturnable<String> info) {
         if ((Item) (Object) this instanceof QuadcopterItem) {
-            Quadcopter.fromStack(itemStack).ifPresent(state ->
-                info.setReturnValue("template.quadz." + state.getTemplate()));
+            Templated.get(itemStack).ifPresent(state -> info.setReturnValue("template.quadz." + state.getTemplate()));
         }
     }
 }

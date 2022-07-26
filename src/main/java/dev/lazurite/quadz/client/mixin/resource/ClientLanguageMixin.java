@@ -8,10 +8,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import org.spongepowered.include.com.google.common.collect.ImmutableMap;
 
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The original call to {@link ClientLanguage#ClientLanguage(Map, boolean)} wraps the
+ * map to an {@link ImmutableMap}. Here, we prevent that from happening by passing it normally.
+ */
 @Mixin(ClientLanguage.class)
 public class ClientLanguageMixin {
     @Inject(

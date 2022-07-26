@@ -2,10 +2,10 @@ package dev.lazurite.quadz.client.mixin.render;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import dev.lazurite.quadz.client.Config;
+import dev.lazurite.quadz.common.data.Config;
 import dev.lazurite.quadz.common.data.template.TemplateLoader;
 import dev.lazurite.quadz.common.data.template.model.Template;
-import dev.lazurite.quadz.common.quadcopter.entity.QuadcopterEntity;
+import dev.lazurite.quadz.common.entity.QuadcopterEntity;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import dev.lazurite.toolbox.api.math.VectorHelper;
@@ -37,6 +37,9 @@ public abstract class CameraMixin {
     @Shadow protected abstract void setPosition(Vec3 pos);
     @Shadow protected abstract void move(double x, double y, double z);
 
+    /**
+     * This mixin transforms the camera's rotation and position based on the quadcopter rotation and template.
+     */
     @Inject(
             method = "setup",
             at = @At(
@@ -45,6 +48,8 @@ public abstract class CameraMixin {
             )
     )
     public void setup_setRotation(BlockGetter blockGetter, Entity entity, boolean bl, boolean bl2, float f, CallbackInfo ci) {
+
+        // Highly Quadz specific
         if (entity instanceof QuadcopterEntity quadcopter) {
             if (quadcopter.getRigidBody() != null && quadcopter.getRigidBody().getFrame() != null) {
                 var template = TemplateLoader.getTemplate(quadcopter.getTemplate());
@@ -67,7 +72,7 @@ public abstract class CameraMixin {
                 this.left.set(1.0F, 0.0F, 0.0F);
                 this.left.transform(rotation);
 
-                if (!bl && !Config.getInstance().renderCameraInCenter) {
+                if (!bl && !Config.renderCameraInCenter) {
                     double cameraX = template.getSettings().getCameraX();
                     double cameraY = template.getSettings().getCameraY();
                     move(cameraX, cameraY, 0);
