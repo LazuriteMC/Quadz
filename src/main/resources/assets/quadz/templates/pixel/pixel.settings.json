@@ -2,6 +2,7 @@
 	"id" : "pixel",
 	"name" : "Pixel",
 	"author" : "BlueVista",
+	"modid" : "quadz",
 	"width" : 0.225,
 	"height" : 0.125,
 	"cameraX" : 0.025,

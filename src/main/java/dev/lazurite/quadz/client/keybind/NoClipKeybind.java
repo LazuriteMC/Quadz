@@ -2,7 +2,7 @@ package dev.lazurite.quadz.client.keybind;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.util.network.NetworkResources;
+import dev.lazurite.quadz.client.QuadzClient;
 import dev.lazurite.toolbox.api.event.ClientEvents;
 import dev.lazurite.toolbox.api.network.ClientNetworking;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -22,7 +22,7 @@ public class NoClipKeybind {
 
         ClientEvents.Tick.END_CLIENT_TICK.register(client -> {
             if (key.consumeClick()) {
-                ClientNetworking.send(NetworkResources.NOCLIP_C2S, buf -> {});
+                ClientNetworking.send(QuadzClient.NOCLIP_C2S, buf -> {});
             }
         });
     }

@@ -2,9 +2,9 @@ package dev.lazurite.quadz.client.mixin.render;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import dev.lazurite.quadz.common.data.Config;
-import dev.lazurite.quadz.common.data.template.TemplateLoader;
-import dev.lazurite.quadz.common.data.template.model.Template;
+import dev.lazurite.form.api.loader.TemplateLoader;
+import dev.lazurite.form.impl.common.template.model.Template;
+import dev.lazurite.remote.impl.client.util.Config;
 import dev.lazurite.quadz.common.entity.QuadcopterEntity;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
@@ -30,7 +30,6 @@ public abstract class CameraMixin {
     @Shadow @Final private com.mojang.math.Vector3f up;
     @Shadow @Final private com.mojang.math.Vector3f left;
     @Shadow @Final private com.mojang.math.Quaternion rotation;
-    @Shadow private Entity entity;
     @Shadow private float xRot;
     @Shadow private float yRot;
 
@@ -48,50 +47,35 @@ public abstract class CameraMixin {
             )
     )
     public void setup_setRotation(BlockGetter blockGetter, Entity entity, boolean bl, boolean bl2, float f, CallbackInfo ci) {
-
-        // Highly Quadz specific
         if (entity instanceof QuadcopterEntity quadcopter) {
             if (quadcopter.getRigidBody() != null && quadcopter.getRigidBody().getFrame() != null) {
-                var template = TemplateLoader.getTemplate(quadcopter.getTemplate());
-                var location = quadcopter.getPhysicsLocation(new Vector3f(), f);
-                setPosition(VectorHelper.toVec3(Convert.toMinecraft(location)));
+                TemplateLoader.getTemplateById(quadcopter.getTemplate()).ifPresent(template -> {
+                    final var location = quadcopter.getPhysicsLocation(new Vector3f(), f);
+                    setPosition(VectorHelper.toVec3(Convert.toMinecraft(location)));
 
-                var quaternion = ((QuadcopterEntity) entity).getPhysicsRotation(new Quaternion(), f);
-                var cameraAngle = ((QuadcopterEntity) entity).getCameraAngle();
-                this.xRot = QuaternionHelper.getPitch(Convert.toMinecraft(quaternion));
-                this.yRot = QuaternionHelper.getYaw(Convert.toMinecraft(quaternion));
+                    final var quaternion = ((QuadcopterEntity) entity).getPhysicsRotation(new Quaternion(), f);
+                    final var cameraAngle = ((QuadcopterEntity) entity).getCameraAngle();
+                    this.xRot = QuaternionHelper.getPitch(Convert.toMinecraft(quaternion));
+                    this.yRot = QuaternionHelper.getYaw(Convert.toMinecraft(quaternion));
 
-                this.rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
-                this.rotation.mul(Convert.toMinecraft(quaternion));
-                this.rotation.mul(com.mojang.math.Vector3f.XN.rotationDegrees(cameraAngle));
+                    this.rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
+                    this.rotation.mul(Convert.toMinecraft(quaternion));
+                    this.rotation.mul(com.mojang.math.Vector3f.XN.rotationDegrees(cameraAngle));
 
-                this.forwards.set(0.0F, 0.0F, 1.0F);
-                this.forwards.transform(rotation);
-                this.up.set(0.0F, 1.0F, 0.0F);
-                this.up.transform(rotation);
-                this.left.set(1.0F, 0.0F, 0.0F);
-                this.left.transform(rotation);
+                    this.forwards.set(0.0F, 0.0F, 1.0F);
+                    this.forwards.transform(rotation);
+                    this.up.set(0.0F, 1.0F, 0.0F);
+                    this.up.transform(rotation);
+                    this.left.set(1.0F, 0.0F, 0.0F);
+                    this.left.transform(rotation);
 
-                if (!bl && !Config.renderCameraInCenter) {
-                    double cameraX = template.getSettings().getCameraX();
-                    double cameraY = template.getSettings().getCameraY();
-                    move(cameraX, cameraY, 0);
-                }
+                    if (!bl && !Config.renderCameraInCenter) {
+                        double cameraX = template.metadata().get("cameraX").getAsDouble();
+                        double cameraY = template.metadata().get("cameraY").getAsDouble();
+                        move(cameraX, cameraY, 0);
+                    }
+                });
             }
-        }
-    }
-
-    @Inject(method = "setPosition(DDD)V", at = @At("HEAD"), cancellable = true)
-    public void setPosition_HEAD(double x, double y, double z, CallbackInfo info) {
-        if (entity instanceof QuadcopterEntity) {
-            info.cancel();
-        }
-    }
-
-    @Inject(method = "setRotation", at = @At("HEAD"), cancellable = true)
-    public void setRotation_HEAD(float yaw, float pitch, CallbackInfo info) {
-        if (entity instanceof QuadcopterEntity) {
-            info.cancel();
         }
     }
 }

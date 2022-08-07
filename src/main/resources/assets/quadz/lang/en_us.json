@@ -14,18 +14,11 @@
   "itemGroup.quadz.items" : "Quadz",
   "item.quadz.goggles_item" : "Goggles",
   "item.quadz.transmitter_item" : "Transmitter",
-  "item.quadz.transmitter_item.bound" : "Transmitter Bound",
 
   "message.quadz.drone_error" : "Must be holding a quadcopter or a bound transmitter.",
   "message.quadz.goggles_error" : "Must be holding or wearing goggles.",
   "message.quadz.noclip_on" : "No Clip Enabled",
   "message.quadz.noclip_off" : "No Clip Disabled",
-  "message.quadz.follow_on" : "Follow LOS Enabled",
-  "message.quadz.follow_off" : "Follow LOS Disabled",
-
-  "toast.quadz.controller.connect" : "Controller Connected!",
-  "toast.quadz.controller.disconnect" : "Controller Disconnected!",
-  "toast.quadz.controller.notfound" : "Controller Not found!",
 
   "mode.quadz.rate" : "Rate",
   "mode.quadz.angle" : "Angle",
@@ -36,8 +29,6 @@
   "config.quadz.category.camera" : "Camera Preferences",
   "config.quadz.category.osd" : "OSD Preferences",
 
-  "config.quadz.entry.controller_id" : "Controller ID",
-  "config.quadz.entry.controller_id.keyboard" : "Keyboard",
   "config.quadz.entry.pitch_axis" : "Pitch",
   "config.quadz.entry.yaw_axis" : "Yaw",
   "config.quadz.entry.roll_axis" : "Roll",
@@ -49,24 +40,8 @@
   "config.quadz.entry.invert_throttle" : "Invert Throttle",
   "config.quadz.entry.throttle_in_center" : "Throttle In Center",
 
-  "config.quadz.entry.mode" : "Mode",
-  "config.quadz.entry.max_angle" : "Max Angle",
-  "config.quadz.entry.follow_los" : "Follow LOS",
-  "config.quadz.entry.render_first_person" : "Render First Person",
-  "config.quadz.entry.render_camera_in_center" : "Render Camera In Center",
-  "config.quadz.entry.first_person_fov" : "First Person FOV",
-  "config.quadz.entry.camera_angle" : "Camera Angle",
-
   "config.quadz.entry.rate" : "Rate",
   "config.quadz.entry.expo" : "Expo",
   "config.quadz.entry.super_rate" : "Super Rate",
-  "config.quadz.entry.deadzone" : "Deadzone",
-
-  "config.quadz.entry.osd_enabled" : "OSD Enabled",
-  "config.quadz.entry.call_sign" : "Call Sign",
-  "config.quadz.entry.velocity_unit" : "Velocity Units",
-
-  "config.quadz.velocity.meters_per_second" :  "Meters Per Second",
-  "config.quadz.velocity.kilometers_per_hour" : "Kilometers Per Hour",
-  "config.quadz.velocity.miles_per_hour" : "Miles Per Hour"
+  "config.quadz.entry.deadzone" : "Deadzone"
 }

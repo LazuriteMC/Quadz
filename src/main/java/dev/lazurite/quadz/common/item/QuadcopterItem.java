@@ -2,9 +2,9 @@ package dev.lazurite.quadz.common.item;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import dev.lazurite.form.api.Templated;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.common.data.model.Bindable;
-import dev.lazurite.quadz.common.data.model.Templated;
+import dev.lazurite.remote.api.Bindable;
 import dev.lazurite.quadz.common.entity.QuadcopterEntity;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
@@ -26,8 +26,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.Random;
 
-// Quadz specific
-public class QuadcopterItem extends Item implements IAnimatable {
+public class QuadcopterItem extends Item implements IAnimatable, Bindable.Item, Templated.Item {
     private final AnimationFactory factory = new AnimationFactory(this);
 
     public QuadcopterItem(Item.Properties properties) {
@@ -42,7 +41,7 @@ public class QuadcopterItem extends Item implements IAnimatable {
             return InteractionResultHolder.success(itemStack);
         } else {
             final var entity = new QuadcopterEntity(Quadz.QUADCOPTER_ENTITY, level);
-            Templated.get(itemStack).ifPresent(entity::copyFrom);
+            entity.copyFrom(Templated.get(itemStack));
             Bindable.get(itemStack).ifPresent(entity::copyFrom);
 
             if (hitResult.getType() == HitResult.Type.BLOCK) {

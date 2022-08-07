@@ -5,8 +5,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [ "dev.lazurite.quadz.Quadz" ],
-    "client": [ "dev.lazurite.quadz.Quadz" ],
-    "modmenu": [ "dev.lazurite.quadz.compat.ModMenuCompat" ]
+    "client": [ "dev.lazurite.quadz.client.QuadzClient" ]
   },
   "mixins": [
     {
@@ -16,15 +15,10 @@
     {
       "config": "quadz.client.mixins.json",
       "environment": "client"
-    },
-    {
-      "config": "quadz.compat.mixins.json",
-      "environment": "*"
     }
   ],
-  "accessWidener" : "quadz.accesswidener",
   "depends": {
-    "minecraft": ">=1.19",
+    "minecraft": ">=1.19.1",
     "fabricloader": ">=0.14.8",
     "fabric": "*",
     "geckolib3": ">=3",

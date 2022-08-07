@@ -2,6 +2,7 @@
 	"id" : "voyager",
 	"name" : "Voyager",
 	"author" : "BlueVista",
+	"modid" : "quadz",
 	"width" : 0.9,
 	"height" : 0.2,
 	"cameraX" : 0.43,

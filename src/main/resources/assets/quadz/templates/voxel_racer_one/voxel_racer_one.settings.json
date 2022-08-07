@@ -2,6 +2,7 @@
 	"id" : "voxel_racer_one",
 	"name" : "Voxel Racer 1",
 	"author" : "BlueVista",
+	"modid" : "quadz",
 	"width" : 0.55,
 	"height" : 0.3,
 	"cameraX" : 0.175,

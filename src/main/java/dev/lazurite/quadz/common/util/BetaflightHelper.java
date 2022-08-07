@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.common.util.tools;
+package dev.lazurite.quadz.common.util;
 
 public class BetaflightHelper {
 	public static double calculateRates(double rcCommand, double rcRate, double expo, double superRate, double delta) {
