@@ -4,7 +4,7 @@
 
 [![GitHub](https://img.shields.io/github/license/LazuriteMC/Quadz?color=A31F34&label=License&labelColor=8A8B8C)](https://github.com/LazuriteMC/Quadz/blob/development/LICENSE)
 [![Discord](https://img.shields.io/discord/719662192601071747?color=7289DA&label=Discord&labelColor=2C2F33&logo=Discord)](https://discord.gg/NNPPHN7b3P)
-[![Trello](https://img.shields.io/static/v1?label=Trello&message=Board&color=FFFFFF&logo=Trello&labelColor=0052CC)](https://trello.com/b/naSFhSWz/fpv-racing-mod)
+[![Trello](https://img.shields.io/static/v1?label=Trello&message=Board&color=FFFFFF&logo=Trello&labelColor=0052CC)](https://trello.com/b/naSFhSWz)
 
 Quadz adds flyable FPV drones to Minecraft using the [Fabric Modloader and API](https://fabricmc.net/). It also makes
 use of several libraries including [Rayon](https://github.com/lazuritemc/rayon), a rigid body simulation library for minecraft, which was
