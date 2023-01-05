@@ -17,12 +17,13 @@
       "environment": "client"
     }
   ],
+  "accessWidener": "quadz.accessWidener",
   "depends": {
-    "minecraft": ">=1.19.1",
-    "fabricloader": ">=0.14.8",
+    "minecraft": ">=1.19.3",
+    "fabricloader": ">=0.14",
     "fabric": "*",
-    "geckolib3": ">=3",
-    "rayon": ">=1.6.0"
+    "geckolib": ">=4",
+    "rayon": ">=1.6.2"
   },
   "breaks": {
     "immersive_portals": "*",
@@ -43,6 +44,14 @@
       "links": {
         "modmenu.discord": "https://discord.gg/NNPPHN7b3P"
       }
+    },
+    "loom:injected_interfaces": {
+      "net/minecraft/class_5498": [
+        "dev/lazurite/quadz/client/extension/CameraTypeExtension"
+      ],
+      "net/minecraft/class_1657": [
+        "dev/lazurite/quadz/common/extension/PlayerExtension"
+      ]
     }
   }
 }

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import dev.lazurite.quadz.Quadz;
+import dev.lazurite.quadz.client.render.osd.OnScreenDisplay;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;
@@ -11,7 +12,10 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class Config {
+public class Config {
+
+    public static int controllerId = -1;
+
     public static int pitch = 1;
     public static int yaw = 3;
     public static int roll = 0;
@@ -26,6 +30,14 @@ public final class Config {
     public static float rate = 0.7f;
     public static float superRate = 0.8f;
     public static float expo = 0.0f;
+
+    public static float deadzone = 0.05f;
+    public static boolean followLOS = true;
+    public static boolean renderFirstPerson = true;
+    public static boolean renderCameraInCenter = true;
+    public static int firstPersonFOV = 30;
+    public static boolean osdEnabled = true;
+    public static OnScreenDisplay.VelocityUnit velocityUnit = OnScreenDisplay.VelocityUnit.METERS_PER_SECOND;
 
     public static Path getConfigPath() {
         return FabricLoader.getInstance().getConfigDir().resolve("quadz.json");
@@ -47,6 +59,14 @@ public final class Config {
         config.add("rate", new JsonPrimitive(rate));
         config.add("superRate", new JsonPrimitive(superRate));
         config.add("expo", new JsonPrimitive(expo));
+        config.add("controllerId", new JsonPrimitive(controllerId));
+        config.add("deadzone", new JsonPrimitive(deadzone));
+        config.add("followLOS", new JsonPrimitive(followLOS));
+        config.add("renderFirstPerson", new JsonPrimitive(renderFirstPerson));
+        config.add("renderCameraInCenter", new JsonPrimitive(renderCameraInCenter));
+        config.add("firstPersonFOV", new JsonPrimitive(firstPersonFOV));
+        config.add("osdEnabled", new JsonPrimitive(osdEnabled));
+        config.add("velocityUnit", new JsonPrimitive(velocityUnit.toString()));
 
         try {
             Files.writeString(path, config.toString());
@@ -77,8 +97,17 @@ public final class Config {
             rate = config.get("rate").getAsFloat();
             superRate = config.get("superRate").getAsFloat();
             expo = config.get("expo").getAsFloat();
+            controllerId = config.get("controllerId").getAsInt();
+            deadzone = config.get("deadzone").getAsFloat();
+            followLOS = config.get("followLOS").getAsBoolean();
+            renderFirstPerson = config.get("renderFirstPerson").getAsBoolean();
+            renderCameraInCenter = config.get("renderCameraInCenter").getAsBoolean();
+            firstPersonFOV = config.get("firstPersonFOV").getAsInt();
+            osdEnabled = config.get("osdEnabled").getAsBoolean();
+            velocityUnit = OnScreenDisplay.VelocityUnit.valueOf(config.get("velocityUnit").getAsString());
         } catch(IOException e) {
             Quadz.LOGGER.error(e);
         }
     }
+
 }

@@ -1,0 +1,12 @@
+accessWidener	v1	named
+
+extendable method net/minecraft/world/entity/Entity getPosition (F)Lnet/minecraft/world/phys/Vec3;
+accessible field net/minecraft/client/resources/SplashManager splashes Ljava/util/List;
+accessible field net/minecraft/client/Camera xRot F
+accessible field net/minecraft/client/Camera yRot F
+accessible field net/minecraft/client/Camera forwards Lorg/joml/Vector3f;
+accessible field net/minecraft/client/Camera up Lorg/joml/Vector3f;
+accessible field net/minecraft/client/Camera left Lorg/joml/Vector3f;
+accessible field net/minecraft/client/Camera rotation Lorg/joml/Quaternionf;
+accessible method net/minecraft/client/Camera move (DDD)V
+accessible method net/minecraft/client/Camera setPosition (Lnet/minecraft/world/phys/Vec3;)V

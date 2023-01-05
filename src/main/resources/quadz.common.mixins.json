@@ -4,7 +4,8 @@
   "package": "dev.lazurite.quadz.common.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "Matrix4fMixin"
+    "PlayerMixin",
+    "ServerPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

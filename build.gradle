@@ -7,13 +7,22 @@ plugins {
 group 'dev.lazurite'
 version quadz_version
 
+loom {
+	accessWidenerPath = file("src/main/resources/quadz.accessWidener")
+}
+
 repositories {
+	maven {
+		name 'Lazurite'
+		url 'https://lazurite.dev/releases'
+	}
+
+	maven {
+		name 'Gecko'
+		url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+	}
+
 	mavenLocal()
-	maven { url 'https://lazurite.dev/releases' }
-	maven { url 'https://maven.shedaniel.me' }
-	maven { url 'https://maven.modmuss50.me' }
-	maven { url 'https://maven.terraformersmc.com/releases' }
-	maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
 }
 
 dependencies {
@@ -24,14 +33,11 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:$fabric_loader_version"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_api_version"
 
-	// Rayon
-	modImplementation "dev.lazurite:rayon-fabric:$rayon_version"
-
-	// Remote
-	modImplementation "dev.lazurite:remote:$remote_version"
-
-	// Form
-	modImplementation "dev.lazurite:form:$form_version"
+	// Lazurite
+//	modApi include("dev.lazurite:lattice:$lattice_version")
+	modApi "dev.lazurite:rayon-fabric:$rayon_version"
+//	modApi include("dev.lazurite:corduroy:$corduroy_version")
+	modApi include("dev.lazurite:form:$form_version")
 }
 
 java {
