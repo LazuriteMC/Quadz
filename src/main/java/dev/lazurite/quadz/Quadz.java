@@ -8,7 +8,6 @@ import dev.lazurite.quadz.common.hooks.ServerNetworkEventHooks;
 import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.item.RemoteItem;
-import dev.lazurite.toolbox.api.event.ServerEvents;
 import dev.lazurite.toolbox.api.network.PacketRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -58,7 +57,6 @@ public class Quadz implements ModInitializer {
         LOGGER.info("Goggles down, thumbs up!");
 
         // Events
-        ServerEvents.Tick.START_SERVER_TICK.register(ServerEventHooks::onServerTick);
         TemplateEvents.ENTITY_TEMPLATE_CHANGED.register(ServerEventHooks::onEntityTemplateChanged);
         TemplateEvents.TEMPLATE_LOADED.register(ServerEventHooks::onTemplateLoaded);
         ItemGroupEvents.modifyEntriesEvent(CREATIVE_MODE_TAB).register(ServerEventHooks::onRebuildCreativeTab);

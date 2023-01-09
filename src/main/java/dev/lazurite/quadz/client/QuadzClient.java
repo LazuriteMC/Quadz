@@ -2,6 +2,7 @@ package dev.lazurite.quadz.client;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.render.entity.QuadcopterEntityRenderer;
+import dev.lazurite.quadz.client.render.item.QuadcopterItemRenderer;
 import dev.lazurite.quadz.common.util.Bindable;
 import dev.lazurite.quadz.common.util.Search;
 import dev.lazurite.quadz.common.util.event.ClickEvents;
@@ -22,6 +23,8 @@ import java.util.Optional;
 
 public class QuadzClient implements ClientModInitializer {
 
+    public static final QuadcopterItemRenderer QUADCOPTER_ITEM_RENDERER = new QuadcopterItemRenderer();
+
     public static boolean isInThirdPerson() {
         return !Minecraft.getInstance().options.getCameraType().isFirstPerson();
     }
@@ -33,7 +36,7 @@ public class QuadzClient implements ClientModInitializer {
         var player = Minecraft.getInstance().player;
 
         if (player != null) {
-            return Bindable.get(player.getMainHandItem()).flatMap(remote -> Search.byBindId(player.level, player.position(), remote.getBindId(), 256));
+            return Bindable.get(player.getMainHandItem()).flatMap(remote -> Search.forQuadWithBindId(player.level, player.position(), remote.getBindId(), 256));
     }
 
         return Optional.empty();

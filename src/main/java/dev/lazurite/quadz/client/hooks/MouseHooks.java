@@ -10,12 +10,16 @@ import net.minecraft.client.Minecraft;
 
 public class MouseHooks {
 
+    private static boolean shouldGrabMouse() {
+        return Minecraft.getInstance().screen == null && Minecraft.getInstance().getCameraEntity() instanceof Quadcopter;
+    }
+
     /**
      * Controls whether the {@link KeyMapping#click} method is called based on
      * whether the player is flying a {@link Quadcopter}.
      */
     public static void onClick(InputConstants.Key key) {
-        if (Minecraft.getInstance().getCameraEntity() instanceof Quadcopter) {
+        if (shouldGrabMouse()) {
             if (key.getName().equals("key.mouse.left")) {
                 ClickEvents.LEFT_CLICK_EVENT.invoke();
             } else if (key.getName().equals("key.mouse.right")) {
@@ -31,14 +35,14 @@ public class MouseHooks {
      * whether the player is flying a {@link Quadcopter}.
      */
     public static void onSet(InputConstants.Key key, boolean pressed) {
-        KeyMapping.set(key, !(Minecraft.getInstance().getCameraEntity() instanceof Quadcopter) && pressed);
+        KeyMapping.set(key, !(shouldGrabMouse()) && pressed);
     }
 
     /**
      * Prevents the player from turning using their mouse under the following conditions.
      */
     public static boolean cancelTurnPlayer() {
-        return Minecraft.getInstance().getCameraEntity() instanceof Quadcopter || (QuadzClient.getQuadcopter().isPresent() && Config.followLOS);
+        return shouldGrabMouse() || (QuadzClient.getQuadcopter().isPresent() && Config.followLOS);
     }
 
 }

@@ -44,10 +44,11 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
 
     public static final EntityDataAccessor<String> TEMPLATE = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> PREV_TEMPLATE = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.STRING);
-    public static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> ARMED = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Integer> BIND_ID = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> CAMERA_ANGLE = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.INT);
 
@@ -67,9 +68,9 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
     public Quadcopter(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
         this.noCulling = true;
-        this.rigidBody.setBuoyancyType(ElementRigidBody.BuoyancyType.NONE);
+        this.rigidBody.setBuoyancyType(ElementRigidBody.BuoyancyType.WATER);
+        this.rigidBody.setDragType(ElementRigidBody.DragType.SIMPLE);
     }
-
 
     @Override
     public void tick() {
@@ -90,7 +91,14 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
             });
         }
 
-        Search.withPlayer(this).ifPresent(player -> {
+        Search.forPlayer(this).ifPresentOrElse(player -> {
+            this.setArmed(true);
+            player.syncJoystick();
+
+            if (player instanceof ServerPlayer serverPlayer && serverPlayer.getCamera() == this && !player.equals(this.getRigidBody().getPriorityPlayer())) {
+                this.getRigidBody().prioritize(player);
+            }
+
             var pitch = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "pitch"));
             var yaw = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "yaw"));
             var roll = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "roll"));
@@ -133,11 +141,13 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
             } else {
                 Quadz.LOGGER.warn("Infinite thrust force!");
             }
-        });
-    }
+        }, () -> {
+            this.setArmed(false);
 
-    public boolean isActive() {
-        return false;
+            if (!this.level.isClientSide) {
+                this.getRigidBody().prioritize(null);
+            }
+        });
     }
 
     public float getThrust() {
@@ -237,7 +247,7 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
         super.defineSynchedData();
         getEntityData().define(TEMPLATE, "");
         getEntityData().define(PREV_TEMPLATE, "");
-        getEntityData().define(ACTIVE, false);
+        getEntityData().define(ARMED, false);
         getEntityData().define(BIND_ID, 0);
         getEntityData().define(CAMERA_ANGLE, 0);
     }
@@ -293,12 +303,13 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
-        if (this.isActive()) {
-            controllerRegistrar.add(new AnimationController<>(this, 0, state -> state.setAndContinue(
-                    DefaultAnimations.IDLE.thenPlay("armed"))),
-                    DefaultAnimations.genericLivingController(this)
-            );
-        }
+        controllerRegistrar.add(new AnimationController<>(this, 0, state -> {
+            if (this.isArmed()) {
+                return state.setAndContinue(RawAnimation.begin().thenLoop("armed"));
+            }
+
+            return PlayState.STOP;
+        }));
     }
 
     @Override
@@ -308,21 +319,30 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
 
     @Override
     public void setBindId(int bindId) {
-
+        this.getEntityData().set(BIND_ID, bindId);
     }
 
     @Override
     public int getBindId() {
-        return 0;
+        return this.getEntityData().get(BIND_ID);
     }
 
     @Override
     public String getTemplate() {
-        return getEntityData().get(TEMPLATE);
+        return this.getEntityData().get(TEMPLATE);
     }
 
     @Override
     public void setTemplate(String template) {
-        getEntityData().set(TEMPLATE, template);
+        this.getEntityData().set(TEMPLATE, template);
     }
+
+    public void setArmed(boolean armed) {
+        this.getEntityData().set(ARMED, armed);
+    }
+
+    public boolean isArmed() {
+        return this.getEntityData().get(ARMED);
+    }
+
 }

@@ -28,7 +28,7 @@ public class PlayerHooks {
         joystickValues.put(axis, value);
     }
 
-    public static void onSync(Player player) {
+    public static void onSyncJoystick(Player player) {
         var level = player.level;
         var joysticks = new HashMap<>(joystickValues);
 

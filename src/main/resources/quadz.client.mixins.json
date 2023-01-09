@@ -8,9 +8,11 @@
     "CameraTypeMixin",
     "GameRendererMixin",
     "GuiMixin",
+    "ItemRendererMixin",
     "LevelRendererMixin",
     "MinecraftMixin",
-    "MouseHandlerMixin"
+    "MouseHandlerMixin",
+    "PauseScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

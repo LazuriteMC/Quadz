@@ -17,7 +17,7 @@ public class LevelRendererMixin {
                     target = "Lnet/minecraft/client/Camera;isDetached()Z"
             )
     )
-    public boolean renderLevel_isDetached(Camera camera) {
+    public boolean renderLevel$isDetached(Camera camera) {
         return RenderHooks.isDetached(camera);
     }
 

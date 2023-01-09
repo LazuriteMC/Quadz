@@ -10,3 +10,6 @@ accessible field net/minecraft/client/Camera left Lorg/joml/Vector3f;
 accessible field net/minecraft/client/Camera rotation Lorg/joml/Quaternionf;
 accessible method net/minecraft/client/Camera move (DDD)V
 accessible method net/minecraft/client/Camera setPosition (Lnet/minecraft/world/phys/Vec3;)V
+accessible method net/minecraft/client/gui/screens/Screen addRenderableWidget (Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;
+accessible field net/minecraft/client/gui/components/GridWidget children Ljava/util/List;
+accessible field net/minecraft/client/gui/screens/PauseScreen disconnectButton Lnet/minecraft/client/gui/components/Button;

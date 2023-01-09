@@ -1,7 +1,7 @@
 package dev.lazurite.quadz.common.util;
 
+import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.common.entity.Quadcopter;
-import dev.lazurite.quadz.common.util.Bindable;
 import dev.lazurite.toolbox.api.util.PlayerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
@@ -32,7 +32,7 @@ public interface Search {
      * @param server the {@link MinecraftServer} to use
      * @return {@link List} of {@link Quadcopter}s
      */
-    static Set<Quadcopter> allBeingViewed(MinecraftServer server) {
+    static Set<Quadcopter> forAllViewed(MinecraftServer server) {
         return server.getPlayerList().getPlayers().stream().filter(player -> player.getCamera() instanceof Quadcopter)
                 .map(player -> (Quadcopter) player.getCamera()).collect(Collectors.toSet());
     }
@@ -42,7 +42,7 @@ public interface Search {
      * @param level the {@link ServerLevel} to use
      * @return {@link List} of {@link Quadcopter}s
      */
-    static Set<Quadcopter> allBeingViewed(ServerLevel level) {
+    static Set<Quadcopter> forAllViewed(ServerLevel level) {
         return level.players().stream().filter(player -> player.getCamera() instanceof Quadcopter)
                 .map(player -> (Quadcopter) player.getCamera()).collect(Collectors.toSet());
     }
@@ -54,7 +54,7 @@ public interface Search {
      * @param range the maximum range
      * @return a {@link List} of {@link Quadcopter} objects
      */
-    static List<Quadcopter> allInArea(Level level, Vec3 origin, int range) {
+    static List<Quadcopter> forAllWithinRange(Level level, Vec3 origin, int range) {
         return level.getEntitiesOfClass(Quadcopter.class, new AABB(new BlockPos(origin)).inflate(range), entity -> true);
     }
 
@@ -66,11 +66,10 @@ public interface Search {
      * @param range the maximum range
      * @return the bound {@link Quadcopter}
      */
-    static Optional<Quadcopter> byBindId(Level level, Vec3 origin, int bindId, int range) {
-        final var entities = level.getEntities((Entity) null,
+    static Optional<Quadcopter> forQuadWithBindId(Level level, Vec3 origin, int bindId, int range) {
+        var entities = level.getEntities((Entity) null,
                 new AABB(new BlockPos(origin)).inflate(range),
-                entity -> entity instanceof Quadcopter remoteControllable && remoteControllable.isBoundTo(bindId));
-
+                entity -> entity instanceof Quadcopter quadcopter && quadcopter.isBoundTo(bindId));
         return entities.size() > 0 ? Optional.of((Quadcopter) entities.get(0)) : Optional.empty();
     }
 
@@ -82,7 +81,7 @@ public interface Search {
      * @param predicate a predicate to narrow the search
      * @return the nearest {@link Quadcopter}
      */
-    static Optional<Quadcopter> nearest(Level level, Vec3 origin, int range, @Nullable Predicate<LivingEntity> predicate) {
+    static Optional<Quadcopter> forNearestQuad(Level level, Vec3 origin, int range, @Nullable Predicate<LivingEntity> predicate) {
         return Optional.ofNullable(level.getNearestEntity(
                 Quadcopter.class,
                 TargetingConditions.DEFAULT.selector(predicate),
@@ -95,15 +94,15 @@ public interface Search {
      * @param quadcopter the {@link Quadcopter} to use in the search
      * @return the matching {@link Player}
      */
-    static Optional<? extends Player> withPlayer(Quadcopter quadcopter) {
+    static Optional<? extends Player> forPlayer(Quadcopter quadcopter) {
         if (quadcopter.getLevel().isClientSide()) {
-            final var level = quadcopter.getLevel();
-            return level.players().stream().filter(player -> Bindable.get(player.getMainHandItem()).filter(bindable -> quadcopter.getBindId() == bindable.getBindId()).isPresent()).findFirst();
+            return quadcopter.getLevel().players().stream()
+                    .filter(player -> Bindable.get(player.getMainHandItem(), quadcopter).isPresent() && player.getMainHandItem().getItem() == Quadz.REMOTE_ITEM)
+                    .findFirst();
         }
 
         return PlayerUtil.tracking(quadcopter)
-                .stream().filter(player -> Bindable.get(player.getMainHandItem())
-                        .filter(bindable -> quadcopter.getBindId() == bindable.getBindId()).isPresent())
+                .stream().filter(player -> Bindable.get(player.getMainHandItem(), quadcopter).isPresent())
                 .findFirst();
     }
 

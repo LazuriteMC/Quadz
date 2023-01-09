@@ -31,14 +31,14 @@ public class ServerNetworkEventHooks {
         Optional.ofNullable(player.getServer()).ifPresent(server -> {
             server.execute(() -> {
                 if (player.getCamera() instanceof Quadcopter quadcopter) {
-                    var allQuadcopters = new ArrayList<>(Search.allBeingViewed(server));
+                    var allQuadcopters = new ArrayList<>(Search.forAllViewed(server));
                     var index = Math.max(allQuadcopters.lastIndexOf(quadcopter) + spectateDirection, 0);
                     var entity = allQuadcopters.get(index % allQuadcopters.size());
                     player.setCamera(entity);
                     CameraEvents.SWITCH_CAMERA_EVENT.invoke(player.getCamera(), entity);
                 } else {
                     Bindable.get(player.getMainHandItem()).ifPresent(bindable -> {
-                        Search.byBindId(
+                        Search.forQuadWithBindId(
                                         player.getLevel(),
                                         player.getCamera().position(),
                                         bindable.getBindId(),
@@ -46,7 +46,7 @@ public class ServerNetworkEventHooks {
                                 .ifPresentOrElse(entity -> {
                                     player.setCamera(entity);
                                     CameraEvents.SWITCH_CAMERA_EVENT.invoke(player.getCamera(), entity);
-                                }, () -> Search.allBeingViewed(server).stream().findFirst().ifPresent(entity -> {
+                                }, () -> Search.forAllViewed(server).stream().findFirst().ifPresent(entity -> {
                                     player.setCamera(entity);
                                     CameraEvents.SWITCH_CAMERA_EVENT.invoke(player.getCamera(), entity);
                                 }));

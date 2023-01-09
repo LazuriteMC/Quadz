@@ -53,7 +53,7 @@ public class ClientEventHooks {
         final var client = Minecraft.getInstance();
 
         if (!client.isPaused()) {
-            client.player.sync();
+            client.player.syncJoystick();
 
             if (client.options.keyShift.isDown() && client.cameraEntity instanceof Quadcopter) {
                 client.options.getCameraType().reset();

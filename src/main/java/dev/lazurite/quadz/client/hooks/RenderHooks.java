@@ -44,8 +44,8 @@ public class RenderHooks {
         if (Config.followLOS) {
             QuadzClient.getQuadcopter().ifPresent(quadcopter -> {
                 if (Minecraft.getInstance().player.hasLineOfSight(quadcopter)) {
-                    /* Get the difference in position between the camera and the remote controllable */
-                    var delta = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(quadcopter.getPosition(tickDelta));
+                    /* Get the difference in position between the player and the quadcopter */
+                    var delta = Minecraft.getInstance().player.getEyePosition().subtract(quadcopter.getPosition(tickDelta));
 
                     /* Set new pitch and yaw */
 					Minecraft.getInstance().player.setYRot((float) Math.toDegrees(Math.atan2(delta.z, delta.x)) + 90);
@@ -100,10 +100,6 @@ public class RenderHooks {
         }
 
         return quaternion;
-    }
-
-    public static boolean isCameraQuadcopter() {
-        return Minecraft.getInstance().getCameraEntity() instanceof Quadcopter;
     }
 
     public static Object onGetFOV(OptionInstance<Integer> optionInstance) {

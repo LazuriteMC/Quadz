@@ -2,6 +2,8 @@ package dev.lazurite.quadz.client.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.lazurite.quadz.client.hooks.RenderHooks;
+import dev.lazurite.quadz.common.entity.Quadcopter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,14 +24,14 @@ public abstract class GuiMixin {
 
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     private void renderCrosshair_HEAD(PoseStack poseStack, CallbackInfo info) {
-        if (RenderHooks.isCameraQuadcopter()) {
+        if (Minecraft.getInstance().getCameraEntity() instanceof Quadcopter) {
             info.cancel();
         }
     }
 
     @Inject(method = "renderExperienceBar", at = @At("HEAD"), cancellable = true)
     public void renderExperienceBar_HEAD(PoseStack poseStack, int i, CallbackInfo info) {
-        if (RenderHooks.isCameraQuadcopter()) {
+        if (Minecraft.getInstance().getCameraEntity() instanceof Quadcopter) {
             info.cancel();
         }
     }

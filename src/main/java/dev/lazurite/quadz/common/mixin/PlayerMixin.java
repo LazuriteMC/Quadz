@@ -27,8 +27,8 @@ public class PlayerMixin implements PlayerExtension {
     }
 
     @Override
-    public void sync() {
-        PlayerHooks.onSync((Player) (Object) this);
+    public void syncJoystick() {
+        PlayerHooks.onSyncJoystick((Player) (Object) this);
     }
 
 }

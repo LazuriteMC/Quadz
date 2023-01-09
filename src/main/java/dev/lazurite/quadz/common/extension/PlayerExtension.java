@@ -18,7 +18,7 @@ public interface PlayerExtension {
         return new HashMap<>();
     }
 
-    default void sync() {
+    default void syncJoystick() {
     }
 
 }

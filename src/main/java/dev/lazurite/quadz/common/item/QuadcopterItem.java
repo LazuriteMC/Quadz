@@ -4,7 +4,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import dev.lazurite.form.api.Templated;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.client.render.item.QuadcopterItemRenderer;
+import dev.lazurite.quadz.client.QuadzClient;
 import dev.lazurite.quadz.common.util.Bindable;
 import dev.lazurite.quadz.client.render.entity.QuadcopterEntityRenderer;
 import dev.lazurite.quadz.common.entity.Quadcopter;
@@ -20,6 +20,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -81,15 +82,9 @@ public class QuadcopterItem extends Item implements GeoItem {
     @Override
     public void createRenderer(Consumer<Object> consumer) {
         consumer.accept(new RenderProvider() {
-            private QuadcopterItemRenderer renderer;
-
             @Override
             public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                if (this.renderer == null) {
-                    this.renderer = new QuadcopterItemRenderer();
-                }
-
-                return this.renderer;
+                return QuadzClient.QUADCOPTER_ITEM_RENDERER;
             }
         });
     }
@@ -107,6 +102,12 @@ public class QuadcopterItem extends Item implements GeoItem {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.cache;
+    }
+
+    @Override
+    public @NotNull String getDescriptionId(ItemStack itemStack) {
+        var template = Templated.get(itemStack).getTemplate();
+        return "template.quadz." + template;
     }
 
 }

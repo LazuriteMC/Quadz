@@ -14,7 +14,7 @@ import java.nio.file.Path;
 
 public class Config {
 
-    public static int controllerId = -1;
+    public static int controllerId = 0;
 
     public static int pitch = 1;
     public static int yaw = 3;
@@ -24,7 +24,7 @@ public class Config {
     public static boolean pitchInverted = false;
     public static boolean yawInverted = true;
     public static boolean rollInverted = false;
-    public static boolean throttleInverted = true;
+    public static boolean throttleInverted = false;
     public static boolean throttleInCenter = false;
 
     public static float rate = 0.7f;

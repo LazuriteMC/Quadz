@@ -2,6 +2,7 @@ package dev.lazurite.quadz.client.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.lazurite.quadz.client.hooks.RenderHooks;
+import dev.lazurite.quadz.common.entity.Quadcopter;
 import net.minecraft.client.Camera;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.renderer.GameRenderer;
@@ -51,7 +52,7 @@ public class GameRendererMixin {
 
     @Inject(method = "renderItemInHand", at = @At("HEAD"), cancellable = true)
     private void renderItemInHand$HEAD(PoseStack poseStack, Camera camera, float f, CallbackInfo info) {
-        if (RenderHooks.isCameraQuadcopter()) {
+        if (camera.getEntity() instanceof Quadcopter) {
             info.cancel();
         }
     }
