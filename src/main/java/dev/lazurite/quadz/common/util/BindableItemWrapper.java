@@ -7,12 +7,12 @@ import net.minecraft.world.item.ItemStack;
  * Stores the bind id in the transmitter through the {@link Bindable} interface.
  * @see Bindable
  */
-public class BindableItemStack implements Bindable {
+public class BindableItemWrapper implements Bindable {
 
     private final ItemStack stack;
     private final CompoundTag tag;
 
-    public BindableItemStack(ItemStack stack) {
+    public BindableItemWrapper(ItemStack stack) {
         this.stack = stack;
         this.tag = this.stack.getOrCreateTagElement("bindable");
     }
@@ -37,8 +37,8 @@ public class BindableItemStack implements Bindable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof BindableItemStack) {
-            return getBindId() == ((BindableItemStack) obj).getBindId();
+        if (obj instanceof BindableItemWrapper) {
+            return getBindId() == ((BindableItemWrapper) obj).getBindId();
         }
 
         return false;

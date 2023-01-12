@@ -2,7 +2,7 @@ package dev.lazurite.quadz.client.render.entity;
 
 import com.jme3.math.Quaternion;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.lazurite.form.impl.client.render.renderer.TemplatedEntityRenderer;
+import dev.lazurite.form.impl.client.render.TemplatedEntityRenderer;
 import dev.lazurite.quadz.common.entity.Quadcopter;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
 import net.minecraft.client.renderer.MultiBufferSource;

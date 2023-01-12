@@ -21,9 +21,15 @@ import org.joml.Quaternionf;
 
 import java.util.Map;
 
+import static dev.lazurite.quadz.client.QuadzClient.STATIC_SHADER_COLOR;
 import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 
 public class RenderHooks {
+
+    public static void onRenderShaders(float tickDelta) {
+        STATIC_SHADER_COLOR.set((float) Math.random(), (float) Math.random(), (float) Math.random(), (float) Math.random());
+        QuadzClient.STATIC_SHADER.render(tickDelta);
+    }
 
     /**
      * Rotates the camera according to the quadcopter's perspective.

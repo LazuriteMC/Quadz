@@ -2,9 +2,6 @@ package dev.lazurite.quadz.common.util.event;
 
 import dev.lazurite.toolbox.api.event.Event;
 
-/**
- * @since 2.0.0
- */
 public class JoystickEvents {
     public static final Event<JoystickConnectEvent> JOYSTICK_CONNECT = Event.create();
     public static final Event<JoystickDisconnectEvent> JOYSTICK_DISCONNECT = Event.create();

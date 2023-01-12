@@ -20,7 +20,7 @@ public interface Bindable {
     }
 
     static Optional<Bindable> get(ItemStack stack) {
-        return Optional.ofNullable(stack.getItem() instanceof RemoteItem || stack.getItem() instanceof QuadcopterItem ? new BindableItemStack(stack) : null);
+        return Optional.ofNullable(stack.getItem() instanceof RemoteItem || stack.getItem() instanceof QuadcopterItem ? new BindableItemWrapper(stack) : null);
     }
 
     static Optional<Bindable> get(ItemStack stack, int bindId) {

@@ -8,7 +8,6 @@
     "CameraTypeMixin",
     "GameRendererMixin",
     "GuiMixin",
-    "ItemRendererMixin",
     "LevelRendererMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",

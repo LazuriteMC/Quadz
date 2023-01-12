@@ -3,11 +3,10 @@ package dev.lazurite.quadz.common.item;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import dev.lazurite.form.api.Templated;
+import dev.lazurite.form.api.render.FormRegistry;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.client.QuadzClient;
 import dev.lazurite.quadz.common.util.Bindable;
 import dev.lazurite.quadz.client.render.entity.QuadcopterEntityRenderer;
-import dev.lazurite.quadz.common.entity.Quadcopter;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -34,10 +33,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Represents a quadcopter, allows the player to spawn with right click on the ground.
+ * Represents a quadcopter, allows the player to spawn with right-click on the ground.
  * @see QuadcopterEntityRenderer
  */
-public class QuadcopterItem extends Item implements GeoItem {
+public class QuadcopterItem extends Item implements GeoItem, Templated.Item {
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
@@ -54,7 +53,7 @@ public class QuadcopterItem extends Item implements GeoItem {
         if (level.isClientSide()) {
             return InteractionResultHolder.success(itemStack); // wave hand
         } else {
-            var entity = new Quadcopter(Quadz.QUADCOPTER, level);
+            var entity = Quadz.QUADCOPTER.create(level);
             entity.copyFrom(Templated.get(itemStack));
             Bindable.get(itemStack).ifPresent(entity::copyFrom);
 
@@ -84,7 +83,7 @@ public class QuadcopterItem extends Item implements GeoItem {
         consumer.accept(new RenderProvider() {
             @Override
             public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                return QuadzClient.QUADCOPTER_ITEM_RENDERER;
+                return FormRegistry.getItemRenderer(QuadcopterItem.this);
             }
         });
     }

@@ -23,6 +23,15 @@ repositories {
 		url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
 	}
 
+	maven {
+		name 'Ladysnake Mods'
+		url 'https://ladysnake.jfrog.io/artifactory/mods'
+		content {
+			includeGroup 'io.github.ladysnake'
+			includeGroupByRegex 'io\\.github\\.onyxstudios.*'
+		}
+	}
+
 	mavenLocal()
 }
 
@@ -35,10 +44,13 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_api_version"
 
 	// Lazurite
-	modApi "dev.lazurite:rayon-fabric:$rayon_version"
-	modApi include("dev.lazurite:form:$form_version")
+	modImplementation "dev.lazurite:rayon-fabric:$rayon_version"
+	modImplementation include("dev.lazurite:form:$form_version")
 //	modApi include("dev.lazurite:corduroy:$corduroy_version")
 //	modApi include("dev.lazurite:lattice:$lattice_version")
+
+	// Other
+	modImplementation include("io.github.ladysnake:satin:${satin_version}") { transitive false }
 }
 
 java {
