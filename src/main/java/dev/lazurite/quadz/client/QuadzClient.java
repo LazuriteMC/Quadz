@@ -18,7 +18,8 @@ import dev.lazurite.toolbox.api.network.PacketRegistry;
 import ladysnake.satin.api.event.ShaderEffectRenderCallback;
 import ladysnake.satin.api.managed.ManagedShaderEffect;
 import ladysnake.satin.api.managed.ShaderEffectManager;
-import ladysnake.satin.api.managed.uniform.Uniform4f;
+import ladysnake.satin.api.managed.uniform.Uniform1f;
+import ladysnake.satin.api.managed.uniform.Uniform3f;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -33,7 +34,11 @@ public class QuadzClient implements ClientModInitializer {
     // Shaders
     public static final ManagedShaderEffect STATIC_SHADER = ShaderEffectManager.getInstance()
             .manage(new ResourceLocation(Quadz.MODID, "shaders/post/static.json"));
-    public static final Uniform4f STATIC_SHADER_COLOR = STATIC_SHADER.findUniform4f("ColorModulate");
+    public static final ManagedShaderEffect FISHEYE_SHADER = ShaderEffectManager.getInstance()
+            .manage(new ResourceLocation(Quadz.MODID, "shaders/post/fisheye.json"));
+    public static final Uniform1f STATIC_TIMER = STATIC_SHADER.findUniform1f("Time");
+    public static final Uniform1f STATIC_AMOUNT = STATIC_SHADER.findUniform1f("Amount");
+    public static final Uniform1f FISHEYE_AMOUNT = FISHEYE_SHADER.findUniform1f("Amount");
 
     public static boolean isInThirdPerson() {
         return !Minecraft.getInstance().options.getCameraType().isFirstPerson();

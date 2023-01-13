@@ -4,7 +4,7 @@
   ],
   "passes": [
     {
-      "name": "quadz:static",
+      "name": "quadz:fisheye",
       "intarget": "minecraft:main",
       "outtarget": "swap"
     },

@@ -38,6 +38,9 @@ public class Config {
     public static int firstPersonFOV = 30;
     public static boolean osdEnabled = true;
     public static OnScreenDisplay.VelocityUnit velocityUnit = OnScreenDisplay.VelocityUnit.METERS_PER_SECOND;
+    public static boolean videoInterferenceEnabled = false;
+    public static boolean fisheyeEnabled = true;
+    public static float fisheyeAmount = 0.8f;
 
     public static Path getConfigPath() {
         return FabricLoader.getInstance().getConfigDir().resolve("quadz.json");
@@ -67,6 +70,9 @@ public class Config {
         config.add("firstPersonFOV", new JsonPrimitive(firstPersonFOV));
         config.add("osdEnabled", new JsonPrimitive(osdEnabled));
         config.add("velocityUnit", new JsonPrimitive(velocityUnit.toString()));
+        config.add("videoInterferenceEnabled", new JsonPrimitive(videoInterferenceEnabled));
+        config.add("fisheyeEnabled", new JsonPrimitive(fisheyeEnabled));
+        config.add("fisheyeAmount", new JsonPrimitive(fisheyeAmount));
 
         try {
             Files.writeString(path, config.toString());
@@ -105,6 +111,9 @@ public class Config {
             firstPersonFOV = config.get("firstPersonFOV").getAsInt();
             osdEnabled = config.get("osdEnabled").getAsBoolean();
             velocityUnit = OnScreenDisplay.VelocityUnit.valueOf(config.get("velocityUnit").getAsString());
+            videoInterferenceEnabled = config.get("videoInterferenceEnabled").getAsBoolean();
+            fisheyeEnabled = config.get("fisheyeEnabled").getAsBoolean();
+            fisheyeAmount = config.get("fisheyeAmount").getAsFloat();
         } catch(IOException e) {
             Quadz.LOGGER.error(e);
         }

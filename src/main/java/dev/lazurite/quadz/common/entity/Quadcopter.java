@@ -56,6 +56,8 @@ import java.util.Optional;
 
 public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Templated, GeoEntity, Bindable {
 
+    public static final int MAX_RANGE = 300;
+
     public static final EntityDataAccessor<String> TEMPLATE = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> PREV_TEMPLATE = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<Boolean> ARMED = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.BOOLEAN);

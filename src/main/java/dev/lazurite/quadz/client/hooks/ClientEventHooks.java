@@ -1,6 +1,7 @@
 package dev.lazurite.quadz.client.hooks;
 
 import dev.lazurite.quadz.Quadz;
+import dev.lazurite.quadz.client.QuadzClient;
 import dev.lazurite.quadz.common.util.JoystickOutput;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.render.screen.ControllerConnectedToast;
@@ -13,6 +14,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ClientEventHooks {
+
+    public static float quadDistanceFromPlayer = 0.0f;
 
     public static void onPostLogin(Minecraft minecraft, ClientLevel level, LocalPlayer player) {
         Config.load();
@@ -31,6 +34,8 @@ public class ClientEventHooks {
             JoystickOutput.getAxisValue(minecraft.player, Config.roll, new ResourceLocation(Quadz.MODID, "roll"), Config.rollInverted, false);
             JoystickOutput.getAxisValue(minecraft.player, Config.throttle, new ResourceLocation(Quadz.MODID, "throttle"), Config.throttleInverted, Config.throttleInCenter);
         }
+
+        quadDistanceFromPlayer = QuadzClient.getQuadcopter().map(quadcopter -> quadcopter.distanceTo(minecraft.player)).orElse(0.0f);
     }
 
     public static void onJoystickConnect(int id, String name) {

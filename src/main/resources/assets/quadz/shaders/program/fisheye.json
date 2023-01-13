@@ -5,7 +5,7 @@
     "dstrgb": "1-srcalpha"
   },
   "vertex": "blit",
-  "fragment": "quadz:static",
+  "fragment": "quadz:fisheye",
   "attributes": [ "Position" ],
   "samplers": [
     {
@@ -26,16 +26,10 @@
       "values": [ 1.0, 1.0 ]
     },
     {
-      "name": "Time",
-      "type": "float",
-      "count": 1,
-      "values": [ 0.0 ]
-    },
-    {
       "name": "Amount",
       "type": "float",
       "count": 1,
-      "values": [ 0.0 ]
+      "values": [ 0.8 ]
     }
   ]
 }

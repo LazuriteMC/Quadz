@@ -10,25 +10,36 @@ import dev.lazurite.quadz.client.QuadzClient;
 import dev.lazurite.quadz.client.render.osd.OnScreenDisplay;
 import dev.lazurite.quadz.common.entity.Quadcopter;
 import dev.lazurite.rayon.impl.bullet.math.Convert;
+import dev.lazurite.rayon.impl.bullet.thread.util.Clock;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.Font;
+import net.minecraft.util.Mth;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import java.util.Map;
 
-import static dev.lazurite.quadz.client.QuadzClient.STATIC_SHADER_COLOR;
 import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 
 public class RenderHooks {
 
+    private static final Clock clock = new Clock();
+
     public static void onRenderShaders(float tickDelta) {
-        STATIC_SHADER_COLOR.set((float) Math.random(), (float) Math.random(), (float) Math.random(), (float) Math.random());
-        QuadzClient.STATIC_SHADER.render(tickDelta);
+        if (QuadzClient.STATIC_SHADER.isInitialized() && Config.videoInterferenceEnabled) {
+            QuadzClient.STATIC_AMOUNT.set(Mth.clamp(ClientEventHooks.quadDistanceFromPlayer / Quadcopter.MAX_RANGE, 0.0f, 1.0f));
+            QuadzClient.STATIC_TIMER.set(clock.get());
+            QuadzClient.STATIC_SHADER.render(tickDelta);
+        }
+
+        if (QuadzClient.FISHEYE_SHADER.isInitialized() && Config.fisheyeEnabled) {
+            QuadzClient.FISHEYE_AMOUNT.set(Config.fisheyeAmount);
+            QuadzClient.FISHEYE_SHADER.render(tickDelta);
+        }
     }
 
     /**
