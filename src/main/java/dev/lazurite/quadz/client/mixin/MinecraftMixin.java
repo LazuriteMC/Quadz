@@ -1,8 +1,13 @@
 package dev.lazurite.quadz.client.mixin;
 
-import dev.lazurite.quadz.client.hooks.RenderHooks;
+import dev.lazurite.corduroy.api.ViewStack;
+import dev.lazurite.quadz.client.QuadzClient;
+import dev.lazurite.quadz.client.render.RenderHooks;
+import dev.lazurite.quadz.client.render.camera.QuadcopterView;
+import dev.lazurite.quadz.common.entity.Quadcopter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,6 +29,15 @@ public class MinecraftMixin {
     )
     public void runTick$render(boolean bl, CallbackInfo ci) {
         RenderHooks.onRenderMinecraft(this.profiler);
+    }
+
+    @Inject(method = "setCameraEntity", at = @At("HEAD"))
+    public void setCameraEntity(Entity entity, CallbackInfo ci) {
+        if (QuadzClient.getQuadcopterFromCamera().isEmpty() && entity instanceof Quadcopter quadcopter) {
+                ViewStack.getInstance().push(new QuadcopterView(quadcopter));
+        } else {
+            ViewStack.getInstance().pop();
+        }
     }
 
 }

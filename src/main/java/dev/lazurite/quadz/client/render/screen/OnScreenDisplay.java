@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.client.render.osd;
+package dev.lazurite.quadz.client.render.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.lazurite.quadz.client.Config;

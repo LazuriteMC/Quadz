@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.client.hooks;
+package dev.lazurite.quadz.client.render.screen;
 
 import dev.lazurite.quadz.client.render.screen.ConfigScreen;
 import net.minecraft.client.Minecraft;

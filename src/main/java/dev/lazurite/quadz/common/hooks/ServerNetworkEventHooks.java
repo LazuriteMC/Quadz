@@ -23,7 +23,7 @@ public class ServerNetworkEventHooks {
         }
     }
 
-    public static void onRemoteControllableViewRequestReceived(PacketRegistry.ServerboundContext context) {
+    public static void onQuadcopterViewRequested(PacketRegistry.ServerboundContext context) {
         var player = context.player();
         var buf = context.byteBuf();
         var spectateDirection = buf.readInt();

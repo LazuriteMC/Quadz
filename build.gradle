@@ -46,7 +46,7 @@ dependencies {
 	// Lazurite
 	modImplementation "dev.lazurite:rayon-fabric:$rayon_version"
 	modImplementation include("dev.lazurite:form:$form_version")
-//	modApi include("dev.lazurite:corduroy:$corduroy_version")
+	modApi include("dev.lazurite:corduroy:$corduroy_version")
 //	modApi include("dev.lazurite:lattice:$lattice_version")
 
 	// Other

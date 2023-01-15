@@ -1,6 +1,6 @@
 package dev.lazurite.quadz.client.mixin;
 
-import dev.lazurite.quadz.client.hooks.ScreenHooks;
+import dev.lazurite.quadz.client.render.screen.ScreenHooks;
 import net.minecraft.client.gui.components.GridWidget;
 import net.minecraft.client.gui.screens.PauseScreen;
 import org.spongepowered.asm.mixin.Mixin;

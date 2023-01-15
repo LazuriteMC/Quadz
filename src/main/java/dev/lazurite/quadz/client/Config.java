@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.client.render.osd.OnScreenDisplay;
+import dev.lazurite.quadz.client.render.screen.OnScreenDisplay;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class Config {
     public static float deadzone = 0.05f;
     public static boolean followLOS = true;
     public static boolean renderFirstPerson = true;
-    public static boolean renderCameraInCenter = true;
+    public static boolean renderCameraInCenter = false;
     public static int firstPersonFOV = 30;
     public static boolean osdEnabled = true;
     public static OnScreenDisplay.VelocityUnit velocityUnit = OnScreenDisplay.VelocityUnit.METERS_PER_SECOND;

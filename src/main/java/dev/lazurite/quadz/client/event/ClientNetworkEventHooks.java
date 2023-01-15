@@ -1,4 +1,4 @@
-package dev.lazurite.quadz.client.hooks;
+package dev.lazurite.quadz.client.event;
 
 import dev.lazurite.toolbox.api.network.PacketRegistry;
 import net.minecraft.client.Minecraft;

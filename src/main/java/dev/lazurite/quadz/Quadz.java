@@ -63,7 +63,7 @@ public class Quadz implements ModInitializer {
 
         // Network events
         PacketRegistry.registerServerbound(Networking.JOYSTICK_INPUT, ServerNetworkEventHooks::onJoystickInput);
-        PacketRegistry.registerServerbound(Networking.REQUEST_REMOTE_CONTROLLABLE_VIEW, ServerNetworkEventHooks::onRemoteControllableViewRequestReceived);
+        PacketRegistry.registerServerbound(Networking.REQUEST_QUADCOPTER_VIEW, ServerNetworkEventHooks::onQuadcopterViewRequested);
         PacketRegistry.registerServerbound(Networking.REQUEST_PLAYER_VIEW, ServerNetworkEventHooks::onPlayerViewRequestReceived);
 
         // Load templates
@@ -73,7 +73,7 @@ public class Quadz implements ModInitializer {
     public static class Networking {
 
         public static final ResourceLocation JOYSTICK_INPUT = new ResourceLocation(MODID, "joystick_input");
-        public static final ResourceLocation REQUEST_REMOTE_CONTROLLABLE_VIEW = new ResourceLocation(MODID, "request_remote_controllable_view");
+        public static final ResourceLocation REQUEST_QUADCOPTER_VIEW = new ResourceLocation(MODID, "request_quadcopter_view");
         public static final ResourceLocation REQUEST_PLAYER_VIEW = new ResourceLocation(MODID, "request_player_view");
 
     }

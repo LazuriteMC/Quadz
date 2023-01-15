@@ -1,16 +1,18 @@
 package dev.lazurite.quadz.client;
 
+import dev.lazurite.corduroy.api.ViewStack;
 import dev.lazurite.form.api.Templated;
 import dev.lazurite.form.api.render.FormRegistry;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.client.hooks.RenderHooks;
+import dev.lazurite.quadz.client.render.camera.QuadcopterView;
+import dev.lazurite.quadz.client.render.RenderHooks;
 import dev.lazurite.quadz.client.render.entity.QuadcopterEntityRenderer;
 import dev.lazurite.quadz.common.util.Bindable;
 import dev.lazurite.quadz.common.util.Search;
 import dev.lazurite.quadz.common.util.event.ClickEvents;
 import dev.lazurite.quadz.common.util.event.JoystickEvents;
-import dev.lazurite.quadz.client.hooks.ClientEventHooks;
-import dev.lazurite.quadz.client.hooks.ClientNetworkEventHooks;
+import dev.lazurite.quadz.client.event.ClientEventHooks;
+import dev.lazurite.quadz.client.event.ClientNetworkEventHooks;
 import dev.lazurite.quadz.client.resource.SplashResourceLoader;
 import dev.lazurite.quadz.common.entity.Quadcopter;
 import dev.lazurite.toolbox.api.event.ClientEvents;
@@ -19,7 +21,6 @@ import ladysnake.satin.api.event.ShaderEffectRenderCallback;
 import ladysnake.satin.api.managed.ManagedShaderEffect;
 import ladysnake.satin.api.managed.ShaderEffectManager;
 import ladysnake.satin.api.managed.uniform.Uniform1f;
-import ladysnake.satin.api.managed.uniform.Uniform3f;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -40,14 +41,22 @@ public class QuadzClient implements ClientModInitializer {
     public static final Uniform1f STATIC_AMOUNT = STATIC_SHADER.findUniform1f("Amount");
     public static final Uniform1f FISHEYE_AMOUNT = FISHEYE_SHADER.findUniform1f("Amount");
 
-    public static boolean isInThirdPerson() {
-        return !Minecraft.getInstance().options.getCameraType().isFirstPerson();
+    /**
+     * Finds the player's quadcopter based on its camera view.
+     */
+    public static Optional<Quadcopter> getQuadcopterFromCamera() {
+        return ViewStack.getInstance()
+                .peek()
+                .filter(view -> view instanceof QuadcopterView)
+                .map(view -> ((QuadcopterView) view).getQuadcopter());
     }
 
     /**
-     * Finds the player's quadcopter if it's within a 256 block radius.
+     * Finds the player's quadcopter based on its held remote.
+     * <p>
+     * Only works if it's within a 256 block radius.
      */
-    public static Optional<Quadcopter> getQuadcopter() {
+    public static Optional<Quadcopter> getQuadcopterFromRemote() {
         var player = Minecraft.getInstance().player;
 
         if (player != null) {

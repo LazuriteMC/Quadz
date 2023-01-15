@@ -1,11 +1,10 @@
-package dev.lazurite.quadz.client.hooks;
+package dev.lazurite.quadz.client.event;
 
 import dev.lazurite.quadz.Quadz;
 import dev.lazurite.quadz.client.QuadzClient;
 import dev.lazurite.quadz.common.util.JoystickOutput;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.render.screen.ControllerConnectedToast;
-import dev.lazurite.quadz.common.entity.Quadcopter;
 import dev.lazurite.toolbox.api.network.ClientNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -35,7 +34,7 @@ public class ClientEventHooks {
             JoystickOutput.getAxisValue(minecraft.player, Config.throttle, new ResourceLocation(Quadz.MODID, "throttle"), Config.throttleInverted, Config.throttleInCenter);
         }
 
-        quadDistanceFromPlayer = QuadzClient.getQuadcopter().map(quadcopter -> quadcopter.distanceTo(minecraft.player)).orElse(0.0f);
+        quadDistanceFromPlayer = QuadzClient.getQuadcopterFromRemote().map(quadcopter -> quadcopter.distanceTo(minecraft.player)).orElse(0.0f);
     }
 
     public static void onJoystickConnect(int id, String name) {
@@ -47,11 +46,11 @@ public class ClientEventHooks {
     }
 
     public static void onLeftClick() {
-        ClientNetworking.send(Quadz.Networking.REQUEST_REMOTE_CONTROLLABLE_VIEW, buf -> buf.writeInt(-1));
+        ClientNetworking.send(Quadz.Networking.REQUEST_QUADCOPTER_VIEW, buf -> buf.writeInt(-1));
     }
 
     public static void onRightClick() {
-        ClientNetworking.send(Quadz.Networking.REQUEST_REMOTE_CONTROLLABLE_VIEW, buf -> buf.writeInt(1));
+        ClientNetworking.send(Quadz.Networking.REQUEST_QUADCOPTER_VIEW, buf -> buf.writeInt(1));
     }
 
     public static void onClientLevelTick(ClientLevel level) {
@@ -60,7 +59,7 @@ public class ClientEventHooks {
         if (!client.isPaused()) {
             client.player.syncJoystick();
 
-            if (client.options.keyShift.isDown() && client.cameraEntity instanceof Quadcopter) {
+            if (client.options.keyShift.isDown() && QuadzClient.getQuadcopterFromCamera().isPresent()) {
                 client.options.getCameraType().reset();
             }
         }

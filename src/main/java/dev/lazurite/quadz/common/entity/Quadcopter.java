@@ -6,8 +6,6 @@ import com.jme3.math.Vector3f;
 import dev.lazurite.form.api.Templated;
 import dev.lazurite.form.api.loader.TemplateLoader;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.client.Config;
-import dev.lazurite.quadz.client.QuadzClient;
 import dev.lazurite.quadz.common.util.Bindable;
 import dev.lazurite.quadz.common.util.Search;
 import dev.lazurite.quadz.common.item.GogglesItem;
@@ -56,7 +54,7 @@ import java.util.Optional;
 
 public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Templated, GeoEntity, Bindable {
 
-    public static final int MAX_RANGE = 300;
+    public static final int MAX_RANGE = 100;
 
     public static final EntityDataAccessor<String> TEMPLATE = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> PREV_TEMPLATE = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.STRING);
@@ -70,7 +68,7 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
     public Quadcopter(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
         this.noCulling = true;
-        this.rigidBody.setBuoyancyType(ElementRigidBody.BuoyancyType.WATER);
+        this.rigidBody.setBuoyancyType(ElementRigidBody.BuoyancyType.NONE);
         this.rigidBody.setDragType(ElementRigidBody.DragType.SIMPLE);
     }
 
@@ -262,10 +260,6 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
 //    @Override
     public boolean shouldPlayerBeViewing(Player player) {
         return player != null && player.getInventory().armor.get(3).getItem() instanceof GogglesItem;
-    }
-
-    public boolean shouldRenderSelf() {
-        return (!Config.renderCameraInCenter && Config.renderFirstPerson) || QuadzClient.isInThirdPerson();
     }
 
     @Override

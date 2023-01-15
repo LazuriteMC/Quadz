@@ -9,6 +9,7 @@ uniform float Amount;
 https://www.shadertoy.com/view/4s2GRR
 */
 
+out vec4 fragColor;
 in vec2 texCoord;
 
 void main()
@@ -31,5 +32,5 @@ void main()
     else
     uv = p;
     vec3 col = texture2D(DiffuseSampler, vec2(uv.x, uv.y * prop)).rgb;
-    gl_FragColor = vec4(col, 1.0);
+    fragColor = vec4(col, 1.0);
 }
