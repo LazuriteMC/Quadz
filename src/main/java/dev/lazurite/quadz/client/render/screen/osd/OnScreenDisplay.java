@@ -14,18 +14,15 @@ import net.minecraft.resources.ResourceLocation;
 
 public class OnScreenDisplay extends GuiComponent {
 
-    private static final OnScreenDisplay instance = new OnScreenDisplay();
+    private final Quadcopter quadcopter;
+    private final Font font;
 
-    public static OnScreenDisplay getInstance() {
-        return instance;
+    public OnScreenDisplay(Quadcopter quadcopter) {
+        this.quadcopter = quadcopter;
+        this.font = Minecraft.getInstance().font;
     }
 
-    public void render(Quadcopter quadcopter, Font font, PoseStack poseStack, float tickDelta) {
-        renderVelocityText(quadcopter, font, poseStack);
-        renderStickInput(quadcopter, poseStack);
-    }
-
-    private void renderVelocityText(Quadcopter quadcopter, Font font, PoseStack poseStack) {
+    public void renderVelocity(PoseStack poseStack, float tickDelta) {
         var client = Minecraft.getInstance();
         var height = client.getWindow().getGuiScaledHeight() - 25;
         var unit = Config.velocityUnit;
@@ -34,12 +31,12 @@ public class OnScreenDisplay extends GuiComponent {
         font.drawShadow(poseStack, velocity, 25, height, 0xFFFFFFFF);
     }
 
-    private void renderStickInput(Quadcopter quadcopter, PoseStack poseStack) {
+    public void renderSticks(PoseStack poseStack, float tickDelta) {
         Search.forPlayer(quadcopter).ifPresent(player -> {
-            var pitch = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "pitch")) * (Config.pitchInverted ? -1 : 1);
-            var yaw = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "yaw")) * (Config.yawInverted ? -1 : 1);
-            var roll = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "roll")) * (Config.rollInverted ? -1 : 1);
-            var throttle = (player.getJoystickValue(new ResourceLocation(Quadz.MODID, "throttle")) + 1.0f) * (Config.throttleInverted ? -1 : 1);
+            var pitch = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "pitch")) * (Config.pitchInverted ? -1 : 1);
+            var yaw = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "yaw")) * (Config.yawInverted ? -1 : 1);
+            var roll = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "roll")) * (Config.rollInverted ? -1 : 1);
+            var throttle = (player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "throttle")) + 1.0f) * (Config.throttleInverted ? -1 : 1);
 
             var width = Minecraft.getInstance().getWindow().getGuiScaledWidth();
             var height = Minecraft.getInstance().getWindow().getGuiScaledHeight();

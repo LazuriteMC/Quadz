@@ -19,7 +19,7 @@ public class ServerNetworkEventHooks {
         for (int i = 0; i < axisCount; i++) {
             var axis = buf.readResourceLocation();
             var value = buf.readFloat();
-            player.setJoystickValue(axis, value);
+            player.quadz$setJoystickValue(axis, value);
         }
     }
 

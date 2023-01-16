@@ -2,8 +2,6 @@ package dev.lazurite.quadz.client.render;
 
 import com.google.common.collect.Maps;
 import com.jme3.math.Vector3f;
-import com.mojang.blaze3d.vertex.PoseStack;
-import dev.lazurite.quadz.client.render.screen.osd.OnScreenDisplay;
 import dev.lazurite.quadz.common.util.event.JoystickEvents;
 import dev.lazurite.quadz.common.util.JoystickOutput;
 import dev.lazurite.quadz.client.Config;
@@ -13,7 +11,6 @@ import dev.lazurite.toolbox.api.math.QuaternionHelper;
 import dev.lazurite.toolbox.api.math.VectorHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
-import net.minecraft.client.gui.Font;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.joml.Quaternionf;
 
@@ -22,12 +19,6 @@ import java.util.Map;
 import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 
 public class RenderHooks {
-
-    public static void onRenderShaderEffects(float tickDelta) {
-        QuadzClient.getQuadcopterFromCamera().ifPresent(quadcopter ->
-            quadcopter.getView().renderShaderEffects(tickDelta)
-        );
-    }
 
     public static void onRenderLevel(float tickDelta) {
         /* Rotate the player's yaw and pitch to follow the quadcopter */
@@ -97,14 +88,6 @@ public class RenderHooks {
         }
 
         return optionInstance.get();
-    }
-
-    public static void onRenderGui(Font font, PoseStack poseStack, float tickDelta) {
-        if (Config.osdEnabled) {
-            QuadzClient.getQuadcopterFromCamera().ifPresent(quadcopter ->
-                OnScreenDisplay.getInstance().render(quadcopter, font, poseStack, tickDelta)
-            );
-        }
     }
 
 }

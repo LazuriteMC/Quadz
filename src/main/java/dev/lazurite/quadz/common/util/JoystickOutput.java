@@ -33,13 +33,13 @@ public interface JoystickOutput {
             }
 
             /* Queue for transmission to the server */
-            player.setJoystickValue(resourceLocation, value);
+            player.quadz$setJoystickValue(resourceLocation, value);
 
             return value;
         }
 
         /* Server-side retrieval */
-        return player.getJoystickValue(resourceLocation);
+        return player.quadz$getJoystickValue(resourceLocation);
     }
 
     static String getJoystickName(int id) {

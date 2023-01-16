@@ -38,7 +38,7 @@ public class Config {
     public static int firstPersonFOV = 30;
     public static boolean osdEnabled = true;
     public static VelocityUnit velocityUnit = VelocityUnit.METERS_PER_SECOND;
-    public static boolean videoInterferenceEnabled = false;
+    public static boolean videoInterferenceEnabled = true;
     public static boolean fisheyeEnabled = true;
     public static float fisheyeAmount = 0.8f;
 

@@ -12,22 +12,22 @@ import java.util.Map;
 public class PlayerMixin implements PlayerExtension {
 
     @Override
-    public float getJoystickValue(ResourceLocation axis) {
+    public float quadz$getJoystickValue(ResourceLocation axis) {
         return PlayerHooks.onGetJoystickValues(axis);
     }
 
     @Override
-    public void setJoystickValue(ResourceLocation axis, float value) {
+    public void quadz$setJoystickValue(ResourceLocation axis, float value) {
         PlayerHooks.onSetJoystickValue(axis, value);
     }
 
     @Override
-    public Map<ResourceLocation, Float> getAllAxes() {
+    public Map<ResourceLocation, Float> quadz$getAllAxes() {
         return PlayerHooks.onGetAllAxes();
     }
 
     @Override
-    public void syncJoystick() {
+    public void quadz$syncJoystick() {
         PlayerHooks.onSyncJoystick((Player) (Object) this);
     }
 

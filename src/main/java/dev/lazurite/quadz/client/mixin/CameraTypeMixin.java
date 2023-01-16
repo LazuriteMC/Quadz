@@ -17,7 +17,7 @@ public class CameraTypeMixin implements CameraTypeExtension {
     }
 
     @Override
-    public void reset() {
+    public void quadz$reset() {
         CameraHooks.onCameraReset();
     }
 

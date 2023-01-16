@@ -7,18 +7,18 @@ import java.util.Map;
 
 public interface PlayerExtension {
 
-    default float getJoystickValue(ResourceLocation axis) {
+    default float quadz$getJoystickValue(ResourceLocation axis) {
         return 0.0f;
     }
 
-    default void setJoystickValue(ResourceLocation axis, float value) {
+    default void quadz$setJoystickValue(ResourceLocation axis, float value) {
     }
 
-    default Map<ResourceLocation, Float> getAllAxes() {
+    default Map<ResourceLocation, Float> quadz$getAllAxes() {
         return new HashMap<>();
     }
 
-    default void syncJoystick() {
+    default void quadz$syncJoystick() {
     }
 
 }

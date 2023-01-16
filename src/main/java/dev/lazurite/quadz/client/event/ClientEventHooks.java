@@ -14,15 +14,11 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ClientEventHooks {
 
-    public static float quadDistanceFromPlayer = 0.0f;
-
     public static void onPostLogin(Minecraft minecraft, ClientLevel level, LocalPlayer player) {
-        Config.load();
-
         if (player != null) {
-            player.setJoystickValue(new ResourceLocation(Quadz.MODID, "rate"), Config.rate);
-            player.setJoystickValue(new ResourceLocation(Quadz.MODID, "super_rate"), Config.superRate);
-            player.setJoystickValue(new ResourceLocation(Quadz.MODID, "expo"), Config.expo);
+            player.quadz$setJoystickValue(new ResourceLocation(Quadz.MODID, "rate"), Config.rate);
+            player.quadz$setJoystickValue(new ResourceLocation(Quadz.MODID, "super_rate"), Config.superRate);
+            player.quadz$setJoystickValue(new ResourceLocation(Quadz.MODID, "expo"), Config.expo);
         }
     }
 
@@ -33,8 +29,6 @@ public class ClientEventHooks {
             JoystickOutput.getAxisValue(minecraft.player, Config.roll, new ResourceLocation(Quadz.MODID, "roll"), Config.rollInverted, false);
             JoystickOutput.getAxisValue(minecraft.player, Config.throttle, new ResourceLocation(Quadz.MODID, "throttle"), Config.throttleInverted, Config.throttleInCenter);
         }
-
-        quadDistanceFromPlayer = QuadzClient.getQuadcopterFromRemote().map(quadcopter -> quadcopter.distanceTo(minecraft.player)).orElse(0.0f);
     }
 
     public static void onJoystickConnect(int id, String name) {
@@ -57,10 +51,10 @@ public class ClientEventHooks {
         final var client = Minecraft.getInstance();
 
         if (!client.isPaused()) {
-            client.player.syncJoystick();
+            client.player.quadz$syncJoystick();
 
             if (client.options.keyShift.isDown() && QuadzClient.getQuadcopterFromCamera().isPresent()) {
-                client.options.getCameraType().reset();
+                client.options.getCameraType().quadz$reset();
             }
         }
     }

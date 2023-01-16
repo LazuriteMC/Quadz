@@ -6,7 +6,7 @@ import com.jme3.math.Vector3f;
 import dev.lazurite.form.api.Templated;
 import dev.lazurite.form.api.loader.TemplateLoader;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.client.render.camera.QuadcopterView;
+import dev.lazurite.quadz.client.render.QuadcopterView;
 import dev.lazurite.quadz.common.util.Bindable;
 import dev.lazurite.quadz.common.util.Search;
 import dev.lazurite.quadz.common.item.GogglesItem;
@@ -110,20 +110,20 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
 
         Search.forPlayer(this).ifPresentOrElse(player -> {
             this.setArmed(true);
-            player.syncJoystick();
+            player.quadz$syncJoystick();
 
             if (player instanceof ServerPlayer serverPlayer && serverPlayer.getCamera() == this && !player.equals(this.getRigidBody().getPriorityPlayer())) {
                 this.getRigidBody().prioritize(player);
             }
 
-            var pitch = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "pitch"));
-            var yaw = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "yaw"));
-            var roll = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "roll"));
-            var throttle = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "throttle")) + 1.0f;
+            var pitch = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "pitch"));
+            var yaw = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "yaw"));
+            var roll = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "roll"));
+            var throttle = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "throttle")) + 1.0f;
 
-            var rate = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "rate"));
-            var superRate = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "super_rate"));
-            var expo = player.getJoystickValue(new ResourceLocation(Quadz.MODID, "expo"));
+            var rate = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "rate"));
+            var superRate = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "super_rate"));
+            var expo = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "expo"));
 
             this.rotate(
                     (float) BetaflightHelper.calculateRates(pitch, rate, expo, superRate, 0.05f),
