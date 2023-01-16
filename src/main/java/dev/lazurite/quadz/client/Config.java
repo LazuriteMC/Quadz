@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import dev.lazurite.quadz.Quadz;
-import dev.lazurite.quadz.client.render.screen.OnScreenDisplay;
+import dev.lazurite.quadz.client.render.screen.osd.VelocityUnit;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class Config {
     public static boolean renderCameraInCenter = false;
     public static int firstPersonFOV = 30;
     public static boolean osdEnabled = true;
-    public static OnScreenDisplay.VelocityUnit velocityUnit = OnScreenDisplay.VelocityUnit.METERS_PER_SECOND;
+    public static VelocityUnit velocityUnit = VelocityUnit.METERS_PER_SECOND;
     public static boolean videoInterferenceEnabled = false;
     public static boolean fisheyeEnabled = true;
     public static float fisheyeAmount = 0.8f;
@@ -110,7 +110,7 @@ public class Config {
             renderCameraInCenter = config.get("renderCameraInCenter").getAsBoolean();
             firstPersonFOV = config.get("firstPersonFOV").getAsInt();
             osdEnabled = config.get("osdEnabled").getAsBoolean();
-            velocityUnit = OnScreenDisplay.VelocityUnit.valueOf(config.get("velocityUnit").getAsString());
+            velocityUnit = VelocityUnit.valueOf(config.get("velocityUnit").getAsString());
             videoInterferenceEnabled = config.get("videoInterferenceEnabled").getAsBoolean();
             fisheyeEnabled = config.get("fisheyeEnabled").getAsBoolean();
             fisheyeAmount = config.get("fisheyeAmount").getAsFloat();

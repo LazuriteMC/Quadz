@@ -62,8 +62,8 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
     public static final EntityDataAccessor<Integer> BIND_ID = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> CAMERA_ANGLE = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.INT);
 
-    private final EntityRigidBody rigidBody = new EntityRigidBody(this);
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private final EntityRigidBody rigidBody = new EntityRigidBody(this);
 
     public Quadcopter(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);

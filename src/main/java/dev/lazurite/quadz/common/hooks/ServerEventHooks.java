@@ -13,7 +13,7 @@ public class ServerEventHooks {
 
     public static void onEntityTemplateChanged(Entity entity) {
         if (entity instanceof Quadcopter quadcopter) {
-            quadcopter.getRigidBody().setCollisionShape(MinecraftShape.convex(entity.getBoundingBox()));
+            quadcopter.getRigidBody().setCollisionShape(MinecraftShape.box(quadcopter.getBoundingBox()));
 
             TemplateLoader.getTemplateById(quadcopter.getTemplate()).ifPresent(template -> {
                 quadcopter.getEntityData().set(Quadcopter.CAMERA_ANGLE, template.metadata().get("cameraAngle").getAsInt());

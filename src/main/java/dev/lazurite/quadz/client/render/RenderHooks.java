@@ -3,7 +3,7 @@ package dev.lazurite.quadz.client.render;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.lazurite.quadz.client.event.ClientEventHooks;
-import dev.lazurite.quadz.client.render.screen.OnScreenDisplay;
+import dev.lazurite.quadz.client.render.screen.osd.OnScreenDisplay;
 import dev.lazurite.quadz.common.util.event.JoystickEvents;
 import dev.lazurite.quadz.common.util.JoystickOutput;
 import dev.lazurite.quadz.client.Config;
