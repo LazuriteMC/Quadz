@@ -32,12 +32,20 @@ repositories {
 		}
 	}
 
+	maven {
+		name 'Parchment'
+		url 'https://maven.parchmentmc.org'
+	}
+
 	mavenLocal()
 }
 
 dependencies {
 	minecraft "com.mojang:minecraft:$minecraft_version"
-	mappings loom.officialMojangMappings()
+	mappings loom.layered() {
+		officialMojangMappings()
+		parchment("org.parchmentmc.data:parchment-$minecraft_version:$parchment_version@zip")
+	}
 
 	// Fabric
 	modImplementation "net.fabricmc:fabric-loader:$fabric_loader_version"

@@ -102,7 +102,7 @@ public class RenderHooks {
     public static void onRenderGui(Font font, PoseStack poseStack, float tickDelta) {
         if (Config.osdEnabled) {
             QuadzClient.getQuadcopterFromCamera().ifPresent(quadcopter ->
-                OnScreenDisplay.render(quadcopter, font, poseStack, tickDelta)
+                OnScreenDisplay.getInstance().render(quadcopter, font, poseStack, tickDelta)
             );
         }
     }
