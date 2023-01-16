@@ -8,6 +8,7 @@ import dev.lazurite.quadz.common.hooks.ServerNetworkEventHooks;
 import dev.lazurite.quadz.common.item.GogglesItem;
 import dev.lazurite.quadz.common.item.QuadcopterItem;
 import dev.lazurite.quadz.common.item.RemoteItem;
+import dev.lazurite.rayon.impl.bullet.collision.space.block.BlockProperty;
 import dev.lazurite.toolbox.api.network.PacketRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -68,6 +70,16 @@ public class Quadz implements ModInitializer {
 
         // Load templates
         TemplateLoader.initialize(MODID);
+
+        BlockProperty.addBlockProperty(Blocks.OAK_LEAVES, 1.0f, 0.0f, false, true);
+        BlockProperty.addBlockProperty(Blocks.ACACIA_LEAVES, 1.0f, 0.0f, false, true);
+        BlockProperty.addBlockProperty(Blocks.AZALEA_LEAVES, 1.0f, 0.0f, false, true);
+        BlockProperty.addBlockProperty(Blocks.FLOWERING_AZALEA_LEAVES, 1.0f, 0.0f, false, true);
+        BlockProperty.addBlockProperty(Blocks.JUNGLE_LEAVES, 1.0f, 0.0f, false, true);
+        BlockProperty.addBlockProperty(Blocks.DARK_OAK_LEAVES, 1.0f, 0.0f, false, true);
+        BlockProperty.addBlockProperty(Blocks.BIRCH_LEAVES, 1.0f, 0.0f, false, true);
+        BlockProperty.addBlockProperty(Blocks.MANGROVE_LEAVES, 1.0f, 0.0f, false, true);
+        BlockProperty.addBlockProperty(Blocks.SPRUCE_LEAVES, 1.0f, 0.0f, false, true);
     }
 
     public static class Networking {

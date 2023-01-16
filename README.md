@@ -14,7 +14,7 @@ to be loaded around the player's camera instead of just the player itself.
 A full list of changes can be found [here](https://github.com/LazuriteMC/Quadz/blob/development/changelog.md). For instructions on how
 to use quadcopter templates, look [here](https://github.com/LazuriteMC/Quadz-Template).
 
-![banner](https://raw.githubusercontent.com/lazuritemc/Quadz/master/src/main/resources/assets/quadz/images/banner.png)
+![banner](https://raw.githubusercontent.com/lazuritemc/Quadz/master/src/main/resources/assets/quadz/misc/images/banner.png)
 
 ### Background
 This mod began in late 2018 as a fun side project. Originally, it was just [BlueVista](https://github.com/ethanejohnsons) developing it

@@ -6,6 +6,7 @@ import com.jme3.math.Vector3f;
 import dev.lazurite.form.api.Templated;
 import dev.lazurite.form.api.loader.TemplateLoader;
 import dev.lazurite.quadz.Quadz;
+import dev.lazurite.quadz.client.render.camera.QuadcopterView;
 import dev.lazurite.quadz.common.util.Bindable;
 import dev.lazurite.quadz.common.util.Search;
 import dev.lazurite.quadz.common.item.GogglesItem;
@@ -37,6 +38,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
@@ -54,8 +57,7 @@ import java.util.Optional;
 
 public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Templated, GeoEntity, Bindable {
 
-    public static final int MAX_RANGE = 100;
-
+    public static final DamageSource PROP_DAMAGE = new DamageSource("quadcopter").setProjectile().damageHelmet();
     public static final EntityDataAccessor<String> TEMPLATE = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> PREV_TEMPLATE = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<Boolean> ARMED = SynchedEntityData.defineId(Quadcopter.class, EntityDataSerializers.BOOLEAN);
@@ -64,6 +66,7 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private final EntityRigidBody rigidBody = new EntityRigidBody(this);
+    private final QuadcopterView view = new QuadcopterView(this);
 
     public Quadcopter(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
@@ -82,12 +85,26 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
             this.refreshDimensions();
         }
 
-        // Server-side only prioritization
         if (!this.level.isClientSide) {
+            // Server-side only prioritization
             Optional.ofNullable(getRigidBody().getPriorityPlayer()).ifPresent(player -> {
                 if (!((ServerPlayer) player).getCamera().equals(this)) {
                     getRigidBody().prioritize(null);
                 }
+            });
+
+            // Break grass, flowers, etc if the quadcopter is above a certain weight.
+            if (this.getRigidBody().getMass() > 0.1f) {
+                var block = this.level.getBlockState(this.blockPosition()).getBlock();
+
+                if (block instanceof BushBlock || block instanceof VineBlock) {
+                    this.level.destroyBlock(this.blockPosition(), false, this);
+                }
+            }
+
+            // Hurt entities on collision
+            this.level.getEntities(this, this.getBoundingBox(), entity -> entity instanceof LivingEntity).forEach(entity -> {
+                entity.hurt(PROP_DAMAGE, 2.0f);
             });
         }
 
@@ -339,6 +356,10 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
 
     public boolean isArmed() {
         return this.getEntityData().get(ARMED);
+    }
+
+    public QuadcopterView getView() {
+        return this.view;
     }
 
 }

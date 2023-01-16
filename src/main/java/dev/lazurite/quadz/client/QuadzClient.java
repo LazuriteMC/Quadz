@@ -83,7 +83,7 @@ public class QuadzClient implements ClientModInitializer {
         JoystickEvents.JOYSTICK_DISCONNECT.register(ClientEventHooks::onJoystickDisconnect);
         ClickEvents.LEFT_CLICK_EVENT.register(ClientEventHooks::onLeftClick);
         ClickEvents.RIGHT_CLICK_EVENT.register(ClientEventHooks::onRightClick);
-        ShaderEffectRenderCallback.EVENT.register(RenderHooks::onRenderShaders);
+        ShaderEffectRenderCallback.EVENT.register(RenderHooks::onRenderShaderEffects);
 
         // Network events
         PacketRegistry.registerClientbound(Quadz.Networking.JOYSTICK_INPUT, ClientNetworkEventHooks::onJoystickInput);

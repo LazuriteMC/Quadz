@@ -1,20 +1,19 @@
 package dev.lazurite.quadz.client.render;
 
 import com.google.common.collect.Maps;
+import com.jme3.math.Vector3f;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.lazurite.quadz.client.event.ClientEventHooks;
 import dev.lazurite.quadz.client.render.screen.osd.OnScreenDisplay;
 import dev.lazurite.quadz.common.util.event.JoystickEvents;
 import dev.lazurite.quadz.common.util.JoystickOutput;
 import dev.lazurite.quadz.client.Config;
 import dev.lazurite.quadz.client.QuadzClient;
-import dev.lazurite.quadz.common.entity.Quadcopter;
-import dev.lazurite.rayon.impl.bullet.thread.util.Clock;
+import dev.lazurite.rayon.impl.bullet.math.Convert;
 import dev.lazurite.toolbox.api.math.QuaternionHelper;
+import dev.lazurite.toolbox.api.math.VectorHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.Font;
-import net.minecraft.util.Mth;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.joml.Quaternionf;
 
@@ -24,37 +23,26 @@ import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 
 public class RenderHooks {
 
-    private static final Clock clock = new Clock();
-
-    public static void onRenderShaders(float tickDelta) {
-        if (QuadzClient.getQuadcopterFromCamera().isPresent() && Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
-            if (QuadzClient.STATIC_SHADER.isInitialized() && Config.videoInterferenceEnabled) {
-                QuadzClient.STATIC_AMOUNT.set(Mth.clamp(ClientEventHooks.quadDistanceFromPlayer / Quadcopter.MAX_RANGE, 0.0f, 3.0f));
-                QuadzClient.STATIC_TIMER.set(clock.get());
-                QuadzClient.STATIC_SHADER.render(tickDelta);
-            }
-
-            if (QuadzClient.FISHEYE_SHADER.isInitialized() && Config.fisheyeEnabled) {
-                QuadzClient.FISHEYE_AMOUNT.set(Config.fisheyeAmount);
-                QuadzClient.FISHEYE_SHADER.render(tickDelta);
-            }
-        }
+    public static void onRenderShaderEffects(float tickDelta) {
+        QuadzClient.getQuadcopterFromCamera().ifPresent(quadcopter ->
+            quadcopter.getView().renderShaderEffects(tickDelta)
+        );
     }
 
-    /**
-     * Rotates the camera according to the quadcopter's perspective.
-     */
     public static void onRenderLevel(float tickDelta) {
         /* Rotate the player's yaw and pitch to follow the quadcopter */
-        if (Config.followLOS) {
+        var player = Minecraft.getInstance().player;
+
+        if (Config.followLOS && player != null) {
             QuadzClient.getQuadcopterFromRemote().ifPresent(quadcopter -> {
-                if (Minecraft.getInstance().player.hasLineOfSight(quadcopter)) {
+                if (player.hasLineOfSight(quadcopter)) {
                     /* Get the difference in position between the player and the quadcopter */
-                    var delta = Minecraft.getInstance().player.getEyePosition().subtract(quadcopter.getPosition(tickDelta));
+                    var delta = Minecraft.getInstance().player.getEyePosition(tickDelta)
+                            .subtract(VectorHelper.toVec3(Convert.toMinecraft(quadcopter.getPhysicsLocation(new Vector3f(), tickDelta))));
 
                     /* Set new pitch and yaw */
-					Minecraft.getInstance().player.setYRot((float) Math.toDegrees(Math.atan2(delta.z, delta.x)) + 90);
-					Minecraft.getInstance().player.setXRot(20 + (float) Math.toDegrees(Math.atan2(delta.y, Math.sqrt(delta.x * delta.x + delta.z * delta.z))));
+					player.setYRot((float) Math.toDegrees(Math.atan2(delta.z, delta.x)) + 90);
+					player.setXRot(20 + (float) Math.toDegrees(Math.atan2(delta.y, Math.sqrt(Math.pow(delta.x, 2) + Math.pow(delta.z, 2)))));
                 }
             });
         }
