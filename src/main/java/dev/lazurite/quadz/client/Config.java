@@ -35,7 +35,6 @@ public class Config {
     public static boolean followLOS = true;
     public static boolean renderFirstPerson = true;
     public static boolean renderCameraInCenter = false;
-    public static int firstPersonFOV = 30;
     public static boolean osdEnabled = true;
     public static VelocityUnit velocityUnit = VelocityUnit.METERS_PER_SECOND;
     public static boolean videoInterferenceEnabled = true;
@@ -67,7 +66,6 @@ public class Config {
         config.add("followLOS", new JsonPrimitive(followLOS));
         config.add("renderFirstPerson", new JsonPrimitive(renderFirstPerson));
         config.add("renderCameraInCenter", new JsonPrimitive(renderCameraInCenter));
-        config.add("firstPersonFOV", new JsonPrimitive(firstPersonFOV));
         config.add("osdEnabled", new JsonPrimitive(osdEnabled));
         config.add("velocityUnit", new JsonPrimitive(velocityUnit.toString()));
         config.add("videoInterferenceEnabled", new JsonPrimitive(videoInterferenceEnabled));
@@ -108,7 +106,6 @@ public class Config {
             followLOS = config.get("followLOS").getAsBoolean();
             renderFirstPerson = config.get("renderFirstPerson").getAsBoolean();
             renderCameraInCenter = config.get("renderCameraInCenter").getAsBoolean();
-            firstPersonFOV = config.get("firstPersonFOV").getAsInt();
             osdEnabled = config.get("osdEnabled").getAsBoolean();
             velocityUnit = VelocityUnit.valueOf(config.get("velocityUnit").getAsString());
             videoInterferenceEnabled = config.get("videoInterferenceEnabled").getAsBoolean();

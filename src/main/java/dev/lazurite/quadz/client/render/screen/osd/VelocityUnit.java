@@ -3,9 +3,9 @@ package dev.lazurite.quadz.client.render.screen.osd;
 import net.minecraft.network.chat.Component;
 
 public enum VelocityUnit {
-    METERS_PER_SECOND(Component.translatable("config.quadz.velocity.meters_per_second"), "m/s", 1.0f),
-    KILOMETERS_PER_HOUR(Component.translatable("config.quadz.velocity.kilometers_per_hour"), "kph", 3.6f),
-    MILES_PER_HOUR(Component.translatable("config.quadz.velocity.miles_per_hour"), "mph", 2.237f);
+    METERS_PER_SECOND(Component.translatable("quadz.velocity.meters_per_second"), "m/s", 1.0f),
+    KILOMETERS_PER_HOUR(Component.translatable("quadz.velocity.kilometers_per_hour"), "kph", 3.6f),
+    MILES_PER_HOUR(Component.translatable("quadz.velocity.miles_per_hour"), "mph", 2.237f);
 
     private final Component translation;
     private final String abbreviation;

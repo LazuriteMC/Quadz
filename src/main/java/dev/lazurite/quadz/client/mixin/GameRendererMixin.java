@@ -4,14 +4,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.lazurite.quadz.client.QuadzClient;
 import dev.lazurite.quadz.client.render.RenderHooks;
 import net.minecraft.client.Camera;
-import net.minecraft.client.OptionInstance;
 import net.minecraft.client.renderer.GameRenderer;
 import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
@@ -51,11 +49,6 @@ public class GameRendererMixin {
         if (QuadzClient.getQuadcopterFromCamera().isPresent()) {
             ci.cancel();
         }
-    }
-
-    @Redirect(method = "getFov", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;"))
-    public Object getFov$FIELD(OptionInstance<Integer> optionInstance) {
-        return RenderHooks.onGetFOV(optionInstance);
     }
 
 }

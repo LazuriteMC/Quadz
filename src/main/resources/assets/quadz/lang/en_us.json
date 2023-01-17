@@ -1,5 +1,6 @@
 {
   "entity.quadz.quadcopter" : "Quadcopter",
+
   "item.quadz.quadcopter" : "Quadcopter",
   "item.quadz.goggles" : "Goggles",
   "item.quadz.remote" : "Remote",
@@ -7,7 +8,25 @@
   "quadz.message.bound" : "Quadcopter Bound",
 
   "quadz.config.title" : "Quadz Config",
+
+  "quadz.config.controller.title" : "Controller",
+  "quadz.config.controller.rate" : "Rate",
+  "quadz.config.controller.superRate" : "Super Rate",
+  "quadz.config.controller.expo" : "Expo",
+  "quadz.config.controller.deadzone" : "Deadzone",
+
+  "quadz.config.visuals.title" : "Visuals",
+  "quadz.config.visuals.static_toggle" : "Video Interference",
+  "quadz.config.visuals.fisheye_toggle" : "Fisheye Lens",
+  "quadz.config.visuals.fisheye_amount" : "Fisheye Amount",
+  "quadz.config.visuals.osd_toggle" : "On Screen Display",
+  "quadz.config.visuals.follow_los_toggle" : "Line of Sight Following",
+  "quadz.config.visuals.velocity_unit" : "Velocity Unit",
+  "quadz.config.visuals.camera_in_center_toggle" : "Camera in Center",
+  "quadz.config.visuals.first_person_render_toggle" : "Render in First Person",
+
   "quadz.config.controller_setup.title" : "Controller Setup",
+  "quadz.config.controller_setup.config" : "Config",
   "quadz.config.controller_setup.save" : "Save",
   "quadz.config.controller_setup.cancel" : "Cancel",
   "quadz.config.controller_setup.pitch": "Pitch",
@@ -18,5 +37,9 @@
   "quadz.config.controller_setup.prompt": "Move the correct stick to assign the axis.",
 
   "quadz.toast.connect" : "Connected",
-  "quadz.toast.disconnect" : "Disconnected"
+  "quadz.toast.disconnect" : "Disconnected",
+
+  "quadz.velocity.meters_per_second" : "Meters per Second",
+  "quadz.velocity.miles_per_hour" : "Miles per Hour",
+  "quadz.velocity.kilometers_per_hour" : "Kilometers per Hour"
 }

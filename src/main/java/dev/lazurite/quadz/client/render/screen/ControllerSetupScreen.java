@@ -26,6 +26,7 @@ public class ControllerSetupScreen extends Screen {
 
     private Button saveButton;
     private Button cancelButton;
+    private Button configButton;
     private Button pitchButton;
     private Button yawButton;
     private Button rollButton;
@@ -57,6 +58,11 @@ public class ControllerSetupScreen extends Screen {
 
         this.cancelButton = Button.builder(Component.translatable("quadz.config.controller_setup.cancel"), this::onCancelButton)
                 .pos(spacing + bWidth + spacing / 2, height - bHeight - spacing)
+                .size(bWidth, bHeight)
+                .build();
+
+        this.configButton = Button.builder(Component.translatable("quadz.config.controller_setup.config"), this::onConfigButton)
+                .pos(width - spacing - bWidth, height - bHeight - spacing)
                 .size(bWidth, bHeight)
                 .build();
 
@@ -102,6 +108,7 @@ public class ControllerSetupScreen extends Screen {
 
         this.addRenderableWidget(this.saveButton);
         this.addRenderableWidget(this.cancelButton);
+        this.addRenderableWidget(this.configButton);
         this.addRenderableWidget(this.pitchButton);
         this.addRenderableWidget(this.yawButton);
         this.addRenderableWidget(this.rollButton);
@@ -119,6 +126,10 @@ public class ControllerSetupScreen extends Screen {
 
     private void onCancelButton(Button button) {
         this.minecraft.setScreen(this.parent);
+    }
+
+    private void onConfigButton(Button button) {
+        this.minecraft.setScreen(MainConfigScreen.get(this));
     }
 
     private void onAxisButton(Consumer<Integer> axisConsumer) {

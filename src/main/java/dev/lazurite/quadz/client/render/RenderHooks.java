@@ -82,12 +82,4 @@ public class RenderHooks {
         return quaternion;
     }
 
-    public static Object onGetFOV(OptionInstance<Integer> optionInstance) {
-        if (QuadzClient.getQuadcopterFromCamera().isPresent() && Config.firstPersonFOV > 30) {
-            return Config.firstPersonFOV;
-        }
-
-        return optionInstance.get();
-    }
-
 }
