@@ -8,7 +8,8 @@
     "GameRendererMixin",
     "GuiMixin",
     "MinecraftMixin",
-    "PauseScreenMixin"
+    "PauseScreenMixin",
+    "TitleScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

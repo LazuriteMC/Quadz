@@ -33,36 +33,36 @@ public class OnScreenDisplay extends GuiComponent {
 
     public void renderSticks(PoseStack poseStack, float tickDelta) {
         Search.forPlayer(quadcopter).ifPresent(player -> {
-            var pitch = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "pitch")) * (Config.pitchInverted ? -1 : 1);
-            var yaw = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "yaw")) * (Config.yawInverted ? -1 : 1);
-            var roll = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "roll")) * (Config.rollInverted ? -1 : 1);
-            var throttle = (player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "throttle")) + 1.0f) * (Config.throttleInverted ? -1 : 1);
-
+            var pitch = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "pitch"));
+            var yaw = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "yaw"));
+            var roll = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "roll"));
+            var throttle = (player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "throttle")) + 1.0f);
             var width = Minecraft.getInstance().getWindow().getGuiScaledWidth();
             var height = Minecraft.getInstance().getWindow().getGuiScaledHeight();
-            var centerX = width / 2;
-
-            var leftX = centerX - 30;
-            var rightX = centerX + 30;
-            var topY = height - 75;
-            var middleY = height - 50;
-            var bottomY = height - 25;
-
-            // Draw crosses
-            vLine(poseStack, leftX, bottomY, topY, 0xFFFFFFFF);
-            vLine(poseStack, rightX, bottomY, topY, 0xFFFFFFFF);
-            hLine(poseStack, leftX - 25, leftX + 25, middleY, 0xFFFFFFFF);
-            hLine(poseStack, rightX - 25, rightX + 25, middleY, 0xFFFFFFFF);
-
-            // Draw stick positions
-            int dotSize = 2;
-            int yawAdjusted = (int) (yaw * 25);
-            int throttleAdjusted = (int) (throttle * 25) - 25;
-            int rollAdjusted = (int) (roll * 25);
-            int pitchAdjusted = (int) (pitch * 25);
-            fill(poseStack, leftX + yawAdjusted - dotSize, middleY - throttleAdjusted - dotSize, leftX + yawAdjusted + dotSize, middleY - throttleAdjusted + dotSize, 0xFFFFFFFF);
-            fill(poseStack, rightX + rollAdjusted - dotSize, middleY - pitchAdjusted - dotSize, rightX + rollAdjusted + dotSize, middleY - pitchAdjusted + dotSize, 0xFFFFFFFF);
+            renderSticks(poseStack, tickDelta, width / 2, height - 75, 25, 5, pitch, yaw, roll, throttle);
         });
+    }
+
+    public static void renderSticks(PoseStack poseStack, float tickDelta, int x, int y, int scale, int spacing, float pitch, float yaw, float roll, float throttle) {
+        var leftX = x - scale - spacing;
+        var rightX = x + scale + spacing;
+        var topY = y + scale;
+        var bottomY = y - scale;
+
+        // Draw crosses
+        fill(poseStack, leftX, bottomY + 1, leftX + 1, topY, 0xFFFFFFFF);
+        fill(poseStack, rightX, bottomY + 1, rightX + 1, topY, 0xFFFFFFFF);
+        fill(poseStack, leftX - scale, y, leftX + scale + 1, y + 1, 0xFFFFFFFF);
+        fill(poseStack, rightX - scale, y, rightX + scale + 1, y + 1, 0xFFFFFFFF);
+
+        // Draw stick positions
+        int dotSize = 2;
+        int yawAdjusted = (int) (yaw * scale);
+        int throttleAdjusted = (int) (throttle * scale) - scale;
+        int rollAdjusted = (int) (roll * scale);
+        int pitchAdjusted = (int) (pitch * scale);
+        fill(poseStack, leftX + yawAdjusted - dotSize, y - throttleAdjusted - dotSize, leftX + yawAdjusted + dotSize, y - throttleAdjusted + dotSize, 0xFFFFFFFF);
+        fill(poseStack, rightX + rollAdjusted - dotSize, y - pitchAdjusted - dotSize, rightX + rollAdjusted + dotSize, y - pitchAdjusted + dotSize, 0xFFFFFFFF);
     }
 
 }

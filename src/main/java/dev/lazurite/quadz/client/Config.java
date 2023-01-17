@@ -22,7 +22,7 @@ public class Config {
     public static int throttle = 2;
 
     public static boolean pitchInverted = false;
-    public static boolean yawInverted = true;
+    public static boolean yawInverted = false;
     public static boolean rollInverted = false;
     public static boolean throttleInverted = false;
     public static boolean throttleInCenter = false;

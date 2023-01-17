@@ -117,7 +117,7 @@ public class Quadcopter extends LivingEntity implements EntityPhysicsElement, Te
             }
 
             var pitch = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "pitch"));
-            var yaw = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "yaw"));
+            var yaw = -1 * player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "yaw"));
             var roll = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "roll"));
             var throttle = player.quadz$getJoystickValue(new ResourceLocation(Quadz.MODID, "throttle")) + 1.0f;
 

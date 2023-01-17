@@ -7,6 +7,15 @@
   "quadz.message.bound" : "Quadcopter Bound",
 
   "quadz.config.title" : "Quadz Config",
+  "quadz.config.controller_setup.title" : "Controller Setup",
+  "quadz.config.controller_setup.save" : "Save",
+  "quadz.config.controller_setup.cancel" : "Cancel",
+  "quadz.config.controller_setup.pitch": "Pitch",
+  "quadz.config.controller_setup.yaw": "Yaw",
+  "quadz.config.controller_setup.roll": "Roll",
+  "quadz.config.controller_setup.throttle": "Throttle",
+  "quadz.config.controller_setup.invert": "Invert",
+  "quadz.config.controller_setup.prompt": "Move the correct stick to assign the axis.",
 
   "quadz.toast.connect" : "Connected",
   "quadz.toast.disconnect" : "Disconnected"
